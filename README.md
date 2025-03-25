@@ -14,6 +14,16 @@ This is an on-chain project to support Cardano ambassadors.
 
    In setup of the app, an initial set of administrators are alloted with multisig (tentatively 2 out of 3) -> scripts can update
 
+### Members management
+
+1. Member admission
+
+   Passing admin multisig threshold to approve members
+
+2. Member removal
+
+   Full multisig required from admin to remove member and records
+
 3. Rotation of administrators
 
    Passing quorem can rotate admin
