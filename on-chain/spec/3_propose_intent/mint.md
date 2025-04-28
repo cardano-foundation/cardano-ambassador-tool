@@ -24,5 +24,4 @@
 3. Burn - Redeemer `RejectProposal {AssetName}`
 
    - only 1 input `ProposeIntent` token from ProposeIntent Spending Script
-   - burn `ProposeIntent` token
-   - check if 1 `Proposal` token is minted
+   - mint value only burn `ProposeIntent` token
