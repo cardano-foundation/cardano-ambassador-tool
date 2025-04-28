@@ -8,9 +8,8 @@
 
 1. Mint - Redeemer `AddMember {PolicyId, Address}`
 
-   - only 1 input `?token` from person
+   - only 1 input `MembershipIntent` from `MembershipIntent` Spending Script
    - mint cip68 (todo: naming)
-   - output `?token` back to person
    - output `Member` nft token to person
    - output `Member` ref token to Member Spending Script
    - require multisig
