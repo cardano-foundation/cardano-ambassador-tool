@@ -6,10 +6,10 @@
 
 ## User Action
 
-1. Mint - Redeemer ` MintProposal {AssetName}`
+1. Mint - Redeemer ` MintProposal`
 
    - only 1 input `ProposeIntent` token from `ProposeIntent` Spending Script
-   - mint 1 `Proposal` token with correct AssetName
+   - mint 1 `Proposal` token with same AssetName
    - output `Proposal` token to `Proposal` Spending Script with the same datum of `ProposeIntent` token(project url, amount, receiver) tbc
    - require multisig
 
