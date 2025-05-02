@@ -1,6 +1,5 @@
-use aiken/crypto.{ScriptHash, VerificationKeyHash}
-use aiken/primitive/bytearray
-use cardano/address.{Address, Credential}
+use aiken/crypto.{VerificationKeyHash}
+use cardano/address.{Address}
 use cardano/assets.{AssetName, PolicyId}
 
 // Mint Redeemer
@@ -20,18 +19,34 @@ pub type OracleSpendRedeemer {
 pub type OracleDatum {
   admins: List<VerificationKeyHash>,
   admin_tenure: String,
+  multi_sig_threshold: Int,
   oracle_nft: PolicyId,
   oracle_address: Address,
-  app_vault_address: Address,
+  membership_intent_token: PolicyId,
+  memebership_intent_address: Address,
   member_token: PolicyId,
   member_address: Address,
   propose_intent_token: PolicyId,
   propose_intent_address: Address,
   proposal_token: PolicyId,
   proposal_address: Address,
+  sign_off_approval_token: PolicyId,
+  sign_off_approval_address: Address,
 }
 
-// 1 - Member
+// 1 - MembershipIntent
+
+pub type MembershipIntentMintRedeemer {
+  ApplyMembership {
+    policy_id: PolicyId,
+    asset_name: AssetName,
+    person: Address,
+  }
+  ApproveMember { policy_id: PolicyId, asset_name: AssetName, person: Address }
+  RejectMember { policy_id: PolicyId, asset_name: AssetName, person: Address }
+}
+
+// 2 - Member
 
 pub type MemberMintRedeemer {
   AddMember { token: PolicyId, person: Address }
@@ -49,22 +64,30 @@ pub type MemberDatum {
   fund_recevied: Int,
 }
 
-// 2 - ProposeIntent
+// 3 - ProposeIntent
 
 pub type ProposeIntentMintRedeemer {
-  ProposeProject { project_url: String, fund_requested: Int }
+  ProposeProject { project_url: String, fund_requested: Int, receiver: Address }
   ApproveProposal { project: AssetName }
   RejectProposal { project: AssetName }
 }
 
-pub type ProposeIntentDatum {
+pub type ProposalDatum {
   project_url: String,
   fund_requested: Int,
+  receiver: Address,
 }
 
-// 3 - Proposal
+// 4 - Proposal
 
 pub type ProposalMintRedeemer {
   MintProposal { project: AssetName }
-  SignOffProposal { project: AssetName }
+  ApproveSignOff { project: AssetName }
+}
+
+// 5 - SignOffApproval
+
+pub type SignOffApprovalMintRedeemer {
+  MintSignOffApproval { project: AssetName }
+  SignOff { project: AssetName }
 }

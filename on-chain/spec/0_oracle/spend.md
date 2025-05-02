@@ -9,12 +9,16 @@
 - `multisig_threshold`: The threshold of multsig
 - `oracle_nft`: The policy id of `OracleNFT`
 - `oracle_address`: The address of the current oracle validator
+- `membership_intent_token`: The policy id of token at address of `MembershipIntent`
+- `membership_intent_address`: The address of `MembershipIntent`
 - `member_token`: The policy id of token at address of `Member`
 - `member_address`: The address of `Member`
 - `propose_intent_token`: The policy id of token at address of `ProposeIntent`
 - `propose_intent_address`: The address of `ProposeIntent`
 - `proposal_token`: The policy id of token at address of `Proposal`
-- `proposal_address`: The address of `Proposal` and `Treasury`
+- `proposal_address`: The address of `Proposal`
+- `sign_off_approval_token`: The policy id of token at address of `SignOffApproval`
+- `sign_off_approval_address`: The address of `SignOffApproval` and `Treasury`
 
 ## User Action
 
@@ -30,7 +34,7 @@
    - The only 1 output datum is updated with new threshold
    - Required full multisig
 
-3. Stop the oracle validator - Redeemer `StopDex`
+3. Stop the oracle validator - Redeemer `StopOracle`
 
    - Require full multisig
    - The `OracleNFT` is burnt
