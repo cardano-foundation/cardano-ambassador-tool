@@ -8,6 +8,7 @@
 
 - `project_url`: `String` - Project Details
 - `fund_requested`: `Int` - fund requested
+- `recevier_address`: `Address`
 
 ## User Action
 
