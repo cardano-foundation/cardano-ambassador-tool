@@ -18,7 +18,9 @@
 - `proposal_token`: The policy id of token at address of `Proposal`
 - `proposal_address`: The address of `Proposal`
 - `sign_off_approval_token`: The policy id of token at address of `SignOffApproval`
-- `sign_off_approval_address`: The address of `SignOffApproval` and `Treasury`
+- `sign_off_approval_address`: The address of `SignOffApproval`
+- `treasury_address`: The address of `SignOffApproval` and `Treasury`
+- `treasury_withdrawal_script_hashes`: To store staking script hashes of `TreasuryWithdrawal`
 
 ## User Action
 
