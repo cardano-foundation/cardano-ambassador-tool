@@ -11,7 +11,7 @@ pub type MintPolarity {
 
 // 0 - Oracle
 pub type OracleSpendRedeemer {
-  RotateAdmin { new_admin: VerificationKeyHash }
+  RotateAdmin { new_admins: List<VerificationKeyHash> }
   UpdateThreshold { new_threshold: Int }
   StopDex
 }
@@ -34,19 +34,31 @@ pub type OracleDatum {
   sign_off_approval_address: Address,
 }
 
-// 1 - MembershipIntent
-
-pub type MembershipIntentMintRedeemer {
-  ApplyMembership {
-    policy_id: PolicyId,
-    asset_name: AssetName,
-    person: Address,
-  }
-  ApproveMember { policy_id: PolicyId, asset_name: AssetName, person: Address }
-  RejectMember { policy_id: PolicyId, asset_name: AssetName, person: Address }
+// 1 - Counter
+pub type CounterSpendRedeemer {
+  IncrementCount
+  UpdateAdmin { new_admins: List<VerificationKeyHash> }
+  StopCounter
 }
 
-// 2 - Member
+pub type CounterDatum {
+  admins: List<VerificationKeyHash>,
+  count: Int,
+}
+
+// 2 - MembershipIntent
+
+pub type MembershipIntentMintRedeemer {
+  ApplyMembership { policy_id: PolicyId, asset_name: AssetName }
+  ApproveMember
+  RejectMember
+}
+
+pub type MembershipIntentDatum {
+  token: (PolicyId, AssetName),
+}
+
+// 3 - Member
 
 pub type MemberMintRedeemer {
   AddMember { token: PolicyId, person: Address }
@@ -60,16 +72,15 @@ pub type MemberSpendRedeemer {
 }
 
 pub type MemberDatum {
+  token: (PolicyId, AssetName),
   completion: Pairs<String, Int>,
   fund_recevied: Int,
 }
 
-// 3 - ProposeIntent
+// 4 - ProposeIntent
 
 pub type ProposeIntentMintRedeemer {
   ProposeProject { project_url: String, fund_requested: Int, receiver: Address }
-  ApproveProposal { project: AssetName }
-  RejectProposal { project: AssetName }
 }
 
 pub type ProposalDatum {
@@ -78,16 +89,22 @@ pub type ProposalDatum {
   receiver: Address,
 }
 
-// 4 - Proposal
+// 5 - Proposal
 
 pub type ProposalMintRedeemer {
-  MintProposal { project: AssetName }
-  ApproveSignOff { project: AssetName }
+  MintProposal
+  ApproveSignOff
 }
 
-// 5 - SignOffApproval
+// 6 - SignOffApproval
 
 pub type SignOffApprovalMintRedeemer {
   MintSignOffApproval { project: AssetName }
   SignOff { project: AssetName }
+}
+
+// 7 - Treasury
+
+pub type TreasuryRedeemer {
+  TreasuryWithdrawal
 }
