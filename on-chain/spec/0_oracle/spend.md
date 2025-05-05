@@ -9,6 +9,8 @@
 - `multisig_threshold`: The threshold of multsig
 - `oracle_nft`: The policy id of `OracleNFT`
 - `oracle_address`: The address of the current oracle validator
+- `counter_nft`: The policy id of `CounterNFT`
+- `counter_address`: The address of the current counter
 - `membership_intent_token`: The policy id of token at address of `MembershipIntent`
 - `membership_intent_address`: The address of `MembershipIntent`
 - `member_token`: The policy id of token at address of `Member`
