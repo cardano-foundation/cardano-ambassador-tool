@@ -1,4 +1,5 @@
 use aiken/collection/list
+use aiken/crypto.{VerificationKeyHash}
 use cardano/assets.{PolicyId, quantity_of}
 use cardano/transaction.{DatumHash, InlineDatum, Input, NoDatum, Output}
 use types.{CounterDatum, OracleDatum}
@@ -45,5 +46,40 @@ pub fn get_counter_datum(
     }
   expect counter_input_datum: CounterDatum = counter_input_data
   counter_input_datum
+}
+
+pub fn has_all_signers(
+  all_signers: List<VerificationKeyHash>,
+  actual_signers: List<VerificationKeyHash>,
+) -> Bool {
+  when all_signers is {
+    [] -> True
+    [head, ..tail] ->
+      if !list.has(actual_signers, head) {
+        False
+      } else {
+        has_all_signers(tail, actual_signers)
+      }
+  }
+}
+
+pub fn has_enough_signers(
+  all_signers: List<VerificationKeyHash>,
+  threshold: Int,
+  actual_signers: List<VerificationKeyHash>,
+) -> Bool {
+  when all_signers is {
+    [] -> False
+    [head, ..tail] ->
+      if list.has(actual_signers, head) {
+        if threshold > 1 {
+          has_enough_signers(tail, threshold - 1, actual_signers)
+        } else {
+          True
+        }
+      } else {
+        has_enough_signers(tail, threshold, actual_signers)
+      }
+  }
 }
 // todo: check membership
