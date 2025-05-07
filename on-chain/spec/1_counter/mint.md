@@ -1,4 +1,4 @@
-# Oracle Token - One Shot
+# Counter Token - One Shot
 
 ## Parameter
 
