@@ -4,12 +4,11 @@
 
 ## Datum
 
-- `admins`: The pkh of all admins
 - `count`: The counting of `Member` token
 
 ## User Action
 
-1. Rotate admin - Redeemer `UpdateCounter`
+1. Counter Increment - Redeemer `UpdateCounter`
 
    - Only 1 input from `Counter` Spending Script
    - Output back to `Counter` Spending Script
