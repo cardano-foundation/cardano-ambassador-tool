@@ -44,12 +44,10 @@ pub type OracleDatum {
 // 1 - Counter
 pub type CounterSpendRedeemer {
   IncrementCount
-  UpdateAdmin { new_admins: List<VerificationKeyHash> }
   StopCounter
 }
 
 pub type CounterDatum {
-  admins: List<VerificationKeyHash>,
   count: Int,
 }
 
