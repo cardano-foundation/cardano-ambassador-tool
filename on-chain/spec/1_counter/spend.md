@@ -1,4 +1,4 @@
-# Specification - Oracle
+# Specification - Counter
 
 ## Parameter
 
