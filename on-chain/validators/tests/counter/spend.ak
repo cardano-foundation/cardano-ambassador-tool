@@ -8,13 +8,11 @@ use mocktail.{
   tx_in_inline_datum, tx_out, tx_out_inline_datum,
 }
 use tests/utils.{
-  mock_counter_address, mock_counter_nft, mock_first_admin,
-  mock_input_oracle_datum, mock_member_token, mock_new_admins,
+  mock_counter_address, mock_counter_input_datum, mock_counter_nft,
+  mock_first_admin, mock_input_oracle_datum, mock_member_token, mock_new_admins,
   mock_oracle_address, mock_oracle_nft, mock_third_admin,
 }
 use types.{CounterDatum, IncrementCount, StopCounter}
-
-const mock_counter_input_datum = CounterDatum { count: 2 }
 
 const mock_counter_output_datum = CounterDatum { count: 3 }
 
