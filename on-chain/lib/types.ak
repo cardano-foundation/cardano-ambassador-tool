@@ -86,6 +86,8 @@ pub type MemberDatum {
 
 pub type ProposeIntentMintRedeemer {
   ProposeProject { project_url: String, fund_requested: Int, receiver: Address }
+  ApproveProposal
+  RejectProposal
 }
 
 pub type ProposalDatum {
