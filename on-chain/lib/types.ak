@@ -66,8 +66,8 @@ pub type MembershipIntentDatum {
 // 3 - Member
 
 pub type MemberMintRedeemer {
-  AddMember { token: PolicyId, person: Address }
-  RemoveMember { token: PolicyId, person: Address }
+  AddMember
+  RemoveMember
 }
 
 pub type MemberSpendRedeemer {
