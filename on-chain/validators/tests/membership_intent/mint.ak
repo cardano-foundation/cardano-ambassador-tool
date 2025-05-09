@@ -1,6 +1,5 @@
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
-use cocktail.{convert_int_to_bytes}
 use membership_intent/mint as membership_intent_mint
 use mocktail.{
   complete, mint, mock_policy_id, mock_tx_hash, mocktail_tx, ref_tx_in,
@@ -8,8 +7,8 @@ use mocktail.{
   tx_out, tx_out_inline_datum,
 }
 use tests/utils.{
-  mock_counter_address, mock_counter_input_datum, mock_counter_nft,
-  mock_first_admin, mock_input_oracle_datum, mock_member_token,
+  mock_counter_address, mock_counter_count, mock_counter_input_datum,
+  mock_counter_nft, mock_first_admin, mock_input_oracle_datum, mock_member_token,
   mock_membership_intent_address, mock_membership_intent_token, mock_new_admins,
   mock_oracle_address, mock_oracle_nft, mock_third_admin, mock_user_address,
   mock_user_token,
@@ -307,12 +306,7 @@ fn mock_approve_member_tx(test_case: ApproveMemberTestCase) -> Transaction {
     |> tx_in_inline_datum(is_counter_inputed, mock_counter_input_datum)
     |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_counter_address)
     |> mint(is_intent_burnt, -1, mock_membership_intent_token, "")
-    |> mint(
-        is_member_minted,
-        1,
-        mock_member_token,
-        convert_int_to_bytes(mock_counter_input_datum.count),
-      )
+    |> mint(is_member_minted, 1, mock_member_token, mock_counter_count)
     |> complete()
 }
 
