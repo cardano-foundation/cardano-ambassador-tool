@@ -86,6 +86,8 @@ pub const mock_new_admin_tenure = @"22-22-2222"
 
 pub const mock_counter_input_datum = CounterDatum { count: 2 }
 
+pub const mock_counter_count = "2"
+
 pub const mock_user_token = (mock_policy_id(20), "user_token")
 
 pub const mock_user_address = from_script("user_address")
