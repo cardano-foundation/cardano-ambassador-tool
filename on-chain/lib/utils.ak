@@ -1,8 +1,10 @@
 use aiken/collection/list
 use aiken/crypto.{VerificationKeyHash}
-use cardano/assets.{PolicyId, quantity_of}
+use cardano/address.{Address}
+use cardano/assets.{AssetName, PolicyId, quantity_of}
 use cardano/transaction.{DatumHash, InlineDatum, Input, NoDatum, Output}
-use types.{CounterDatum, OracleDatum}
+use cocktail.{convert_int_to_bytes, inputs_at_with, output_inline_datum}
+use types.{CounterDatum, MembershipIntentDatum, OracleDatum}
 
 pub fn get_oracle_nft_datum(
   reference_inputs: List<Input>,
@@ -26,26 +28,41 @@ pub fn get_oracle_nft_datum(
   oracle_input_datum
 }
 
-pub fn get_counter_datum(
-  reference_inputs: List<Input>,
+pub fn get_counter_count(
+  inputs: List<Input>,
   counter_nft: PolicyId,
-) -> CounterDatum {
-  expect Some(counter_input) =
-    reference_inputs
+  counter_address: Address,
+) -> AssetName {
+  expect [counter_input] =
+    inputs_at_with(inputs, counter_address, counter_nft, "")
+  expect counter_input_datum: CounterDatum =
+    output_inline_datum(counter_input.output)
+  let CounterDatum { count } = counter_input_datum
+  let count_asset_name = convert_int_to_bytes(count)
+  count_asset_name
+}
+
+pub fn get_membership_intent_datum(
+  inputs: List<Input>,
+  membership_intent_token: PolicyId,
+) -> MembershipIntentDatum {
+  expect Some(membership_intent_input) =
+    inputs
       |> list.find(
-          fn(ref_input: Input) {
-            quantity_of(ref_input.output.value, counter_nft, "") == 1
+          fn(input: Input) {
+            quantity_of(input.output.value, membership_intent_token, "") == 1
           },
         )
 
-  let counter_input_data: Data =
-    when counter_input.output.datum is {
+  let membership_intent_input_data: Data =
+    when membership_intent_input.output.datum is {
       NoDatum -> fail @"Counter input does not contain any datum"
       DatumHash(_) -> fail @"Counter input datum must be inlined"
       InlineDatum(data) -> data
     }
-  expect counter_input_datum: CounterDatum = counter_input_data
-  counter_input_datum
+  expect membership_intent_input_datum: MembershipIntentDatum =
+    membership_intent_input_data
+  membership_intent_input_datum
 }
 
 pub fn has_all_signers(

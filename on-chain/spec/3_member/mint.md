@@ -10,7 +10,7 @@
 
    - only 1 input `MembershipIntent` from `MembershipIntent` Spending Script
    - only 1 input `Counter` from `Counter` Spending Script
-   - Mint 1 `Member` NFT with name `Counter`'s count
+   - mint 1 `Member` NFT with name `Counter`'s count
    - output `Member` NFT to `Member` Spending Script with `MemberDatum`
    - require multisig
 

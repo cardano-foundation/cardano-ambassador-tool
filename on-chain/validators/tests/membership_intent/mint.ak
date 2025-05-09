@@ -4,8 +4,8 @@ use cocktail.{convert_int_to_bytes}
 use membership_intent/mint as membership_intent_mint
 use mocktail.{
   complete, mint, mock_policy_id, mock_tx_hash, mocktail_tx, ref_tx_in,
-  ref_tx_in_inline_datum, required_signer_hash, tx_in, tx_out,
-  tx_out_inline_datum,
+  ref_tx_in_inline_datum, required_signer_hash, tx_in, tx_in_inline_datum,
+  tx_out, tx_out_inline_datum,
 }
 use tests/utils.{
   mock_counter_address, mock_counter_input_datum, mock_counter_nft,
@@ -297,14 +297,14 @@ fn mock_approve_member_tx(test_case: ApproveMemberTestCase) -> Transaction {
         is_oracle_inputed && !is_oracle_format_correct,
         mock_new_admins,
       )
-    |> ref_tx_in(
+    |> tx_in(
         is_counter_inputed,
-        mock_tx_hash(0),
-        0,
+        mock_tx_hash(10),
+        10,
         from_asset(mock_counter_nft, "", 1),
         mock_counter_address,
       )
-    |> ref_tx_in_inline_datum(is_counter_inputed, mock_counter_input_datum)
+    |> tx_in_inline_datum(is_counter_inputed, mock_counter_input_datum)
     |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_counter_address)
     |> mint(is_intent_burnt, -1, mock_membership_intent_token, "")
     |> mint(

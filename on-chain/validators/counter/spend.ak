@@ -2,7 +2,7 @@ use cardano/assets.{PolicyId}
 use cardano/transaction.{OutputReference, Transaction, find_input}
 use cocktail.{
   convert_int_to_bytes, only_minted_token, output_inline_datum,
-  outputs_at_with_policy, value_length,
+  outputs_at_with_policy, policy_only_minted_token, value_length,
 }
 use types.{
   CounterDatum, CounterSpendRedeemer, IncrementCount, OracleDatum, StopCounter,
@@ -52,7 +52,7 @@ validator counter(oracle_nft: PolicyId) {
         let updated_output_datum = CounterDatum { count: count + 1 }
         let is_counter_updated = only_output_datum == updated_output_datum
         let asset_name = convert_int_to_bytes(count)
-        is_output_value_clean? && is_counter_updated? && only_minted_token(
+        is_output_value_clean? && is_counter_updated? && policy_only_minted_token(
           mint,
           member_token,
           asset_name,
