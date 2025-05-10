@@ -47,7 +47,7 @@ validator propose_intent(oracle_nft: PolicyId) {
         let MemberDatum { token, .. } = member_input_datum
 
         expect [member_output] =
-          outputs_at_with_policy(outputs, member_address, policy_id)
+          outputs_at_with_policy(outputs, member_address, member_token)
         let is_member_output_value_clean =
           value_length(member_output.value) == 2
 
