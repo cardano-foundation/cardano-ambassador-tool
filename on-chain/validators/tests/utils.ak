@@ -1,6 +1,6 @@
 use cardano/address.{from_script}
 use mocktail.{mock_policy_id, mock_pub_key_hash, mock_script_hash}
-use types.{CounterDatum, OracleDatum}
+use types.{CounterDatum, MemberDatum, OracleDatum, ProposalDatum}
 
 pub const mock_first_admin = mock_pub_key_hash(0)
 
@@ -91,3 +91,23 @@ pub const mock_counter_count = "2"
 pub const mock_user_token = (mock_policy_id(20), "user_token")
 
 pub const mock_user_address = from_script("user_address")
+
+pub const mock_project_url = @"abc project"
+
+pub const mock_fund_requested = 1000
+
+pub const mock_receiver = from_script("receiver")
+
+pub const mock_member_datum =
+  MemberDatum {
+    token: (mock_user_token.1st, mock_user_token.2nd),
+    completion: [],
+    fund_recevied: 0,
+  }
+
+pub const mock_proposal_datum =
+  ProposalDatum {
+    project_url: mock_project_url,
+    fund_requested: mock_fund_requested,
+    receiver: mock_receiver,
+  }

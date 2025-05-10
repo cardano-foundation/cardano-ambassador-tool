@@ -84,7 +84,7 @@ fn mock_apply_membership_tx(test_case: ApplyMembershipTestCase) -> Transaction {
     |> complete()
 }
 
-test s2_spend_success_apply_membership() {
+test s2_mint_success_apply_membership() {
   let tx =
     mock_apply_membership_tx(
       ApplyMembershipTestCase {
@@ -106,7 +106,7 @@ test s2_spend_success_apply_membership() {
   )
 }
 
-test s2_spend_fail_apply_membership_with_no_oracle_inputed() fail {
+test s2_mint_fail_apply_membership_with_no_oracle_inputed() fail {
   let tx =
     mock_apply_membership_tx(
       ApplyMembershipTestCase {
@@ -128,7 +128,7 @@ test s2_spend_fail_apply_membership_with_no_oracle_inputed() fail {
   )
 }
 
-test s2_spend_fail_apply_membership_with_incorrect_oracle_inputed() fail {
+test s2_mint_fail_apply_membership_with_incorrect_oracle_inputed() fail {
   let tx =
     mock_apply_membership_tx(
       ApplyMembershipTestCase {
@@ -150,7 +150,7 @@ test s2_spend_fail_apply_membership_with_incorrect_oracle_inputed() fail {
   )
 }
 
-test s2_spend_fail_increment_count_with_no_intent_minted() {
+test s2_mint_fail_apply_membership_with_no_intent_minted() {
   let tx =
     mock_apply_membership_tx(
       ApplyMembershipTestCase {
@@ -172,7 +172,7 @@ test s2_spend_fail_increment_count_with_no_intent_minted() {
   )
 }
 
-test s2_spend_fail_increment_count_with_no_token_inputed() fail {
+test s2_mint_fail_apply_membership_with_no_token_inputed() fail {
   let tx =
     mock_apply_membership_tx(
       ApplyMembershipTestCase {
@@ -194,7 +194,7 @@ test s2_spend_fail_increment_count_with_no_token_inputed() fail {
   )
 }
 
-test s2_spend_fail_increment_count_with_token_ouput_incorrect() fail {
+test s2_mint_fail_apply_membership_with_token_ouput_incorrect() fail {
   let tx =
     mock_apply_membership_tx(
       ApplyMembershipTestCase {
@@ -216,7 +216,7 @@ test s2_spend_fail_increment_count_with_token_ouput_incorrect() fail {
   )
 }
 
-test s2_spend_fail_increment_count_with_intent_token_output_not_clean() fail {
+test s2_mint_fail_apply_membership_with_intent_token_output_not_clean() fail {
   let tx =
     mock_apply_membership_tx(
       ApplyMembershipTestCase {
@@ -238,7 +238,7 @@ test s2_spend_fail_increment_count_with_intent_token_output_not_clean() fail {
   )
 }
 
-test s2_spend_fail_increment_count_with_incorrect_intent_token_output_datum() {
+test s2_mint_fail_apply_membership_with_incorrect_intent_token_output_datum() {
   let tx =
     mock_apply_membership_tx(
       ApplyMembershipTestCase {
@@ -310,7 +310,7 @@ fn mock_approve_member_tx(test_case: ApproveMemberTestCase) -> Transaction {
     |> complete()
 }
 
-test s2_spend_success_approve_member() {
+test s2_mint_success_approve_member() {
   let tx =
     mock_approve_member_tx(
       ApproveMemberTestCase {
@@ -330,7 +330,7 @@ test s2_spend_success_approve_member() {
   )
 }
 
-test s2_spend_fail_approve_member_with_no_oracle_inputed() fail {
+test s2_mint_fail_approve_member_with_no_oracle_inputed() fail {
   let tx =
     mock_approve_member_tx(
       ApproveMemberTestCase {
@@ -350,7 +350,7 @@ test s2_spend_fail_approve_member_with_no_oracle_inputed() fail {
   )
 }
 
-test s2_spend_fail_approve_member_with_incorrect_oracle_format() fail {
+test s2_mint_fail_approve_member_with_incorrect_oracle_format() fail {
   let tx =
     mock_approve_member_tx(
       ApproveMemberTestCase {
@@ -370,7 +370,7 @@ test s2_spend_fail_approve_member_with_incorrect_oracle_format() fail {
   )
 }
 
-test s2_spend_fail_approve_member_with_no_counter_inputed() fail {
+test s2_mint_fail_approve_member_with_no_counter_inputed() fail {
   let tx =
     mock_approve_member_tx(
       ApproveMemberTestCase {
@@ -390,7 +390,7 @@ test s2_spend_fail_approve_member_with_no_counter_inputed() fail {
   )
 }
 
-test s2_spend_fail_approve_member_with_no_intent_burnt() {
+test s2_mint_fail_approve_member_with_no_intent_burnt() {
   let tx =
     mock_approve_member_tx(
       ApproveMemberTestCase {
@@ -410,7 +410,7 @@ test s2_spend_fail_approve_member_with_no_intent_burnt() {
   )
 }
 
-test s2_spend_fail_approve_member_with_no_member_minted() {
+test s2_mint_fail_approve_member_with_no_member_minted() {
   let tx =
     mock_approve_member_tx(
       ApproveMemberTestCase {
@@ -471,7 +471,7 @@ fn mock_reject_member_tx(test_case: RejectMemberTestCase) -> Transaction {
     |> complete()
 }
 
-test s2_spend_success_reject_member() {
+test s2_mint_success_reject_member() {
   let tx =
     mock_reject_member_tx(
       RejectMemberTestCase {
@@ -490,7 +490,7 @@ test s2_spend_success_reject_member() {
   )
 }
 
-test s2_spend_fail_reject_member_with_no_oracle_inputed() fail {
+test s2_mint_fail_reject_member_with_no_oracle_inputed() fail {
   let tx =
     mock_reject_member_tx(
       RejectMemberTestCase {
@@ -509,7 +509,7 @@ test s2_spend_fail_reject_member_with_no_oracle_inputed() fail {
   )
 }
 
-test s2_spend_fail_reject_member_with_incorrect_oracle_format() fail {
+test s2_mint_fail_reject_member_with_incorrect_oracle_format() fail {
   let tx =
     mock_reject_member_tx(
       RejectMemberTestCase {
@@ -528,7 +528,7 @@ test s2_spend_fail_reject_member_with_incorrect_oracle_format() fail {
   )
 }
 
-test s2_spend_fail_reject_member_with_no_intent_burnt() {
+test s2_mint_fail_reject_member_with_no_intent_burnt() {
   let tx =
     mock_reject_member_tx(
       RejectMemberTestCase {
@@ -547,7 +547,7 @@ test s2_spend_fail_reject_member_with_no_intent_burnt() {
   )
 }
 
-test s2_spend_fail_reject_member_with_no_admins_signed() {
+test s2_mint_fail_reject_member_with_no_admins_signed() {
   let tx =
     mock_reject_member_tx(
       RejectMemberTestCase {

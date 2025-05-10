@@ -25,3 +25,4 @@
 
    - only 1 input `ProposeIntent` token from `ProposeIntent` Spending Script
    - mint value only burn `ProposeIntent` token
+   - require multisig
