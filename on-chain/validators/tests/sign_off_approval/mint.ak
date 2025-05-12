@@ -11,7 +11,7 @@ use tests/utils.{
   mock_oracle_address, mock_oracle_nft, mock_project_url, mock_proposal_address,
   mock_proposal_datum, mock_proposal_token, mock_receiver,
   mock_sign_off_approval_address, mock_sign_off_approval_token, mock_third_admin,
-  mock_treasury_withdrawal_script_hash, mock_user_address,
+  mock_treasury_withdrawal_script_hash,
 }
 use types.{MintSignOffApproval, ProcessSignOff, ProposalDatum}
 
@@ -70,7 +70,6 @@ fn mock_add_approval_tx(test_case: MintSignOffApprovalTestCase) -> Transaction {
       )
     |> tx_in_inline_datum(is_proposal_inputed, mock_proposal_datum)
     |> mint(is_approval_minted, 1, mock_sign_off_approval_token, "")
-    |> tx_out(True, mock_user_address, input_value)
     |> tx_out(
         is_approval_output_clean,
         mock_sign_off_approval_address,
