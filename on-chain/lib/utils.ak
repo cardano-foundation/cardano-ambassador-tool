@@ -1,10 +1,14 @@
-use aiken/collection/list
+use aiken/collection/list.{concat, length}
 use aiken/crypto.{VerificationKeyHash}
 use cardano/address.{Address}
 use cardano/assets.{AssetName, PolicyId, quantity_of}
 use cardano/transaction.{DatumHash, InlineDatum, Input, NoDatum, Output}
-use cocktail.{convert_int_to_bytes, inputs_at_with, output_inline_datum}
-use types.{CounterDatum, MembershipIntentDatum, OracleDatum}
+use cocktail.{
+  convert_int_to_bytes, inputs_at_with, output_inline_datum, outputs_at,
+}
+use types.{
+  CounterDatum, MemberDatum, MembershipIntentDatum, OracleDatum, ProposalDatum,
+}
 
 pub fn get_oracle_nft_datum(
   reference_inputs: List<Input>,
@@ -99,4 +103,35 @@ pub fn has_enough_signers(
       }
   }
 }
-// todo: check membership
+
+pub fn updated_member_datum(
+  member_datum: MemberDatum,
+  proposal_datum: ProposalDatum,
+) -> MemberDatum {
+  let MemberDatum { completion, fund_recevied, .. } = member_datum
+  let ProposalDatum { project_url, fund_requested, .. } = proposal_datum
+  let new_fund_received = fund_recevied + fund_requested
+  let new_completion = completion |> concat([Pair(project_url, fund_requested)])
+  let updated_datum: MemberDatum =
+    MemberDatum {
+      ..member_datum,
+      completion: new_completion,
+      fund_recevied: new_fund_received,
+    }
+
+  updated_datum
+}
+
+pub fn check_treasury_change_address(
+  outputs: List<Output>,
+  treasury_address: Address,
+) -> Bool {
+  when length(outputs) is {
+    2 -> True
+    3 -> {
+      expect [_] = outputs_at(outputs, treasury_address)
+      True
+    }
+    _ -> False
+  }
+}
