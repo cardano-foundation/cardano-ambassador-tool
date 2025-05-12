@@ -22,7 +22,7 @@
 - `sign_off_approval_token`: The policy id of token at address of `SignOffApproval`
 - `sign_off_approval_address`: The address of `SignOffApproval`
 - `treasury_address`: The address of `SignOffApproval` and `Treasury`
-- `treasury_withdrawal_script_hashes`: To store staking script hashes of `TreasuryWithdrawal`
+- `treasury_withdrawal_script_hash`: To store staking script hashes of `TreasuryWithdrawal`
 
 ## User Action
 

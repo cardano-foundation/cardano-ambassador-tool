@@ -23,7 +23,7 @@ validator member(oracle_nft: PolicyId) {
     let OracleDatum {
       member_token,
       propose_intent_token,
-      treasury_withdrawal_script_hashes,
+      treasury_withdrawal_script_hash,
       ..
     } = oracle_input_datum
 
@@ -39,7 +39,7 @@ validator member(oracle_nft: PolicyId) {
         only_minted_token(mint, propose_intent_token, "", 1)?
       AdminSignOffProject -> {
         let treasury_withdrawal_credential: Credential =
-          Script(treasury_withdrawal_script_hashes)
+          Script(treasury_withdrawal_script_hash)
         let withdrawal_script_check =
           withdrawals
             |> has_key(treasury_withdrawal_credential)

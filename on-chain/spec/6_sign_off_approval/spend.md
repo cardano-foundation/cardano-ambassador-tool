@@ -14,5 +14,4 @@
 
 1. Process Sign-off
 
-   - Obtain the `treasury_withdrawal` script hash from oracle
-   - Withdrawal script of `treasury_withdrawal` validating
+   - `SignOffApproval` token in own input is burnt
