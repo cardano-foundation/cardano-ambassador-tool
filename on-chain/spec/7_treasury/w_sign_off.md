@@ -13,3 +13,4 @@
    - burn `SignOffApproval` token
    - output `Member` NFT to Member Spending Script with datum (Completed: Project) tbc
    - output correct $$$ from `Treasury` to receiver in `Proposal` datum
+   - output leftover $$$ back to `Treasury`
