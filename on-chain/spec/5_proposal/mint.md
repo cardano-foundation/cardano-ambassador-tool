@@ -13,7 +13,7 @@
    - output `Proposal` token to `Proposal` Spending Script with the same datum of `ProposeIntent` token(project url, amount, receiver) tbc
    - require multisig
 
-2. Burn - Redeemer `ApproveSignOff{AssetName}`
+2. Burn - Redeemer `ApproveSignOff`
 
    - only 1 `Proposal` token from `Proposal` Spending Script
    - burn 1 `Proposal` token

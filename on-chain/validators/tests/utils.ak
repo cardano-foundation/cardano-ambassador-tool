@@ -46,7 +46,7 @@ pub const mock_sign_off_approval_address =
 
 pub const mock_treasury_address = from_script("treasury_address")
 
-pub const mock_treasury_withdrawal_script_hashes = mock_script_hash(700)
+pub const mock_treasury_withdrawal_script_hash = mock_script_hash(700)
 
 pub const mock_input_oracle_datum: OracleDatum =
   OracleDatum {
@@ -68,7 +68,7 @@ pub const mock_input_oracle_datum: OracleDatum =
     sign_off_approval_token: mock_sign_off_approval_token,
     sign_off_approval_address: mock_sign_off_approval_address,
     treasury_address: mock_treasury_address,
-    treasury_withdrawal_script_hashes: mock_treasury_withdrawal_script_hashes,
+    treasury_withdrawal_script_hash: mock_treasury_withdrawal_script_hash,
   }
 
 pub const mock_new_first_admin = mock_pub_key_hash(10)

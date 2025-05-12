@@ -38,7 +38,7 @@ pub type OracleDatum {
   sign_off_approval_token: PolicyId,
   sign_off_approval_address: Address,
   treasury_address: Address,
-  treasury_withdrawal_script_hashes: ScriptHash,
+  treasury_withdrawal_script_hash: ScriptHash,
 }
 
 // 1 - Counter
@@ -106,8 +106,8 @@ pub type ProposalMintRedeemer {
 // 6 - SignOffApproval
 
 pub type SignOffApprovalMintRedeemer {
-  MintSignOffApproval { project: AssetName }
-  SignOff { project: AssetName }
+  MintSignOffApproval
+  ProcessSignOff
 }
 
 // 7 - Treasury

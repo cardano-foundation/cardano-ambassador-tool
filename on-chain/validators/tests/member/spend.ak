@@ -8,7 +8,7 @@ use mocktail.{
 use tests/utils.{
   mock_counter_count, mock_input_oracle_datum, mock_member_address,
   mock_member_token, mock_new_admins, mock_oracle_address, mock_oracle_nft,
-  mock_propose_intent_token, mock_treasury_withdrawal_script_hashes,
+  mock_propose_intent_token, mock_treasury_withdrawal_script_hash,
 }
 use types.{AdminRemoveMember, AdminSignOffProject, MemberProposeProject}
 
@@ -276,7 +276,7 @@ fn mock_sign_off_project_tx(test_case: SignOffProjectTestCase) -> Transaction {
     |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_member_address)
     |> script_withdrawal(
         is_treasury_withdrawal_cred_attached,
-        mock_treasury_withdrawal_script_hashes,
+        mock_treasury_withdrawal_script_hash,
         2_000_000,
       )
     |> complete()
