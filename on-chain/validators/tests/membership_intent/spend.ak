@@ -105,7 +105,7 @@ test s2_spend_fail_process_intent_with_incorrect_oracle_inputed() fail {
   )
 }
 
-test s2_spend_fail_process_intent_with_no_counter_updated() {
+test s2_spend_fail_process_intent_with_no_intent_burnt() {
   let tx =
     mock_process_intent_tx(
       ProcessIntentTestCase {

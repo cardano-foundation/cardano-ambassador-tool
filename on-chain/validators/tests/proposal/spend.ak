@@ -4,27 +4,26 @@ use mocktail.{
   complete, mint, mock_tx_hash, mock_utxo_ref, mocktail_tx, ref_tx_in,
   ref_tx_in_inline_datum, tx_in,
 }
-use propose_intent/spend as propose_intent_spend
+use proposal/spend as proposal_spend
 use tests/utils.{
   mock_input_oracle_datum, mock_new_admins, mock_oracle_address, mock_oracle_nft,
-  mock_propose_intent_address, mock_propose_intent_token,
+  mock_proposal_address, mock_proposal_token,
 }
 
-type ProcessIntentTestCase {
+type ApproveSignOffTestCase {
   is_oracle_inputed: Bool,
   is_oracle_format_correct: Bool,
-  is_intent_burnt: Bool,
+  is_proposal_burnt: Bool,
 }
 
-fn mock_process_intent_tx(test_case: ProcessIntentTestCase) -> Transaction {
-  let ProcessIntentTestCase {
+fn mock_approve_sign_off_tx(test_case: ApproveSignOffTestCase) -> Transaction {
+  let ApproveSignOffTestCase {
     is_oracle_inputed,
     is_oracle_format_correct,
-    is_intent_burnt,
+    is_proposal_burnt,
   } = test_case
 
-  let input_value =
-    from_lovelace(20000000) |> add(mock_propose_intent_token, "", 1)
+  let input_value = from_lovelace(20000000) |> add(mock_proposal_token, "", 1)
 
   mocktail_tx()
     |> ref_tx_in(
@@ -42,22 +41,22 @@ fn mock_process_intent_tx(test_case: ProcessIntentTestCase) -> Transaction {
         is_oracle_inputed && !is_oracle_format_correct,
         mock_new_admins,
       )
-    |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_propose_intent_address)
-    |> mint(is_intent_burnt, -1, mock_propose_intent_token, "")
+    |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_proposal_address)
+    |> mint(is_proposal_burnt, -1, mock_proposal_token, "")
     |> complete()
 }
 
-test s4_spend_success_process_intent() {
+test s5_spend_success_approve_sign_off() {
   let tx =
-    mock_process_intent_tx(
-      ProcessIntentTestCase {
+    mock_approve_sign_off_tx(
+      ApproveSignOffTestCase {
         is_oracle_inputed: True,
         is_oracle_format_correct: True,
-        is_intent_burnt: True,
+        is_proposal_burnt: True,
       },
     )
 
-  propose_intent_spend.propose_intent.spend(
+  proposal_spend.proposal.spend(
     mock_oracle_nft,
     None,
     None,
@@ -66,17 +65,17 @@ test s4_spend_success_process_intent() {
   )
 }
 
-test s4_spend_fail_process_intent_with_no_oracle_inputed() fail {
+test s5_spend_fail_approve_sign_off_with_no_oracle_inputed() fail {
   let tx =
-    mock_process_intent_tx(
-      ProcessIntentTestCase {
+    mock_approve_sign_off_tx(
+      ApproveSignOffTestCase {
         is_oracle_inputed: False,
         is_oracle_format_correct: True,
-        is_intent_burnt: True,
+        is_proposal_burnt: True,
       },
     )
 
-  !propose_intent_spend.propose_intent.spend(
+  !proposal_spend.proposal.spend(
     mock_oracle_nft,
     None,
     None,
@@ -85,17 +84,17 @@ test s4_spend_fail_process_intent_with_no_oracle_inputed() fail {
   )
 }
 
-test s4_spend_fail_process_intent_with_incorrect_oracle_inputed() fail {
+test s5_spend_fail_approve_sign_off_with_incorrect_oracle_inputed() fail {
   let tx =
-    mock_process_intent_tx(
-      ProcessIntentTestCase {
+    mock_approve_sign_off_tx(
+      ApproveSignOffTestCase {
         is_oracle_inputed: True,
         is_oracle_format_correct: False,
-        is_intent_burnt: True,
+        is_proposal_burnt: True,
       },
     )
 
-  !propose_intent_spend.propose_intent.spend(
+  !proposal_spend.proposal.spend(
     mock_oracle_nft,
     None,
     None,
@@ -104,17 +103,17 @@ test s4_spend_fail_process_intent_with_incorrect_oracle_inputed() fail {
   )
 }
 
-test s4_spend_fail_process_intent_with_no_intent_burnt() {
+test s5_spend_fail_approve_sign_off_with_no_proposal_burnt() {
   let tx =
-    mock_process_intent_tx(
-      ProcessIntentTestCase {
+    mock_approve_sign_off_tx(
+      ApproveSignOffTestCase {
         is_oracle_inputed: True,
         is_oracle_format_correct: True,
-        is_intent_burnt: False,
+        is_proposal_burnt: False,
       },
     )
 
-  !propose_intent_spend.propose_intent.spend(
+  !proposal_spend.proposal.spend(
     mock_oracle_nft,
     None,
     None,

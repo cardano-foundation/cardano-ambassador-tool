@@ -26,6 +26,7 @@ validator proposal(oracle_nft: PolicyId) {
       admins,
       propose_intent_address,
       proposal_address,
+      propose_intent_token,
       multi_sig_threshold,
       sign_off_approval_token,
       ..
@@ -34,12 +35,16 @@ validator proposal(oracle_nft: PolicyId) {
     when redeemer is {
       MintProposal -> {
         expect [intent_input] =
-          inputs_at_with_policy(inputs, propose_intent_address, policy_id)
+          inputs_at_with_policy(
+            inputs,
+            propose_intent_address,
+            propose_intent_token,
+          )
         expect intent_input_datum: ProposalDatum =
           output_inline_datum(intent_input.output)
 
-        expect Some((policy_id, proposal_asset_name, _)) =
-          value_policy_info(intent_input.output.value, policy_id)
+        expect Some((_, proposal_asset_name, _)) =
+          value_policy_info(intent_input.output.value, propose_intent_token)
 
         expect [proposal_output] =
           outputs_at_with(
