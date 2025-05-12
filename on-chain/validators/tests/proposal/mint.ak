@@ -5,13 +5,13 @@ use mocktail.{
   ref_tx_in_inline_datum, required_signer_hash, tx_in, tx_in_inline_datum,
   tx_out, tx_out_inline_datum,
 }
-use proposal/mint as proposal_minted
+use proposal/mint as proposal_mint
 use tests/utils.{
   mock_first_admin, mock_input_oracle_datum, mock_new_admins,
   mock_oracle_address, mock_oracle_nft, mock_project_url, mock_proposal_address,
   mock_proposal_datum, mock_proposal_token, mock_propose_intent_address,
   mock_propose_intent_token, mock_receiver, mock_sign_off_approval_token,
-  mock_third_admin, mock_user_address,
+  mock_third_admin,
 }
 use types.{ApproveSignOff, MintProposal, ProposalDatum}
 
@@ -71,7 +71,6 @@ fn mock_add_proposal_tx(test_case: MintProposalTestCase) -> Transaction {
       )
     |> tx_in_inline_datum(is_intent_inputed, mock_proposal_datum)
     |> mint(is_proposal_minted, 1, mock_proposal_token, "")
-    |> tx_out(True, mock_user_address, input_value)
     |> tx_out(
         is_proposal_output_clean,
         mock_proposal_address,
@@ -112,7 +111,7 @@ test s5_mint_success_add_proposal() {
       },
     )
 
-  proposal_minted.proposal.mint(
+  proposal_mint.proposal.mint(
     mock_oracle_nft,
     MintProposal,
     mock_proposal_token,
@@ -134,7 +133,7 @@ test s5_mint_fail_add_proposal_with_no_oracle_inputed() fail {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     MintProposal,
     mock_proposal_token,
@@ -156,7 +155,7 @@ test s5_mint_fail_add_proposal_with_incorrect_oracle_format() fail {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     MintProposal,
     mock_proposal_token,
@@ -178,7 +177,7 @@ test s5_mint_fail_add_proposal_with_no_intent_inputed() fail {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     MintProposal,
     mock_proposal_token,
@@ -200,7 +199,7 @@ test s5_mint_fail_add_proposal_with_no_proposal_minted() {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     MintProposal,
     mock_proposal_token,
@@ -222,7 +221,7 @@ test s5_mint_fail_add_proposal_with_proposal_output_not_clean() {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     MintProposal,
     mock_proposal_token,
@@ -244,7 +243,7 @@ test s5_mint_fail_add_proposal_with_proposal_output_incorrect_datum() {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     MintProposal,
     mock_proposal_token,
@@ -266,7 +265,7 @@ test s5_mint_fail_add_proposal_with_no_admins_signed() {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     MintProposal,
     mock_proposal_token,
@@ -326,7 +325,7 @@ test s5_mint_success_remove_proposal() {
       },
     )
 
-  proposal_minted.proposal.mint(
+  proposal_mint.proposal.mint(
     mock_oracle_nft,
     ApproveSignOff,
     mock_proposal_token,
@@ -345,7 +344,7 @@ test s5_mint_fail_remove_proposal_with_no_oracle_inputed() fail {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     ApproveSignOff,
     mock_proposal_token,
@@ -364,7 +363,7 @@ test s5_mint_fail_remove_proposal_with_incorrect_oracle_format() fail {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     ApproveSignOff,
     mock_proposal_token,
@@ -383,7 +382,7 @@ test s5_mint_fail_remove_proposal_with_no_proposal_burnt() {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     ApproveSignOff,
     mock_proposal_token,
@@ -402,7 +401,7 @@ test s5_mint_fail_remove_proposal_with_no_sign_off_approval_minted() {
       },
     )
 
-  !proposal_minted.proposal.mint(
+  !proposal_mint.proposal.mint(
     mock_oracle_nft,
     ApproveSignOff,
     mock_proposal_token,

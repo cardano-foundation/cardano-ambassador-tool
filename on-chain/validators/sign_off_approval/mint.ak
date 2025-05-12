@@ -12,7 +12,7 @@ use types.{
 }
 use utils.{get_oracle_nft_datum, has_enough_signers}
 
-validator proposal(oracle_nft: PolicyId) {
+validator sign_off_approval(oracle_nft: PolicyId) {
   mint(
     redeemer: SignOffApprovalMintRedeemer,
     policy_id: PolicyId,
