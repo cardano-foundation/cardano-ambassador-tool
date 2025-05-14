@@ -18,11 +18,17 @@ import {
   TreasuryWithdrawBlueprint,
 } from "./bar";
 
+export const minUtxos = {
+  oracle: "6000000",
+};
+
+export const networkId = (process.env.NETWORK_ID || "0") === "0" ? 0 : 1;
+
 export const admin_key_first = process.env.ADMIN_KEY || "TODO";
 export const admin_key_second = process.env.ADMIN_KEY || "TODO";
 export const admin_key_third = process.env.ADMIN_KEY || "TODO";
 export const admin_tenure = process.env.ADMIN_TENURE || "TODO";
-export const multi_sig_threshold = 2;
+export const multi_sig_threshold = Number(process.env.MULTI_SIG_THRESHOLD) || 2;
 
 export const oracle_nft = byteString("TODO");
 
