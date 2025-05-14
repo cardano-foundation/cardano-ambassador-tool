@@ -18,16 +18,22 @@ import {
   Pairs,
   pubKeyAddress,
   conStr1,
+  conStr2,
 } from "@meshsdk/core";
 import {
+  AddMember,
   ApplyMembership,
+  ApproveMember,
   CounterDatum,
+  IncrementCount,
   MemberDatum,
   MemberProposeProject,
   MembershipIntentDatum,
   OracleDatum,
   ProposalDatum,
   ProposeProject,
+  RejectMember,
+  RemoveMember,
   RotateAdmin,
   UpdateThreshold,
 } from "./bar";
@@ -94,6 +100,8 @@ export const counterDatum = (count: number): CounterDatum => {
   return conStr0([integer(count)]);
 };
 
+export const incrementCount: IncrementCount = conStr0([]);
+
 // 2 - MembershipIntent
 
 export const applyMembership = (
@@ -102,6 +110,10 @@ export const applyMembership = (
 ): ApplyMembership => {
   return conStr0([policyId(tokenPolicyId), assetName(tokenAssetName)]);
 };
+
+export const approveMember: ApproveMember = conStr1([]);
+
+export const rejectMember: RejectMember = conStr2([]);
 
 export const membershipIntentDatum = (
   tokenPolicyId: string,
@@ -133,6 +145,10 @@ export const memberDatum = (
 
   return conStr0([token, completionPluts, integer(fund_received)]);
 };
+
+export const addMember: AddMember = conStr0([]);
+
+export const removeMember: RemoveMember = conStr1([]);
 
 // 4 - ProposeIntent
 
