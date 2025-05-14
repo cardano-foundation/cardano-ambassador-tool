@@ -20,9 +20,10 @@ import {
 
 export const minUtxos = {
   oracle: "6000000",
-  dexNetDeposit: "1500000",
-  dexAccountBalance: "1500000",
-  appDepositRequest: "2000000",
+  counter: "1500000",
+  applyMembership: "1500000",
+  member: "1500000",
+  proposeIntent: "1500000",
 };
 
 export const networkId = (process.env.NETWORK_ID || "0") === "0" ? 0 : 1;
