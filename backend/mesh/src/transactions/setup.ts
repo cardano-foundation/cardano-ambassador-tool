@@ -4,30 +4,9 @@ import { minUtxos, scripts } from "../lib/constant";
 import { counterDatum, oracleDatum } from "@/lib";
 
 export class SetupTx extends Layer1Tx {
-  wallet: IWallet;
   constructor(address: string, adminWallet: IWallet) {
-    super(address);
-    this.wallet = adminWallet;
+    super(adminWallet, address);
   }
-
-  newValidationTx = async (evaluateTx = true) => {
-    const txBuilder = this.newTxBuilder(evaluateTx);
-    const { utxos } = await this.getUtxos(this.address);
-    const collateral = await this.wallet.getCollateral();
-    if (!collateral || collateral.length === 0) {
-      throw new Error("Collateral is undefined");
-    }
-    txBuilder
-      .txInCollateral(
-        collateral[0]!.input.txHash,
-        collateral[0]!.input.outputIndex,
-        collateral[0]!.output.amount,
-        collateral[0]!.output.address
-      )
-      .changeAddress(this.address)
-      .selectUtxosFrom(utxos, "experimental", "5000000");
-    return txBuilder;
-  };
 
   /**
    * Internal tx at setup

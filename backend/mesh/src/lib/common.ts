@@ -10,6 +10,7 @@ import {
   pubKeyAddress,
   serializeAddressObj,
   MeshTxBuilderOptions,
+  IWallet,
 } from "@meshsdk/core";
 import { networkId, scripts } from "./constant";
 import { CSLSerializer, OfflineEvaluator } from "@meshsdk/core-csl";
@@ -34,12 +35,17 @@ export const provider = blockfrost;
 export const submitter = blockfrost;
 
 export class Layer1Tx {
-  enterprizeWalletAddress: string;
+  wallet: IWallet;
+  address: string;
 
-  constructor(public address: string) {
+  constructor(wallet: IWallet, address: string) {
+    this.wallet = wallet;
+
     const addr = deserializeAddress(address);
-    const enterprizeAddressJson = pubKeyAddress(addr.pubKeyHash);
-    this.enterprizeWalletAddress = serializeAddressObj(enterprizeAddressJson);
+    const addressJson = pubKeyAddress(addr.pubKeyHash);
+    const walletAddress = serializeAddressObj(addressJson);
+
+    this.address = walletAddress;
   }
 
   getUtxos = async (address: string) => {
@@ -78,6 +84,25 @@ export class Layer1Tx {
     const txBuilder = this.newTxBuilder();
     const { utxos } = await this.getUtxos(this.address);
     txBuilder.changeAddress(this.address).selectUtxosFrom(utxos);
+    return txBuilder;
+  };
+
+  newValidationTx = async (evaluateTx = true) => {
+    const txBuilder = this.newTxBuilder(evaluateTx);
+    const { utxos } = await this.getUtxos(this.address);
+    const collateral = await this.wallet.getCollateral();
+    if (!collateral || collateral.length === 0) {
+      throw new Error("Collateral is undefined");
+    }
+    txBuilder
+      .txInCollateral(
+        collateral[0]!.input.txHash,
+        collateral[0]!.input.outputIndex,
+        collateral[0]!.output.amount,
+        collateral[0]!.output.address
+      )
+      .changeAddress(this.address)
+      .selectUtxosFrom(utxos);
     return txBuilder;
   };
 

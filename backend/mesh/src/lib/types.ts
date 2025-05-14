@@ -23,6 +23,7 @@ import {
   ApplyMembership,
   CounterDatum,
   MemberDatum,
+  MemberProposeProject,
   MembershipIntentDatum,
   OracleDatum,
   ProposalDatum,
@@ -95,7 +96,7 @@ export const counterDatum = (count: number): CounterDatum => {
 
 // 2 - MembershipIntent
 
-export const applyMemberShip = (
+export const applyMembership = (
   tokenPolicyId: string,
   tokenAssetName: string
 ): ApplyMembership => {
@@ -109,6 +110,8 @@ export const membershipIntentDatum = (
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
   return conStr0([token]);
 };
+
+export const memberProposeProject: MemberProposeProject = conStr1([]);
 
 // 3 - Member
 
