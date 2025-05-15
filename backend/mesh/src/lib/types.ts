@@ -22,19 +22,29 @@ import {
 } from "@meshsdk/core";
 import {
   AddMember,
+  AdminRemoveMember,
+  AdminSignOffProject,
   ApplyMembership,
   ApproveMember,
+  ApproveProposal,
+  ApproveSignOff,
   CounterDatum,
   IncrementCount,
   MemberDatum,
   MemberProposeProject,
   MembershipIntentDatum,
+  MintProposal,
+  MintSignOffApproval,
   OracleDatum,
+  ProcessSignOff,
   ProposalDatum,
   ProposeProject,
   RejectMember,
+  RejectProposal,
   RemoveMember,
   RotateAdmin,
+  StopCounter,
+  StopOracle,
   UpdateThreshold,
 } from "./bar";
 import {
@@ -94,6 +104,8 @@ export const updateThreshold = (new_threshold: number): UpdateThreshold => {
   return conStr1([integer(new_threshold)]);
 };
 
+export const stopOracle: StopOracle = conStr2([]);
+
 // 1 - Counter
 
 export const counterDatum = (count: number): CounterDatum => {
@@ -101,6 +113,8 @@ export const counterDatum = (count: number): CounterDatum => {
 };
 
 export const incrementCount: IncrementCount = conStr0([]);
+
+export const stopCounter: StopCounter = conStr1([]);
 
 // 2 - MembershipIntent
 
@@ -122,8 +136,6 @@ export const membershipIntentDatum = (
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
   return conStr0([token]);
 };
-
-export const memberProposeProject: MemberProposeProject = conStr1([]);
 
 // 3 - Member
 
@@ -150,6 +162,11 @@ export const addMember: AddMember = conStr0([]);
 
 export const removeMember: RemoveMember = conStr1([]);
 
+export const adminRemoveMember: AdminRemoveMember = conStr0([]);
+
+export const memberProposeProject: MemberProposeProject = conStr1([]);
+
+export const adminSignOffProject: AdminSignOffProject = conStr2([]);
 // 4 - ProposeIntent
 
 export const proposeProject = (
@@ -164,6 +181,10 @@ export const proposeProject = (
   ]);
 };
 
+export const approveProposal: ApproveProposal = conStr1([]);
+
+export const rejectProposal: RejectProposal = conStr2([]);
+
 export const proposalDatum = (
   project_url: string,
   fund_requested: number,
@@ -175,3 +196,15 @@ export const proposalDatum = (
     pubKeyAddress(receiver), // TODO: handle script
   ]);
 };
+
+// 5 - Proposal
+
+export const mintProposal: MintProposal = conStr0([]);
+
+export const approveSignOff: ApproveSignOff = conStr1([]);
+
+// 6 - SignOffApproval
+
+export const mintSignOffApproval: MintSignOffApproval = conStr0([]);
+
+export const processSignOff: ProcessSignOff = conStr1([]);
