@@ -40,5 +40,6 @@
 
 3. Stop the oracle validator - Redeemer `StopOracle`
 
-   - Require full multisig
-   - The `OracleNFT` is burnt
+   - Required full multisig
+   - The output value to oracle is clean (value length == 2)
+   - Check `own_input` with `oracle_nft`, check that there is one output with same value and identical datum with `admins` as empty bytearray

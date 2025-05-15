@@ -24,6 +24,8 @@ export const minUtxos = {
   applyMembership: "1500000",
   member: "1500000",
   proposeIntent: "1500000",
+  proposal: "1500000",
+  signOffApproval: "1500000",
 };
 
 export const networkId = (process.env.NETWORK_ID || "0") === "0" ? 0 : 1;

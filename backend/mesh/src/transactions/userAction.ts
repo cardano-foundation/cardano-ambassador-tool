@@ -19,12 +19,6 @@ export class UserActionTx extends Layer1Tx {
     super(userWallet, address);
   }
 
-  /**
-   * External tx called by user
-   * @param utxos
-   * @param toDeposit
-   * @returns
-   */
   applyMembership = async (
     oracleUtxo: UTxO,
     tokenUtxo: UTxO,
@@ -111,14 +105,14 @@ export class UserActionTx extends Layer1Tx {
       .txInInlineDatumPresent()
 
       .mintPlutusScriptV3()
-      .mint("1", scripts.proposeIntent.mint.hash, "")
+      .mint("1", scripts.proposeIntent.mint.hash, "to")
       .mintingScript(scripts.proposeIntent.mint.cbor)
       .mintRedeemerValue(redeemer)
 
       .txOut(scripts.proposeIntent.spend.address, [
         { unit: "lovelace", quantity: minUtxos.proposeIntent },
         {
-          unit: scripts.proposeIntent.mint.hash,
+          unit: scripts.proposeIntent.mint.hash + "todo",
           quantity: "1",
         },
       ])
