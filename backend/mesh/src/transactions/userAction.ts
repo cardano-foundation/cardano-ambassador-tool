@@ -1,4 +1,4 @@
-import { IWallet, UTxO } from "@meshsdk/core";
+import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 import { Layer1Tx } from "../lib/common";
 import { minUtxos, scripts } from "../lib/constant";
 
@@ -13,6 +13,7 @@ import {
   ProposeProject,
   proposeProject,
 } from "@/lib";
+import { getTokenAssetNameByPolicyId } from "@/lib/utils";
 
 export class UserActionTx extends Layer1Tx {
   constructor(address: string, userWallet: IWallet) {
@@ -27,11 +28,11 @@ export class UserActionTx extends Layer1Tx {
   ) => {
     const redeemer: ApplyMembership = applyMembership(
       tokenPolicyId,
-      tokenAssetName
+      stringToHex(tokenAssetName) // todo: stringToHex tbc
     );
     const datum: MembershipIntentDatum = membershipIntentDatum(
       tokenPolicyId,
-      tokenAssetName
+      stringToHex(tokenAssetName) // todo: stringToHex tbc
     );
 
     const txBuilder = await this.newValidationTx(true);
@@ -78,13 +79,18 @@ export class UserActionTx extends Layer1Tx {
     fund_requested: number,
     receiver: string
   ) => {
+    const memberAssetName = getTokenAssetNameByPolicyId(
+      memberUtxo,
+      scripts.member.mint.hash
+    );
+
     const redeemer: ProposeProject = proposeProject(
-      project_url,
+      stringToHex(project_url),
       fund_requested,
       receiver
     );
     const datum: ProposalDatum = proposalDatum(
-      project_url,
+      stringToHex(project_url),
       fund_requested,
       receiver
     );
@@ -112,7 +118,7 @@ export class UserActionTx extends Layer1Tx {
       .txOut(scripts.proposeIntent.spend.address, [
         { unit: "lovelace", quantity: minUtxos.proposeIntent },
         {
-          unit: scripts.proposeIntent.mint.hash + "todo",
+          unit: scripts.proposeIntent.mint.hash + memberAssetName,
           quantity: "1",
         },
       ])
