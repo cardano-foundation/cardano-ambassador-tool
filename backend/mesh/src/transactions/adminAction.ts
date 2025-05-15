@@ -5,6 +5,7 @@ import { minUtxos, scripts } from "../lib/constant";
 import {
   addMember,
   adminRemoveMember,
+  adminSignOffProject,
   approveMember,
   approveProposal,
   approveSignOff,
@@ -15,9 +16,9 @@ import {
   MemberDatum,
   mintProposal,
   mintSignOffApproval,
-  oracleDatum,
   OracleDatum,
   processSignOff,
+  Proposal,
   rejectMember,
   rejectProposal,
   removeMember,
@@ -28,22 +29,36 @@ import {
   UpdateThreshold,
   updateThreshold,
 } from "@/lib";
+import {
+  getCounterDatum,
+  getMembershipIntentDatum,
+  getProposalDatum,
+  getTokenAssetNameByPolicyId,
+  updateMemberDatum,
+  updateOracleDatum,
+} from "@/lib/utils";
 
 export class AdminActionTx extends Layer1Tx {
   constructor(address: string, userWallet: IWallet) {
     super(userWallet, address);
   }
 
+  adminSignTx = async (unsignedTx: string) => {
+    const signedTx = await this.wallet.signTx(unsignedTx, true);
+    return signedTx;
+  };
+
   // todo: handle multisig
   approveMember = async (
     oracleUtxo: UTxO,
     counterUtxo: UTxO,
     membershipIntentUtxo: UTxO,
-    count: number,
-    tokenPolicyId: string,
-    tokenAssetName: string,
     admin_signed: string[]
   ) => {
+    const count = getCounterDatum(oracleUtxo);
+    const { policyId: tokenPolicyId, assetName: tokenAssetName } =
+      getMembershipIntentDatum(membershipIntentUtxo);
+
     const new_member_datum: MemberDatum = memberDatum(
       tokenPolicyId,
       tokenAssetName,
@@ -150,9 +165,13 @@ export class AdminActionTx extends Layer1Tx {
   removeMember = async (
     oracleUtxo: UTxO,
     memberUtxo: UTxO,
-    memberAssetName: string,
     admin_signed: string[]
   ) => {
+    const memberAssetName = getTokenAssetNameByPolicyId(
+      memberUtxo,
+      scripts.member.mint.hash
+    );
+
     const txBuilder = await this.newValidationTx(true);
     txBuilder
       .readOnlyTxInReference(
@@ -181,12 +200,16 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
-  // todo: mint same assetname
   approveProposal = async (
     oracleUtxo: UTxO,
-    prposeIntentUtxo: UTxO,
+    proposeIntentUtxo: UTxO,
     admin_signed: string[]
   ) => {
+    const proposeIntentAssetName = getTokenAssetNameByPolicyId(
+      proposeIntentUtxo,
+      scripts.proposeIntent.mint.hash
+    );
+
     const txBuilder = await this.newValidationTx(true);
     txBuilder
       .readOnlyTxInReference(
@@ -195,29 +218,40 @@ export class AdminActionTx extends Layer1Tx {
       )
 
       .spendingPlutusScriptV3()
-      .txIn(prposeIntentUtxo.input.txHash, prposeIntentUtxo.input.outputIndex)
+      .txIn(proposeIntentUtxo.input.txHash, proposeIntentUtxo.input.outputIndex)
       .txInRedeemerValue("", "JSON")
       .txInScript(scripts.proposeIntent.spend.cbor)
       .txInInlineDatumPresent()
 
       .mintPlutusScriptV3()
-      .mint("-1", scripts.proposeIntent.mint.hash, "todo")
+      .mint("-1", scripts.proposeIntent.mint.hash, proposeIntentAssetName)
       .mintingScript(scripts.proposeIntent.mint.cbor)
       .mintRedeemerValue(approveProposal)
 
       .mintPlutusScriptV3()
-      .mint("1", scripts.proposal.mint.hash, "todo")
+      .mint("1", scripts.proposal.mint.hash, proposeIntentAssetName)
       .mintingScript(scripts.proposal.mint.cbor)
-      .mintRedeemerValue(mintProposal)
+      .mintRedeemerValue(mintProposal);
 
-      .txOut(scripts.proposal.spend.address, [
+    if (proposeIntentUtxo.output.plutusData) {
+      txBuilder
+        .txOut(scripts.proposal.spend.address, [
+          { unit: "lovelace", quantity: minUtxos.proposal },
+          {
+            unit: scripts.proposal.mint.hash + proposeIntentAssetName,
+            quantity: "1",
+          },
+        ])
+        .txOutInlineDatumValue(proposeIntentUtxo.output.plutusData, "CBOR");
+    } else {
+      txBuilder.txOut(scripts.proposal.spend.address, [
         { unit: "lovelace", quantity: minUtxos.proposal },
         {
-          unit: scripts.proposal.mint.hash + "todo",
+          unit: scripts.proposal.mint.hash + proposeIntentAssetName,
           quantity: "1",
         },
-      ])
-      .txOutInlineDatumValue("todo", "JSON");
+      ]);
+    }
 
     for (const admin of admin_signed) {
       txBuilder.requiredSignerHash(admin);
@@ -231,9 +265,14 @@ export class AdminActionTx extends Layer1Tx {
   // todo: handle multisig
   rejectProposal = async (
     oracleUtxo: UTxO,
-    prposeIntentUtxo: UTxO,
+    proposeIntentUtxo: UTxO,
     admin_signed: string[]
   ) => {
+    const proposeIntentAssetName = getTokenAssetNameByPolicyId(
+      proposeIntentUtxo,
+      scripts.proposeIntent.mint.hash
+    );
+
     const txBuilder = await this.newValidationTx(true);
     txBuilder
       .readOnlyTxInReference(
@@ -242,13 +281,13 @@ export class AdminActionTx extends Layer1Tx {
       )
 
       .spendingPlutusScriptV3()
-      .txIn(prposeIntentUtxo.input.txHash, prposeIntentUtxo.input.outputIndex)
+      .txIn(proposeIntentUtxo.input.txHash, proposeIntentUtxo.input.outputIndex)
       .txInRedeemerValue("", "JSON")
       .txInScript(scripts.proposeIntent.spend.cbor)
       .txInInlineDatumPresent()
 
       .mintPlutusScriptV3()
-      .mint("-1", scripts.proposeIntent.mint.hash, "todo")
+      .mint("-1", scripts.proposeIntent.mint.hash, proposeIntentAssetName)
       .mintingScript(scripts.proposeIntent.mint.cbor)
       .mintRedeemerValue(rejectProposal);
 
@@ -262,12 +301,16 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
-  // todo: mint same assetname
   approveSignOff = async (
     oracleUtxo: UTxO,
     proposalUtxo: UTxO,
     admin_signed: string[]
   ) => {
+    const proposalAssetName = getTokenAssetNameByPolicyId(
+      proposalUtxo,
+      scripts.proposal.mint.hash
+    );
+
     const txBuilder = await this.newValidationTx(true);
     txBuilder
       .readOnlyTxInReference(
@@ -282,23 +325,34 @@ export class AdminActionTx extends Layer1Tx {
       .txInInlineDatumPresent()
 
       .mintPlutusScriptV3()
-      .mint("-1", scripts.proposal.mint.hash, "todo")
+      .mint("-1", scripts.proposal.mint.hash, proposalAssetName)
       .mintingScript(scripts.proposal.mint.cbor)
       .mintRedeemerValue(approveSignOff)
 
       .mintPlutusScriptV3()
-      .mint("1", scripts.signOffApproval.mint.hash, "todo")
+      .mint("1", scripts.signOffApproval.mint.hash, proposalAssetName)
       .mintingScript(scripts.signOffApproval.mint.cbor)
-      .mintRedeemerValue(mintSignOffApproval)
+      .mintRedeemerValue(mintSignOffApproval);
 
-      .txOut(scripts.signOffApproval.spend.address, [
+    if (proposalUtxo.output.plutusData) {
+      txBuilder
+        .txOut(scripts.signOffApproval.spend.address, [
+          { unit: "lovelace", quantity: minUtxos.signOffApproval },
+          {
+            unit: scripts.signOffApproval.mint.hash + proposalAssetName,
+            quantity: "1",
+          },
+        ])
+        .txOutInlineDatumValue(proposalUtxo.output.plutusData, "CBOR");
+    } else {
+      txBuilder.txOut(scripts.signOffApproval.spend.address, [
         { unit: "lovelace", quantity: minUtxos.signOffApproval },
         {
-          unit: scripts.signOffApproval.mint.hash + "todo",
+          unit: scripts.signOffApproval.mint.hash + proposalAssetName,
           quantity: "1",
         },
-      ])
-      .txOutInlineDatumValue("todo", "JSON");
+      ]);
+    }
 
     for (const admin of admin_signed) {
       txBuilder.requiredSignerHash(admin);
@@ -315,11 +369,20 @@ export class AdminActionTx extends Layer1Tx {
     memberUtxo: UTxO,
     treasuryUtxos: UTxO[]
   ) => {
-    const updated_member_datum: MemberDatum = memberDatum(
-      "todo",
-      "todo",
-      new Map(),
-      0
+    const memberAssetName = getTokenAssetNameByPolicyId(
+      memberUtxo,
+      scripts.member.mint.hash
+    );
+    const signOffApprovalAssetName = getTokenAssetNameByPolicyId(
+      signOffApprovalUtxo,
+      scripts.signOffApproval.mint.hash
+    );
+
+    const proposal: Proposal = getProposalDatum(signOffApprovalUtxo);
+
+    const updated_member_datum: MemberDatum = updateMemberDatum(
+      memberUtxo,
+      signOffApprovalUtxo
     );
 
     const txBuilder = await this.newValidationTx(true);
@@ -340,32 +403,32 @@ export class AdminActionTx extends Layer1Tx {
 
       .spendingPlutusScriptV3()
       .txIn(memberUtxo.input.txHash, memberUtxo.input.outputIndex)
-      .txInRedeemerValue(adminRemoveMember, "JSON")
+      .txInRedeemerValue(adminSignOffProject, "JSON")
       .txInScript(scripts.member.spend.cbor)
       .txInInlineDatumPresent()
 
       .mintPlutusScriptV3()
-      .mint("-1", scripts.signOffApproval.mint.hash, "todo")
+      .mint("-1", scripts.signOffApproval.mint.hash, signOffApprovalAssetName)
       .mintingScript(scripts.signOffApproval.mint.cbor)
       .mintRedeemerValue(processSignOff)
 
-      .txOut(scripts.signOffApproval.spend.address, [
-        { unit: "lovelace", quantity: minUtxos.signOffApproval },
-        {
-          unit: scripts.signOffApproval.mint.hash + "todo",
-          quantity: "1",
-        },
+      .txOut(proposal.receiver, [
+        { unit: "lovelace", quantity: proposal.fund_requested.toString() },
       ])
-      .txOutInlineDatumValue("todo", "JSON")
 
       .txOut(scripts.member.spend.address, [
         { unit: "lovelace", quantity: minUtxos.member },
         {
-          unit: scripts.member.mint.hash + "todo",
+          unit: scripts.member.mint.hash + memberAssetName,
           quantity: "1",
         },
       ])
-      .txOutInlineDatumValue(updated_member_datum, "JSON");
+      .txOutInlineDatumValue(updated_member_datum, "JSON")
+
+      .withdrawalPlutusScriptV3()
+      .withdrawal(scripts.treasury.withdraw.address, "0")
+      .withdrawalScript(scripts.treasury.withdraw.cbor)
+      .withdrawalRedeemerValue("");
 
     for (const utxo of treasuryUtxos) {
       txBuilder
@@ -386,7 +449,7 @@ export class AdminActionTx extends Layer1Tx {
     return { txHex, treasuryUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
   };
 
-  // todo: handle multisig and update oracle
+  // todo: handle multisig
   rotateAdmin = async (
     oracleUtxo: UTxO,
     admin_signed: string[],
@@ -395,7 +458,12 @@ export class AdminActionTx extends Layer1Tx {
   ) => {
     const redeemer: RotateAdmin = rotateAdmin(new_admins, new_admin_tenure);
 
-    const updated_oracle_datum: OracleDatum = oracleDatum;
+    const updated_oracle_datum: OracleDatum = updateOracleDatum(
+      oracleUtxo,
+      new_admins,
+      new_admin_tenure,
+      null
+    );
 
     const txBuilder = await this.newValidationTx(true);
     txBuilder
@@ -406,7 +474,7 @@ export class AdminActionTx extends Layer1Tx {
       .txInInlineDatumPresent()
 
       .txOut(scripts.oracle.spend.address, [
-        { unit: "lovelace", quantity: minUtxos.member },
+        { unit: "lovelace", quantity: minUtxos.oracle },
         {
           unit: scripts.oracle.mint.hash,
           quantity: "1",
@@ -423,15 +491,20 @@ export class AdminActionTx extends Layer1Tx {
     return { txHex, txIndex: 0 };
   };
 
-  // todo: handle multisig and update oracle
+  // todo: handle multisig
   updateThreshold = async (
     oracleUtxo: UTxO,
     admin_signed: string[],
-    new_threshold: number
+    new_multi_sig_threshold: number
   ) => {
-    const redeemer: UpdateThreshold = updateThreshold(new_threshold);
+    const redeemer: UpdateThreshold = updateThreshold(new_multi_sig_threshold);
 
-    const updated_oracle_datum: OracleDatum = oracleDatum;
+    const updated_oracle_datum: OracleDatum = updateOracleDatum(
+      oracleUtxo,
+      null,
+      null,
+      new_multi_sig_threshold
+    );
 
     const txBuilder = await this.newValidationTx(true);
     txBuilder
@@ -442,7 +515,7 @@ export class AdminActionTx extends Layer1Tx {
       .txInInlineDatumPresent()
 
       .txOut(scripts.oracle.spend.address, [
-        { unit: "lovelace", quantity: minUtxos.member },
+        { unit: "lovelace", quantity: minUtxos.oracle },
         {
           unit: scripts.oracle.mint.hash,
           quantity: "1",
@@ -459,9 +532,14 @@ export class AdminActionTx extends Layer1Tx {
     return { txHex, txIndex: 0 };
   };
 
-  // todo: handle multisig and update oracle
+  // todo: handle multisig
   stopOracle = async (oracleUtxo: UTxO, admin_signed: string[]) => {
-    const updated_oracle_datum: OracleDatum = oracleDatum;
+    const updated_oracle_datum: OracleDatum = updateOracleDatum(
+      oracleUtxo,
+      [],
+      null,
+      null
+    );
 
     const txBuilder = await this.newValidationTx(true);
     txBuilder
@@ -472,7 +550,7 @@ export class AdminActionTx extends Layer1Tx {
       .txInInlineDatumPresent()
 
       .txOut(scripts.oracle.spend.address, [
-        { unit: "lovelace", quantity: minUtxos.member },
+        { unit: "lovelace", quantity: minUtxos.oracle },
         {
           unit: scripts.oracle.mint.hash,
           quantity: "1",

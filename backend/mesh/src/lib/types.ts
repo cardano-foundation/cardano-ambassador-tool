@@ -16,7 +16,6 @@ import {
   stringToHex,
   pairs,
   Pairs,
-  pubKeyAddress,
   conStr1,
   conStr2,
 } from "@meshsdk/core";
@@ -47,26 +46,17 @@ import {
   StopOracle,
   UpdateThreshold,
 } from "./bar";
-import {
-  admin_key_first,
-  admin_key_second,
-  admin_key_third,
-  admin_tenure,
-  multi_sig_threshold,
-  scripts,
-} from "./constant";
-
-// Non blueprint types
-// TODO
+import { admin_tenure, admins, multi_sig_threshold, scripts } from "./constant";
+import { addrBech32ToPlutusDataObj } from "@meshsdk/core-csl";
 
 // 0 - Oracle
 
 export const oracleDatum: OracleDatum = conStr0([
-  list([
-    verificationKey(admin_key_first),
-    verificationKey(admin_key_second),
-    verificationKey(admin_key_third),
-  ]),
+  list(
+    admins.map((admin) => {
+      return verificationKey(admin);
+    })
+  ),
   byteString(admin_tenure),
   integer(multi_sig_threshold),
   policyId(scripts.oracle.mint.hash),
@@ -100,8 +90,10 @@ export const rotateAdmin = (
   ]);
 };
 
-export const updateThreshold = (new_threshold: number): UpdateThreshold => {
-  return conStr1([integer(new_threshold)]);
+export const updateThreshold = (
+  new_multi_sig_threshold: number
+): UpdateThreshold => {
+  return conStr1([integer(new_multi_sig_threshold)]);
 };
 
 export const stopOracle: StopOracle = conStr2([]);
@@ -177,7 +169,7 @@ export const proposeProject = (
   return conStr0([
     byteString(project_url),
     integer(fund_requested),
-    pubKeyAddress(receiver), // TODO: handle script
+    addrBech32ToPlutusDataObj(receiver),
   ]);
 };
 
@@ -193,7 +185,7 @@ export const proposalDatum = (
   return conStr0([
     byteString(project_url),
     integer(fund_requested),
-    pubKeyAddress(receiver), // TODO: handle script
+    addrBech32ToPlutusDataObj(receiver),
   ]);
 };
 
@@ -208,3 +200,17 @@ export const approveSignOff: ApproveSignOff = conStr1([]);
 export const mintSignOffApproval: MintSignOffApproval = conStr0([]);
 
 export const processSignOff: ProcessSignOff = conStr1([]);
+
+// Non blueprint types
+
+export type Member = {
+  token: { policyId: string; assetName: string };
+  completion: Map<string, number>;
+  fund_received: number;
+};
+
+export type Proposal = {
+  project_url: string;
+  fund_requested: number;
+  receiver: string;
+};

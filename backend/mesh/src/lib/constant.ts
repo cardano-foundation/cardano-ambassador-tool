@@ -29,10 +29,12 @@ export const minUtxos = {
 };
 
 export const networkId = (process.env.NETWORK_ID || "0") === "0" ? 0 : 1;
+export const policyIdLength = 56; // Assuming the policyId is always 56 characters
 
 export const admin_key_first = process.env.ADMIN_KEY || "TODO";
 export const admin_key_second = process.env.ADMIN_KEY || "TODO";
 export const admin_key_third = process.env.ADMIN_KEY || "TODO";
+export const admins = [admin_key_first, admin_key_second, admin_key_third];
 export const admin_tenure = process.env.ADMIN_TENURE || "TODO";
 export const multi_sig_threshold = Number(process.env.MULTI_SIG_THRESHOLD) || 2;
 
