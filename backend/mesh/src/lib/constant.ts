@@ -1,4 +1,4 @@
-import { byteString, outputReference } from "@meshsdk/core";
+import { byteString, hexToString, outputReference } from "@meshsdk/core";
 import {
   CounterMintBlueprint,
   CounterSpendBlueprint,
@@ -31,22 +31,38 @@ export const minUtxos = {
 export const networkId = (process.env.NETWORK_ID || "0") === "0" ? 0 : 1;
 export const policyIdLength = 56; // Assuming the policyId is always 56 characters
 
-export const admin_key_first = process.env.ADMIN_KEY || "TODO";
-export const admin_key_second = process.env.ADMIN_KEY || "TODO";
-export const admin_key_third = process.env.ADMIN_KEY || "TODO";
+export const admin_key_first =
+  process.env.ADMIN_KEY ||
+  "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2";
+export const admin_key_second =
+  process.env.ADMIN_KEY ||
+  "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2";
+export const admin_key_third =
+  process.env.ADMIN_KEY ||
+  "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2";
 export const admins = [admin_key_first, admin_key_second, admin_key_third];
 export const admin_tenure = process.env.ADMIN_TENURE || "TODO";
 export const multi_sig_threshold = Number(process.env.MULTI_SIG_THRESHOLD) || 2;
 
-export const oracle_nft = byteString("TODO");
+export const oracle_nft = byteString(hexToString("TODO"));
 
 export const scripts = {
   oracle: {
-    mint: new OracleMintBlueprint([outputReference("TODO", 0)]),
+    mint: new OracleMintBlueprint([
+      outputReference(
+        "ccdf490c8b7fd1e67f81b59eb98791d910cc785c23498a82ec845540467dc3ba",
+        0
+      ),
+    ]),
     spend: new OracleSpendBlueprint(),
   },
   counter: {
-    mint: new CounterMintBlueprint([outputReference("TODO", 0)]),
+    mint: new CounterMintBlueprint([
+      outputReference(
+        "ccdf490c8b7fd1e67f81b59eb98791d910cc785c23498a82ec845540467dc3ba",
+        0
+      ),
+    ]),
     spend: new CounterSpendBlueprint([oracle_nft]),
   },
   membershipIntent: {

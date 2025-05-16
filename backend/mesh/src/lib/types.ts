@@ -57,7 +57,7 @@ export const oracleDatum: OracleDatum = conStr0([
       return verificationKey(admin);
     })
   ),
-  byteString(admin_tenure),
+  byteString(stringToHex(admin_tenure)),
   integer(multi_sig_threshold),
   policyId(scripts.oracle.mint.hash),
   scriptAddress(scripts.oracle.spend.hash),
