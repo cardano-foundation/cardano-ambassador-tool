@@ -67,6 +67,7 @@ export class UserActionTx extends Layer1Tx {
     }
 
     const txHex = await txBuilder.complete();
+    await this.wallet.submitTx(txHex);
 
     return { txHex, txIndex: 0 };
   };
@@ -137,6 +138,7 @@ export class UserActionTx extends Layer1Tx {
       .txOutInlineDatumValue(memberUtxo.output.plutusData!, "CBOR");
 
     const txHex = await txBuilder.complete();
+    await this.wallet.submitTx(txHex);
 
     return { txHex, txIndex: 0 };
   };
