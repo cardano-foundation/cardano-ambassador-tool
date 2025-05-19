@@ -1,4 +1,4 @@
-import { byteString, hexToString, outputReference } from "@meshsdk/core";
+import { byteString, outputReference, resolveScriptHash } from "@meshsdk/core";
 import {
   CounterMintBlueprint,
   CounterSpendBlueprint,
@@ -33,7 +33,7 @@ export const policyIdLength = 56; // Assuming the policyId is always 56 characte
 
 export const admin_key_first =
   process.env.ADMIN_KEY ||
-  "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2";
+  "0f8e16a0898ae2bcb9d5bd2db74cb248a53840b8ce18c4f2314aea63";
 export const admin_key_second =
   process.env.ADMIN_KEY ||
   "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2";
@@ -44,14 +44,24 @@ export const admins = [admin_key_first];
 export const admin_tenure = process.env.ADMIN_TENURE || "TODO";
 export const multi_sig_threshold = Number(process.env.MULTI_SIG_THRESHOLD) || 1;
 
-export const oracle_nft = byteString(hexToString("TODO"));
+export const oracle_nft = byteString(
+  resolveScriptHash(
+    new OracleMintBlueprint([
+      outputReference(
+        "42289600a5a9691854d4a47f136af609a3ed57a2e3e80311bad20dfdd39b9a08",
+        1
+      ),
+    ]).cbor,
+    "V3"
+  )
+);
 
 export const scripts = {
   oracle: {
     mint: new OracleMintBlueprint([
       outputReference(
-        "ccdf490c8b7fd1e67f81b59eb98791d910cc785c23498a82ec845540467dc3ba",
-        0
+        "42289600a5a9691854d4a47f136af609a3ed57a2e3e80311bad20dfdd39b9a08",
+        1
       ),
     ]),
     spend: new OracleSpendBlueprint(),
@@ -59,8 +69,8 @@ export const scripts = {
   counter: {
     mint: new CounterMintBlueprint([
       outputReference(
-        "ccdf490c8b7fd1e67f81b59eb98791d910cc785c23498a82ec845540467dc3ba",
-        0
+        "9ed7523e896c685cf925ae100df09bd27d476eabc52d86ff6d9581773b5a9084",
+        5
       ),
     ]),
     spend: new CounterSpendBlueprint([oracle_nft]),

@@ -1,4 +1,11 @@
-import { Layer1Tx, scripts, counterDatum, minUtxos, oracleDatum } from "@/lib";
+import {
+  Layer1Tx,
+  scripts,
+  counterDatum,
+  minUtxos,
+  oracleDatum,
+  rMint,
+} from "@/lib";
 import { IWallet, resolveScriptHash } from "@meshsdk/core";
 
 export class SetupTx extends Layer1Tx {
@@ -14,14 +21,39 @@ export class SetupTx extends Layer1Tx {
   mintOracleNFT = async () => {
     const scriptCbor = scripts.oracle.mint.cbor;
     const policyId = resolveScriptHash(scriptCbor, "V3");
+    const oracleAddress = scripts.oracle.spend.address;
+
+    const utxos = await this.wallet.getUtxos();
+    const paramUtxo = utxos[0]!;
+    console.log(paramUtxo);
+
     const txBuilder = await this.newValidationTx();
-    const txHex = await txBuilder
-      .mintPlutusScriptV3()
-      .mint("1", policyId, "")
-      .mintingScript(scriptCbor)
-      .mintRedeemerValue("")
-      .complete();
-    return txHex;
+    try {
+      const unsignedTx = await txBuilder
+        .txIn(
+          paramUtxo.input.txHash,
+          paramUtxo.input.outputIndex,
+          paramUtxo.output.amount,
+          paramUtxo.output.address
+        )
+        .mintPlutusScriptV3()
+        .mint("1", policyId, "")
+        .mintingScript(scriptCbor)
+        .mintRedeemerValue(rMint, "JSON")
+        .txOut(oracleAddress, [
+          { unit: "lovelace", quantity: minUtxos.oracle },
+          { unit: policyId, quantity: "1" },
+        ])
+        .txOutInlineDatumValue(oracleDatum, "JSON")
+        .complete();
+
+      const signedTx = await this.wallet.signTx(unsignedTx, true);
+      const txHash = await this.wallet.submitTx(signedTx);
+
+      return txHash;
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   /**
@@ -31,72 +63,40 @@ export class SetupTx extends Layer1Tx {
   mintCounterNFT = async () => {
     const scriptCbor = scripts.counter.mint.cbor;
     const policyId = resolveScriptHash(scriptCbor, "V3");
-    const txBuilder = await this.newValidationTx();
-    const txHex = await txBuilder
-      .mintPlutusScriptV3()
-      .mint("1", policyId, "")
-      .mintingScript(scriptCbor)
-      .mintRedeemerValue("")
-      .complete();
-    return txHex;
-  };
-
-  /**
-   * Internal tx at setup
-   * @returns
-   */
-  mintAllNfts = async () => {
-    const oracleScriptCbor = scripts.oracle.mint.cbor;
-    const oraclePolicyId = resolveScriptHash(oracleScriptCbor, "V3");
-    const counterScriptCbor = scripts.counter.mint.cbor;
-    const counterPolicyId = resolveScriptHash(counterScriptCbor, "V3");
-
-    const txBuilder = await this.newValidationTx();
-    const txHex = await txBuilder
-      .mintPlutusScriptV3()
-      .mint("1", oraclePolicyId, "")
-      .mintingScript(oracleScriptCbor)
-      .mintRedeemerValue("")
-      .mintPlutusScriptV3()
-      .mint("1", counterPolicyId, "")
-      .mintingScript(counterScriptCbor)
-      .mintRedeemerValue("")
-      .mintPlutusScriptV3()
-      .complete();
-
-    return txHex;
-  };
-
-  /**
-   * Internal tx at setup - have to run after all tokens minted
-   * @returns
-   */
-  setupOracles = async () => {
-    const oracleNFT = scripts.oracle.mint.hash;
-    const oracleAddress = scripts.oracle.spend.address;
-
-    const counterToken = scripts.counter.mint.hash;
-    const couterAddress = scripts.counter.spend.address;
+    const counterAddress = scripts.counter.spend.address;
     const couterInlineDatum = counterDatum(0);
 
+    const utxos = await this.wallet.getUtxos();
+    const paramUtxo = utxos[0]!;
+    console.log(paramUtxo);
+
     const txBuilder = await this.newValidationTx();
-    const txHex = await txBuilder
-      .txOut(oracleAddress, [
-        { unit: "lovelace", quantity: minUtxos.oracle },
-        { unit: oracleNFT, quantity: "1" },
-      ])
-      .txOutInlineDatumValue(oracleDatum, "JSON")
-      .txOut(couterAddress, [
-        { unit: "lovelace", quantity: minUtxos.oracle },
-        { unit: counterToken, quantity: "1" },
-      ])
-      .txOutInlineDatumValue(couterInlineDatum, "JSON")
-      .complete();
-    return {
-      txHex,
-      oracleUtxoTxIndex: 0,
-      counterUtxoTxIndex: 1,
-    };
+    try {
+      const unsignedTx = await txBuilder
+        .txIn(
+          paramUtxo.input.txHash,
+          paramUtxo.input.outputIndex,
+          paramUtxo.output.amount,
+          paramUtxo.output.address
+        )
+        .mintPlutusScriptV3()
+        .mint("1", policyId, "")
+        .mintingScript(scriptCbor)
+        .mintRedeemerValue(rMint, "JSON")
+        .txOut(counterAddress, [
+          { unit: "lovelace", quantity: minUtxos.counter },
+          { unit: policyId, quantity: "1" },
+        ])
+        .txOutInlineDatumValue(couterInlineDatum, "JSON")
+        .complete();
+
+      const signedTx = await this.wallet.signTx(unsignedTx, true);
+      const txHash = await this.wallet.submitTx(signedTx);
+
+      return txHash;
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   /**
@@ -107,10 +107,17 @@ export class SetupTx extends Layer1Tx {
     const treasuryWithdraw = scripts.treasury.withdraw.address;
 
     const txBuilder = await this.newValidationTx();
-    const txHex = await txBuilder
-      .registerStakeCertificate(treasuryWithdraw)
-      .complete();
+    try {
+      const unsignedTx = await txBuilder
+        .registerStakeCertificate(treasuryWithdraw)
+        .complete();
 
-    return txHex;
+      const signedTx = await this.wallet.signTx(unsignedTx, true);
+      const txHash = await this.wallet.submitTx(signedTx);
+
+      return txHash;
+    } catch (e) {
+      console.error(e);
+    }
   };
 }
