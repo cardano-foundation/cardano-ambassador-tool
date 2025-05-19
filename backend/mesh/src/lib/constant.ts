@@ -40,9 +40,9 @@ export const admin_key_second =
 export const admin_key_third =
   process.env.ADMIN_KEY ||
   "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2";
-export const admins = [admin_key_first, admin_key_second, admin_key_third];
+export const admins = [admin_key_first];
 export const admin_tenure = process.env.ADMIN_TENURE || "TODO";
-export const multi_sig_threshold = Number(process.env.MULTI_SIG_THRESHOLD) || 2;
+export const multi_sig_threshold = Number(process.env.MULTI_SIG_THRESHOLD) || 1;
 
 export const oracle_nft = byteString(hexToString("TODO"));
 

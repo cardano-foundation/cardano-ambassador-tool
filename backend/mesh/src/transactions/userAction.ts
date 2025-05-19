@@ -1,19 +1,19 @@
-import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
-import { Layer1Tx } from "../lib/common";
-import { minUtxos, scripts } from "../lib/constant";
-
 import {
-  applyMembership,
+  Layer1Tx,
   ApplyMembership,
-  memberProposeProject,
+  applyMembership,
   MembershipIntentDatum,
   membershipIntentDatum,
-  proposalDatum,
-  ProposalDatum,
+  scripts,
+  minUtxos,
+  getTokenAssetNameByPolicyId,
   ProposeProject,
   proposeProject,
+  ProposalDatum,
+  proposalDatum,
+  memberProposeProject,
 } from "@/lib";
-import { getTokenAssetNameByPolicyId } from "@/lib/utils";
+import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
 export class UserActionTx extends Layer1Tx {
   constructor(address: string, userWallet: IWallet) {

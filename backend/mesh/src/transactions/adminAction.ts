@@ -1,42 +1,40 @@
-import { IWallet, UTxO } from "@meshsdk/core";
-import { Layer1Tx } from "../lib/common";
-import { minUtxos, scripts } from "../lib/constant";
-
 import {
-  addMember,
-  adminRemoveMember,
-  adminSignOffProject,
-  approveMember,
-  approveProposal,
-  approveSignOff,
+  Layer1Tx,
+  getCounterDatum,
+  getMembershipIntentDatum,
+  MemberDatum,
+  memberDatum,
   CounterDatum,
   counterDatum,
   incrementCount,
-  memberDatum,
-  MemberDatum,
-  mintProposal,
-  mintSignOffApproval,
-  OracleDatum,
-  processSignOff,
-  Proposal,
+  scripts,
+  addMember,
+  approveMember,
+  minUtxos,
   rejectMember,
-  rejectProposal,
+  getTokenAssetNameByPolicyId,
+  adminRemoveMember,
   removeMember,
+  approveProposal,
+  mintProposal,
+  rejectProposal,
+  approveSignOff,
+  mintSignOffApproval,
+  Proposal,
+  getProposalDatum,
+  updateMemberDatum,
+  adminSignOffProject,
+  processSignOff,
   RotateAdmin,
   rotateAdmin,
-  stopCounter,
-  stopOracle,
+  OracleDatum,
+  updateOracleDatum,
   UpdateThreshold,
   updateThreshold,
+  stopOracle,
+  stopCounter,
 } from "@/lib";
-import {
-  getCounterDatum,
-  getMembershipIntentDatum,
-  getProposalDatum,
-  getTokenAssetNameByPolicyId,
-  updateMemberDatum,
-  updateOracleDatum,
-} from "@/lib/utils";
+import { IWallet, UTxO } from "@meshsdk/core";
 
 export class AdminActionTx extends Layer1Tx {
   constructor(address: string, userWallet: IWallet) {
@@ -46,6 +44,11 @@ export class AdminActionTx extends Layer1Tx {
   adminSignTx = async (unsignedTx: string) => {
     const signedTx = await this.wallet.signTx(unsignedTx, true);
     return signedTx;
+  };
+
+  adminSubmitTx = async (signedTx: string) => {
+    const tx = await this.wallet.submitTx(signedTx);
+    return tx;
   };
 
   // todo: handle multisig
