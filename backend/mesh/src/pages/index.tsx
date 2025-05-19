@@ -3,11 +3,19 @@ import { CardanoWallet, MeshBadge, useWallet } from "@meshsdk/react";
 import { AdminActionTx, SetupTx, UserActionTx } from "@/transactions";
 import { useState } from "react";
 import { UTxO } from "@meshsdk/core";
+import { BlockfrostService } from "@/services";
 
 export default function Home() {
   const { connected, wallet } = useWallet();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const blockfrostService = new BlockfrostService();
+
+  // State for UTxO fetching
+  const [txHash, setTxHash] = useState("");
+  const [outputIndex, setOutputIndex] = useState("");
+  const [, setFetchedUtxo] = useState<UTxO | null>(null);
 
   // State for UTxO inputs
   const [oracleUtxo, setOracleUtxo] = useState<UTxO | null>(null);
@@ -35,13 +43,34 @@ export default function Home() {
   const [newAdminTenure, setNewAdminTenure] = useState("");
   const [newMultiSigThreshold, setNewMultiSigThreshold] = useState("");
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAction = async (action: () => Promise<any>) => {
     try {
       setLoading(true);
+      setError("");
       const result = await action();
       setResult(JSON.stringify(result, null, 2));
     } catch (error) {
-      setResult(JSON.stringify(error, null, 2));
+      setError(JSON.stringify(error, null, 2));
+      setResult("");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUtxo = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const utxo = await blockfrostService.getUtxo(
+        txHash,
+        parseInt(outputIndex)
+      );
+      setFetchedUtxo(utxo);
+      setResult(JSON.stringify(utxo, null, 2));
+    } catch (error) {
+      setError(JSON.stringify(error, null, 2));
+      setResult("");
     } finally {
       setLoading(false);
     }
@@ -93,6 +122,32 @@ export default function Home() {
     return (
       <div className="space-y-4 w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-4">Test Functions</h2>
+
+        {/* UTxO Fetching Section */}
+        <div className="bg-gray-800 p-4 rounded-lg">
+          <h3 className="text-xl font-semibold mb-2">Fetch UTxO</h3>
+          <div className="space-y-4">
+            <div className="bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">
+                Get UTxO by Hash and Index
+              </h4>
+              {renderInputField("Transaction Hash", txHash, setTxHash)}
+              {renderInputField(
+                "Output Index",
+                outputIndex,
+                setOutputIndex,
+                "number"
+              )}
+              <button
+                className="bg-blue-500 hover:bg-blue-600 p-2 rounded w-full"
+                onClick={fetchUtxo}
+                disabled={loading}
+              >
+                {loading ? "Fetching..." : "Fetch UTxO"}
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Setup Functions */}
         <div className="bg-gray-800 p-4 rounded-lg">
@@ -674,10 +729,28 @@ export default function Home() {
         </div>
 
         {/* Result Display */}
-        {result && (
-          <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-            <h3 className="text-xl font-semibold mb-2">Result:</h3>
-            <pre className="text-left overflow-auto max-h-60">{result}</pre>
+        {(result || error) && (
+          <div className="mt-4 p-4 rounded-lg">
+            {result && (
+              <div className="bg-green-900/50 p-4 rounded-lg mb-4">
+                <h3 className="text-xl font-semibold mb-2 text-green-400">
+                  Success:
+                </h3>
+                <pre className="text-left overflow-auto max-h-60 text-green-200">
+                  {result}
+                </pre>
+              </div>
+            )}
+            {error && (
+              <div className="bg-red-900/50 p-4 rounded-lg">
+                <h3 className="text-xl font-semibold mb-2 text-red-400">
+                  Error:
+                </h3>
+                <pre className="text-left overflow-auto max-h-60 text-red-200">
+                  {error}
+                </pre>
+              </div>
+            )}
           </div>
         )}
       </div>

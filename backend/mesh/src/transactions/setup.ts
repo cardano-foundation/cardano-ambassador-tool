@@ -1,7 +1,5 @@
+import { Layer1Tx, scripts, counterDatum, minUtxos, oracleDatum } from "@/lib";
 import { IWallet, resolveScriptHash } from "@meshsdk/core";
-import { Layer1Tx } from "../lib/common";
-import { minUtxos, scripts } from "../lib/constant";
-import { counterDatum, oracleDatum } from "@/lib";
 
 export class SetupTx extends Layer1Tx {
   constructor(address: string, adminWallet: IWallet) {

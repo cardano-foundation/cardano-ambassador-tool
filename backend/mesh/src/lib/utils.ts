@@ -10,15 +10,15 @@ import {
   UTxO,
   verificationKey,
 } from "@meshsdk/core";
-import { policyIdLength } from "./constant";
 import {
-  CounterDatum,
-  MemberDatum,
-  MembershipIntentDatum,
   OracleDatum,
+  CounterDatum,
+  MembershipIntentDatum,
+  MemberDatum,
   ProposalDatum,
 } from "./bar";
-import { Member, memberDatum, Proposal } from "./types";
+import { policyIdLength } from "./constant";
+import { Member, Proposal, memberDatum } from "./types";
 
 export const getTokenAssetNameByPolicyId = (
   utxo: UTxO,
