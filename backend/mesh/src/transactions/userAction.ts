@@ -28,48 +28,58 @@ export class UserActionTx extends Layer1Tx {
   ) => {
     const redeemer: ApplyMembership = applyMembership(
       tokenPolicyId,
-      stringToHex(tokenAssetName) // todo: stringToHex tbc
+      tokenAssetName // todo: stringToHex tbc
     );
     const datum: MembershipIntentDatum = membershipIntentDatum(
       tokenPolicyId,
-      stringToHex(tokenAssetName) // todo: stringToHex tbc
+      tokenAssetName // todo: stringToHex tbc
     );
 
-    const txBuilder = await this.newValidationTx(true);
-    txBuilder
-      .readOnlyTxInReference(
-        oracleUtxo.input.txHash,
-        oracleUtxo.input.outputIndex
-      )
-
-      .txIn(tokenUtxo.input.txHash, tokenUtxo.input.outputIndex)
-
-      .mintPlutusScriptV3()
-      .mint("1", scripts.membershipIntent.mint.hash, "")
-      .mintingScript(scripts.membershipIntent.mint.cbor)
-      .mintRedeemerValue(redeemer)
-
-      .txOut(scripts.membershipIntent.spend.address, [
-        { unit: "lovelace", quantity: minUtxos.applyMembership },
-        {
-          unit: scripts.membershipIntent.mint.hash,
-          quantity: "1",
-        },
-      ])
-      .txOutInlineDatumValue(datum, "JSON");
-
-    if (tokenUtxo.output.plutusData) {
+    try {
+      const txBuilder = await this.newValidationTx(true);
       txBuilder
-        .txOut(tokenUtxo.output.address, tokenUtxo.output.amount)
-        .txOutInlineDatumValue(tokenUtxo.output.plutusData, "CBOR");
-    } else {
-      txBuilder.txOut(tokenUtxo.output.address, tokenUtxo.output.amount);
+        .readOnlyTxInReference(
+          oracleUtxo.input.txHash,
+          oracleUtxo.input.outputIndex
+        )
+
+        .txIn(
+          tokenUtxo.input.txHash,
+          tokenUtxo.input.outputIndex,
+          paramUtxo.output.amount,
+          paramUtxo.output.address
+        )
+
+        .mintPlutusScriptV3()
+        .mint("1", scripts.membershipIntent.mint.hash, "")
+        .mintingScript(scripts.membershipIntent.mint.cbor)
+        .mintRedeemerValue(redeemer, "JSON")
+
+        .txOut(scripts.membershipIntent.spend.address, [
+          { unit: "lovelace", quantity: minUtxos.applyMembership },
+          {
+            unit: scripts.membershipIntent.mint.hash,
+            quantity: "1",
+          },
+        ])
+        .txOutInlineDatumValue(datum, "JSON");
+
+      if (tokenUtxo.output.plutusData) {
+        txBuilder
+          .txOut(tokenUtxo.output.address, tokenUtxo.output.amount)
+          .txOutInlineDatumValue(tokenUtxo.output.plutusData, "CBOR");
+      } else {
+        txBuilder.txOut(tokenUtxo.output.address, tokenUtxo.output.amount);
+      }
+
+      const txHex = await txBuilder.complete();
+      const signedTx = await this.wallet.signTx(txHex);
+      await this.wallet.submitTx(signedTx);
+
+      return { txHex, txIndex: 0 };
+    } catch (e) {
+      console.error(e);
     }
-
-    const txHex = await txBuilder.complete();
-    await this.wallet.submitTx(txHex);
-
-    return { txHex, txIndex: 0 };
   };
 
   proposeProject = async (
@@ -138,7 +148,8 @@ export class UserActionTx extends Layer1Tx {
       .txOutInlineDatumValue(memberUtxo.output.plutusData!, "CBOR");
 
     const txHex = await txBuilder.complete();
-    await this.wallet.submitTx(txHex);
+    const signedTx = await this.wallet.signTx(txHex);
+    await this.wallet.submitTx(signedTx);
 
     return { txHex, txIndex: 0 };
   };

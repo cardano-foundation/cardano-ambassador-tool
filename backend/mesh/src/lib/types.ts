@@ -38,9 +38,11 @@ import {
   ProcessSignOff,
   ProposalDatum,
   ProposeProject,
+  RBurn,
   RejectMember,
   RejectProposal,
   RemoveMember,
+  RMint,
   RotateAdmin,
   StopCounter,
   StopOracle,
@@ -50,6 +52,9 @@ import { admin_tenure, admins, multi_sig_threshold, scripts } from "./constant";
 import { addrBech32ToPlutusDataObj } from "@meshsdk/core-csl";
 
 // 0 - Oracle
+export const rMint: RMint = conStr0([]);
+
+export const rBurn: RBurn = conStr1([]);
 
 export const oracleDatum: OracleDatum = conStr0([
   list(

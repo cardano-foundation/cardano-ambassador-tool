@@ -6,16 +6,13 @@ import {
   BlockfrostProvider,
   MaestroProvider,
   U5CProvider,
-  deserializeAddress,
-  pubKeyAddress,
-  serializeAddressObj,
   MeshTxBuilderOptions,
   IWallet,
 } from "@meshsdk/core";
 import { networkId, scripts } from "./constant";
 import { CSLSerializer, OfflineEvaluator } from "@meshsdk/core-csl";
 
-const blockfrostApiKey = process.env.BLOCKFROST_API_KEY || "";
+const blockfrostApiKey = process.env.NEXT_PUBLIC_BLOCKFROST_API_KEY || "";
 const maestroApiKey = process.env.MAESTRO_API_KEY || "";
 const u5cUrl = process.env.U5C_URL || "https://preprod.utxorpc-v0.demeter.run";
 const u5cApiKey = process.env.U5C_API_KEY || "";
@@ -40,16 +37,11 @@ export class Layer1Tx {
 
   constructor(wallet: IWallet, address: string) {
     this.wallet = wallet;
-
-    const addr = deserializeAddress(address);
-    const addressJson = pubKeyAddress(addr.pubKeyHash);
-    const walletAddress = serializeAddressObj(addressJson);
-
-    this.address = walletAddress;
+    this.address = address;
   }
 
-  getUtxos = async (address: string) => {
-    const utxos = await provider.fetchAddressUTxOs(address);
+  getWalletUtxos = async () => {
+    const utxos = await this.wallet.getUtxos();
     const pureAdaUtxos = utxos.filter(
       (utxo) =>
         utxo.output.amount.length === 1 &&
@@ -59,9 +51,15 @@ export class Layer1Tx {
     return { utxos: utxos, collaterals: pureAdaUtxos };
   };
 
+  getUtxos = async (address: string) => {
+    const utxos = await provider.fetchAddressUTxOs(address);
+    return { utxos: utxos };
+  };
+
   newTxBuilder = (evaluateTx = true) => {
     const txBuilderConfig: MeshTxBuilderOptions = {
       fetcher: provider,
+      submitter: submitter,
       serializer: new CSLSerializer(),
       verbose: true,
     };
@@ -82,14 +80,14 @@ export class Layer1Tx {
 
   newTx = async () => {
     const txBuilder = this.newTxBuilder();
-    const { utxos } = await this.getUtxos(this.address);
+    const { utxos } = await this.getWalletUtxos();
     txBuilder.changeAddress(this.address).selectUtxosFrom(utxos);
     return txBuilder;
   };
 
   newValidationTx = async (evaluateTx = true) => {
     const txBuilder = this.newTxBuilder(evaluateTx);
-    const { utxos } = await this.getUtxos(this.address);
+    const { utxos } = await this.getWalletUtxos();
     const collateral = await this.wallet.getCollateral();
     if (!collateral || collateral.length === 0) {
       throw new Error("Collateral is undefined");

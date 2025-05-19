@@ -62,7 +62,7 @@ export default function Home() {
     try {
       setLoading(true);
       setError("");
-      const utxo = await blockfrostService.getUtxo(
+      const utxo = await blockfrostService.fetchUtxo(
         txHash,
         parseInt(outputIndex)
       );
@@ -100,6 +100,43 @@ export default function Home() {
   ) => (
     <div className="mb-2">
       <label className="block text-sm font-medium mb-1">{label}</label>
+      <div className="flex gap-2 mb-2">
+        <input
+          type="text"
+          placeholder="Transaction Hash"
+          className="flex-1 p-2 rounded bg-gray-700 text-white"
+          onChange={(e) => setTxHash(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Output Index"
+          className="w-32 p-2 rounded bg-gray-700 text-white"
+          onChange={(e) => setOutputIndex(e.target.value)}
+        />
+        <button
+          className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded"
+          onClick={async () => {
+            try {
+              setLoading(true);
+              setError("");
+              const utxo = await blockfrostService.fetchUtxo(
+                txHash,
+                parseInt(outputIndex)
+              );
+              onChange(utxo);
+              setResult(JSON.stringify(utxo, null, 2));
+            } catch (error) {
+              setError(JSON.stringify(error, null, 2));
+              setResult("");
+            } finally {
+              setLoading(false);
+            }
+          }}
+          disabled={loading || !txHash || !outputIndex}
+        >
+          {loading ? "Fetching..." : "Fetch"}
+        </button>
+      </div>
       <textarea
         value={value ? JSON.stringify(value, null, 2) : ""}
         onChange={(e) => {
@@ -112,6 +149,7 @@ export default function Home() {
         }}
         className="w-full p-2 rounded bg-gray-700 text-white"
         rows={4}
+        placeholder="UTxO JSON will appear here after fetching"
       />
     </div>
   );
@@ -180,34 +218,6 @@ export default function Home() {
               }
             >
               Mint Counter NFT
-            </button>
-            <button
-              className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
-              onClick={() =>
-                handleAction(async () => {
-                  const setup = new SetupTx(
-                    await wallet.getChangeAddress(),
-                    wallet
-                  );
-                  return await setup.mintAllNfts();
-                })
-              }
-            >
-              Mint All NFTs
-            </button>
-            <button
-              className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
-              onClick={() =>
-                handleAction(async () => {
-                  const setup = new SetupTx(
-                    await wallet.getChangeAddress(),
-                    wallet
-                  );
-                  return await setup.setupOracles();
-                })
-              }
-            >
-              Setup Oracles
             </button>
             <button
               className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
