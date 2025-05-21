@@ -7,30 +7,77 @@ import { BlockfrostService } from "@/services";
 
 export default function Home() {
   const { connected, wallet } = useWallet();
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
   const blockfrostService = new BlockfrostService();
 
-  // State for UTxO fetching
-  const [txHash, setTxHash] = useState("");
-  const [outputIndex, setOutputIndex] = useState("");
-  const [, setFetchedUtxo] = useState<UTxO | null>(null);
-
   // State for UTxO inputs
-  const [oracleUtxo, setOracleUtxo] = useState<UTxO | null>(null);
-  const [counterUtxo, setCounterUtxo] = useState<UTxO | null>(null);
-  const [membershipIntentUtxo, setMembershipIntentUtxo] = useState<UTxO | null>(
-    null
-  );
-  const [memberUtxo, setMemberUtxo] = useState<UTxO | null>(null);
-  const [proposeIntentUtxo, setProposeIntentUtxo] = useState<UTxO | null>(null);
-  const [proposalUtxo, setProposalUtxo] = useState<UTxO | null>(null);
-  const [signOffApprovalUtxo, setSignOffApprovalUtxo] = useState<UTxO | null>(
-    null
-  );
+  const [oracleUtxoHash, setOracleUtxoHash] = useState("");
+  const [oracleUtxoIndex, setOracleUtxoIndex] = useState("");
+  const [tokenUtxoHash, setTokenUtxoHash] = useState("");
+  const [tokenUtxoIndex, setTokenUtxoIndex] = useState("");
+  const [memberUtxoHash, setMemberUtxoHash] = useState("");
+  const [memberUtxoIndex, setMemberUtxoIndex] = useState("");
+  const [counterUtxoHash, setCounterUtxoHash] = useState("");
+  const [counterUtxoIndex, setCounterUtxoIndex] = useState("");
+  const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState("");
+  const [membershipIntentUtxoIndex, setMembershipIntentUtxoIndex] =
+    useState("");
+  const [proposeIntentUtxoHash, setProposeIntentUtxoHash] = useState("");
+  const [proposeIntentUtxoIndex, setProposeIntentUtxoIndex] = useState("");
+  const [proposalUtxoHash, setProposalUtxoHash] = useState("");
+  const [proposalUtxoIndex, setProposalUtxoIndex] = useState("");
+  const [signOffApprovalUtxoHash, setSignOffApprovalUtxoHash] = useState("");
+  const [signOffApprovalUtxoIndex, setSignOffApprovalUtxoIndex] = useState("");
   const [treasuryUtxos, setTreasuryUtxos] = useState<UTxO[]>([]);
-  const [tokenUtxo, setTokenUtxo] = useState<UTxO | null>(null);
+
+  const renderUtxoInputs = (
+    label: string,
+    hash: string,
+    setHash: (value: string) => void,
+    index: string,
+    setIndex: (value: string) => void
+  ) => (
+    <div className="mb-2">
+      <label className="block text-sm font-medium mb-1">{label}</label>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          placeholder="Transaction Hash"
+          className="flex-1 p-2 rounded bg-gray-700 text-white"
+          value={hash}
+          onChange={(e) => setHash(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Output Index"
+          className="w-32 p-2 rounded bg-gray-700 text-white"
+          value={index}
+          onChange={(e) => setIndex(e.target.value)}
+        />
+      </div>
+    </div>
+  );
+
+  const fetchUtxo = async (hash: string, index: string, label: string) => {
+    if (!hash || !index) {
+      throw new Error(
+        `Please provide both Transaction Hash and Output Index for ${label}`
+      );
+    }
+    try {
+      setLoading(true);
+      setError("");
+      const utxo = await blockfrostService.fetchUtxo(hash, parseInt(index));
+      return utxo;
+    } catch (error) {
+      setError(JSON.stringify(error, null, 2));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // State for other parameters
   const [tokenPolicyId, setTokenPolicyId] = useState("");
@@ -58,24 +105,6 @@ export default function Home() {
     }
   };
 
-  const fetchUtxo = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const utxo = await blockfrostService.fetchUtxo(
-        txHash,
-        parseInt(outputIndex)
-      );
-      setFetchedUtxo(utxo);
-      setResult(JSON.stringify(utxo, null, 2));
-    } catch (error) {
-      setError(JSON.stringify(error, null, 2));
-      setResult("");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const renderInputField = (
     label: string,
     value: string,
@@ -93,67 +122,6 @@ export default function Home() {
     </div>
   );
 
-  const renderUTxOInput = (
-    label: string,
-    value: UTxO | null,
-    onChange: (value: UTxO | null) => void
-  ) => (
-    <div className="mb-2">
-      <label className="block text-sm font-medium mb-1">{label}</label>
-      <div className="flex gap-2 mb-2">
-        <input
-          type="text"
-          placeholder="Transaction Hash"
-          className="flex-1 p-2 rounded bg-gray-700 text-white"
-          onChange={(e) => setTxHash(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Output Index"
-          className="w-32 p-2 rounded bg-gray-700 text-white"
-          onChange={(e) => setOutputIndex(e.target.value)}
-        />
-        <button
-          className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded"
-          onClick={async () => {
-            try {
-              setLoading(true);
-              setError("");
-              const utxo = await blockfrostService.fetchUtxo(
-                txHash,
-                parseInt(outputIndex)
-              );
-              onChange(utxo);
-              setResult(JSON.stringify(utxo, null, 2));
-            } catch (error) {
-              setError(JSON.stringify(error, null, 2));
-              setResult("");
-            } finally {
-              setLoading(false);
-            }
-          }}
-          disabled={loading || !txHash || !outputIndex}
-        >
-          {loading ? "Fetching..." : "Fetch"}
-        </button>
-      </div>
-      <textarea
-        value={value ? JSON.stringify(value, null, 2) : ""}
-        onChange={(e) => {
-          try {
-            const parsed = JSON.parse(e.target.value);
-            onChange(parsed);
-          } catch {
-            onChange(null);
-          }
-        }}
-        className="w-full p-2 rounded bg-gray-700 text-white"
-        rows={4}
-        placeholder="UTxO JSON will appear here after fetching"
-      />
-    </div>
-  );
-
   const renderTestButtons = () => {
     if (!connected) return null;
 
@@ -161,50 +129,10 @@ export default function Home() {
       <div className="space-y-4 w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-4">Test Functions</h2>
 
-        {/* UTxO Fetching Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <h3 className="text-xl font-semibold mb-2">Fetch UTxO</h3>
-          <div className="space-y-4">
-            <div className="bg-gray-700 p-4 rounded">
-              <h4 className="text-lg font-medium mb-2">
-                Get UTxO by Hash and Index
-              </h4>
-              {renderInputField("Transaction Hash", txHash, setTxHash)}
-              {renderInputField(
-                "Output Index",
-                outputIndex,
-                setOutputIndex,
-                "number"
-              )}
-              <button
-                className="bg-blue-500 hover:bg-blue-600 p-2 rounded w-full"
-                onClick={fetchUtxo}
-                disabled={loading}
-              >
-                {loading ? "Fetching..." : "Fetch UTxO"}
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Setup Functions */}
         <div className="bg-gray-800 p-4 rounded-lg">
           <h3 className="text-xl font-semibold mb-2">Setup Functions</h3>
           <div className="grid grid-cols-2 gap-2">
-            <button
-              className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
-              onClick={() =>
-                handleAction(async () => {
-                  const setup = new SetupTx(
-                    await wallet.getChangeAddress(),
-                    wallet
-                  );
-                  return await setup.mintOracleNFT();
-                })
-              }
-            >
-              Mint Oracle NFT
-            </button>
             <button
               className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
               onClick={() =>
@@ -227,12 +155,122 @@ export default function Home() {
                     await wallet.getChangeAddress(),
                     wallet
                   );
+                  return await setup.mintSpendOracleNFT();
+                })
+              }
+            >
+              Mint and Spend Oracle NFT
+            </button>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
+              onClick={() =>
+                handleAction(async () => {
+                  const setup = new SetupTx(
+                    await wallet.getChangeAddress(),
+                    wallet
+                  );
+                  return await setup.spendCounterNFT();
+                })
+              }
+            >
+              Spend Counter NFT
+            </button>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
+              onClick={() =>
+                handleAction(async () => {
+                  const setup = new SetupTx(
+                    await wallet.getChangeAddress(),
+                    wallet
+                  );
                   return await setup.registerAllCerts();
                 })
               }
             >
               Register All Certs
             </button>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
+              onClick={() =>
+                handleAction(async () => {
+                  const setup = new SetupTx(
+                    await wallet.getChangeAddress(),
+                    wallet
+                  );
+                  return await setup.txOutScript();
+                })
+              }
+            >
+              Tx Out Scripts
+            </button>
+          </div>
+        </div>
+
+        {/* Transaction Signing and Submission */}
+        <div className="bg-gray-800 p-4 rounded-lg">
+          <h3 className="text-xl font-semibold mb-2">
+            Transaction Signing and Submission
+          </h3>
+          <div className="space-y-4">
+            <div className="bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">Sign Transaction</h4>
+              <textarea
+                value={result}
+                onChange={(e) => setResult(e.target.value)}
+                placeholder="Enter unsigned transaction hex"
+                className="w-full p-2 rounded bg-gray-700 text-white mb-2"
+                rows={4}
+              />
+              <button
+                className="bg-blue-500 hover:bg-blue-600 p-2 rounded w-full"
+                onClick={() =>
+                  handleAction(async () => {
+                    if (!result) {
+                      throw new Error(
+                        "Please provide an unsigned transaction hex"
+                      );
+                    }
+                    const adminAction = new AdminActionTx(
+                      await wallet.getChangeAddress(),
+                      wallet
+                    );
+                    return await adminAction.adminSignTx(result);
+                  })
+                }
+              >
+                Sign Transaction
+              </button>
+            </div>
+
+            <div className="bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">Submit Transaction</h4>
+              <textarea
+                value={result}
+                onChange={(e) => setResult(e.target.value)}
+                placeholder="Enter signed transaction hex"
+                className="w-full p-2 rounded bg-gray-700 text-white mb-2"
+                rows={4}
+              />
+              <button
+                className="bg-blue-500 hover:bg-blue-600 p-2 rounded w-full"
+                onClick={() =>
+                  handleAction(async () => {
+                    if (!result) {
+                      throw new Error(
+                        "Please provide a signed transaction hex"
+                      );
+                    }
+                    const adminAction = new AdminActionTx(
+                      await wallet.getChangeAddress(),
+                      wallet
+                    );
+                    return await adminAction.adminSubmitTx(result);
+                  })
+                }
+              >
+                Submit Transaction
+              </button>
+            </div>
           </div>
         </div>
 
@@ -243,8 +281,20 @@ export default function Home() {
             {/* Apply Membership */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Apply Membership</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
-              {renderUTxOInput("Token UTxO", tokenUtxo, setTokenUtxo)}
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
+              {renderUtxoInputs(
+                "Token UTxO",
+                tokenUtxoHash,
+                setTokenUtxoHash,
+                tokenUtxoIndex,
+                setTokenUtxoIndex
+              )}
               {renderInputField(
                 "Token Policy ID",
                 tokenPolicyId,
@@ -259,8 +309,16 @@ export default function Home() {
                 className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo || !tokenUtxo)
-                      throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    const tokenUtxo = await fetchUtxo(
+                      tokenUtxoHash,
+                      tokenUtxoIndex,
+                      "Token UTxO"
+                    );
                     const userAction = new UserActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -281,9 +339,27 @@ export default function Home() {
             {/* Propose Project */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Propose Project</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
-              {renderUTxOInput("Token UTxO", tokenUtxo, setTokenUtxo)}
-              {renderUTxOInput("Member UTxO", memberUtxo, setMemberUtxo)}
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
+              {renderUtxoInputs(
+                "Token UTxO",
+                tokenUtxoHash,
+                setTokenUtxoHash,
+                tokenUtxoIndex,
+                setTokenUtxoIndex
+              )}
+              {renderUtxoInputs(
+                "Member UTxO",
+                memberUtxoHash,
+                setMemberUtxoHash,
+                memberUtxoIndex,
+                setMemberUtxoIndex
+              )}
               {renderInputField("Project URL", projectUrl, setProjectUrl)}
               {renderInputField(
                 "Fund Requested",
@@ -296,8 +372,21 @@ export default function Home() {
                 className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo || !tokenUtxo || !memberUtxo)
-                      throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    const tokenUtxo = await fetchUtxo(
+                      tokenUtxoHash,
+                      tokenUtxoIndex,
+                      "Token UTxO"
+                    );
+                    const memberUtxo = await fetchUtxo(
+                      memberUtxoHash,
+                      memberUtxoIndex,
+                      "Member UTxO"
+                    );
                     const userAction = new UserActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -326,12 +415,26 @@ export default function Home() {
             {/* Approve Member */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Approve Member</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
-              {renderUTxOInput("Counter UTxO", counterUtxo, setCounterUtxo)}
-              {renderUTxOInput(
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
+              {renderUtxoInputs(
+                "Counter UTxO",
+                counterUtxoHash,
+                setCounterUtxoHash,
+                counterUtxoIndex,
+                setCounterUtxoIndex
+              )}
+              {renderUtxoInputs(
                 "Membership Intent UTxO",
-                membershipIntentUtxo,
-                setMembershipIntentUtxo
+                membershipIntentUtxoHash,
+                setMembershipIntentUtxoHash,
+                membershipIntentUtxoIndex,
+                setMembershipIntentUtxoIndex
               )}
               <textarea
                 value={adminSigned.join("\n")}
@@ -344,8 +447,21 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo || !counterUtxo || !membershipIntentUtxo)
-                      throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    const counterUtxo = await fetchUtxo(
+                      counterUtxoHash,
+                      counterUtxoIndex,
+                      "Counter UTxO"
+                    );
+                    const membershipIntentUtxo = await fetchUtxo(
+                      membershipIntentUtxoHash,
+                      membershipIntentUtxoIndex,
+                      "Membership Intent UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -366,11 +482,19 @@ export default function Home() {
             {/* Reject Member */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Reject Member</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
-              {renderUTxOInput(
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
+              {renderUtxoInputs(
                 "Membership Intent UTxO",
-                membershipIntentUtxo,
-                setMembershipIntentUtxo
+                membershipIntentUtxoHash,
+                setMembershipIntentUtxoHash,
+                membershipIntentUtxoIndex,
+                setMembershipIntentUtxoIndex
               )}
               <textarea
                 value={adminSigned.join("\n")}
@@ -383,8 +507,16 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo || !membershipIntentUtxo)
-                      throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    const membershipIntentUtxo = await fetchUtxo(
+                      membershipIntentUtxoHash,
+                      membershipIntentUtxoIndex,
+                      "Membership Intent UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -404,8 +536,20 @@ export default function Home() {
             {/* Remove Member */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Remove Member</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
-              {renderUTxOInput("Member UTxO", memberUtxo, setMemberUtxo)}
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
+              {renderUtxoInputs(
+                "Member UTxO",
+                memberUtxoHash,
+                setMemberUtxoHash,
+                memberUtxoIndex,
+                setMemberUtxoIndex
+              )}
               <textarea
                 value={adminSigned.join("\n")}
                 onChange={(e) => setAdminSigned(e.target.value.split("\n"))}
@@ -417,8 +561,16 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo || !memberUtxo)
-                      throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    const memberUtxo = await fetchUtxo(
+                      memberUtxoHash,
+                      memberUtxoIndex,
+                      "Member UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -438,11 +590,19 @@ export default function Home() {
             {/* Approve Proposal */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Approve Proposal</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
-              {renderUTxOInput(
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
+              {renderUtxoInputs(
                 "Propose Intent UTxO",
-                proposeIntentUtxo,
-                setProposeIntentUtxo
+                proposeIntentUtxoHash,
+                setProposeIntentUtxoHash,
+                proposeIntentUtxoIndex,
+                setProposeIntentUtxoIndex
               )}
               <textarea
                 value={adminSigned.join("\n")}
@@ -455,8 +615,16 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo || !proposeIntentUtxo)
-                      throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    const proposeIntentUtxo = await fetchUtxo(
+                      proposeIntentUtxoHash,
+                      proposeIntentUtxoIndex,
+                      "Propose Intent UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -476,11 +644,19 @@ export default function Home() {
             {/* Reject Proposal */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Reject Proposal</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
-              {renderUTxOInput(
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
+              {renderUtxoInputs(
                 "Propose Intent UTxO",
-                proposeIntentUtxo,
-                setProposeIntentUtxo
+                proposeIntentUtxoHash,
+                setProposeIntentUtxoHash,
+                proposeIntentUtxoIndex,
+                setProposeIntentUtxoIndex
               )}
               <textarea
                 value={adminSigned.join("\n")}
@@ -493,8 +669,16 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo || !proposeIntentUtxo)
-                      throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    const proposeIntentUtxo = await fetchUtxo(
+                      proposeIntentUtxoHash,
+                      proposeIntentUtxoIndex,
+                      "Propose Intent UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -514,8 +698,20 @@ export default function Home() {
             {/* Approve Sign Off */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Approve Sign Off</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
-              {renderUTxOInput("Proposal UTxO", proposalUtxo, setProposalUtxo)}
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
+              {renderUtxoInputs(
+                "Proposal UTxO",
+                proposalUtxoHash,
+                setProposalUtxoHash,
+                proposalUtxoIndex,
+                setProposalUtxoIndex
+              )}
               <textarea
                 value={adminSigned.join("\n")}
                 onChange={(e) => setAdminSigned(e.target.value.split("\n"))}
@@ -527,8 +723,16 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo || !proposalUtxo)
-                      throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    const proposalUtxo = await fetchUtxo(
+                      proposalUtxoHash,
+                      proposalUtxoIndex,
+                      "Proposal UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -548,13 +752,27 @@ export default function Home() {
             {/* Sign Off */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Sign Off</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
-              {renderUTxOInput(
-                "Sign Off Approval UTxO",
-                signOffApprovalUtxo,
-                setSignOffApprovalUtxo
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
               )}
-              {renderUTxOInput("Member UTxO", memberUtxo, setMemberUtxo)}
+              {renderUtxoInputs(
+                "Sign Off Approval UTxO",
+                signOffApprovalUtxoHash,
+                setSignOffApprovalUtxoHash,
+                signOffApprovalUtxoIndex,
+                setSignOffApprovalUtxoIndex
+              )}
+              {renderUtxoInputs(
+                "Member UTxO",
+                memberUtxoHash,
+                setMemberUtxoHash,
+                memberUtxoIndex,
+                setMemberUtxoIndex
+              )}
               <textarea
                 value={JSON.stringify(treasuryUtxos, null, 2)}
                 onChange={(e) => {
@@ -572,8 +790,21 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo || !signOffApprovalUtxo || !memberUtxo)
-                      throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    const signOffApprovalUtxo = await fetchUtxo(
+                      signOffApprovalUtxoHash,
+                      signOffApprovalUtxoIndex,
+                      "Sign Off Approval UTxO"
+                    );
+                    const memberUtxo = await fetchUtxo(
+                      memberUtxoHash,
+                      memberUtxoIndex,
+                      "Member UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -594,7 +825,13 @@ export default function Home() {
             {/* Rotate Admin */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Rotate Admin</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
               <textarea
                 value={newAdmins.join("\n")}
                 onChange={(e) => setNewAdmins(e.target.value.split("\n"))}
@@ -618,7 +855,11 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo) throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -639,7 +880,13 @@ export default function Home() {
             {/* Update Threshold */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Update Threshold</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
               {renderInputField(
                 "New Multi-sig Threshold",
                 newMultiSigThreshold,
@@ -657,7 +904,11 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo) throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -677,7 +928,13 @@ export default function Home() {
             {/* Stop Oracle */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Stop Oracle</h4>
-              {renderUTxOInput("Oracle UTxO", oracleUtxo, setOracleUtxo)}
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
               <textarea
                 value={adminSigned.join("\n")}
                 onChange={(e) => setAdminSigned(e.target.value.split("\n"))}
@@ -689,7 +946,11 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!oracleUtxo) throw new Error("Missing UTxOs");
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet
@@ -708,7 +969,13 @@ export default function Home() {
             {/* Stop Counter */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Stop Counter</h4>
-              {renderUTxOInput("Counter UTxO", counterUtxo, setCounterUtxo)}
+              {renderUtxoInputs(
+                "Counter UTxO",
+                counterUtxoHash,
+                setCounterUtxoHash,
+                counterUtxoIndex,
+                setCounterUtxoIndex
+              )}
               <textarea
                 value={adminSigned.join("\n")}
                 onChange={(e) => setAdminSigned(e.target.value.split("\n"))}
@@ -720,7 +987,11 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
-                    if (!counterUtxo) throw new Error("Missing UTxOs");
+                    const counterUtxo = await fetchUtxo(
+                      counterUtxoHash,
+                      counterUtxoIndex,
+                      "Counter UTxO"
+                    );
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet

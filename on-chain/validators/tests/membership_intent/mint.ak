@@ -1,3 +1,4 @@
+use aiken/cbor
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
 use membership_intent/mint as membership_intent_mint
@@ -82,6 +83,12 @@ fn mock_apply_membership_tx(test_case: ApplyMembershipTestCase) -> Transaction {
         incorrect_user_token_datum,
       )
     |> complete()
+}
+
+test datum() {
+  let datum = mock_input_oracle_datum
+
+  cbor.serialise(datum) == #"f111"
 }
 
 test s2_mint_success_apply_membership() {

@@ -19,7 +19,6 @@ import {
   ScriptHash,
   WithdrawalBlueprint,
   ByteString,
-  VerificationKey,
 } from "@meshsdk/core";
 
 const version = "V3";
@@ -317,7 +316,7 @@ export type MembershipIntentDatum = ConStr0<[Tuple<PolicyId, AssetName>]>;
 
 export type OracleSpendRedeemer = RotateAdmin | UpdateThreshold | StopOracle;
 
-export type RotateAdmin = ConStr0<[List<VerificationKey>, ByteString]>;
+export type RotateAdmin = ConStr0<[List<ByteString>, ByteString]>;
 
 export type UpdateThreshold = ConStr1<[Integer]>;
 
@@ -325,7 +324,7 @@ export type StopOracle = ConStr2<[]>;
 
 export type OracleDatum = ConStr0<
   [
-    List<VerificationKey>,
+    List<ByteString>,
     ByteString,
     Integer,
     PolicyId,
