@@ -46,8 +46,8 @@ export class UserActionTx extends Layer1Tx {
         .txIn(
           tokenUtxo.input.txHash,
           tokenUtxo.input.outputIndex,
-          paramUtxo.output.amount,
-          paramUtxo.output.address
+          tokenUtxo.output.amount,
+          tokenUtxo.output.address
         )
 
         .mintPlutusScriptV3()
@@ -106,51 +106,65 @@ export class UserActionTx extends Layer1Tx {
       receiver
     );
 
-    const txBuilder = await this.newValidationTx(true);
-    txBuilder
-      .readOnlyTxInReference(
-        oracleUtxo.input.txHash,
-        oracleUtxo.input.outputIndex
-      )
-
-      .txIn(tokenUtxo.input.txHash, tokenUtxo.input.outputIndex)
-
-      .spendingPlutusScriptV3()
-      .txIn(memberUtxo.input.txHash, memberUtxo.input.outputIndex)
-      .txInRedeemerValue(memberProposeProject, "JSON")
-      .txInScript(scripts.member.spend.cbor)
-      .txInInlineDatumPresent()
-
-      .mintPlutusScriptV3()
-      .mint("1", scripts.proposeIntent.mint.hash, "to")
-      .mintingScript(scripts.proposeIntent.mint.cbor)
-      .mintRedeemerValue(redeemer)
-
-      .txOut(scripts.proposeIntent.spend.address, [
-        { unit: "lovelace", quantity: minUtxos.proposeIntent },
-        {
-          unit: scripts.proposeIntent.mint.hash + memberAssetName,
-          quantity: "1",
-        },
-      ])
-      .txOutInlineDatumValue(datum, "JSON");
-
-    if (tokenUtxo.output.plutusData) {
+    try {
+      const txBuilder = await this.newValidationTx(true);
       txBuilder
-        .txOut(tokenUtxo.output.address, tokenUtxo.output.amount)
-        .txOutInlineDatumValue(tokenUtxo.output.plutusData, "CBOR");
-    } else {
-      txBuilder.txOut(tokenUtxo.output.address, tokenUtxo.output.amount);
+        .readOnlyTxInReference(
+          oracleUtxo.input.txHash,
+          oracleUtxo.input.outputIndex
+        )
+
+        .txIn(
+          tokenUtxo.input.txHash,
+          tokenUtxo.input.outputIndex,
+          tokenUtxo.output.amount,
+          tokenUtxo.output.address
+        )
+
+        .spendingPlutusScriptV3()
+        .txIn(
+          memberUtxo.input.txHash,
+          memberUtxo.input.outputIndex,
+          memberUtxo.output.amount,
+          memberUtxo.output.address
+        )
+        .txInRedeemerValue(memberProposeProject, "JSON")
+        .txInScript(scripts.member.spend.cbor)
+        .txInInlineDatumPresent()
+
+        .mintPlutusScriptV3()
+        .mint("1", scripts.proposeIntent.mint.hash, "to")
+        .mintingScript(scripts.proposeIntent.mint.cbor)
+        .mintRedeemerValue(redeemer, "JSON")
+
+        .txOut(scripts.proposeIntent.spend.address, [
+          { unit: "lovelace", quantity: minUtxos.proposeIntent },
+          {
+            unit: scripts.proposeIntent.mint.hash + memberAssetName,
+            quantity: "1",
+          },
+        ])
+        .txOutInlineDatumValue(datum, "JSON");
+
+      if (tokenUtxo.output.plutusData) {
+        txBuilder
+          .txOut(tokenUtxo.output.address, tokenUtxo.output.amount)
+          .txOutInlineDatumValue(tokenUtxo.output.plutusData, "CBOR");
+      } else {
+        txBuilder.txOut(tokenUtxo.output.address, tokenUtxo.output.amount);
+      }
+
+      txBuilder
+        .txOut(memberUtxo.output.address, memberUtxo.output.amount)
+        .txOutInlineDatumValue(memberUtxo.output.plutusData!, "CBOR");
+
+      const txHex = await txBuilder.complete();
+      const signedTx = await this.wallet.signTx(txHex);
+      await this.wallet.submitTx(signedTx);
+
+      return { txHex, txIndex: 0 };
+    } catch (e) {
+      console.error(e);
     }
-
-    txBuilder
-      .txOut(memberUtxo.output.address, memberUtxo.output.amount)
-      .txOutInlineDatumValue(memberUtxo.output.plutusData!, "CBOR");
-
-    const txHex = await txBuilder.complete();
-    const signedTx = await this.wallet.signTx(txHex);
-    await this.wallet.submitTx(signedTx);
-
-    return { txHex, txIndex: 0 };
   };
 }

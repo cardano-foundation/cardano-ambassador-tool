@@ -8,7 +8,6 @@ import {
   list,
   byteString,
   integer,
-  verificationKey,
   assetName,
   tuple,
   ByteString,
@@ -59,7 +58,7 @@ export const rBurn: RBurn = conStr1([]);
 export const oracleDatum: OracleDatum = conStr0([
   list(
     admins.map((admin) => {
-      return verificationKey(admin);
+      return byteString(admin);
     })
   ),
   byteString(stringToHex(admin_tenure)),
@@ -87,7 +86,7 @@ export const rotateAdmin = (
   new_admin_tenure: string
 ): RotateAdmin => {
   const new_admins_verifiaction_keys = new_admins.map((key) => {
-    return verificationKey(key);
+    return byteString(key);
   });
   return conStr0([
     list(new_admins_verifiaction_keys),
