@@ -6,12 +6,12 @@ import {
   membershipIntentDatum,
   scripts,
   minUtxos,
-  getTokenAssetNameByPolicyId,
   ProposeProject,
   proposeProject,
   ProposalDatum,
   proposalDatum,
   memberProposeProject,
+  ref_tx_in_scripts,
 } from "@/lib";
 import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
@@ -52,7 +52,12 @@ export class UserActionTx extends Layer1Tx {
 
         .mintPlutusScriptV3()
         .mint("1", scripts.membershipIntent.mint.hash, "")
-        .mintingScript(scripts.membershipIntent.mint.cbor)
+        .mintTxInReference(
+          ref_tx_in_scripts.membershipIntent.mint.txHash,
+          ref_tx_in_scripts.membershipIntent.mint.outputIndex,
+          (scripts.membershipIntent.mint.cbor.length / 2).toString(),
+          scripts.membershipIntent.mint.hash
+        )
         .mintRedeemerValue(redeemer, "JSON")
 
         .txOut(scripts.membershipIntent.spend.address, [
@@ -90,11 +95,6 @@ export class UserActionTx extends Layer1Tx {
     fund_requested: number,
     receiver: string
   ) => {
-    const memberAssetName = getTokenAssetNameByPolicyId(
-      memberUtxo,
-      scripts.member.mint.hash
-    );
-
     const redeemer: ProposeProject = proposeProject(
       stringToHex(project_url),
       fund_requested,
@@ -129,18 +129,28 @@ export class UserActionTx extends Layer1Tx {
           memberUtxo.output.address
         )
         .txInRedeemerValue(memberProposeProject, "JSON")
-        .txInScript(scripts.member.spend.cbor)
+        .spendingTxInReference(
+          ref_tx_in_scripts.member.spend.txHash,
+          ref_tx_in_scripts.member.spend.outputIndex,
+          (scripts.member.spend.cbor.length / 2).toString(),
+          scripts.member.spend.hash
+        )
         .txInInlineDatumPresent()
 
         .mintPlutusScriptV3()
-        .mint("1", scripts.proposeIntent.mint.hash, "to")
-        .mintingScript(scripts.proposeIntent.mint.cbor)
+        .mint("1", scripts.proposeIntent.mint.hash, "") // todo: assetName
+        .mintTxInReference(
+          ref_tx_in_scripts.proposeIntent.mint.txHash,
+          ref_tx_in_scripts.proposeIntent.mint.outputIndex,
+          (scripts.proposeIntent.mint.cbor.length / 2).toString(),
+          scripts.proposeIntent.mint.hash
+        )
         .mintRedeemerValue(redeemer, "JSON")
 
         .txOut(scripts.proposeIntent.spend.address, [
           { unit: "lovelace", quantity: minUtxos.proposeIntent },
           {
-            unit: scripts.proposeIntent.mint.hash + memberAssetName,
+            unit: scripts.proposeIntent.mint.hash,
             quantity: "1",
           },
         ])
@@ -158,11 +168,21 @@ export class UserActionTx extends Layer1Tx {
         .txOut(memberUtxo.output.address, memberUtxo.output.amount)
         .txOutInlineDatumValue(memberUtxo.output.plutusData!, "CBOR");
 
-      const txHex = await txBuilder.complete();
-      const signedTx = await this.wallet.signTx(txHex);
-      await this.wallet.submitTx(signedTx);
+      const txHex = txBuilder.completeUnbalanced();
+      console.log(txHex);
+      const evaluation = await txBuilder.evaluator?.evaluateTx(txHex, [], []);
+      console.log(evaluation);
+      const txHex2 = await txBuilder.complete();
+      console.log(txHex2);
+      // const signedTx = await this.wallet.signTx(txHex);
+      // await this.wallet.submitTx(signedTx);
 
-      return { txHex, txIndex: 0 };
+      return {
+        txHex,
+        proposeIntentUtxoTxIndex: 0,
+        tokenUtxoTxIndex: 1,
+        memberUtxoTxIndex: 2,
+      };
     } catch (e) {
       console.error(e);
     }

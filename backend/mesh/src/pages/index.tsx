@@ -13,12 +13,18 @@ export default function Home() {
   const blockfrostService = new BlockfrostService();
 
   // State for UTxO inputs
-  const [oracleUtxoHash, setOracleUtxoHash] = useState("");
-  const [oracleUtxoIndex, setOracleUtxoIndex] = useState("");
-  const [tokenUtxoHash, setTokenUtxoHash] = useState("");
-  const [tokenUtxoIndex, setTokenUtxoIndex] = useState("");
-  const [memberUtxoHash, setMemberUtxoHash] = useState("");
-  const [memberUtxoIndex, setMemberUtxoIndex] = useState("");
+  const [oracleUtxoHash, setOracleUtxoHash] = useState(
+    "f2c95746f252b609e03ca9447548589aa3def1a83bb0d7d67617be041dfef203"
+  );
+  const [oracleUtxoIndex, setOracleUtxoIndex] = useState("0");
+  const [tokenUtxoHash, setTokenUtxoHash] = useState(
+    "b5461230311cde067d202ebf22d6f511f2eadba8f8672d4b2835c07ee24abd22"
+  );
+  const [tokenUtxoIndex, setTokenUtxoIndex] = useState("1");
+  const [memberUtxoHash, setMemberUtxoHash] = useState(
+    "b5461230311cde067d202ebf22d6f511f2eadba8f8672d4b2835c07ee24abd22"
+  );
+  const [memberUtxoIndex, setMemberUtxoIndex] = useState("2");
   const [counterUtxoHash, setCounterUtxoHash] = useState("");
   const [counterUtxoIndex, setCounterUtxoIndex] = useState("");
   const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState("");
@@ -30,7 +36,51 @@ export default function Home() {
   const [proposalUtxoIndex, setProposalUtxoIndex] = useState("");
   const [signOffApprovalUtxoHash, setSignOffApprovalUtxoHash] = useState("");
   const [signOffApprovalUtxoIndex, setSignOffApprovalUtxoIndex] = useState("");
-  const [treasuryUtxos, setTreasuryUtxos] = useState<UTxO[]>([]);
+  const [treasuryUtxoInputs, setTreasuryUtxoInputs] = useState<
+    { hash: string; index: string }[]
+  >([{ hash: "", index: "" }]);
+
+  const addTreasuryUtxoInput = () => {
+    setTreasuryUtxoInputs([...treasuryUtxoInputs, { hash: "", index: "" }]);
+  };
+
+  const removeTreasuryUtxoInput = (index: number) => {
+    const newInputs = treasuryUtxoInputs.filter((_, i) => i !== index);
+    setTreasuryUtxoInputs(newInputs);
+  };
+
+  const updateTreasuryUtxoInput = (
+    index: number,
+    field: "hash" | "index",
+    value: string
+  ) => {
+    const newInputs = [...treasuryUtxoInputs];
+    newInputs[index][field] = value;
+    setTreasuryUtxoInputs(newInputs);
+  };
+
+  const fetchTreasuryUtxos = async () => {
+    const utxos: UTxO[] = [];
+    for (const input of treasuryUtxoInputs) {
+      if (input.hash && input.index) {
+        try {
+          const utxo = await fetchUtxo(
+            input.hash,
+            input.index,
+            "Treasury UTxO"
+          );
+          utxos.push(utxo);
+        } catch (error) {
+          console.error(
+            `Error fetching UTxO ${input.hash}#${input.index}:`,
+            error
+          );
+          throw error;
+        }
+      }
+    }
+    return utxos;
+  };
 
   const renderUtxoInputs = (
     label: string,
@@ -82,9 +132,11 @@ export default function Home() {
   // State for other parameters
   const [tokenPolicyId, setTokenPolicyId] = useState("");
   const [tokenAssetName, setTokenAssetName] = useState("");
-  const [projectUrl, setProjectUrl] = useState("");
-  const [fundRequested, setFundRequested] = useState("");
-  const [receiver, setReceiver] = useState("");
+  const [projectUrl, setProjectUrl] = useState("111");
+  const [fundRequested, setFundRequested] = useState("1111111");
+  const [receiver, setReceiver] = useState(
+    "addr_test1qzhm3fg7v9t9e4nrlw0z49cysmvzfy3xpmvxuht80aa3rvnm5tz7rfnph9ntszp2fclw5m334udzq49777gkhwkztsks4c69rg"
+  );
   const [adminSigned, setAdminSigned] = useState<string[]>([]);
   const [newAdmins, setNewAdmins] = useState<string[]>([]);
   const [newAdminTenure, setNewAdminTenure] = useState("");
@@ -773,19 +825,45 @@ export default function Home() {
                 memberUtxoIndex,
                 setMemberUtxoIndex
               )}
-              <textarea
-                value={JSON.stringify(treasuryUtxos, null, 2)}
-                onChange={(e) => {
-                  try {
-                    setTreasuryUtxos(JSON.parse(e.target.value));
-                  } catch {
-                    setTreasuryUtxos([]);
-                  }
-                }}
-                placeholder="Enter treasury UTxOs as JSON array"
-                className="w-full p-2 rounded bg-gray-700 text-white mb-2"
-                rows={4}
-              />
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  Treasury UTxOs
+                </label>
+                {treasuryUtxoInputs.map((input, index) => (
+                  <div key={index} className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      placeholder="Transaction Hash"
+                      className="flex-1 p-2 rounded bg-gray-700 text-white"
+                      value={input.hash}
+                      onChange={(e) =>
+                        updateTreasuryUtxoInput(index, "hash", e.target.value)
+                      }
+                    />
+                    <input
+                      type="number"
+                      placeholder="Output Index"
+                      className="w-32 p-2 rounded bg-gray-700 text-white"
+                      value={input.index}
+                      onChange={(e) =>
+                        updateTreasuryUtxoInput(index, "index", e.target.value)
+                      }
+                    />
+                    <button
+                      onClick={() => removeTreasuryUtxoInput(index)}
+                      className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={addTreasuryUtxoInput}
+                  className="w-full p-2 bg-blue-500 hover:bg-blue-600 rounded"
+                >
+                  Add Treasury UTxO
+                </button>
+              </div>
               <button
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
@@ -805,6 +883,7 @@ export default function Home() {
                       memberUtxoIndex,
                       "Member UTxO"
                     );
+                    const treasuryUtxos = await fetchTreasuryUtxos();
                     const adminAction = new AdminActionTx(
                       await wallet.getChangeAddress(),
                       wallet

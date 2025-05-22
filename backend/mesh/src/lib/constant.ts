@@ -34,14 +34,14 @@ export const policyIdLength = 56; // Assuming the policyId is always 56 characte
 
 export const admin_key_first =
   process.env.ADMIN_KEY ||
-  "0f8e16a0898ae2bcb9d5bd2db74cb248a53840b8ce18c4f2314aea63";
+  "086cb798b0f694cd5a449296f7de9a794d3cd8593097be5898fd50f9";
 export const admin_key_second =
   process.env.ADMIN_KEY ||
   "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2";
 export const admin_key_third =
   process.env.ADMIN_KEY ||
   "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2";
-export const admins = [admin_key_first, admin_key_first];
+export const admins = [admin_key_first, admin_key_second];
 export const admin_tenure = process.env.ADMIN_TENURE || "TODO";
 export const multi_sig_threshold = Number(process.env.MULTI_SIG_THRESHOLD) || 1;
 
@@ -49,8 +49,8 @@ export const oracle_nft = byteString(
   resolveScriptHash(
     new OracleMintBlueprint([
       outputReference(
-        "60dcd700473102171b0191a65e135bcd19938a365dffaee70d675ee88d8ce0c0",
-        1
+        "079ae9a3549a84770917fbc3aedab8c85b23f07c1a34b715496edcf35a9f346d",
+        2
       ),
     ]).cbor,
     "V3"
@@ -61,8 +61,8 @@ export const scripts = {
   oracle: {
     mint: new OracleMintBlueprint([
       outputReference(
-        "60dcd700473102171b0191a65e135bcd19938a365dffaee70d675ee88d8ce0c0",
-        1
+        "079ae9a3549a84770917fbc3aedab8c85b23f07c1a34b715496edcf35a9f346d",
+        2
       ),
     ]),
     spend: new OracleSpendBlueprint(),
@@ -70,7 +70,7 @@ export const scripts = {
   counter: {
     mint: new CounterMintBlueprint([
       outputReference(
-        "d50f72bca8ca2a8a7046b3ce27a3f24746025d0b9b08fc8b827d8a855777d36a",
+        "079ae9a3549a84770917fbc3aedab8c85b23f07c1a34b715496edcf35a9f346d",
         1
       ),
     ]),
@@ -106,36 +106,73 @@ export const ref_tx_in_scripts = {
   membershipIntent: {
     mint: {
       txHash:
-        "47b7fdaf8f863e4b29d0c09a256f21ab631fe22fb65e7b0ae1322732bf81fb16",
+        "ebe1909a1f0754b4065afa3b1f5eca6ef669ea613c6802de98a2c99b95362d4d",
       outputIndex: 0,
     },
     spend: {
       txHash:
-        "47b7fdaf8f863e4b29d0c09a256f21ab631fe22fb65e7b0ae1322732bf81fb16",
+        "ebe1909a1f0754b4065afa3b1f5eca6ef669ea613c6802de98a2c99b95362d4d",
       outputIndex: 1,
     },
   },
   member: {
     mint: {
       txHash:
-        "e7d0bd0b7e9cf56b16afffaae4664e505664441db98a391e70f96774436a74df",
+        "9617e93dd4b3e75253d16ee90586e08b9f904c396f3a580580da09f820c42d0a",
       outputIndex: 0,
+    },
+    spend: {
+      txHash:
+        "9617e93dd4b3e75253d16ee90586e08b9f904c396f3a580580da09f820c42d0a",
+      outputIndex: 1,
     },
   },
   proposeIntent: {
-    mint: new ProposeIntentMintBlueprint([oracle_nft]),
-    spend: new ProposeIntentSpendBlueprint([oracle_nft]),
+    mint: {
+      txHash:
+        "d476ac0425a1bdc53557bf1b9d52ad5204bc96a5b0a5ebf40a224b43e4e8d400",
+      outputIndex: 0,
+    },
+    spend: {
+      txHash:
+        "d476ac0425a1bdc53557bf1b9d52ad5204bc96a5b0a5ebf40a224b43e4e8d400",
+      outputIndex: 1,
+    },
   },
   proposal: {
-    mint: new ProposalMintBlueprint([oracle_nft]),
-    spend: new ProposalSpendBlueprint([oracle_nft]),
+    mint: {
+      txHash:
+        "4f210c1f2116c77be28bb9ebd388eaa38517173450275ce2e97de0a45c256f0e",
+      outputIndex: 0,
+    },
+    spend: {
+      txHash:
+        "4f210c1f2116c77be28bb9ebd388eaa38517173450275ce2e97de0a45c256f0e",
+      outputIndex: 1,
+    },
   },
   signOffApproval: {
-    mint: new SignOffApprovalMintBlueprint([oracle_nft]),
-    spend: new SignOffApprovalSpendBlueprint([oracle_nft]),
+    mint: {
+      txHash:
+        "1463e3c76637ec6e386d35857a8ed571451c8c7c6c5f3ee108af50ff0aa559b0",
+      outputIndex: 0,
+    },
+    spend: {
+      txHash:
+        "1463e3c76637ec6e386d35857a8ed571451c8c7c6c5f3ee108af50ff0aa559b0",
+      outputIndex: 1,
+    },
   },
   treasury: {
-    spend: new TreasurySpendBlueprint([oracle_nft]),
-    withdraw: new TreasuryWithdrawBlueprint([oracle_nft]),
+    spend: {
+      txHash:
+        "d551b8f6d9d035436fcce241b3de032c8228c6f5076bd0ffd184c6dbc0ee3802",
+      outputIndex: 0,
+    },
+    withdrawal: {
+      txHash:
+        "d551b8f6d9d035436fcce241b3de032c8228c6f5076bd0ffd184c6dbc0ee3802",
+      outputIndex: 1,
+    },
   },
 };

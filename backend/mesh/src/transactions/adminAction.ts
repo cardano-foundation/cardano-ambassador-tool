@@ -35,8 +35,9 @@ import {
   stopCounter,
   rBurn,
   ref_tx_in_scripts,
+  getTreasuryChange,
 } from "@/lib";
-import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
+import { Asset, IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
 export class AdminActionTx extends Layer1Tx {
   constructor(address: string, userWallet: IWallet) {
@@ -53,8 +54,12 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   adminSubmitTx = async (signedTx: string) => {
-    const tx = await this.wallet.submitTx(signedTx);
-    return tx;
+    try {
+      const tx = await this.wallet.submitTx(signedTx);
+      return tx;
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   // todo: handle multisig
@@ -64,7 +69,7 @@ export class AdminActionTx extends Layer1Tx {
     membershipIntentUtxo: UTxO,
     admin_signed: string[]
   ) => {
-    const count = getCounterDatum(oracleUtxo);
+    const count = getCounterDatum(counterUtxo);
     const { policyId: tokenPolicyId, assetName: tokenAssetName } =
       getMembershipIntentDatum(membershipIntentUtxo);
 
@@ -75,6 +80,7 @@ export class AdminActionTx extends Layer1Tx {
       0
     );
     const updated_counter_datum: CounterDatum = counterDatum(count + 1);
+
     try {
       const txBuilder = await this.newValidationTx(true);
       txBuilder
@@ -153,8 +159,6 @@ export class AdminActionTx extends Layer1Tx {
       }
       const txHex = await txBuilder.complete();
 
-      console.log(txHex);
-
       return { txHex, counterUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
     } catch (e) {
       console.error(e);
@@ -181,13 +185,23 @@ export class AdminActionTx extends Layer1Tx {
         membershipIntentUtxo.output.amount,
         membershipIntentUtxo.output.address
       )
-      .txInRedeemerValue("", "JSON")
-      .txInScript(scripts.membershipIntent.spend.cbor)
+      .txInRedeemerValue("", "Mesh")
+      .spendingTxInReference(
+        ref_tx_in_scripts.membershipIntent.spend.txHash,
+        ref_tx_in_scripts.membershipIntent.spend.outputIndex,
+        (scripts.membershipIntent.spend.cbor.length / 2).toString(),
+        scripts.membershipIntent.spend.hash
+      )
       .txInInlineDatumPresent()
 
       .mintPlutusScriptV3()
       .mint("-1", scripts.membershipIntent.mint.hash, "")
-      .mintingScript(scripts.membershipIntent.mint.cbor)
+      .mintTxInReference(
+        ref_tx_in_scripts.membershipIntent.mint.txHash,
+        ref_tx_in_scripts.membershipIntent.mint.outputIndex,
+        (scripts.membershipIntent.mint.cbor.length / 2).toString(),
+        scripts.membershipIntent.mint.hash
+      )
       .mintRedeemerValue(rejectMember, "JSON");
 
     for (const admin of admin_signed) {
@@ -225,12 +239,22 @@ export class AdminActionTx extends Layer1Tx {
         memberUtxo.output.address
       )
       .txInRedeemerValue(adminRemoveMember, "JSON")
-      .txInScript(scripts.member.spend.cbor)
+      .spendingTxInReference(
+        ref_tx_in_scripts.member.spend.txHash,
+        ref_tx_in_scripts.member.spend.outputIndex,
+        (scripts.member.spend.cbor.length / 2).toString(),
+        scripts.member.spend.hash
+      )
       .txInInlineDatumPresent()
 
       .mintPlutusScriptV3()
       .mint("-1", scripts.member.mint.hash, memberAssetName)
-      .mintingScript(scripts.member.mint.cbor)
+      .mintTxInReference(
+        ref_tx_in_scripts.member.mint.txHash,
+        ref_tx_in_scripts.member.mint.outputIndex,
+        (scripts.member.mint.cbor.length / 2).toString(),
+        scripts.member.mint.hash
+      )
       .mintRedeemerValue(removeMember, "JSON");
 
     for (const admin of admin_signed) {
@@ -253,61 +277,80 @@ export class AdminActionTx extends Layer1Tx {
       scripts.proposeIntent.mint.hash
     );
 
-    const txBuilder = await this.newValidationTx(true);
-    txBuilder
-      .readOnlyTxInReference(
-        oracleUtxo.input.txHash,
-        oracleUtxo.input.outputIndex
-      )
-
-      .spendingPlutusScriptV3()
-      .txIn(
-        proposeIntentUtxo.input.txHash,
-        proposeIntentUtxo.input.outputIndex,
-        proposeIntentUtxo.output.amount,
-        proposeIntentUtxo.output.address
-      )
-      .txInRedeemerValue("", "JSON")
-      .txInScript(scripts.proposeIntent.spend.cbor)
-      .txInInlineDatumPresent()
-
-      .mintPlutusScriptV3()
-      .mint("-1", scripts.proposeIntent.mint.hash, proposeIntentAssetName)
-      .mintingScript(scripts.proposeIntent.mint.cbor)
-      .mintRedeemerValue(approveProposal, "JSON")
-
-      .mintPlutusScriptV3()
-      .mint("1", scripts.proposal.mint.hash, proposeIntentAssetName)
-      .mintingScript(scripts.proposal.mint.cbor)
-      .mintRedeemerValue(mintProposal, "JSON");
-
-    if (proposeIntentUtxo.output.plutusData) {
+    try {
+      const txBuilder = await this.newValidationTx(true);
       txBuilder
-        .txOut(scripts.proposal.spend.address, [
+        .readOnlyTxInReference(
+          oracleUtxo.input.txHash,
+          oracleUtxo.input.outputIndex
+        )
+
+        .spendingPlutusScriptV3()
+        .txIn(
+          proposeIntentUtxo.input.txHash,
+          proposeIntentUtxo.input.outputIndex,
+          proposeIntentUtxo.output.amount,
+          proposeIntentUtxo.output.address
+        )
+        .txInRedeemerValue("", "Mesh")
+        .spendingTxInReference(
+          ref_tx_in_scripts.proposeIntent.spend.txHash,
+          ref_tx_in_scripts.proposeIntent.spend.outputIndex,
+          (scripts.proposeIntent.spend.cbor.length / 2).toString(),
+          scripts.proposeIntent.spend.hash
+        )
+        .txInInlineDatumPresent()
+
+        .mintPlutusScriptV3()
+        .mint("-1", scripts.proposeIntent.mint.hash, proposeIntentAssetName)
+        .mintTxInReference(
+          ref_tx_in_scripts.proposeIntent.mint.txHash,
+          ref_tx_in_scripts.proposeIntent.mint.outputIndex,
+          (scripts.proposeIntent.mint.cbor.length / 2).toString(),
+          scripts.proposeIntent.mint.hash
+        )
+        .mintRedeemerValue(approveProposal, "JSON")
+
+        .mintPlutusScriptV3()
+        .mint("1", scripts.proposal.mint.hash, proposeIntentAssetName)
+        .mintTxInReference(
+          ref_tx_in_scripts.proposal.mint.txHash,
+          ref_tx_in_scripts.proposal.mint.outputIndex,
+          (scripts.proposal.mint.cbor.length / 2).toString(),
+          scripts.proposal.mint.hash
+        )
+        .mintRedeemerValue(mintProposal, "JSON");
+
+      if (proposeIntentUtxo.output.plutusData) {
+        txBuilder
+          .txOut(scripts.proposal.spend.address, [
+            { unit: "lovelace", quantity: minUtxos.proposal },
+            {
+              unit: scripts.proposal.mint.hash + proposeIntentAssetName,
+              quantity: "1",
+            },
+          ])
+          .txOutInlineDatumValue(proposeIntentUtxo.output.plutusData, "CBOR");
+      } else {
+        txBuilder.txOut(scripts.proposal.spend.address, [
           { unit: "lovelace", quantity: minUtxos.proposal },
           {
             unit: scripts.proposal.mint.hash + proposeIntentAssetName,
             quantity: "1",
           },
-        ])
-        .txOutInlineDatumValue(proposeIntentUtxo.output.plutusData, "CBOR");
-    } else {
-      txBuilder.txOut(scripts.proposal.spend.address, [
-        { unit: "lovelace", quantity: minUtxos.proposal },
-        {
-          unit: scripts.proposal.mint.hash + proposeIntentAssetName,
-          quantity: "1",
-        },
-      ]);
+        ]);
+      }
+
+      for (const admin of admin_signed) {
+        txBuilder.requiredSignerHash(admin);
+      }
+      const txHex = txBuilder.serializeMockTx();
+      // const txHex = await txBuilder.complete();
+
+      return { txHex, txIndex: 0 };
+    } catch (e) {
+      console.error(e);
     }
-
-    for (const admin of admin_signed) {
-      txBuilder.requiredSignerHash(admin);
-    }
-
-    const txHex = await txBuilder.complete();
-
-    return { txHex, txIndex: 0 };
   };
 
   // todo: handle multisig
@@ -335,13 +378,23 @@ export class AdminActionTx extends Layer1Tx {
         proposeIntentUtxo.output.amount,
         proposeIntentUtxo.output.address
       )
-      .txInRedeemerValue("", "JSON")
-      .txInScript(scripts.proposeIntent.spend.cbor)
+      .txInRedeemerValue("", "Mesh")
+      .spendingTxInReference(
+        ref_tx_in_scripts.proposeIntent.spend.txHash,
+        ref_tx_in_scripts.proposeIntent.spend.outputIndex,
+        (scripts.proposeIntent.spend.cbor.length / 2).toString(),
+        scripts.proposeIntent.spend.hash
+      )
       .txInInlineDatumPresent()
 
       .mintPlutusScriptV3()
       .mint("-1", scripts.proposeIntent.mint.hash, proposeIntentAssetName)
-      .mintingScript(scripts.proposeIntent.mint.cbor)
+      .mintTxInReference(
+        ref_tx_in_scripts.proposeIntent.mint.txHash,
+        ref_tx_in_scripts.proposeIntent.mint.outputIndex,
+        (scripts.proposeIntent.mint.cbor.length / 2).toString(),
+        scripts.proposeIntent.mint.hash
+      )
       .mintRedeemerValue(rejectProposal, "JSON");
 
     for (const admin of admin_signed) {
@@ -364,56 +417,75 @@ export class AdminActionTx extends Layer1Tx {
       scripts.proposal.mint.hash
     );
 
-    const txBuilder = await this.newValidationTx(true);
-    txBuilder
-      .readOnlyTxInReference(
-        oracleUtxo.input.txHash,
-        oracleUtxo.input.outputIndex
-      )
-
-      .spendingPlutusScriptV3()
-      .txIn(proposalUtxo.input.txHash, proposalUtxo.input.outputIndex)
-      .txInRedeemerValue("", "JSON")
-      .txInScript(scripts.proposal.spend.cbor)
-      .txInInlineDatumPresent()
-
-      .mintPlutusScriptV3()
-      .mint("-1", scripts.proposal.mint.hash, proposalAssetName)
-      .mintingScript(scripts.proposal.mint.cbor)
-      .mintRedeemerValue(approveSignOff, "JSON")
-
-      .mintPlutusScriptV3()
-      .mint("1", scripts.signOffApproval.mint.hash, proposalAssetName)
-      .mintingScript(scripts.signOffApproval.mint.cbor)
-      .mintRedeemerValue(mintSignOffApproval, "JSON");
-
-    if (proposalUtxo.output.plutusData) {
+    try {
+      const txBuilder = await this.newValidationTx(true);
       txBuilder
-        .txOut(scripts.signOffApproval.spend.address, [
+        .readOnlyTxInReference(
+          oracleUtxo.input.txHash,
+          oracleUtxo.input.outputIndex
+        )
+
+        .spendingPlutusScriptV3()
+        .txIn(proposalUtxo.input.txHash, proposalUtxo.input.outputIndex)
+        .txInRedeemerValue("", "Mesh")
+        .spendingTxInReference(
+          ref_tx_in_scripts.proposal.spend.txHash,
+          ref_tx_in_scripts.proposal.spend.outputIndex,
+          (scripts.proposal.spend.cbor.length / 2).toString(),
+          scripts.proposal.spend.hash
+        )
+        .txInInlineDatumPresent()
+
+        .mintPlutusScriptV3()
+        .mint("-1", scripts.proposal.mint.hash, proposalAssetName)
+        .mintTxInReference(
+          ref_tx_in_scripts.proposal.mint.txHash,
+          ref_tx_in_scripts.proposal.mint.outputIndex,
+          (scripts.proposal.mint.cbor.length / 2).toString(),
+          scripts.proposal.mint.hash
+        )
+        .mintRedeemerValue(approveSignOff, "JSON")
+
+        .mintPlutusScriptV3()
+        .mint("1", scripts.signOffApproval.mint.hash, proposalAssetName)
+        .mintTxInReference(
+          ref_tx_in_scripts.signOffApproval.mint.txHash,
+          ref_tx_in_scripts.signOffApproval.mint.outputIndex,
+          (scripts.signOffApproval.mint.cbor.length / 2).toString(),
+          scripts.signOffApproval.mint.hash
+        )
+        .mintRedeemerValue(mintSignOffApproval, "JSON");
+
+      if (proposalUtxo.output.plutusData) {
+        txBuilder
+          .txOut(scripts.signOffApproval.spend.address, [
+            { unit: "lovelace", quantity: minUtxos.signOffApproval },
+            {
+              unit: scripts.signOffApproval.mint.hash + proposalAssetName,
+              quantity: "1",
+            },
+          ])
+          .txOutInlineDatumValue(proposalUtxo.output.plutusData, "CBOR");
+      } else {
+        txBuilder.txOut(scripts.signOffApproval.spend.address, [
           { unit: "lovelace", quantity: minUtxos.signOffApproval },
           {
             unit: scripts.signOffApproval.mint.hash + proposalAssetName,
             quantity: "1",
           },
-        ])
-        .txOutInlineDatumValue(proposalUtxo.output.plutusData, "CBOR");
-    } else {
-      txBuilder.txOut(scripts.signOffApproval.spend.address, [
-        { unit: "lovelace", quantity: minUtxos.signOffApproval },
-        {
-          unit: scripts.signOffApproval.mint.hash + proposalAssetName,
-          quantity: "1",
-        },
-      ]);
+        ]);
+      }
+
+      for (const admin of admin_signed) {
+        txBuilder.requiredSignerHash(admin);
+      }
+
+      const txHex = await txBuilder.complete();
+
+      return { txHex, txIndex: 0 };
+    } catch (e) {
+      console.error(e);
     }
-
-    for (const admin of admin_signed) {
-      txBuilder.requiredSignerHash(admin);
-    }
-
-    const txHex = await txBuilder.complete();
-
-    return { txHex, txIndex: 0 };
   };
 
   SignOff = async (
@@ -438,75 +510,112 @@ export class AdminActionTx extends Layer1Tx {
       signOffApprovalUtxo
     );
 
-    const txBuilder = await this.newValidationTx(true);
-    txBuilder
-      .readOnlyTxInReference(
-        oracleUtxo.input.txHash,
-        oracleUtxo.input.outputIndex
-      )
+    const treasury_change: Asset[] = getTreasuryChange(
+      treasuryUtxos,
+      proposal.fund_requested
+    );
 
-      .spendingPlutusScriptV3()
-      .txIn(
-        signOffApprovalUtxo.input.txHash,
-        signOffApprovalUtxo.input.outputIndex,
-        signOffApprovalUtxo.output.amount,
-        signOffApprovalUtxo.output.address
-      )
-      .txInRedeemerValue("", "JSON")
-      .txInScript(scripts.proposal.spend.cbor)
-      .txInInlineDatumPresent()
-
-      .spendingPlutusScriptV3()
-      .txIn(
-        memberUtxo.input.txHash,
-        memberUtxo.input.outputIndex,
-        memberUtxo.output.amount,
-        memberUtxo.output.address
-      )
-      .txInRedeemerValue(adminSignOffProject, "JSON")
-      .txInScript(scripts.member.spend.cbor)
-      .txInInlineDatumPresent()
-
-      .mintPlutusScriptV3()
-      .mint("-1", scripts.signOffApproval.mint.hash, signOffApprovalAssetName)
-      .mintingScript(scripts.signOffApproval.mint.cbor)
-      .mintRedeemerValue(processSignOff, "JSON")
-
-      .txOut(proposal.receiver, [
-        { unit: "lovelace", quantity: proposal.fund_requested.toString() },
-      ])
-
-      .txOut(scripts.member.spend.address, [
-        { unit: "lovelace", quantity: minUtxos.member },
-        {
-          unit: scripts.member.mint.hash + memberAssetName,
-          quantity: "1",
-        },
-      ])
-      .txOutInlineDatumValue(updated_member_datum, "JSON")
-
-      .withdrawalPlutusScriptV3()
-      .withdrawal(scripts.treasury.withdraw.address, "0")
-      .withdrawalScript(scripts.treasury.withdraw.cbor)
-      .withdrawalRedeemerValue("");
-
-    for (const utxo of treasuryUtxos) {
+    try {
+      const txBuilder = await this.newValidationTx(true);
       txBuilder
+        .readOnlyTxInReference(
+          oracleUtxo.input.txHash,
+          oracleUtxo.input.outputIndex
+        )
+
         .spendingPlutusScriptV3()
         .txIn(
-          utxo.input.txHash,
-          utxo.input.outputIndex,
-          utxo.output.amount,
-          utxo.output.address,
-          0
+          signOffApprovalUtxo.input.txHash,
+          signOffApprovalUtxo.input.outputIndex,
+          signOffApprovalUtxo.output.amount,
+          signOffApprovalUtxo.output.address
+        )
+        .txInRedeemerValue("", "Mesh")
+        .spendingTxInReference(
+          ref_tx_in_scripts.signOffApproval.spend.txHash,
+          ref_tx_in_scripts.signOffApproval.spend.outputIndex,
+          (scripts.signOffApproval.spend.cbor.length / 2).toString(),
+          scripts.signOffApproval.spend.hash
         )
         .txInInlineDatumPresent()
-        .txInScript(scripts.treasury.spend.cbor);
+
+        .spendingPlutusScriptV3()
+        .txIn(
+          memberUtxo.input.txHash,
+          memberUtxo.input.outputIndex,
+          memberUtxo.output.amount,
+          memberUtxo.output.address
+        )
+        .txInRedeemerValue(adminSignOffProject, "JSON")
+        .spendingTxInReference(
+          ref_tx_in_scripts.member.spend.txHash,
+          ref_tx_in_scripts.member.spend.outputIndex,
+          (scripts.member.spend.cbor.length / 2).toString(),
+          scripts.member.spend.hash
+        )
+        .txInInlineDatumPresent()
+
+        .mintPlutusScriptV3()
+        .mint("-1", scripts.signOffApproval.mint.hash, signOffApprovalAssetName)
+        .mintTxInReference(
+          ref_tx_in_scripts.signOffApproval.mint.txHash,
+          ref_tx_in_scripts.signOffApproval.mint.outputIndex,
+          (scripts.signOffApproval.mint.cbor.length / 2).toString(),
+          scripts.signOffApproval.mint.hash
+        )
+        .mintRedeemerValue(processSignOff, "JSON")
+
+        .txOut(proposal.receiver, [
+          { unit: "lovelace", quantity: proposal.fund_requested.toString() },
+        ])
+
+        .txOut(scripts.member.spend.address, [
+          { unit: "lovelace", quantity: minUtxos.member },
+          {
+            unit: scripts.member.mint.hash + memberAssetName,
+            quantity: "1",
+          },
+        ])
+        .txOutInlineDatumValue(updated_member_datum, "JSON")
+
+        .txOut(scripts.treasury.spend.address, treasury_change)
+
+        .withdrawalPlutusScriptV3()
+        .withdrawal(scripts.treasury.withdraw.address, "0")
+        .withdrawalTxInReference(
+          ref_tx_in_scripts.treasury.withdrawal.txHash,
+          ref_tx_in_scripts.treasury.withdrawal.outputIndex,
+          (scripts.treasury.withdraw.cbor.length / 2).toString(),
+          scripts.treasury.withdraw.hash
+        )
+        .withdrawalRedeemerValue("", "Mesh");
+
+      for (const utxo of treasuryUtxos) {
+        txBuilder
+          .spendingPlutusScriptV3()
+          .txIn(
+            utxo.input.txHash,
+            utxo.input.outputIndex,
+            utxo.output.amount,
+            utxo.output.address,
+            0
+          )
+          .txInRedeemerValue("", "Mesh")
+          .txInInlineDatumPresent()
+          .spendingTxInReference(
+            ref_tx_in_scripts.treasury.spend.txHash,
+            ref_tx_in_scripts.treasury.spend.outputIndex,
+            (scripts.treasury.spend.cbor.length / 2).toString(),
+            scripts.treasury.spend.hash
+          );
+      }
+
+      const txHex = await txBuilder.complete();
+
+      return { txHex, treasuryUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
+    } catch (e) {
+      console.error(e);
     }
-
-    const txHex = await txBuilder.complete();
-
-    return { txHex, treasuryUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
   };
 
   // todo: handle multisig
