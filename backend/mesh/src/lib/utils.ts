@@ -1,4 +1,5 @@
 import {
+  Asset,
   byteString,
   conStr0,
   deserializeDatum,
@@ -8,7 +9,6 @@ import {
   serializeAddressObj,
   stringToHex,
   UTxO,
-  verificationKey,
 } from "@meshsdk/core";
 import {
   OracleDatum,
@@ -48,7 +48,7 @@ export const updateOracleDatum = (
     new_admins
       ? list(
           new_admins.map((admin) => {
-            return verificationKey(admin);
+            return byteString(admin);
           })
         )
       : datum.fields[0],
@@ -163,4 +163,35 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
     fund_requested: fund_requested,
     receiver: receiver,
   };
+};
+
+export const getTreasuryChange = (
+  utxos: UTxO[],
+  fund_requested: number
+): Asset[] => {
+  const changedAmount: Asset[] = [];
+  const assetMap: Map<string, number> = new Map();
+
+  utxos.forEach((utxo) => {
+    utxo.output.amount.forEach((asset) => {
+      const existingValue = assetMap.get(asset.unit);
+      if (existingValue !== undefined) {
+        assetMap.set(asset.unit, existingValue + Number(asset.quantity));
+      } else {
+        assetMap.set(asset.unit, Number(asset.quantity));
+      }
+    });
+  });
+  assetMap.set("lovelace", fund_requested);
+
+  assetMap.forEach((quantity, unit) => {
+    changedAmount.push({
+      unit: unit,
+      quantity: quantity.toString(),
+    });
+  });
+
+  console.log(changedAmount);
+
+  return changedAmount;
 };
