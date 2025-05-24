@@ -17,14 +17,10 @@ export default function Home() {
     "f2c95746f252b609e03ca9447548589aa3def1a83bb0d7d67617be041dfef203"
   );
   const [oracleUtxoIndex, setOracleUtxoIndex] = useState("0");
-  const [tokenUtxoHash, setTokenUtxoHash] = useState(
-    "b5461230311cde067d202ebf22d6f511f2eadba8f8672d4b2835c07ee24abd22"
-  );
-  const [tokenUtxoIndex, setTokenUtxoIndex] = useState("1");
-  const [memberUtxoHash, setMemberUtxoHash] = useState(
-    "b5461230311cde067d202ebf22d6f511f2eadba8f8672d4b2835c07ee24abd22"
-  );
-  const [memberUtxoIndex, setMemberUtxoIndex] = useState("2");
+  const [tokenUtxoHash, setTokenUtxoHash] = useState("");
+  const [tokenUtxoIndex, setTokenUtxoIndex] = useState("");
+  const [memberUtxoHash, setMemberUtxoHash] = useState("");
+  const [memberUtxoIndex, setMemberUtxoIndex] = useState("");
   const [counterUtxoHash, setCounterUtxoHash] = useState("");
   const [counterUtxoIndex, setCounterUtxoIndex] = useState("");
   const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState("");
@@ -137,7 +133,9 @@ export default function Home() {
   const [receiver, setReceiver] = useState(
     "addr_test1qzhm3fg7v9t9e4nrlw0z49cysmvzfy3xpmvxuht80aa3rvnm5tz7rfnph9ntszp2fclw5m334udzq49777gkhwkztsks4c69rg"
   );
-  const [adminSigned, setAdminSigned] = useState<string[]>([]);
+  const [adminSigned, setAdminSigned] = useState<string[]>([
+    "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2",
+  ]);
   const [newAdmins, setNewAdmins] = useState<string[]>([]);
   const [newAdminTenure, setNewAdminTenure] = useState("");
   const [newMultiSigThreshold, setNewMultiSigThreshold] = useState("");
