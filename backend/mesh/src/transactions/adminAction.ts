@@ -35,9 +35,8 @@ import {
   stopCounter,
   rBurn,
   ref_tx_in_scripts,
-  getTreasuryChange,
 } from "@/lib";
-import { Asset, IWallet, stringToHex, UTxO } from "@meshsdk/core";
+import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
 export class AdminActionTx extends Layer1Tx {
   constructor(address: string, userWallet: IWallet) {
@@ -344,8 +343,7 @@ export class AdminActionTx extends Layer1Tx {
       for (const admin of admin_signed) {
         txBuilder.requiredSignerHash(admin);
       }
-      const txHex = txBuilder.serializeMockTx();
-      // const txHex = await txBuilder.complete();
+      const txHex = await txBuilder.complete();
 
       return { txHex, txIndex: 0 };
     } catch (e) {
@@ -491,8 +489,7 @@ export class AdminActionTx extends Layer1Tx {
   SignOff = async (
     oracleUtxo: UTxO,
     signOffApprovalUtxo: UTxO,
-    memberUtxo: UTxO,
-    treasuryUtxos: UTxO[]
+    memberUtxo: UTxO
   ) => {
     const memberAssetName = getTokenAssetNameByPolicyId(
       memberUtxo,
@@ -510,13 +507,29 @@ export class AdminActionTx extends Layer1Tx {
       signOffApprovalUtxo
     );
 
-    const treasury_change: Asset[] = getTreasuryChange(
-      treasuryUtxos,
-      proposal.fund_requested
-    );
+    const { selectedUtxos, returnValue } = await this.getUtxosForWithdrawal([
+      { unit: "lovelace", quantity: proposal.fund_requested.toString() },
+    ]);
 
     try {
-      const txBuilder = await this.newValidationTx(true);
+      const txBuilder = this.newTxBuilder(true);
+      const { utxos } = await this.getWalletUtxos();
+      const collateral = await this.wallet.getCollateral();
+      if (!collateral || collateral.length === 0) {
+        throw new Error("Collateral is undefined");
+      }
+      txBuilder
+        .txInCollateral(
+          collateral[0]!.input.txHash,
+          collateral[0]!.input.outputIndex,
+          collateral[0]!.output.amount,
+          collateral[0]!.output.address
+        )
+        .changeAddress(
+          "addr_test1qzhm3fg7v9t9e4nrlw0z49cysmvzfy3xpmvxuht80aa3rvnm5tz7rfnph9ntszp2fclw5m334udzq49777gkhwkztsks4c69rg"
+        )
+        .selectUtxosFrom(utxos);
+
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
@@ -578,8 +591,6 @@ export class AdminActionTx extends Layer1Tx {
         ])
         .txOutInlineDatumValue(updated_member_datum, "JSON")
 
-        .txOut(scripts.treasury.spend.address, treasury_change)
-
         .withdrawalPlutusScriptV3()
         .withdrawal(scripts.treasury.withdraw.address, "0")
         .withdrawalTxInReference(
@@ -590,14 +601,14 @@ export class AdminActionTx extends Layer1Tx {
         )
         .withdrawalRedeemerValue("", "Mesh");
 
-      for (const utxo of treasuryUtxos) {
+      for (const selectedUtxo of selectedUtxos) {
         txBuilder
           .spendingPlutusScriptV3()
           .txIn(
-            utxo.input.txHash,
-            utxo.input.outputIndex,
-            utxo.output.amount,
-            utxo.output.address,
+            selectedUtxo.input.txHash,
+            selectedUtxo.input.outputIndex,
+            selectedUtxo.output.amount,
+            selectedUtxo.output.address,
             0
           )
           .txInRedeemerValue("", "Mesh")
@@ -608,6 +619,10 @@ export class AdminActionTx extends Layer1Tx {
             (scripts.treasury.spend.cbor.length / 2).toString(),
             scripts.treasury.spend.hash
           );
+      }
+
+      if (returnValue.length > 0) {
+        txBuilder.txOut(scripts.treasury.spend.address, returnValue);
       }
 
       const txHex = await txBuilder.complete();

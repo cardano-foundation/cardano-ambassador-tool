@@ -296,7 +296,7 @@ export type MemberProposeProject = ConStr1<[]>;
 export type AdminSignOffProject = ConStr2<[]>;
 
 export type MemberDatum = ConStr0<
-  [Tuple<PolicyId, AssetName>, Pairs<ByteString, Integer>, Integer]
+  [Tuple<[PolicyId, AssetName]>, Pairs<ByteString, Integer>, Integer]
 >;
 
 export type MembershipIntentMintRedeemer =
@@ -312,7 +312,7 @@ export type RejectMember = ConStr2<[]>;
 
 export type Data = any;
 
-export type MembershipIntentDatum = ConStr0<[Tuple<PolicyId, AssetName>]>;
+export type MembershipIntentDatum = ConStr0<[Tuple<[PolicyId, AssetName]>]>;
 
 export type OracleSpendRedeemer = RotateAdmin | UpdateThreshold | StopOracle;
 

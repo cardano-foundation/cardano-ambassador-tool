@@ -168,14 +168,9 @@ export class UserActionTx extends Layer1Tx {
         .txOut(memberUtxo.output.address, memberUtxo.output.amount)
         .txOutInlineDatumValue(memberUtxo.output.plutusData!, "CBOR");
 
-      const txHex = txBuilder.completeUnbalanced();
-      console.log(txHex);
-      const evaluation = await txBuilder.evaluator?.evaluateTx(txHex, [], []);
-      console.log(evaluation);
-      const txHex2 = await txBuilder.complete();
-      console.log(txHex2);
-      // const signedTx = await this.wallet.signTx(txHex);
-      // await this.wallet.submitTx(signedTx);
+      const txHex = await txBuilder.complete();
+      const signedTx = await this.wallet.signTx(txHex);
+      await this.wallet.submitTx(signedTx);
 
       return {
         txHex,

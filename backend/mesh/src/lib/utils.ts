@@ -133,7 +133,7 @@ export const updateMemberDatum = (
     updated_completion.set(stringToHex(k), v);
   });
   updated_completion.set(
-    stringToHex(signOffApproval.project_url),
+    signOffApproval.project_url,
     signOffApproval.fund_requested
   );
 
