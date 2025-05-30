@@ -12,12 +12,19 @@ import {
   proposalDatum,
   memberProposeProject,
   ref_tx_in_scripts,
-} from "@/lib";
+  IProvider,
+  Network,
+} from "../lib";
 import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
 export class UserActionTx extends Layer1Tx {
-  constructor(address: string, userWallet: IWallet) {
-    super(userWallet, address);
+  constructor(
+    public address: string,
+    public userWallet: IWallet,
+    public provider: IProvider,
+    public network: Network = "preprod"
+  ) {
+    super(userWallet, address, provider, network);
   }
 
   applyMembership = async (

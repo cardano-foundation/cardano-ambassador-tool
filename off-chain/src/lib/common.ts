@@ -3,39 +3,24 @@ import {
   Asset,
   MeshValue,
   UTxO,
-  BlockfrostProvider,
-  MaestroProvider,
-  U5CProvider,
   MeshTxBuilderOptions,
   IWallet,
+  IFetcher,
+  ISubmitter,
 } from "@meshsdk/core";
 import { networkId, scripts } from "./constant";
 import { CSLSerializer, OfflineEvaluator } from "@meshsdk/core-csl";
 
-const blockfrostApiKey = process.env.NEXT_PUBLIC_BLOCKFROST_API_KEY || "";
-const maestroApiKey = process.env.MAESTRO_API_KEY || "";
-const u5cUrl = process.env.U5C_URL || "https://preprod.utxorpc-v0.demeter.run";
-const u5cApiKey = process.env.U5C_API_KEY || "";
-const network = (process.env.NETWORK_ID || "") === "1" ? "Mainnet" : "Preprod";
-
-export const blockfrost = new BlockfrostProvider(blockfrostApiKey);
-export const maestro = new MaestroProvider({ network, apiKey: maestroApiKey });
-
-export const u5cProvider = new U5CProvider({
-  url: u5cUrl,
-  headers: {
-    "dmtr-api-key": u5cApiKey,
-  },
-});
-
-export const provider = blockfrost;
-export const submitter = blockfrost;
+export type IProvider = IFetcher & ISubmitter;
+export type Network = "preprod" | "mainnet";
 
 export class Layer1Tx {
-  wallet: IWallet;
-  address: string;
-
-  constructor(wallet: IWallet, address: string) {
+  constructor(
+    public wallet: IWallet,
+    public address: string,
+    public provider: IProvider,
+    public network: Network = "preprod"
+  ) {
     this.wallet = wallet;
     this.address = address;
   }
@@ -52,22 +37,19 @@ export class Layer1Tx {
   };
 
   getUtxos = async (address: string) => {
-    const utxos = await provider.fetchAddressUTxOs(address);
+    const utxos = await this.provider.fetchAddressUTxOs(address);
     return { utxos: utxos };
   };
 
   newTxBuilder = (evaluateTx = true) => {
     const txBuilderConfig: MeshTxBuilderOptions = {
-      fetcher: provider,
-      submitter: submitter,
+      fetcher: this.provider,
+      submitter: this.provider,
       serializer: new CSLSerializer(),
       verbose: true,
     };
     if (evaluateTx) {
-      const evaluator = new OfflineEvaluator(
-        provider,
-        network.toLocaleLowerCase() as "mainnet" | "preprod"
-      );
+      const evaluator = new OfflineEvaluator(this.provider, this.network);
       txBuilderConfig.evaluator = evaluator;
     }
 

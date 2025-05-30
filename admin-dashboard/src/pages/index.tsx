@@ -193,8 +193,7 @@ export default function Home() {
                   );
                   return await setup.mintCounterNFT();
                 })
-              }
-            >
+              }>
               Mint Counter NFT
             </button>
             <button
@@ -207,8 +206,7 @@ export default function Home() {
                   );
                   return await setup.mintSpendOracleNFT();
                 })
-              }
-            >
+              }>
               Mint and Spend Oracle NFT
             </button>
             <button
@@ -221,8 +219,7 @@ export default function Home() {
                   );
                   return await setup.spendCounterNFT();
                 })
-              }
-            >
+              }>
               Spend Counter NFT
             </button>
             <button
@@ -235,8 +232,7 @@ export default function Home() {
                   );
                   return await setup.registerAllCerts();
                 })
-              }
-            >
+              }>
               Register All Certs
             </button>
             <button
@@ -249,8 +245,7 @@ export default function Home() {
                   );
                   return await setup.txOutScript();
                 })
-              }
-            >
+              }>
               Tx Out Scripts
             </button>
           </div>
@@ -286,8 +281,7 @@ export default function Home() {
                     );
                     return await adminAction.adminSignTx(result);
                   })
-                }
-              >
+                }>
                 Sign Transaction
               </button>
             </div>
@@ -316,8 +310,7 @@ export default function Home() {
                     );
                     return await adminAction.adminSubmitTx(result);
                   })
-                }
-              >
+                }>
                 Submit Transaction
               </button>
             </div>
@@ -380,8 +373,7 @@ export default function Home() {
                       tokenAssetName
                     );
                   })
-                }
-              >
+                }>
                 Apply Membership
               </button>
             </div>
@@ -450,8 +442,7 @@ export default function Home() {
                       receiver
                     );
                   })
-                }
-              >
+                }>
                 Propose Project
               </button>
             </div>
@@ -523,8 +514,7 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }
-              >
+                }>
                 Approve Member
               </button>
             </div>
@@ -577,8 +567,7 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }
-              >
+                }>
                 Reject Member
               </button>
             </div>
@@ -631,8 +620,7 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }
-              >
+                }>
                 Remove Member
               </button>
             </div>
@@ -685,8 +673,7 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }
-              >
+                }>
                 Approve Proposal
               </button>
             </div>
@@ -739,8 +726,7 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }
-              >
+                }>
                 Reject Proposal
               </button>
             </div>
@@ -793,8 +779,7 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }
-              >
+                }>
                 Approve Sign Off
               </button>
             </div>
@@ -849,16 +834,14 @@ export default function Home() {
                     />
                     <button
                       onClick={() => removeTreasuryUtxoInput(index)}
-                      className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded"
-                    >
+                      className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded">
                       Remove
                     </button>
                   </div>
                 ))}
                 <button
                   onClick={addTreasuryUtxoInput}
-                  className="w-full p-2 bg-blue-500 hover:bg-blue-600 rounded"
-                >
+                  className="w-full p-2 bg-blue-500 hover:bg-blue-600 rounded">
                   Add Treasury UTxO
                 </button>
               </div>
@@ -893,8 +876,7 @@ export default function Home() {
                       treasuryUtxos
                     );
                   })
-                }
-              >
+                }>
                 Sign Off
               </button>
             </div>
@@ -948,8 +930,7 @@ export default function Home() {
                       newAdminTenure
                     );
                   })
-                }
-              >
+                }>
                 Rotate Admin
               </button>
             </div>
@@ -996,8 +977,7 @@ export default function Home() {
                       Number(newMultiSigThreshold)
                     );
                   })
-                }
-              >
+                }>
                 Update Threshold
               </button>
             </div>
@@ -1037,8 +1017,7 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }
-              >
+                }>
                 Stop Oracle
               </button>
             </div>
@@ -1078,8 +1057,7 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }
-              >
+                }>
                 Stop Counter
               </button>
             </div>
