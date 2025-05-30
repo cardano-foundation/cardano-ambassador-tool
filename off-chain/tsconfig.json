@@ -1,22 +1,28 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "src",
+    "declaration": true,
+    "esModuleInterop": true,
+    "inlineSourceMap": false,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "listEmittedFiles": false,
+    "listFiles": false,
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "pretty": true,
+    "resolveJsonModule": true,
+    "rootDir": "src",
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
+    "traceResolution": false,
+    "types": ["node"],
     "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "outDir": "dist/mjs",
+    "target": "esnext"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "compileOnSave": false,
+  "exclude": ["node_modules", "dist"],
+  "include": ["src"]
 }

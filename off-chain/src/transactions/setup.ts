@@ -5,12 +5,19 @@ import {
   minUtxos,
   oracleDatum,
   rMint,
-} from "@/lib";
+  IProvider,
+  Network,
+} from "../lib";
 import { IWallet, resolveScriptHash } from "@meshsdk/core";
 
 export class SetupTx extends Layer1Tx {
-  constructor(address: string, adminWallet: IWallet) {
-    super(adminWallet, address);
+  constructor(
+    public address: string,
+    public userWallet: IWallet,
+    public provider: IProvider,
+    public network: Network = "preprod"
+  ) {
+    super(userWallet, address, provider, network);
   }
 
   /**

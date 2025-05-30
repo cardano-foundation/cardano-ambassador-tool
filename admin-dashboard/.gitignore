@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/dist
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,4 +41,3 @@ yarn-error.log*
 next-env.d.ts
 
 package-lock.json
-dist

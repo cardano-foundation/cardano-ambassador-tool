@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import blueprint from "../../../../on-chain/plutus.json";
+import blueprint from "../../../on-chain/plutus.json";
 
 import {
   OutputReference,
