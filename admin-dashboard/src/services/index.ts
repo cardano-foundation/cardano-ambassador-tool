@@ -1,1 +1,1 @@
-export * from "./blockFrostService";
+export * from "./blockfrostService";
