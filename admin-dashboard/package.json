@@ -1,7 +1,7 @@
 {
   "name": "cardano-ambassador-tool",
-  "description": "A Mesh starter template for NextJS",
-  "author": "MeshJS",
+  "description": "The admin pangel for cardano ambassador tool",
+  "author": "SIDAN Lab",
   "license": "Apache-2.0",
   "version": "0.1.0",
   "scripts": {
@@ -12,8 +12,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@meshsdk/core": "1.9.0-beta.43",
-    "@meshsdk/core-csl": "1.9.0-beta.43",
+    "@meshsdk/core": "1.9.0-beta.53",
+    "@meshsdk/core-csl": "1.9.0-beta.53",
     "@sidan-lab/cardano-ambassador-tool": "^0.0.1",
     "next": "15.0.3",
     "react": "^18.2.0",
