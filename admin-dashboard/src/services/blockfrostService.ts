@@ -1,5 +1,8 @@
-import { blockfrost } from "@/lib";
 import { BlockfrostProvider, UTxO } from "@meshsdk/core";
+
+export const blockfrost = new BlockfrostProvider(
+  process.env.NEXT_PUBLIC_BLOCKFROST_API_KEY || ""
+);
 
 export class BlockfrostService {
   blockFrost: BlockfrostProvider;

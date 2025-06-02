@@ -1,9 +1,14 @@
 import Head from "next/head";
 import { CardanoWallet, MeshBadge, useWallet } from "@meshsdk/react";
-import { AdminActionTx, SetupTx, UserActionTx } from "@/transactions";
+import {
+  AdminActionTx,
+  Network,
+  SetupTx,
+  UserActionTx,
+} from "@sidan-lab/cardano-ambassador-tool";
 import { useState } from "react";
-import { UTxO } from "@meshsdk/core";
-import { BlockfrostService } from "@/services";
+// import { UTxO } from "@meshsdk/core";
+import { blockfrost, BlockfrostService } from "@/services";
 
 export default function Home() {
   const { connected, wallet } = useWallet();
@@ -11,6 +16,36 @@ export default function Home() {
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
   const blockfrostService = new BlockfrostService();
+
+  const getSetupTx = async () => {
+    const setup = new SetupTx(
+      await wallet.getChangeAddress(),
+      wallet,
+      blockfrost,
+      process.env.NEXT_PUBLIC_NETWORK as Network
+    );
+    return setup;
+  };
+
+  const getAdminActionTx = async () => {
+    const adminAction = new AdminActionTx(
+      await wallet.getChangeAddress(),
+      wallet,
+      blockfrost,
+      process.env.NEXT_PUBLIC_NETWORK as Network
+    );
+    return adminAction;
+  };
+
+  const getUserActionTx = async () => {
+    const userAction = new UserActionTx(
+      await wallet.getChangeAddress(),
+      wallet,
+      blockfrost,
+      process.env.NEXT_PUBLIC_NETWORK as Network
+    );
+    return userAction;
+  };
 
   // State for UTxO inputs
   const [oracleUtxoHash, setOracleUtxoHash] = useState(
@@ -55,28 +90,28 @@ export default function Home() {
     setTreasuryUtxoInputs(newInputs);
   };
 
-  const fetchTreasuryUtxos = async () => {
-    const utxos: UTxO[] = [];
-    for (const input of treasuryUtxoInputs) {
-      if (input.hash && input.index) {
-        try {
-          const utxo = await fetchUtxo(
-            input.hash,
-            input.index,
-            "Treasury UTxO"
-          );
-          utxos.push(utxo);
-        } catch (error) {
-          console.error(
-            `Error fetching UTxO ${input.hash}#${input.index}:`,
-            error
-          );
-          throw error;
-        }
-      }
-    }
-    return utxos;
-  };
+  // const fetchTreasuryUtxos = async () => {
+  //   const utxos: UTxO[] = [];
+  //   for (const input of treasuryUtxoInputs) {
+  //     if (input.hash && input.index) {
+  //       try {
+  //         const utxo = await fetchUtxo(
+  //           input.hash,
+  //           input.index,
+  //           "Treasury UTxO"
+  //         );
+  //         utxos.push(utxo);
+  //       } catch (error) {
+  //         console.error(
+  //           `Error fetching UTxO ${input.hash}#${input.index}:`,
+  //           error
+  //         );
+  //         throw error;
+  //       }
+  //     }
+  //   }
+  //   return utxos;
+  // };
 
   const renderUtxoInputs = (
     label: string,
@@ -187,10 +222,7 @@ export default function Home() {
               className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
               onClick={() =>
                 handleAction(async () => {
-                  const setup = new SetupTx(
-                    await wallet.getChangeAddress(),
-                    wallet
-                  );
+                  const setup = await getSetupTx();
                   return await setup.mintCounterNFT();
                 })
               }>
@@ -200,10 +232,7 @@ export default function Home() {
               className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
               onClick={() =>
                 handleAction(async () => {
-                  const setup = new SetupTx(
-                    await wallet.getChangeAddress(),
-                    wallet
-                  );
+                  const setup = await getSetupTx();
                   return await setup.mintSpendOracleNFT();
                 })
               }>
@@ -213,10 +242,7 @@ export default function Home() {
               className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
               onClick={() =>
                 handleAction(async () => {
-                  const setup = new SetupTx(
-                    await wallet.getChangeAddress(),
-                    wallet
-                  );
+                  const setup = await getSetupTx();
                   return await setup.spendCounterNFT();
                 })
               }>
@@ -226,10 +252,7 @@ export default function Home() {
               className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
               onClick={() =>
                 handleAction(async () => {
-                  const setup = new SetupTx(
-                    await wallet.getChangeAddress(),
-                    wallet
-                  );
+                  const setup = await getSetupTx();
                   return await setup.registerAllCerts();
                 })
               }>
@@ -239,10 +262,7 @@ export default function Home() {
               className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
               onClick={() =>
                 handleAction(async () => {
-                  const setup = new SetupTx(
-                    await wallet.getChangeAddress(),
-                    wallet
-                  );
+                  const setup = await getSetupTx();
                   return await setup.txOutScript();
                 })
               }>
@@ -275,10 +295,7 @@ export default function Home() {
                         "Please provide an unsigned transaction hex"
                       );
                     }
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.adminSignTx(result);
                   })
                 }>
@@ -304,10 +321,7 @@ export default function Home() {
                         "Please provide a signed transaction hex"
                       );
                     }
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.adminSubmitTx(result);
                   })
                 }>
@@ -362,10 +376,7 @@ export default function Home() {
                       tokenUtxoIndex,
                       "Token UTxO"
                     );
-                    const userAction = new UserActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const userAction = await getUserActionTx();
                     return await userAction.applyMembership(
                       oracleUtxo,
                       tokenUtxo,
@@ -429,10 +440,7 @@ export default function Home() {
                       memberUtxoIndex,
                       "Member UTxO"
                     );
-                    const userAction = new UserActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const userAction = await getUserActionTx();
                     return await userAction.proposeProject(
                       oracleUtxo,
                       tokenUtxo,
@@ -503,10 +511,7 @@ export default function Home() {
                       membershipIntentUtxoIndex,
                       "Membership Intent UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.approveMember(
                       oracleUtxo,
                       counterUtxo,
@@ -557,10 +562,7 @@ export default function Home() {
                       membershipIntentUtxoIndex,
                       "Membership Intent UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.rejectMember(
                       oracleUtxo,
                       membershipIntentUtxo,
@@ -610,10 +612,7 @@ export default function Home() {
                       memberUtxoIndex,
                       "Member UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.removeMember(
                       oracleUtxo,
                       memberUtxo,
@@ -663,10 +662,7 @@ export default function Home() {
                       proposeIntentUtxoIndex,
                       "Propose Intent UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.approveProposal(
                       oracleUtxo,
                       proposeIntentUtxo,
@@ -716,10 +712,7 @@ export default function Home() {
                       proposeIntentUtxoIndex,
                       "Propose Intent UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.rejectProposal(
                       oracleUtxo,
                       proposeIntentUtxo,
@@ -769,10 +762,7 @@ export default function Home() {
                       proposalUtxoIndex,
                       "Proposal UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.approveSignOff(
                       oracleUtxo,
                       proposalUtxo,
@@ -864,16 +854,13 @@ export default function Home() {
                       memberUtxoIndex,
                       "Member UTxO"
                     );
-                    const treasuryUtxos = await fetchTreasuryUtxos();
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    // const treasuryUtxos = await fetchTreasuryUtxos();
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.SignOff(
                       oracleUtxo,
                       signOffApprovalUtxo,
-                      memberUtxo,
-                      treasuryUtxos
+                      memberUtxo
+                      // treasuryUtxos
                     );
                   })
                 }>
@@ -919,10 +906,7 @@ export default function Home() {
                       oracleUtxoIndex,
                       "Oracle UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.rotateAdmin(
                       oracleUtxo,
                       adminSigned,
@@ -967,10 +951,7 @@ export default function Home() {
                       oracleUtxoIndex,
                       "Oracle UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.updateThreshold(
                       oracleUtxo,
                       adminSigned,
@@ -1008,10 +989,7 @@ export default function Home() {
                       oracleUtxoIndex,
                       "Oracle UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.stopOracle(
                       oracleUtxo,
                       adminSigned
@@ -1048,10 +1026,7 @@ export default function Home() {
                       counterUtxoIndex,
                       "Counter UTxO"
                     );
-                    const adminAction = new AdminActionTx(
-                      await wallet.getChangeAddress(),
-                      wallet
-                    );
+                    const adminAction = await getAdminActionTx();
                     return await adminAction.stopCounter(
                       counterUtxo,
                       adminSigned
