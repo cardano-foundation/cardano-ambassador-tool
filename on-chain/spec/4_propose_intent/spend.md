@@ -6,9 +6,9 @@
 
 ## Datum
 
-- `project_url`: `String` - Project Details
 - `fund_requested`: `Int` - fund requested
 - `recevier_address`: `Address`
+- `metadata`: `Data` - Project Details
 
 ## User Action
 
