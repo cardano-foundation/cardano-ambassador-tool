@@ -14,6 +14,12 @@ import {
   ref_tx_in_scripts,
   IProvider,
   Network,
+  MembershipMetadata,
+  membershipMetadata,
+  ProposalMetadata,
+  proposalMetadata,
+  getTokenAssetNameByPolicyId,
+  computeProposalMetadataHash,
 } from "../lib";
 import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
@@ -31,15 +37,29 @@ export class UserActionTx extends Layer1Tx {
     oracleUtxo: UTxO,
     tokenUtxo: UTxO,
     tokenPolicyId: string,
-    tokenAssetName: string
+    tokenAssetName: string,
+    walletAddress: string,
+    fullName: string,
+    displayName: string,
+    emailAddress: string,
+    bio: string
   ) => {
+    const metadata: MembershipMetadata = membershipMetadata(
+      stringToHex(walletAddress),
+      stringToHex(fullName),
+      stringToHex(displayName),
+      stringToHex(emailAddress),
+      stringToHex(bio)
+    );
     const redeemer: ApplyMembership = applyMembership(
       tokenPolicyId,
-      tokenAssetName // todo: stringToHex tbc
+      tokenAssetName, // todo: stringToHex tbc
+      metadata
     );
     const datum: MembershipIntentDatum = membershipIntentDatum(
       tokenPolicyId,
-      tokenAssetName // todo: stringToHex tbc
+      tokenAssetName, // todo: stringToHex tbc
+      metadata
     );
 
     try {
@@ -98,20 +118,30 @@ export class UserActionTx extends Layer1Tx {
     oracleUtxo: UTxO,
     tokenUtxo: UTxO,
     memberUtxo: UTxO,
-    project_url: string,
     fund_requested: number,
-    receiver: string
+    receiver: string,
+    project_details: string
   ) => {
+    const metadata: ProposalMetadata = proposalMetadata(
+      stringToHex(project_details)
+    );
+    const memberAssetName = getTokenAssetNameByPolicyId(
+      memberUtxo,
+      scripts.member.mint.hash
+    );
     const redeemer: ProposeProject = proposeProject(
-      stringToHex(project_url),
       fund_requested,
-      receiver
+      receiver,
+      Number(memberAssetName),
+      metadata
     );
     const datum: ProposalDatum = proposalDatum(
-      stringToHex(project_url),
       fund_requested,
-      receiver
+      receiver,
+      Number(memberAssetName),
+      metadata
     );
+    const intentAssetName = computeProposalMetadataHash(metadata);
 
     try {
       const txBuilder = await this.newValidationTx(true);
@@ -145,7 +175,7 @@ export class UserActionTx extends Layer1Tx {
         .txInInlineDatumPresent()
 
         .mintPlutusScriptV3()
-        .mint("1", scripts.proposeIntent.mint.hash, "") // todo: assetName
+        .mint("1", scripts.proposeIntent.mint.hash, intentAssetName)
         .mintTxInReference(
           ref_tx_in_scripts.proposeIntent.mint.txHash,
           ref_tx_in_scripts.proposeIntent.mint.outputIndex,

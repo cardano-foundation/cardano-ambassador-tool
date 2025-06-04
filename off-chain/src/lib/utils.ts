@@ -7,6 +7,7 @@ import {
   integer,
   list,
   serializeAddressObj,
+  serializeData,
   stringToHex,
   UTxO,
 } from "@meshsdk/core";
@@ -18,7 +19,17 @@ import {
   ProposalDatum,
 } from "./bar";
 import { policyIdLength } from "./constant";
-import { Member, Proposal, memberDatum } from "./types";
+import {
+  Member,
+  MemberData,
+  MembershipMetadata,
+  Proposal,
+  ProposalData,
+  ProposalMetadata,
+  memberDatum,
+  membershipMetadata,
+} from "./types";
+import { blake2bHex } from "blakejs";
 
 export const getTokenAssetNameByPolicyId = (
   utxo: UTxO,
@@ -90,19 +101,21 @@ export const getCounterDatum = (counterUtxo: UTxO): number => {
 
 export const getMembershipIntentDatum = (
   membershipIntentUtxo: UTxO
-): { policyId: string; assetName: string } => {
+): { policyId: string; assetName: string; metadata: MemberData } => {
   const plutusData = membershipIntentUtxo.output.plutusData!;
   const datum: MembershipIntentDatum = deserializeDatum(plutusData);
 
   const policyId = datum.fields[0].list[0].bytes;
   const assetName = datum.fields[0].list[1].bytes;
+  const metadata: MemberData = datum.fields[1];
 
-  return { policyId, assetName };
+  return { policyId, assetName, metadata };
 };
 
 export const getMemberDatum = (memberUtxo: UTxO): Member => {
   const plutusData = memberUtxo.output.plutusData!;
   const datum: MemberDatum = deserializeDatum(plutusData);
+  const metadata: MemberData = datum.fields[3];
 
   const policyId = datum.fields[0].list[0].bytes;
   const assetName = datum.fields[0].list[1].bytes;
@@ -118,6 +131,7 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
     token: { policyId, assetName },
     completion,
     fund_received,
+    metadata,
   };
 };
 
@@ -128,23 +142,32 @@ export const updateMemberDatum = (
   const member: Member = getMemberDatum(memberUtxo);
   const signOffApproval: Proposal = getProposalDatum(signOffApprovalUtxo);
 
-  const updated_completion: Map<string, number> = new Map();
+  const updated_completion: Map<any, number> = new Map();
   member.completion.forEach((v, k) => {
     updated_completion.set(stringToHex(k), v);
   });
   updated_completion.set(
-    signOffApproval.project_url,
+    signOffApproval.metadata,
     signOffApproval.fund_requested
   );
 
   const updated_fund_received =
     member.fund_received + signOffApproval.fund_requested;
 
+  const member_metadata: MembershipMetadata = membershipMetadata(
+    member.metadata.walletAddress,
+    member.metadata.fullName,
+    member.metadata.displayName,
+    member.metadata.emailAddress,
+    member.metadata.bio
+  );
+
   const updated_member_datum: MemberDatum = memberDatum(
     member.token.policyId,
     member.token.assetName,
     updated_completion,
-    updated_fund_received
+    updated_fund_received,
+    member_metadata
   );
 
   return updated_member_datum;
@@ -154,14 +177,16 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
   const plutusData = utxo.output.plutusData!;
   const datum: ProposalDatum = deserializeDatum(plutusData);
 
-  const project_url: string = hexToString(datum.fields[0].bytes);
-  const fund_requested: number = Number(datum.fields[1].int);
-  const receiver: string = serializeAddressObj(datum.fields[2]);
+  const fund_requested: number = Number(datum.fields[0].int);
+  const receiver: string = serializeAddressObj(datum.fields[1]);
+  const member: number = Number(datum.fields[2].int);
+  const metadata: ProposalData = datum.fields[3];
 
   return {
-    project_url: project_url,
     fund_requested: fund_requested,
     receiver: receiver,
+    member: member,
+    metadata: metadata,
   };
 };
 
@@ -191,7 +216,13 @@ export const getTreasuryChange = (
     });
   });
 
-  console.log(changedAmount);
-
   return changedAmount;
+};
+
+export const computeProposalMetadataHash = (
+  metadata: ProposalMetadata
+): string => {
+  const bytes: string = serializeData(metadata, "JSON");
+  const hash = blake2bHex(bytes, undefined, 32);
+  return hash;
 };
