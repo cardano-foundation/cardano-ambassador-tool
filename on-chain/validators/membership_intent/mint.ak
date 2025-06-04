@@ -39,7 +39,7 @@ validator membership_intent(oracle_nft: PolicyId) {
     } = oracle_input_datum
 
     when redeemer is {
-      ApplyMembership(user_token_policy_id, asset_name) -> {
+      ApplyMembership(user_token_policy_id, asset_name, metadata) -> {
         expect [intent_output] =
           outputs_at_with_policy(outputs, memebership_intent_address, policy_id)
         let is_intent_output_value_clean =
@@ -47,7 +47,10 @@ validator membership_intent(oracle_nft: PolicyId) {
         expect intent_output_datum: MembershipIntentDatum =
           output_inline_datum(intent_output)
         let correct_intent_output_datum =
-          MembershipIntentDatum { token: (user_token_policy_id, asset_name) }
+          MembershipIntentDatum {
+            token: (user_token_policy_id, asset_name),
+            metadata,
+          }
         let is_intent_datum_correct =
           intent_output_datum == correct_intent_output_datum
 
@@ -66,7 +69,6 @@ validator membership_intent(oracle_nft: PolicyId) {
           mint,
           policy_id,
           "",
-          //todo: naming
           1,
         )?
       }

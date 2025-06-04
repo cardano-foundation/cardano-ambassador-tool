@@ -9,9 +9,9 @@ use mocktail.{
 use tests/utils.{
   mock_counter_address, mock_counter_count, mock_counter_input_datum,
   mock_counter_nft, mock_first_admin, mock_input_oracle_datum, mock_member_token,
-  mock_membership_intent_address, mock_membership_intent_token, mock_new_admins,
-  mock_oracle_address, mock_oracle_nft, mock_third_admin, mock_user_address,
-  mock_user_token,
+  mock_membership_intent_address, mock_membership_intent_token, mock_metadata,
+  mock_new_admins, mock_oracle_address, mock_oracle_nft, mock_third_admin,
+  mock_user_address, mock_user_token,
 }
 use types.{ApplyMembership, ApproveMember, MembershipIntentDatum, RejectMember}
 
@@ -37,9 +37,15 @@ fn mock_apply_membership_tx(test_case: ApplyMembershipTestCase) -> Transaction {
   } = test_case
 
   let correct_user_token_datum =
-    MembershipIntentDatum { token: (mock_user_token.1st, mock_user_token.2nd) }
+    MembershipIntentDatum {
+      token: (mock_user_token.1st, mock_user_token.2nd),
+      metadata: mock_metadata,
+    }
   let incorrect_user_token_datum =
-    MembershipIntentDatum { token: (mock_policy_id(999), "incorrect") }
+    MembershipIntentDatum {
+      token: (mock_policy_id(999), "incorrect"),
+      metadata: mock_metadata,
+    }
   let input_value =
     from_lovelace(20000000) |> add(mock_user_token.1st, mock_user_token.2nd, 1)
 
@@ -100,7 +106,7 @@ test s2_mint_success_apply_membership() {
 
   membership_intent_mint.membership_intent.mint(
     mock_oracle_nft,
-    ApplyMembership(mock_user_token.1st, mock_user_token.2nd),
+    ApplyMembership(mock_user_token.1st, mock_user_token.2nd, mock_metadata),
     mock_membership_intent_token,
     tx,
   )
@@ -122,7 +128,7 @@ test s2_mint_fail_apply_membership_with_no_oracle_inputed() fail {
 
   !membership_intent_mint.membership_intent.mint(
     mock_oracle_nft,
-    ApplyMembership(mock_user_token.1st, mock_user_token.2nd),
+    ApplyMembership(mock_user_token.1st, mock_user_token.2nd, mock_metadata),
     mock_membership_intent_token,
     tx,
   )
@@ -144,7 +150,7 @@ test s2_mint_fail_apply_membership_with_incorrect_oracle_inputed() fail {
 
   !membership_intent_mint.membership_intent.mint(
     mock_oracle_nft,
-    ApplyMembership(mock_user_token.1st, mock_user_token.2nd),
+    ApplyMembership(mock_user_token.1st, mock_user_token.2nd, mock_metadata),
     mock_membership_intent_token,
     tx,
   )
@@ -166,7 +172,7 @@ test s2_mint_fail_apply_membership_with_no_intent_minted() {
 
   !membership_intent_mint.membership_intent.mint(
     mock_oracle_nft,
-    ApplyMembership(mock_user_token.1st, mock_user_token.2nd),
+    ApplyMembership(mock_user_token.1st, mock_user_token.2nd, mock_metadata),
     mock_membership_intent_token,
     tx,
   )
@@ -188,7 +194,7 @@ test s2_mint_fail_apply_membership_with_no_token_inputed() fail {
 
   !membership_intent_mint.membership_intent.mint(
     mock_oracle_nft,
-    ApplyMembership(mock_user_token.1st, mock_user_token.2nd),
+    ApplyMembership(mock_user_token.1st, mock_user_token.2nd, mock_metadata),
     mock_membership_intent_token,
     tx,
   )
@@ -210,7 +216,7 @@ test s2_mint_fail_apply_membership_with_token_ouput_incorrect() fail {
 
   !membership_intent_mint.membership_intent.mint(
     mock_oracle_nft,
-    ApplyMembership(mock_user_token.1st, mock_user_token.2nd),
+    ApplyMembership(mock_user_token.1st, mock_user_token.2nd, mock_metadata),
     mock_membership_intent_token,
     tx,
   )
@@ -232,7 +238,7 @@ test s2_mint_fail_apply_membership_with_intent_token_output_not_clean() fail {
 
   !membership_intent_mint.membership_intent.mint(
     mock_oracle_nft,
-    ApplyMembership(mock_user_token.1st, mock_user_token.2nd),
+    ApplyMembership(mock_user_token.1st, mock_user_token.2nd, mock_metadata),
     mock_membership_intent_token,
     tx,
   )
@@ -254,7 +260,7 @@ test s2_mint_fail_apply_membership_with_incorrect_intent_token_output_datum() {
 
   !membership_intent_mint.membership_intent.mint(
     mock_oracle_nft,
-    ApplyMembership(mock_user_token.1st, mock_user_token.2nd),
+    ApplyMembership(mock_user_token.1st, mock_user_token.2nd, mock_metadata),
     mock_membership_intent_token,
     tx,
   )

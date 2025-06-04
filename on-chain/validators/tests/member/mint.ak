@@ -10,9 +10,9 @@ use tests/utils.{
   mock_counter_address, mock_counter_count, mock_counter_input_datum,
   mock_counter_nft, mock_first_admin, mock_input_oracle_datum,
   mock_member_address, mock_member_token, mock_membership_intent_address,
-  mock_membership_intent_token, mock_new_admins, mock_oracle_address,
-  mock_oracle_nft, mock_second_admin, mock_third_admin, mock_user_address,
-  mock_user_token,
+  mock_membership_intent_token, mock_metadata, mock_new_admins,
+  mock_oracle_address, mock_oracle_nft, mock_second_admin, mock_third_admin,
+  mock_user_address, mock_user_token,
 }
 use types.{AddMember, MemberDatum, MembershipIntentDatum, RemoveMember}
 
@@ -44,12 +44,14 @@ fn mock_add_member_tx(test_case: AddMemberTestCase) -> Transaction {
       token: (mock_user_token.1st, mock_user_token.2nd),
       completion: [],
       fund_recevied: 0,
+      metadata: mock_metadata,
     }
   let incorrect_member_datum =
     MemberDatum {
       token: (mock_user_token.1st, mock_user_token.2nd),
       completion: [],
       fund_recevied: 999,
+      metadata: mock_metadata,
     }
   let input_value =
     from_lovelace(20000000) |> add(mock_membership_intent_token, "", 1)
@@ -89,6 +91,7 @@ fn mock_add_member_tx(test_case: AddMemberTestCase) -> Transaction {
         is_intent_inputed,
         MembershipIntentDatum {
           token: (mock_user_token.1st, mock_user_token.2nd),
+          metadata: mock_metadata,
         },
       )
     |> mint(is_member_minted, 1, mock_member_token, mock_counter_count)
