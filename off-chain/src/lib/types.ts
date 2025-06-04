@@ -17,6 +17,9 @@ import {
   Pairs,
   conStr1,
   conStr2,
+  ConStr0,
+  PubKeyAddress,
+  pubKeyAddress,
 } from "@meshsdk/core";
 import {
   AddMember,
@@ -48,7 +51,7 @@ import {
   UpdateThreshold,
 } from "./bar";
 import { admin_tenure, admins, multi_sig_threshold, scripts } from "./constant";
-import { addrBech32ToPlutusDataObj } from "@meshsdk/core-csl";
+import { addrBech32ToPlutusDataObj, toPlutusData } from "@meshsdk/core-csl";
 
 // 0 - Oracle
 export const rMint: RMint = conStr0([]);
@@ -114,11 +117,42 @@ export const stopCounter: StopCounter = conStr1([]);
 
 // 2 - MembershipIntent
 
+export type MembershipMetadata = ConStr0<
+  [
+    PubKeyAddress, // wallet address
+    ByteString, // full name
+    ByteString, // display name
+    ByteString, // email address
+    ByteString // bio
+  ]
+>;
+
+export const membershipMetadata = (
+  walletAddress: string,
+  fullName: string,
+  displayName: string,
+  emailAddress: string,
+  bio: string
+): MembershipMetadata => {
+  return conStr0([
+    addrBech32ToPlutusDataObj(walletAddress),
+    byteString(fullName),
+    byteString(displayName),
+    byteString(emailAddress),
+    byteString(bio),
+  ]);
+};
+
 export const applyMembership = (
   tokenPolicyId: string,
-  tokenAssetName: string
+  tokenAssetName: string,
+  metaData: MembershipMetadata
 ): ApplyMembership => {
-  return conStr0([policyId(tokenPolicyId), assetName(tokenAssetName)]);
+  return conStr0([
+    policyId(tokenPolicyId),
+    assetName(tokenAssetName),
+    metaData,
+  ]);
 };
 
 export const approveMember: ApproveMember = conStr1([]);
@@ -127,10 +161,11 @@ export const rejectMember: RejectMember = conStr2([]);
 
 export const membershipIntentDatum = (
   tokenPolicyId: string,
-  tokenAssetName: string
+  tokenAssetName: string,
+  metaData: MembershipMetadata
 ): MembershipIntentDatum => {
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
-  return conStr0([token]);
+  return conStr0([token, metaData]);
 };
 
 // 3 - Member
@@ -139,7 +174,8 @@ export const memberDatum = (
   tokenPolicyId: string,
   tokenAssetName: string,
   completion: Map<string, number>,
-  fund_received: number
+  fund_received: number,
+  metaData: MembershipMetadata
 ): MemberDatum => {
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
   const completionItems: [ByteString, Integer][] = Array.from(
@@ -151,7 +187,7 @@ export const memberDatum = (
     Integer
   >(completionItems);
 
-  return conStr0([token, completionPluts, integer(fund_received)]);
+  return conStr0([token, completionPluts, integer(fund_received), metaData]);
 };
 
 export const addMember: AddMember = conStr0([]);
@@ -165,15 +201,27 @@ export const memberProposeProject: MemberProposeProject = conStr1([]);
 export const adminSignOffProject: AdminSignOffProject = conStr2([]);
 // 4 - ProposeIntent
 
+export type ProposalMetadata = ConStr0<
+  [
+    ByteString // project details
+  ]
+>;
+
+export const proposalMetadata = (projectDetails: string): ProposalMetadata => {
+  return conStr0([byteString(projectDetails)]);
+};
+
 export const proposeProject = (
-  project_url: string,
   fund_requested: number,
-  receiver: string
+  receiver: string,
+  member: number,
+  metaData: ProposalMetadata
 ): ProposeProject => {
   return conStr0([
-    byteString(project_url),
     integer(fund_requested),
     addrBech32ToPlutusDataObj(receiver),
+    integer(member),
+    metaData,
   ]);
 };
 
@@ -182,14 +230,16 @@ export const approveProposal: ApproveProposal = conStr1([]);
 export const rejectProposal: RejectProposal = conStr2([]);
 
 export const proposalDatum = (
-  project_url: string,
   fund_requested: number,
-  receiver: string
+  receiver: string,
+  member: number,
+  metaData: ProposalMetadata
 ): ProposalDatum => {
   return conStr0([
-    byteString(project_url),
     integer(fund_requested),
     addrBech32ToPlutusDataObj(receiver),
+    integer(member),
+    metaData,
   ]);
 };
 
@@ -206,15 +256,28 @@ export const mintSignOffApproval: MintSignOffApproval = conStr0([]);
 export const processSignOff: ProcessSignOff = conStr1([]);
 
 // Non blueprint types
+export type MemberData = {
+  walletAddress: string;
+  fullName: string;
+  displayName: string;
+  emailAddress: string;
+  bio: string;
+};
 
 export type Member = {
   token: { policyId: string; assetName: string };
   completion: Map<string, number>;
   fund_received: number;
+  metadata: MemberData;
+};
+
+export type ProposalData = {
+  projectDetails: string;
 };
 
 export type Proposal = {
-  project_url: string;
   fund_requested: number;
   receiver: string;
+  member: number;
+  metadata: ProposalData;
 };

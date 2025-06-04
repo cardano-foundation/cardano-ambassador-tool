@@ -37,6 +37,8 @@ import {
   ref_tx_in_scripts,
   IProvider,
   Network,
+  MembershipMetadata,
+  membershipMetadata,
 } from "../lib";
 import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
@@ -76,14 +78,25 @@ export class AdminActionTx extends Layer1Tx {
     admin_signed: string[]
   ) => {
     const count = getCounterDatum(counterUtxo);
-    const { policyId: tokenPolicyId, assetName: tokenAssetName } =
-      getMembershipIntentDatum(membershipIntentUtxo);
+    const {
+      policyId: tokenPolicyId,
+      assetName: tokenAssetName,
+      metadata: memberData,
+    } = getMembershipIntentDatum(membershipIntentUtxo);
 
+    const metadata: MembershipMetadata = membershipMetadata(
+      memberData.walletAddress,
+      memberData.fullName,
+      memberData.displayName,
+      memberData.emailAddress,
+      memberData.bio
+    );
     const new_member_datum: MemberDatum = memberDatum(
       tokenPolicyId,
       tokenAssetName,
       new Map(),
-      0
+      0,
+      metadata
     );
     const updated_counter_datum: CounterDatum = counterDatum(count + 1);
 
