@@ -6,10 +6,10 @@
 
 ## User Action
 
-1. Mint - Redeemer `ApplyMembership {Asset}`
+1. Mint - Redeemer `ApplyMembership {PolicyId, AssetName, Data}`
 
    - only 1 input token bought in
-   - mint 1 `MembershipIntent` token (todo: naming)
+   - mint 1 `MembershipIntent` token
    - output bought in token back to person
    - output `MembershipIntent` token to `MembershipIntent` Spending Script with datum {Asset}
 

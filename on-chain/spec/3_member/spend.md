@@ -9,6 +9,7 @@
 - `token` : `Asset` - Asset of the token bougth in
 - `completion`: `Pairs<String,Int>` - Proposal completion records
 - `fund_recevied`: `Int` - fund received records
+- `metadata`: `Data`
 
 ## User Action
 

@@ -1,3 +1,5 @@
+use aiken/cbor
+use aiken/crypto.{blake2b_256}
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
 use mocktail.{
@@ -7,12 +9,12 @@ use mocktail.{
 }
 use propose_intent/mint as propose_intent_mint
 use tests/utils.{
-  mock_counter_address, mock_counter_count, mock_first_admin,
-  mock_fund_requested, mock_input_oracle_datum, mock_member_address,
-  mock_member_datum, mock_member_token, mock_metadata, mock_new_admins,
-  mock_oracle_address, mock_oracle_nft, mock_proposal_token,
-  mock_propose_intent_address, mock_propose_intent_token, mock_receiver,
-  mock_third_admin, mock_user_address, mock_user_token,
+  mock_counter_count, mock_first_admin, mock_fund_requested,
+  mock_input_oracle_datum, mock_member, mock_member_address, mock_member_datum,
+  mock_member_token, mock_metadata, mock_new_admins, mock_oracle_address,
+  mock_oracle_nft, mock_proposal_token, mock_propose_intent_address,
+  mock_propose_intent_token, mock_receiver, mock_third_admin, mock_user_address,
+  mock_user_token,
 }
 use types.{ApproveProposal, ProposalDatum, ProposeProject, RejectProposal}
 
@@ -45,12 +47,14 @@ fn mock_propose_project_tx(test_case: ProposeProjectTestCase) -> Transaction {
     ProposalDatum {
       fund_requested: mock_fund_requested,
       receiver: mock_receiver,
+      member: mock_member,
       metadata: mock_metadata,
     }
   let incorrect_intent_token_datum =
     ProposalDatum {
       fund_requested: 10,
       receiver: mock_receiver,
+      member: mock_member,
       metadata: mock_metadata,
     }
 
@@ -75,7 +79,12 @@ fn mock_propose_project_tx(test_case: ProposeProjectTestCase) -> Transaction {
         is_oracle_inputed && !is_oracle_format_correct,
         mock_new_admins,
       )
-    |> mint(is_intent_minted, 1, mock_propose_intent_token, "")
+    |> mint(
+        is_intent_minted,
+        1,
+        mock_propose_intent_token,
+        cbor.serialise(mock_metadata) |> blake2b_256(),
+      )
     |> tx_in(is_token_inputed, mock_tx_hash(0), 0, input_value, mock_user_address)
     |> tx_in(
         is_member_inputed,
@@ -134,7 +143,12 @@ test s4_mint_success_propose_project() {
 
   propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(
+      mock_fund_requested,
+      mock_receiver,
+      mock_member,
+      mock_metadata,
+    ),
     mock_propose_intent_token,
     tx,
   )
@@ -158,7 +172,7 @@ test s4_mint_fail_propose_project_with_no_oracle_inputed() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(mock_fund_requested, mock_receiver, 0, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -182,7 +196,7 @@ test s4_mint_fail_propose_project_with_incorrect_oracle_inputed() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(mock_fund_requested, mock_receiver, 0, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -206,7 +220,7 @@ test s4_mint_fail_propose_project_with_no_intent_minted() {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(mock_fund_requested, mock_receiver, 0, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -230,7 +244,7 @@ test s4_mint_fail_propose_project_with_no_token_inputed() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(mock_fund_requested, mock_receiver, 0, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -254,7 +268,7 @@ test s4_mint_fail_propose_project_with_token_ouput_incorrect() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(mock_fund_requested, mock_receiver, 0, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -278,7 +292,7 @@ test s4_mint_fail_propose_project_with_no_member_inputed() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(mock_fund_requested, mock_receiver, 0, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -302,7 +316,7 @@ test s4_mint_fail_propose_project_with_member_output_incorrect() {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(mock_fund_requested, mock_receiver, 0, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -326,7 +340,7 @@ test s4_mint_fail_propose_project_with_intent_token_output_not_clean() {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(mock_fund_requested, mock_receiver, 0, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -350,7 +364,7 @@ test s4_mint_fail_propose_project_with_incorrect_intent_token_output_datum() {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
+    ProposeProject(mock_fund_requested, mock_receiver, 0, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -372,7 +386,12 @@ fn mock_approve_proposal_tx(test_case: ApproveProposalTestCase) -> Transaction {
   } = test_case
 
   let input_value =
-    from_lovelace(20000000) |> add(mock_propose_intent_token, "", 1)
+    from_lovelace(20000000)
+      |> add(
+          mock_propose_intent_token,
+          cbor.serialise(mock_metadata) |> blake2b_256(),
+          1,
+        )
 
   mocktail_tx()
     |> ref_tx_in(
@@ -390,9 +409,19 @@ fn mock_approve_proposal_tx(test_case: ApproveProposalTestCase) -> Transaction {
         is_oracle_inputed && !is_oracle_format_correct,
         mock_new_admins,
       )
-    |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_counter_address)
-    |> mint(is_intent_burnt, -1, mock_propose_intent_token, "")
-    |> mint(is_proposal_minted, 1, mock_proposal_token, "")
+    |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_propose_intent_address)
+    |> mint(
+        is_intent_burnt,
+        -1,
+        mock_propose_intent_token,
+        cbor.serialise(mock_metadata) |> blake2b_256(),
+      )
+    |> mint(
+        is_proposal_minted,
+        1,
+        mock_proposal_token,
+        cbor.serialise(mock_metadata) |> blake2b_256(),
+      )
     |> complete()
 }
 
@@ -507,7 +536,12 @@ fn mock_reject_proposal_tx(test_case: RejectProposalTestCase) -> Transaction {
   } = test_case
 
   let input_value =
-    from_lovelace(20000000) |> add(mock_propose_intent_token, "", 1)
+    from_lovelace(20000000)
+      |> add(
+          mock_propose_intent_token,
+          cbor.serialise(mock_metadata) |> blake2b_256(),
+          1,
+        )
 
   mocktail_tx()
     |> ref_tx_in(
@@ -525,8 +559,13 @@ fn mock_reject_proposal_tx(test_case: RejectProposalTestCase) -> Transaction {
         is_oracle_inputed && !is_oracle_format_correct,
         mock_new_admins,
       )
-    |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_counter_address)
-    |> mint(is_intent_burnt, -1, mock_propose_intent_token, "")
+    |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_propose_intent_address)
+    |> mint(
+        is_intent_burnt,
+        -1,
+        mock_propose_intent_token,
+        cbor.serialise(mock_metadata) |> blake2b_256(),
+      )
     |> required_signer_hash(is_admins_signed, mock_first_admin)
     |> required_signer_hash(is_admins_signed, mock_third_admin)
     |> complete()

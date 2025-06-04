@@ -7,8 +7,8 @@ use mocktail.{
 }
 use sign_off_approval/mint as sign_off_approval_mint
 use tests/utils.{
-  mock_first_admin, mock_input_oracle_datum, mock_metadata, mock_new_admins,
-  mock_oracle_address, mock_oracle_nft, mock_proposal_address,
+  mock_first_admin, mock_input_oracle_datum, mock_member, mock_metadata,
+  mock_new_admins, mock_oracle_address, mock_oracle_nft, mock_proposal_address,
   mock_proposal_datum, mock_proposal_token, mock_receiver,
   mock_sign_off_approval_address, mock_sign_off_approval_token, mock_third_admin,
   mock_treasury_withdrawal_script_hash,
@@ -41,6 +41,7 @@ fn mock_add_approval_tx(test_case: MintSignOffApprovalTestCase) -> Transaction {
     ProposalDatum {
       fund_requested: 10,
       receiver: mock_receiver,
+      member: mock_member,
       metadata: mock_metadata,
     }
   let input_value = from_lovelace(20000000) |> add(mock_proposal_token, "", 1)

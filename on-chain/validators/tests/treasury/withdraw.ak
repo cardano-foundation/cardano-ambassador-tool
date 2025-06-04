@@ -6,9 +6,9 @@ use mocktail.{
 }
 use tests/utils.{
   mock_counter_count, mock_fund_requested, mock_input_oracle_datum,
-  mock_member_address, mock_member_datum, mock_member_token, mock_new_admins,
-  mock_oracle_address, mock_oracle_nft, mock_proposal_datum, mock_receiver,
-  mock_sign_off_approval_address, mock_sign_off_approval_token,
+  mock_member_address, mock_member_datum, mock_member_token, mock_metadata,
+  mock_new_admins, mock_oracle_address, mock_oracle_nft, mock_proposal_datum,
+  mock_receiver, mock_sign_off_approval_address, mock_sign_off_approval_token,
   mock_treasury_address, mock_user_address, mock_user_token,
 }
 use treasury/w_sign_off as treasury_withdraw
@@ -45,6 +45,7 @@ fn mock_add_approval_tx(test_case: ProcessSignOffTestCase) -> Transaction {
       token: (mock_user_token.1st, mock_user_token.2nd),
       completion: [Pair(input_metadata, 1000)],
       fund_recevied: 1000,
+      metadata: mock_metadata,
     }
   let incorrect_member_datum = mock_member_datum
   let approval_input_value =

@@ -54,13 +54,14 @@ pub type CounterDatum {
 // 2 - MembershipIntent
 
 pub type MembershipIntentMintRedeemer {
-  ApplyMembership { policy_id: PolicyId, asset_name: AssetName }
+  ApplyMembership { policy_id: PolicyId, asset_name: AssetName, metadata: Data }
   ApproveMember
   RejectMember
 }
 
 pub type MembershipIntentDatum {
   token: (PolicyId, AssetName),
+  metadata: Data,
 }
 
 // 3 - Member
@@ -80,12 +81,18 @@ pub type MemberDatum {
   token: (PolicyId, AssetName),
   completion: Pairs<Data, Int>,
   fund_recevied: Int,
+  metadata: Data,
 }
 
 // 4 - ProposeIntent
 
 pub type ProposeIntentMintRedeemer {
-  ProposeProject { fund_requested: Int, receiver: Address, metadata: Data }
+  ProposeProject {
+    fund_requested: Int,
+    receiver: Address,
+    member: Int,
+    metadata: Data,
+  }
   ApproveProposal
   RejectProposal
 }
@@ -93,6 +100,7 @@ pub type ProposeIntentMintRedeemer {
 pub type ProposalDatum {
   fund_requested: Int,
   receiver: Address,
+  member: Int,
   metadata: Data,
 }
 

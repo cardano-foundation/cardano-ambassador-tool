@@ -2,9 +2,9 @@ use cardano/assets.{PolicyId, lovelace_of}
 use cardano/certificate.{Certificate}
 use cardano/transaction.{Transaction}
 use cocktail.{
-  get_all_value_from, get_all_value_to, inputs_at_with_policy, only_minted_token,
-  output_inline_datum, outputs_at, outputs_at_with_policy, value_length,
-  value_policy_info,
+  convert_int_to_bytes, get_all_value_from, get_all_value_to, inputs_at_with,
+  inputs_at_with_policy, only_minted_token, output_inline_datum, outputs_at,
+  outputs_at_with, value_length, value_policy_info,
 }
 use types.{MemberDatum, OracleDatum, ProposalDatum}
 use utils.{get_oracle_nft_datum, updated_member_datum}
@@ -32,17 +32,28 @@ validator treasury(oracle_nft: PolicyId) {
     expect approval_input_datum: ProposalDatum =
       output_inline_datum(approval_input.output)
 
-    let ProposalDatum { fund_requested, receiver, .. } = approval_input_datum
+    let ProposalDatum { fund_requested, receiver, member, .. } =
+      approval_input_datum
     expect Some((_, proposal_asset_name, _)) =
       value_policy_info(approval_input.output.value, sign_off_approval_token)
 
     expect [member_input] =
-      inputs_at_with_policy(inputs, member_address, member_token)
+      inputs_at_with(
+        inputs,
+        member_address,
+        member_token,
+        convert_int_to_bytes(member),
+      )
     expect member_input_datum: MemberDatum =
       output_inline_datum(member_input.output)
 
     expect [member_output] =
-      outputs_at_with_policy(outputs, member_address, member_token)
+      outputs_at_with(
+        outputs,
+        member_address,
+        member_token,
+        convert_int_to_bytes(member),
+      )
     let is_member_output_value_clean = value_length(member_output.value) == 2
     expect member_output_datum: MemberDatum = output_inline_datum(member_output)
     let correct_member_output_datum =

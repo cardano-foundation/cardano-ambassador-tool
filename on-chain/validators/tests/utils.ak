@@ -96,6 +96,8 @@ pub const mock_metadata = "abc project"
 
 pub const mock_fund_requested = 1000
 
+pub const mock_member = 2
+
 pub const mock_receiver = from_script("receiver")
 
 pub const mock_member_datum =
@@ -103,11 +105,13 @@ pub const mock_member_datum =
     token: (mock_user_token.1st, mock_user_token.2nd),
     completion: [],
     fund_recevied: 0,
+    metadata: mock_metadata,
   }
 
 pub const mock_proposal_datum =
   ProposalDatum {
     fund_requested: mock_fund_requested,
     receiver: mock_receiver,
+    member: mock_member,
     metadata: mock_metadata,
   }

@@ -7,6 +7,7 @@
 ## Datum
 
 - `token`: `Asset` - The token bought in
+- `metadata`: `Data`
 
 ## User Action
 

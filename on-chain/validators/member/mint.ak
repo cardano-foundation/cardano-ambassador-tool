@@ -64,6 +64,7 @@ validator member(oracle_nft: PolicyId) {
             token: intent_input_datum.token,
             completion: [],
             fund_recevied: 0,
+            metadata: intent_input_datum.metadata,
           }
         let is_member_output_datum_correct =
           member_output_datum == new_member_output_datum
