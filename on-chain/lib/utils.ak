@@ -1,11 +1,9 @@
-use aiken/collection/list.{concat, length}
+use aiken/collection/list.{concat}
 use aiken/crypto.{VerificationKeyHash}
 use cardano/address.{Address}
 use cardano/assets.{AssetName, PolicyId, quantity_of}
 use cardano/transaction.{DatumHash, InlineDatum, Input, NoDatum, Output}
-use cocktail.{
-  convert_int_to_bytes, inputs_at_with, output_inline_datum, outputs_at,
-}
+use cocktail.{convert_int_to_bytes, inputs_at_with, output_inline_datum}
 use types.{
   CounterDatum, MemberDatum, MembershipIntentDatum, OracleDatum, ProposalDatum,
 }
@@ -120,18 +118,4 @@ pub fn updated_member_datum(
     }
 
   updated_datum
-}
-
-pub fn check_treasury_change_address(
-  outputs: List<Output>,
-  treasury_address: Address,
-) -> Bool {
-  when length(outputs) is {
-    2 -> True
-    3 -> {
-      expect [_] = outputs_at(outputs, treasury_address)
-      True
-    }
-    _ -> False
-  }
 }

@@ -84,6 +84,20 @@ fn mock_add_approval_tx(test_case: ProcessSignOffTestCase) -> Transaction {
         mock_member_address,
       )
     |> tx_in_inline_datum(is_member_inputed, mock_member_datum)
+    |> tx_in(
+        True,
+        mock_tx_hash(13),
+        13,
+        from_lovelace(20000000),
+        mock_treasury_address,
+      )
+    |> tx_in(
+        True,
+        mock_tx_hash(14),
+        13,
+        from_lovelace(20000000),
+        mock_treasury_address,
+      )
     |> tx_out(is_member_output_clean, mock_member_address, member_input_value)
     |> tx_out(
         !is_member_output_clean,
@@ -102,7 +116,12 @@ fn mock_add_approval_tx(test_case: ProcessSignOffTestCase) -> Transaction {
     |> tx_out(
         is_change_output_correct,
         mock_treasury_address,
-        from_lovelace(999999),
+        from_lovelace(20000000 + 20000000 - mock_fund_requested),
+      )
+    |> tx_out(
+        !is_change_output_correct,
+        mock_treasury_address,
+        from_lovelace(20000000),
       )
     |> tx_out(!is_change_output_correct, mock_user_address, from_lovelace(999999))
     |> complete()
@@ -279,7 +298,7 @@ test s7_withdraw_fail_process_sign_off_with_incorrect_fund_output() {
   !treasury_withdraw.treasury.withdraw(mock_oracle_nft, None, None, tx)
 }
 
-test s7_withdraw_fail_process_sign_off_with_incorrect_change_output() fail {
+test s7_withdraw_fail_process_sign_off_with_incorrect_change_output() {
   let tx =
     mock_add_approval_tx(
       ProcessSignOffTestCase {
