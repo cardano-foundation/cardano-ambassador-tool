@@ -9,8 +9,8 @@ use propose_intent/mint as propose_intent_mint
 use tests/utils.{
   mock_counter_address, mock_counter_count, mock_first_admin,
   mock_fund_requested, mock_input_oracle_datum, mock_member_address,
-  mock_member_datum, mock_member_token, mock_new_admins, mock_oracle_address,
-  mock_oracle_nft, mock_project_url, mock_proposal_token,
+  mock_member_datum, mock_member_token, mock_metadata, mock_new_admins,
+  mock_oracle_address, mock_oracle_nft, mock_proposal_token,
   mock_propose_intent_address, mock_propose_intent_token, mock_receiver,
   mock_third_admin, mock_user_address, mock_user_token,
 }
@@ -43,16 +43,17 @@ fn mock_propose_project_tx(test_case: ProposeProjectTestCase) -> Transaction {
 
   let correct_intent_token_datum =
     ProposalDatum {
-      project_url: mock_project_url,
       fund_requested: mock_fund_requested,
       receiver: mock_receiver,
+      metadata: mock_metadata,
     }
   let incorrect_intent_token_datum =
     ProposalDatum {
-      project_url: mock_project_url,
       fund_requested: 10,
       receiver: mock_receiver,
+      metadata: mock_metadata,
     }
+
   let input_value =
     from_lovelace(20000000) |> add(mock_user_token.1st, mock_user_token.2nd, 1)
   let member_input_value =
@@ -133,7 +134,7 @@ test s4_mint_success_propose_project() {
 
   propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -157,7 +158,7 @@ test s4_mint_fail_propose_project_with_no_oracle_inputed() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -181,7 +182,7 @@ test s4_mint_fail_propose_project_with_incorrect_oracle_inputed() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -205,7 +206,7 @@ test s4_mint_fail_propose_project_with_no_intent_minted() {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -229,7 +230,7 @@ test s4_mint_fail_propose_project_with_no_token_inputed() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -253,7 +254,7 @@ test s4_mint_fail_propose_project_with_token_ouput_incorrect() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -277,7 +278,7 @@ test s4_mint_fail_propose_project_with_no_member_inputed() fail {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -301,7 +302,7 @@ test s4_mint_fail_propose_project_with_member_output_incorrect() {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -325,7 +326,7 @@ test s4_mint_fail_propose_project_with_intent_token_output_not_clean() {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )
@@ -349,7 +350,7 @@ test s4_mint_fail_propose_project_with_incorrect_intent_token_output_datum() {
 
   !propose_intent_mint.propose_intent.mint(
     mock_oracle_nft,
-    ProposeProject(mock_project_url, mock_fund_requested, mock_receiver),
+    ProposeProject(mock_fund_requested, mock_receiver, mock_metadata),
     mock_propose_intent_token,
     tx,
   )

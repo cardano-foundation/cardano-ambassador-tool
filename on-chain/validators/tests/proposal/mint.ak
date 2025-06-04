@@ -7,8 +7,8 @@ use mocktail.{
 }
 use proposal/mint as proposal_mint
 use tests/utils.{
-  mock_first_admin, mock_input_oracle_datum, mock_new_admins,
-  mock_oracle_address, mock_oracle_nft, mock_project_url, mock_proposal_address,
+  mock_first_admin, mock_input_oracle_datum, mock_metadata, mock_new_admins,
+  mock_oracle_address, mock_oracle_nft, mock_proposal_address,
   mock_proposal_datum, mock_proposal_token, mock_propose_intent_address,
   mock_propose_intent_token, mock_receiver, mock_sign_off_approval_token,
   mock_third_admin,
@@ -39,9 +39,9 @@ fn mock_add_proposal_tx(test_case: MintProposalTestCase) -> Transaction {
   let correct_proposal_datum = mock_proposal_datum
   let incorrect_proposal_datum =
     ProposalDatum {
-      project_url: mock_project_url,
       fund_requested: 10,
       receiver: mock_receiver,
+      metadata: mock_metadata,
     }
   let input_value =
     from_lovelace(20000000) |> add(mock_propose_intent_token, "", 1)

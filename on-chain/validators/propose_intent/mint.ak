@@ -39,7 +39,7 @@ validator propose_intent(oracle_nft: PolicyId) {
     } = oracle_input_datum
 
     when redeemer is {
-      ProposeProject(project_url, fund_requested, receiver) -> {
+      ProposeProject(fund_requested, receiver, metadata) -> {
         expect [member_input] =
           inputs_at_with_policy(inputs, member_address, member_token)
         expect member_input_datum: MemberDatum =
@@ -63,7 +63,7 @@ validator propose_intent(oracle_nft: PolicyId) {
         expect intent_output_datum: ProposalDatum =
           output_inline_datum(intent_output)
         let correct_intent_output_datum =
-          ProposalDatum { project_url, fund_requested, receiver }
+          ProposalDatum { fund_requested, receiver, metadata }
         let is_intent_datum_correct =
           intent_output_datum == correct_intent_output_datum
 

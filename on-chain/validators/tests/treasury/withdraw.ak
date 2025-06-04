@@ -39,10 +39,11 @@ fn mock_add_approval_tx(test_case: ProcessSignOffTestCase) -> Transaction {
     is_change_output_correct,
   } = test_case
 
+  let input_metadata: Data = "abc project"
   let correct_member_datum =
     MemberDatum {
       token: (mock_user_token.1st, mock_user_token.2nd),
-      completion: [Pair(@"abc project", 1000)],
+      completion: [Pair(input_metadata, 1000)],
       fund_recevied: 1000,
     }
   let incorrect_member_datum = mock_member_datum

@@ -13,7 +13,7 @@ pub type MintPolarity {
 pub type OracleSpendRedeemer {
   RotateAdmin {
     new_admins: List<VerificationKeyHash>,
-    new_admin_tenure: String,
+    new_admin_tenure: ByteArray,
   }
   UpdateThreshold { new_threshold: Int }
   StopOracle
@@ -21,7 +21,7 @@ pub type OracleSpendRedeemer {
 
 pub type OracleDatum {
   admins: List<VerificationKeyHash>,
-  admin_tenure: String,
+  admin_tenure: ByteArray,
   multi_sig_threshold: Int,
   oracle_nft: PolicyId,
   oracle_address: Address,
@@ -78,22 +78,22 @@ pub type MemberSpendRedeemer {
 
 pub type MemberDatum {
   token: (PolicyId, AssetName),
-  completion: Pairs<String, Int>,
+  completion: Pairs<Data, Int>,
   fund_recevied: Int,
 }
 
 // 4 - ProposeIntent
 
 pub type ProposeIntentMintRedeemer {
-  ProposeProject { project_url: String, fund_requested: Int, receiver: Address }
+  ProposeProject { fund_requested: Int, receiver: Address, metadata: Data }
   ApproveProposal
   RejectProposal
 }
 
 pub type ProposalDatum {
-  project_url: String,
   fund_requested: Int,
   receiver: Address,
+  metadata: Data,
 }
 
 // 5 - Proposal

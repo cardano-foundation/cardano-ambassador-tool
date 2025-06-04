@@ -109,9 +109,9 @@ pub fn updated_member_datum(
   proposal_datum: ProposalDatum,
 ) -> MemberDatum {
   let MemberDatum { completion, fund_recevied, .. } = member_datum
-  let ProposalDatum { project_url, fund_requested, .. } = proposal_datum
+  let ProposalDatum { fund_requested, metadata, .. } = proposal_datum
   let new_fund_received = fund_recevied + fund_requested
-  let new_completion = completion |> concat([Pair(project_url, fund_requested)])
+  let new_completion = completion |> concat([Pair(metadata, fund_requested)])
   let updated_datum: MemberDatum =
     MemberDatum {
       ..member_datum,
