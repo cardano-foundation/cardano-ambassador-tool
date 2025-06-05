@@ -4,22 +4,19 @@ import {
   applyMembership,
   MembershipIntentDatum,
   membershipIntentDatum,
-  scripts,
-  minUtxos,
   ProposeProject,
   proposeProject,
   ProposalDatum,
   proposalDatum,
   memberProposeProject,
-  ref_tx_in_scripts,
   IProvider,
-  Network,
   MembershipMetadata,
   membershipMetadata,
   ProposalMetadata,
   proposalMetadata,
   getTokenAssetNameByPolicyId,
   computeProposalMetadataHash,
+  CATConstants,
 } from "../lib";
 import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
@@ -28,9 +25,9 @@ export class UserActionTx extends Layer1Tx {
     public address: string,
     public userWallet: IWallet,
     public provider: IProvider,
-    public network: Network = "preprod"
+    public catConstant: CATConstants
   ) {
-    super(userWallet, address, provider, network);
+    super(userWallet, address, provider, catConstant);
   }
 
   applyMembership = async (
@@ -78,19 +75,20 @@ export class UserActionTx extends Layer1Tx {
         )
 
         .mintPlutusScriptV3()
-        .mint("1", scripts.membershipIntent.mint.hash, "")
+        .mint("1", this.catConstant.scripts.membershipIntent.mint.hash, "")
         .mintTxInReference(
-          ref_tx_in_scripts.membershipIntent.mint.txHash,
-          ref_tx_in_scripts.membershipIntent.mint.outputIndex,
-          (scripts.membershipIntent.mint.cbor.length / 2).toString(),
-          scripts.membershipIntent.mint.hash
+          this.catConstant.refTxInScripts.membershipIntent.mint.txHash,
+          this.catConstant.refTxInScripts.membershipIntent.mint.outputIndex,
+          (
+            this.catConstant.scripts.membershipIntent.mint.cbor.length / 2
+          ).toString(),
+          this.catConstant.scripts.membershipIntent.mint.hash
         )
         .mintRedeemerValue(redeemer, "JSON")
 
-        .txOut(scripts.membershipIntent.spend.address, [
-          { unit: "lovelace", quantity: minUtxos.applyMembership },
+        .txOut(this.catConstant.scripts.membershipIntent.spend.address, [
           {
-            unit: scripts.membershipIntent.mint.hash,
+            unit: this.catConstant.scripts.membershipIntent.mint.hash,
             quantity: "1",
           },
         ])
@@ -118,25 +116,25 @@ export class UserActionTx extends Layer1Tx {
     oracleUtxo: UTxO,
     tokenUtxo: UTxO,
     memberUtxo: UTxO,
-    fund_requested: number,
+    fundRequested: number,
     receiver: string,
-    project_details: string
+    projectDetails: string
   ) => {
     const metadata: ProposalMetadata = proposalMetadata(
-      stringToHex(project_details)
+      stringToHex(projectDetails)
     );
     const memberAssetName = getTokenAssetNameByPolicyId(
       memberUtxo,
-      scripts.member.mint.hash
+      this.catConstant.scripts.member.mint.hash
     );
     const redeemer: ProposeProject = proposeProject(
-      fund_requested,
+      fundRequested,
       receiver,
       Number(memberAssetName),
       metadata
     );
     const datum: ProposalDatum = proposalDatum(
-      fund_requested,
+      fundRequested,
       receiver,
       Number(memberAssetName),
       metadata
@@ -167,27 +165,32 @@ export class UserActionTx extends Layer1Tx {
         )
         .txInRedeemerValue(memberProposeProject, "JSON")
         .spendingTxInReference(
-          ref_tx_in_scripts.member.spend.txHash,
-          ref_tx_in_scripts.member.spend.outputIndex,
-          (scripts.member.spend.cbor.length / 2).toString(),
-          scripts.member.spend.hash
+          this.catConstant.refTxInScripts.member.spend.txHash,
+          this.catConstant.refTxInScripts.member.spend.outputIndex,
+          (this.catConstant.scripts.member.spend.cbor.length / 2).toString(),
+          this.catConstant.scripts.member.spend.hash
         )
         .txInInlineDatumPresent()
 
         .mintPlutusScriptV3()
-        .mint("1", scripts.proposeIntent.mint.hash, intentAssetName)
+        .mint(
+          "1",
+          this.catConstant.scripts.proposeIntent.mint.hash,
+          intentAssetName
+        )
         .mintTxInReference(
-          ref_tx_in_scripts.proposeIntent.mint.txHash,
-          ref_tx_in_scripts.proposeIntent.mint.outputIndex,
-          (scripts.proposeIntent.mint.cbor.length / 2).toString(),
-          scripts.proposeIntent.mint.hash
+          this.catConstant.refTxInScripts.proposeIntent.mint.txHash,
+          this.catConstant.refTxInScripts.proposeIntent.mint.outputIndex,
+          (
+            this.catConstant.scripts.proposeIntent.mint.cbor.length / 2
+          ).toString(),
+          this.catConstant.scripts.proposeIntent.mint.hash
         )
         .mintRedeemerValue(redeemer, "JSON")
 
-        .txOut(scripts.proposeIntent.spend.address, [
-          { unit: "lovelace", quantity: minUtxos.proposeIntent },
+        .txOut(this.catConstant.scripts.proposeIntent.spend.address, [
           {
-            unit: scripts.proposeIntent.mint.hash,
+            unit: this.catConstant.scripts.proposeIntent.mint.hash,
             quantity: "1",
           },
         ])

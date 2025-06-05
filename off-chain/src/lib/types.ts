@@ -50,57 +50,63 @@ import {
   StopOracle,
   UpdateThreshold,
 } from "./bar";
-import { admin_tenure, admins, multi_sig_threshold, scripts } from "./constant";
-import { addrBech32ToPlutusDataObj, toPlutusData } from "@meshsdk/core-csl";
+import { addrBech32ToPlutusDataObj } from "@meshsdk/core-csl";
 
 // 0 - Oracle
 export const rMint: RMint = conStr0([]);
 
 export const rBurn: RBurn = conStr1([]);
 
-export const oracleDatum: OracleDatum = conStr0([
-  list(
-    admins.map((admin) => {
-      return byteString(admin);
-    })
-  ),
-  byteString(stringToHex(admin_tenure)),
-  integer(multi_sig_threshold),
-  policyId(scripts.oracle.mint.hash),
-  scriptAddress(scripts.oracle.spend.hash),
-  policyId(scripts.counter.mint.hash),
-  scriptAddress(scripts.counter.spend.hash),
-  policyId(scripts.membershipIntent.mint.hash),
-  scriptAddress(scripts.membershipIntent.spend.hash),
-  policyId(scripts.member.mint.hash),
-  scriptAddress(scripts.member.spend.hash),
-  policyId(scripts.proposeIntent.mint.hash),
-  scriptAddress(scripts.proposeIntent.spend.hash),
-  policyId(scripts.proposal.mint.hash),
-  scriptAddress(scripts.proposal.spend.hash),
-  policyId(scripts.signOffApproval.mint.hash),
-  scriptAddress(scripts.signOffApproval.spend.hash),
-  scriptAddress(scripts.treasury.spend.hash),
-  scriptHash(scripts.treasury.withdraw.hash),
-]);
+export const oracleDatum = (
+  admins: string[],
+  adminTenure: string,
+  multiSigThreshold: number,
+  scripts: any
+): OracleDatum => {
+  return conStr0([
+    list(
+      admins.map((admin) => {
+        return byteString(admin);
+      })
+    ),
+    byteString(stringToHex(adminTenure)),
+    integer(multiSigThreshold),
+    policyId(scripts.oracle.mint.hash),
+    scriptAddress(scripts.oracle.spend.hash),
+    policyId(scripts.counter.mint.hash),
+    scriptAddress(scripts.counter.spend.hash),
+    policyId(scripts.membershipIntent.mint.hash),
+    scriptAddress(scripts.membershipIntent.spend.hash),
+    policyId(scripts.member.mint.hash),
+    scriptAddress(scripts.member.spend.hash),
+    policyId(scripts.proposeIntent.mint.hash),
+    scriptAddress(scripts.proposeIntent.spend.hash),
+    policyId(scripts.proposal.mint.hash),
+    scriptAddress(scripts.proposal.spend.hash),
+    policyId(scripts.signOffApproval.mint.hash),
+    scriptAddress(scripts.signOffApproval.spend.hash),
+    scriptAddress(scripts.treasury.spend.hash),
+    scriptHash(scripts.treasury.withdraw.hash),
+  ]);
+};
 
 export const rotateAdmin = (
-  new_admins: string[],
-  new_admin_tenure: string
+  newAdmins: string[],
+  newAdminsTenure: string
 ): RotateAdmin => {
-  const new_admins_verifiaction_keys = new_admins.map((key) => {
+  const newAdminsVerificationKeys = newAdmins.map((key) => {
     return byteString(key);
   });
   return conStr0([
-    list(new_admins_verifiaction_keys),
-    byteString(new_admin_tenure),
+    list(newAdminsVerificationKeys),
+    byteString(newAdminsTenure),
   ]);
 };
 
 export const updateThreshold = (
-  new_multi_sig_threshold: number
+  newMultiSigThreshold: number
 ): UpdateThreshold => {
-  return conStr1([integer(new_multi_sig_threshold)]);
+  return conStr1([integer(newMultiSigThreshold)]);
 };
 
 export const stopOracle: StopOracle = conStr2([]);
@@ -174,7 +180,7 @@ export const memberDatum = (
   tokenPolicyId: string,
   tokenAssetName: string,
   completion: Map<string, number>,
-  fund_received: number,
+  fundReceived: number,
   metaData: MembershipMetadata
 ): MemberDatum => {
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
@@ -187,7 +193,7 @@ export const memberDatum = (
     Integer
   >(completionItems);
 
-  return conStr0([token, completionPluts, integer(fund_received), metaData]);
+  return conStr0([token, completionPluts, integer(fundReceived), metaData]);
 };
 
 export const addMember: AddMember = conStr0([]);
@@ -212,13 +218,13 @@ export const proposalMetadata = (projectDetails: string): ProposalMetadata => {
 };
 
 export const proposeProject = (
-  fund_requested: number,
+  fundRequested: number,
   receiver: string,
   member: number,
   metaData: ProposalMetadata
 ): ProposeProject => {
   return conStr0([
-    integer(fund_requested),
+    integer(fundRequested),
     addrBech32ToPlutusDataObj(receiver),
     integer(member),
     metaData,
@@ -230,13 +236,13 @@ export const approveProposal: ApproveProposal = conStr1([]);
 export const rejectProposal: RejectProposal = conStr2([]);
 
 export const proposalDatum = (
-  fund_requested: number,
+  fundRequested: number,
   receiver: string,
   member: number,
   metaData: ProposalMetadata
 ): ProposalDatum => {
   return conStr0([
-    integer(fund_requested),
+    integer(fundRequested),
     addrBech32ToPlutusDataObj(receiver),
     integer(member),
     metaData,
@@ -267,7 +273,7 @@ export type MemberData = {
 export type Member = {
   token: { policyId: string; assetName: string };
   completion: Map<string, number>;
-  fund_received: number;
+  fundReceived: number;
   metadata: MemberData;
 };
 
@@ -276,8 +282,84 @@ export type ProposalData = {
 };
 
 export type Proposal = {
-  fund_requested: number;
+  fundRequested: number;
   receiver: string;
   member: number;
   metadata: ProposalData;
+};
+
+// setup
+
+export type SetupUtxos = {
+  oracle: {
+    txHash: string;
+    outputIndex: number;
+  };
+  counter: {
+    txHash: string;
+    outputIndex: number;
+  };
+};
+
+export type RefTxInScripts = {
+  membershipIntent: {
+    mint: {
+      txHash: string;
+      outputIndex: number;
+    };
+    spend: {
+      txHash: string;
+      outputIndex: number;
+    };
+  };
+  member: {
+    mint: {
+      txHash: string;
+      outputIndex: number;
+    };
+    spend: {
+      txHash: string;
+      outputIndex: number;
+    };
+  };
+  proposeIntent: {
+    mint: {
+      txHash: string;
+      outputIndex: number;
+    };
+    spend: {
+      txHash: string;
+      outputIndex: number;
+    };
+  };
+  proposal: {
+    mint: {
+      txHash: string;
+      outputIndex: number;
+    };
+    spend: {
+      txHash: string;
+      outputIndex: number;
+    };
+  };
+  signOffApproval: {
+    mint: {
+      txHash: string;
+      outputIndex: number;
+    };
+    spend: {
+      txHash: string;
+      outputIndex: number;
+    };
+  };
+  treasury: {
+    spend: {
+      txHash: string;
+      outputIndex: number;
+    };
+    withdrawal: {
+      txHash: string;
+      outputIndex: number;
+    };
+  };
 };

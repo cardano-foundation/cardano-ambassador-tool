@@ -48,26 +48,26 @@ export const getTokenAssetNameByPolicyId = (
 
 export const updateOracleDatum = (
   oracleUtxo: UTxO,
-  new_admins: string[] | null,
-  new_admin_tenure: string | null,
-  new_multi_sig_threshold: number | null
+  newAdmins: string[] | null,
+  newAdminsTenure: string | null,
+  newAdminsVerificationKeys: number | null
 ): OracleDatum => {
   const plutusData = oracleUtxo.output.plutusData!;
   const datum: OracleDatum = deserializeDatum(plutusData);
 
-  const updated_oracle_datum: OracleDatum = conStr0([
-    new_admins
+  const updatedOracleDatum: OracleDatum = conStr0([
+    newAdmins
       ? list(
-          new_admins.map((admin) => {
+          newAdmins.map((admin) => {
             return byteString(admin);
           })
         )
       : datum.fields[0],
-    new_admin_tenure
-      ? byteString(hexToString(new_admin_tenure))
+    newAdminsTenure
+      ? byteString(hexToString(newAdminsTenure))
       : datum.fields[1],
-    new_multi_sig_threshold
-      ? integer(new_multi_sig_threshold)
+    newAdminsVerificationKeys
+      ? integer(newAdminsVerificationKeys)
       : datum.fields[2],
     datum.fields[3],
     datum.fields[4],
@@ -87,7 +87,7 @@ export const updateOracleDatum = (
     datum.fields[18],
   ]);
 
-  return updated_oracle_datum;
+  return updatedOracleDatum;
 };
 
 export const getCounterDatum = (counterUtxo: UTxO): number => {
@@ -125,12 +125,12 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
     completion.set(hexToString(item.k.bytes), Number(item.v.int));
   });
 
-  const fund_received = Number(datum.fields[2].int);
+  const fundReceived = Number(datum.fields[2].int);
 
   return {
     token: { policyId, assetName },
     completion,
-    fund_received,
+    fundReceived,
     metadata,
   };
 };
@@ -142,19 +142,19 @@ export const updateMemberDatum = (
   const member: Member = getMemberDatum(memberUtxo);
   const signOffApproval: Proposal = getProposalDatum(signOffApprovalUtxo);
 
-  const updated_completion: Map<any, number> = new Map();
+  const updatedCompletions: Map<any, number> = new Map();
   member.completion.forEach((v, k) => {
-    updated_completion.set(stringToHex(k), v);
+    updatedCompletions.set(stringToHex(k), v);
   });
-  updated_completion.set(
+  updatedCompletions.set(
     signOffApproval.metadata,
-    signOffApproval.fund_requested
+    signOffApproval.fundRequested
   );
 
-  const updated_fund_received =
-    member.fund_received + signOffApproval.fund_requested;
+  const updatedFundRecevied =
+    member.fundReceived + signOffApproval.fundRequested;
 
-  const member_metadata: MembershipMetadata = membershipMetadata(
+  const memberMetadata: MembershipMetadata = membershipMetadata(
     member.metadata.walletAddress,
     member.metadata.fullName,
     member.metadata.displayName,
@@ -162,28 +162,28 @@ export const updateMemberDatum = (
     member.metadata.bio
   );
 
-  const updated_member_datum: MemberDatum = memberDatum(
+  const updatedMemberDatum: MemberDatum = memberDatum(
     member.token.policyId,
     member.token.assetName,
-    updated_completion,
-    updated_fund_received,
-    member_metadata
+    updatedCompletions,
+    updatedFundRecevied,
+    memberMetadata
   );
 
-  return updated_member_datum;
+  return updatedMemberDatum;
 };
 
 export const getProposalDatum = (utxo: UTxO): Proposal => {
   const plutusData = utxo.output.plutusData!;
   const datum: ProposalDatum = deserializeDatum(plutusData);
 
-  const fund_requested: number = Number(datum.fields[0].int);
+  const fundRequested: number = Number(datum.fields[0].int);
   const receiver: string = serializeAddressObj(datum.fields[1]);
   const member: number = Number(datum.fields[2].int);
   const metadata: ProposalData = datum.fields[3];
 
   return {
-    fund_requested: fund_requested,
+    fundRequested: fundRequested,
     receiver: receiver,
     member: member,
     metadata: metadata,
@@ -192,7 +192,7 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
 
 export const getTreasuryChange = (
   utxos: UTxO[],
-  fund_requested: number
+  fundRequested: number
 ): Asset[] => {
   const changedAmount: Asset[] = [];
   const assetMap: Map<string, number> = new Map();
@@ -207,7 +207,7 @@ export const getTreasuryChange = (
       }
     });
   });
-  assetMap.set("lovelace", fund_requested);
+  assetMap.set("lovelace", fundRequested);
 
   assetMap.forEach((quantity, unit) => {
     changedAmount.push({

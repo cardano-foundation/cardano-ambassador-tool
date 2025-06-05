@@ -2,30 +2,31 @@ import {
   Layer1Tx,
   scripts,
   counterDatum,
-  minUtxos,
   oracleDatum,
   rMint,
   IProvider,
   Network,
+  OracleDatum,
+  CATConstants,
 } from "../lib";
-import { IWallet, resolveScriptHash } from "@meshsdk/core";
+import { IWallet, resolveScriptHash, UTxO } from "@meshsdk/core";
 
 export class SetupTx extends Layer1Tx {
   constructor(
     public address: string,
     public userWallet: IWallet,
     public provider: IProvider,
-    public network: Network = "preprod"
+    public catConstant: CATConstants
   ) {
-    super(userWallet, address, provider, network);
+    super(userWallet, address, provider, catConstant);
   }
 
   /**
    * Internal tx at setup
    * @returns
    */
-  mintCounterNFT = async () => {
-    const scriptCbor = scripts.counter.mint.cbor;
+  mintCounterNFT = async (utxo: UTxO) => {
+    const scriptCbor = this.catConstant.scripts.counter.mint.cbor;
     const policyId = resolveScriptHash(scriptCbor, "V3");
 
     const utxos = await this.wallet.getUtxos();
@@ -36,10 +37,10 @@ export class SetupTx extends Layer1Tx {
     try {
       const unsignedTx = await txBuilder
         .txIn(
-          paramUtxo.input.txHash,
-          paramUtxo.input.outputIndex,
-          paramUtxo.output.amount,
-          paramUtxo.output.address
+          utxo.input.txHash,
+          utxo.input.outputIndex,
+          utxo.output.amount,
+          utxo.output.address
         )
         .mintPlutusScriptV3()
         .mint("1", policyId, "")
@@ -60,33 +61,42 @@ export class SetupTx extends Layer1Tx {
    * Internal tx at setup
    * @returns
    */
-  mintSpendOracleNFT = async () => {
-    const scriptCbor = scripts.oracle.mint.cbor;
+  mintSpendOracleNFT = async (
+    utxo: UTxO,
+    admins: string[],
+    adminTenure: string,
+    multiSigThreshold: number
+  ) => {
+    const scriptCbor = this.catConstant.scripts.oracle.mint.cbor;
     const policyId = resolveScriptHash(scriptCbor, "V3");
-    const oracleAddress = scripts.oracle.spend.address;
+    const oracleAddress = this.catConstant.scripts.oracle.spend.address;
 
     const utxos = await this.wallet.getUtxos();
     const paramUtxo = utxos[0]!;
     console.log(paramUtxo);
 
+    const newOracleDatum: OracleDatum = oracleDatum(
+      admins,
+      adminTenure,
+      multiSigThreshold,
+      this.catConstant.scripts
+    );
+
     const txBuilder = await this.newValidationTx();
     try {
       const unsignedTx = await txBuilder
         .txIn(
-          paramUtxo.input.txHash,
-          paramUtxo.input.outputIndex,
-          paramUtxo.output.amount,
-          paramUtxo.output.address
+          utxo.input.txHash,
+          utxo.input.outputIndex,
+          utxo.output.amount,
+          utxo.output.address
         )
         .mintPlutusScriptV3()
         .mint("1", policyId, "")
         .mintingScript(scriptCbor)
         .mintRedeemerValue(rMint, "JSON")
-        .txOut(oracleAddress, [
-          { unit: "lovelace", quantity: minUtxos.oracle },
-          { unit: policyId, quantity: "1" },
-        ])
-        .txOutInlineDatumValue(oracleDatum, "JSON")
+        .txOut(oracleAddress, [{ unit: policyId, quantity: "1" }])
+        .txOutInlineDatumValue(newOracleDatum, "JSON")
         .complete();
 
       const signedTx = await this.wallet.signTx(unsignedTx, true);
@@ -102,24 +112,23 @@ export class SetupTx extends Layer1Tx {
    * Internal tx at setup
    * @returns
    */
-  spendCounterNFT = async () => {
-    const scriptCbor = scripts.counter.mint.cbor;
+  spendCounterNFT = async (utxo: UTxO) => {
+    const scriptCbor = this.catConstant.scripts.counter.mint.cbor;
     const policyId = resolveScriptHash(scriptCbor, "V3");
-    const counterAddress = scripts.counter.spend.address;
+    const counterAddress = this.catConstant.scripts.counter.spend.address;
     const couterInlineDatum = counterDatum(0);
 
     const txBuilder = await this.newValidationTx();
     try {
       const unsignedTx = await txBuilder
         .txIn(
-          "94e4833e674c35474137b8c628eab6cacd48b154ff1b891b04b0daab55e276de",
-          0
+          utxo.input.txHash,
+          utxo.input.outputIndex,
+          utxo.output.amount,
+          utxo.output.address
         )
 
-        .txOut(counterAddress, [
-          { unit: "lovelace", quantity: minUtxos.counter },
-          { unit: policyId, quantity: "1" },
-        ])
+        .txOut(counterAddress, [{ unit: policyId, quantity: "1" }])
         .txOutInlineDatumValue(couterInlineDatum, "JSON")
         .complete();
 
@@ -137,7 +146,7 @@ export class SetupTx extends Layer1Tx {
    * @returns
    */
   registerAllCerts = async () => {
-    const treasuryWithdraw = scripts.treasury.withdraw.address;
+    const treasuryWithdraw = this.catConstant.scripts.treasury.withdraw.address;
 
     const txBuilder = await this.newValidationTx();
     try {
@@ -233,10 +242,8 @@ export class SetupTx extends Layer1Tx {
       // );
 
       const unsignedTreasuryTx = await txBuilder
-        .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-        .txOutReferenceScript(scripts.treasury.spend.cbor)
-        .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-        .txOutReferenceScript(scripts.treasury.withdraw.cbor)
+        .txOutReferenceScript(this.catConstant.scripts.treasury.spend.cbor)
+        .txOutReferenceScript(this.catConstant.scripts.treasury.withdraw.cbor)
         .complete();
 
       const signedTreasuryTx = await this.wallet.signTx(
