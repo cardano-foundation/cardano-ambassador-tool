@@ -1,11 +1,9 @@
 import {
   Layer1Tx,
-  scripts,
   counterDatum,
   oracleDatum,
   rMint,
   IProvider,
-  Network,
   OracleDatum,
   CATConstants,
 } from "../lib";

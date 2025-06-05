@@ -19,7 +19,6 @@ import {
   conStr2,
   ConStr0,
   PubKeyAddress,
-  pubKeyAddress,
 } from "@meshsdk/core";
 import {
   AddMember,
