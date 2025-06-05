@@ -2,9 +2,11 @@ import Head from "next/head";
 import { CardanoWallet, MeshBadge, useWallet } from "@meshsdk/react";
 import {
   AdminActionTx,
-  Network,
   SetupTx,
   UserActionTx,
+  CATConstants,
+  setupUtxo,
+  refTxInScripts,
 } from "@sidan-lab/cardano-ambassador-tool";
 import { useState } from "react";
 // import { UTxO } from "@meshsdk/core";
@@ -17,12 +19,19 @@ export default function Home() {
   const [error, setError] = useState<string>("");
   const blockfrostService = new BlockfrostService();
 
+  // Helper to get CATConstants instance
+  const getCatConstants = () => {
+    const network =
+      (process.env.NEXT_PUBLIC_NETWORK as "mainnet" | "preprod") || "preprod";
+    return new CATConstants(network, setupUtxo, refTxInScripts);
+  };
+
   const getSetupTx = async () => {
     const setup = new SetupTx(
       await wallet.getChangeAddress(),
       wallet,
       blockfrost,
-      process.env.NEXT_PUBLIC_NETWORK as Network
+      getCatConstants()
     );
     return setup;
   };
@@ -32,7 +41,7 @@ export default function Home() {
       await wallet.getChangeAddress(),
       wallet,
       blockfrost,
-      process.env.NEXT_PUBLIC_NETWORK as Network
+      getCatConstants()
     );
     return adminAction;
   };
@@ -42,7 +51,7 @@ export default function Home() {
       await wallet.getChangeAddress(),
       wallet,
       blockfrost,
-      process.env.NEXT_PUBLIC_NETWORK as Network
+      getCatConstants()
     );
     return userAction;
   };
@@ -175,6 +184,17 @@ export default function Home() {
   const [newAdminTenure, setNewAdminTenure] = useState("");
   const [newMultiSigThreshold, setNewMultiSigThreshold] = useState("");
 
+  // Add new state variables for user info
+  const [fullName, setFullName] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+  const [bio, setBio] = useState("");
+
+  // Add new state variables for admin setup
+  const [admins, setAdmins] = useState<string[]>(["admin1"]);
+  const [adminTenure, setAdminTenure] = useState("1y");
+  const [multiSigThreshold, setMultiSigThreshold] = useState("1");
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAction = async (action: () => Promise<any>) => {
     try {
@@ -194,7 +214,8 @@ export default function Home() {
     label: string,
     value: string,
     onChange: (value: string) => void,
-    type: string = "text"
+    type: string = "text",
+    placeholder?: string
   ) => (
     <div className="mb-2">
       <label className="block text-sm font-medium mb-1">{label}</label>
@@ -202,6 +223,7 @@ export default function Home() {
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
         className="w-full p-2 rounded bg-gray-700 text-white"
       />
     </div>
@@ -223,29 +245,89 @@ export default function Home() {
               onClick={() =>
                 handleAction(async () => {
                   const setup = await getSetupTx();
-                  return await setup.mintCounterNFT();
+                  const utxo = await fetchUtxo(
+                    counterUtxoHash,
+                    counterUtxoIndex,
+                    "Counter UTxO"
+                  );
+                  return await setup.mintCounterNFT(utxo);
                 })
-              }>
+              }
+            >
               Mint Counter NFT
             </button>
+
+            {/* Add new Mint and Spend Oracle NFT section */}
+            <div className="col-span-2 bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">Mint and Spend Oracle NFT</h4>
+              {renderUtxoInputs(
+                "Oracle UTxO",
+                oracleUtxoHash,
+                setOracleUtxoHash,
+                oracleUtxoIndex,
+                setOracleUtxoIndex
+              )}
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Admin Addresses</label>
+                <textarea
+                  value={admins.join("\n")}
+                  onChange={(e) => setAdmins(e.target.value.split("\n"))}
+                  placeholder="Enter admin addresses (one per line)"
+                  className="w-full p-2 rounded bg-gray-700 text-white mb-2"
+                  rows={3}
+                />
+              </div>
+              {renderInputField(
+                "Admin Tenure",
+                adminTenure,
+                setAdminTenure,
+                "text",
+                "e.g., 1y, 6m, 365d"
+              )}
+              {renderInputField(
+                "Multi-sig Threshold",
+                multiSigThreshold,
+                setMultiSigThreshold,
+                "number",
+                "Minimum number of admin signatures required"
+              )}
+              <button
+                className="bg-blue-500 hover:bg-blue-600 p-2 rounded w-full mt-4"
+                onClick={() =>
+                  handleAction(async () => {
+                    const setup = await getSetupTx();
+                    const utxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
+                    return await setup.mintSpendOracleNFT(
+                      utxo,
+                      admins,
+                      adminTenure,
+                      Number(multiSigThreshold)
+                    );
+                  })
+                }
+              >
+                Mint and Spend Oracle NFT
+              </button>
+            </div>
+
             <button
               className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
               onClick={() =>
                 handleAction(async () => {
                   const setup = await getSetupTx();
-                  return await setup.mintSpendOracleNFT();
+                  const utxo = await fetchUtxo(
+                    counterUtxoHash,
+                    counterUtxoIndex,
+                    "Counter UTxO"
+                  );
+                  return await setup.spendCounterNFT(utxo);
                 })
-              }>
-              Mint and Spend Oracle NFT
-            </button>
-            <button
-              className="bg-blue-500 hover:bg-blue-600 p-2 rounded"
-              onClick={() =>
-                handleAction(async () => {
-                  const setup = await getSetupTx();
-                  return await setup.spendCounterNFT();
-                })
-              }>
+              }
+            >
               Spend Counter NFT
             </button>
             <button
@@ -255,7 +337,8 @@ export default function Home() {
                   const setup = await getSetupTx();
                   return await setup.registerAllCerts();
                 })
-              }>
+              }
+            >
               Register All Certs
             </button>
             <button
@@ -265,7 +348,8 @@ export default function Home() {
                   const setup = await getSetupTx();
                   return await setup.txOutScript();
                 })
-              }>
+              }
+            >
               Tx Out Scripts
             </button>
           </div>
@@ -298,7 +382,8 @@ export default function Home() {
                     const adminAction = await getAdminActionTx();
                     return await adminAction.adminSignTx(result);
                   })
-                }>
+                }
+              >
                 Sign Transaction
               </button>
             </div>
@@ -324,7 +409,8 @@ export default function Home() {
                     const adminAction = await getAdminActionTx();
                     return await adminAction.adminSubmitTx(result);
                   })
-                }>
+                }
+              >
                 Submit Transaction
               </button>
             </div>
@@ -352,16 +438,12 @@ export default function Home() {
                 tokenUtxoIndex,
                 setTokenUtxoIndex
               )}
-              {renderInputField(
-                "Token Policy ID",
-                tokenPolicyId,
-                setTokenPolicyId
-              )}
-              {renderInputField(
-                "Token Asset Name",
-                tokenAssetName,
-                setTokenAssetName
-              )}
+              {renderInputField("Token Policy ID", tokenPolicyId, setTokenPolicyId)}
+              {renderInputField("Token Asset Name", tokenAssetName, setTokenAssetName)}
+              {renderInputField("Full Name", fullName, setFullName)}
+              {renderInputField("Display Name", displayName, setDisplayName)}
+              {renderInputField("Email Address", emailAddress, setEmailAddress)}
+              {renderInputField("Bio", bio, setBio)}
               <button
                 className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
                 onClick={() =>
@@ -381,10 +463,16 @@ export default function Home() {
                       oracleUtxo,
                       tokenUtxo,
                       tokenPolicyId,
-                      tokenAssetName
+                      tokenAssetName,
+                      await wallet.getChangeAddress(),
+                      fullName,
+                      displayName,
+                      emailAddress,
+                      bio
                     );
                   })
-                }>
+                }
+              >
                 Apply Membership
               </button>
             </div>
@@ -413,14 +501,9 @@ export default function Home() {
                 memberUtxoIndex,
                 setMemberUtxoIndex
               )}
-              {renderInputField("Project URL", projectUrl, setProjectUrl)}
-              {renderInputField(
-                "Fund Requested",
-                fundRequested,
-                setFundRequested,
-                "number"
-              )}
+              {renderInputField("Fund Requested", fundRequested, setFundRequested, "number")}
               {renderInputField("Receiver", receiver, setReceiver)}
+              {renderInputField("Project Details", projectUrl, setProjectUrl)}
               <button
                 className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
                 onClick={() =>
@@ -445,12 +528,13 @@ export default function Home() {
                       oracleUtxo,
                       tokenUtxo,
                       memberUtxo,
-                      projectUrl,
                       Number(fundRequested),
-                      receiver
+                      receiver,
+                      projectUrl
                     );
                   })
-                }>
+                }
+              >
                 Propose Project
               </button>
             </div>
@@ -519,7 +603,8 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }>
+                }
+              >
                 Approve Member
               </button>
             </div>
@@ -569,7 +654,8 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }>
+                }
+              >
                 Reject Member
               </button>
             </div>
@@ -619,7 +705,8 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }>
+                }
+              >
                 Remove Member
               </button>
             </div>
@@ -669,7 +756,8 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }>
+                }
+              >
                 Approve Proposal
               </button>
             </div>
@@ -719,7 +807,8 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }>
+                }
+              >
                 Reject Proposal
               </button>
             </div>
@@ -769,7 +858,8 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }>
+                }
+              >
                 Approve Sign Off
               </button>
             </div>
@@ -824,14 +914,16 @@ export default function Home() {
                     />
                     <button
                       onClick={() => removeTreasuryUtxoInput(index)}
-                      className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded">
+                      className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded"
+                    >
                       Remove
                     </button>
                   </div>
                 ))}
                 <button
                   onClick={addTreasuryUtxoInput}
-                  className="w-full p-2 bg-blue-500 hover:bg-blue-600 rounded">
+                  className="w-full p-2 bg-blue-500 hover:bg-blue-600 rounded"
+                >
                   Add Treasury UTxO
                 </button>
               </div>
@@ -863,7 +955,8 @@ export default function Home() {
                       // treasuryUtxos
                     );
                   })
-                }>
+                }
+              >
                 Sign Off
               </button>
             </div>
@@ -914,7 +1007,8 @@ export default function Home() {
                       newAdminTenure
                     );
                   })
-                }>
+                }
+              >
                 Rotate Admin
               </button>
             </div>
@@ -958,7 +1052,8 @@ export default function Home() {
                       Number(newMultiSigThreshold)
                     );
                   })
-                }>
+                }
+              >
                 Update Threshold
               </button>
             </div>
@@ -995,7 +1090,8 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }>
+                }
+              >
                 Stop Oracle
               </button>
             </div>
@@ -1032,7 +1128,8 @@ export default function Home() {
                       adminSigned
                     );
                   })
-                }>
+                }
+              >
                 Stop Counter
               </button>
             </div>
