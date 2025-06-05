@@ -8,7 +8,7 @@ import {
   IFetcher,
   ISubmitter,
 } from "@meshsdk/core";
-import { networkId, scripts } from "./constant";
+import { CATConstants } from "./constant";
 import { CSLSerializer, OfflineEvaluator } from "@meshsdk/core-csl";
 
 export type IProvider = IFetcher & ISubmitter;
@@ -19,10 +19,11 @@ export class Layer1Tx {
     public wallet: IWallet,
     public address: string,
     public provider: IProvider,
-    public network: Network = "preprod"
+    public catConstant: CATConstants
   ) {
     this.wallet = wallet;
     this.address = address;
+    this.catConstant = catConstant;
   }
 
   getWalletUtxos = async () => {
@@ -49,14 +50,19 @@ export class Layer1Tx {
       verbose: true,
     };
     if (evaluateTx) {
-      const evaluator = new OfflineEvaluator(this.provider, this.network);
+      const evaluator = new OfflineEvaluator(
+        this.provider,
+        this.catConstant.network
+      );
       txBuilderConfig.evaluator = evaluator;
     }
 
     const txBuilder = new MeshTxBuilder(txBuilderConfig);
     txBuilder.txEvaluationMultiplier = 1.5;
 
-    txBuilder.setNetwork(networkId === 1 ? "mainnet" : "preprod");
+    txBuilder.setNetwork(
+      this.catConstant.networkId === 1 ? "mainnet" : "preprod"
+    );
     return txBuilder;
   };
 
@@ -100,7 +106,7 @@ export class Layer1Tx {
     const selectedUtxos: UTxO[] = [];
     const selectedValue = new MeshValue();
     let { utxos: unselectedUtxos } = await this.getUtxos(
-      scripts.treasury.spend.address
+      this.catConstant.scripts.treasury.spend.address
     );
 
     const nonLovelace = withdrawalAmount.filter(

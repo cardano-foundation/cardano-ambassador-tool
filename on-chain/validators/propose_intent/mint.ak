@@ -3,10 +3,10 @@ use aiken/crypto.{blake2b_256}
 use cardano/assets.{PolicyId}
 use cardano/transaction.{Transaction}
 use cocktail.{
-  inputs_at_with_policy, inputs_with, output_inline_datum, outputs_at_with,
-  outputs_at_with_policy, value_length, value_policy_info,
+  inputs_at_with_policy, inputs_with, only_minted_token, output_inline_datum,
+  outputs_at_with, outputs_at_with_policy, policy_only_minted_token,
+  value_length, value_policy_info,
 }
-use cocktail/vodka_mints.{only_minted_token, policy_only_minted_token}
 use types.{
   ApproveProposal, MemberDatum, OracleDatum, ProposalDatum,
   ProposeIntentMintRedeemer, ProposeProject, RejectProposal,
