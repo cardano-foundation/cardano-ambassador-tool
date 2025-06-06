@@ -29,7 +29,7 @@ import {
   memberDatum,
   membershipMetadata,
 } from "./types";
-import { blake2bHex } from "blakejs";
+import { blake2b } from "blakejs";
 
 export const getTokenAssetNameByPolicyId = (
   utxo: UTxO,
@@ -223,6 +223,8 @@ export const computeProposalMetadataHash = (
   metadata: ProposalMetadata
 ): string => {
   const bytes: string = serializeData(metadata, "JSON");
-  const hash = blake2bHex(bytes, undefined, 32);
-  return hash;
+  const hash = blake2b(Buffer.from(bytes, "hex"), undefined, 32);
+  const str = Buffer.from(hash.buffer).toString();
+
+  return str;
 };

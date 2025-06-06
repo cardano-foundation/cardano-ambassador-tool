@@ -9,7 +9,7 @@ import {
   ISubmitter,
 } from "@meshsdk/core";
 import { CATConstants } from "./constant";
-import { CSLSerializer, OfflineEvaluator } from "@meshsdk/core-csl";
+import { OfflineEvaluator } from "@meshsdk/core-csl";
 
 export type IProvider = IFetcher & ISubmitter;
 export type Network = "preprod" | "mainnet";
@@ -43,10 +43,11 @@ export class Layer1Tx {
   };
 
   newTxBuilder = (evaluateTx = true) => {
+    console.log("no csl");
+
     const txBuilderConfig: MeshTxBuilderOptions = {
       fetcher: this.provider,
       submitter: this.provider,
-      serializer: new CSLSerializer(),
       verbose: true,
     };
     if (evaluateTx) {
