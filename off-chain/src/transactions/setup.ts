@@ -44,6 +44,7 @@ export class SetupTx extends Layer1Tx {
         .mint("1", policyId, "")
         .mintingScript(scriptCbor)
         .mintRedeemerValue(rMint, "JSON")
+        .setFee("228122")
         .complete();
 
       const signedTx = await this.wallet.signTx(unsignedTx, true);
@@ -165,82 +166,89 @@ export class SetupTx extends Layer1Tx {
    * Internal tx at setup
    * @returns
    */
-  txOutScript = async () => {
-    const address =
-      "addr_test1qqyxeduckrmffn26gjffda77nfu560xctycf00jcnr74p7vdx9gcw644ygkqgqcfm5nlrecqv0rzp0qcyw55q3lxcpkq093wet";
-
+  txOutScript = async (address: string) => {
     const txBuilder = await this.newValidationTx();
     try {
-      // const unsignedMembershipIntentTx = await txBuilder
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.membershipIntent.mint.cbor)
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.membershipIntent.spend.cbor)
-      //   .complete();
+      const unsignedMembershipIntentTx = await txBuilder
+        .txOut(address, [])
+        .txOutReferenceScript(
+          this.catConstant.scripts.membershipIntent.mint.cbor
+        )
+        .txOut(address, [])
+        .txOutReferenceScript(
+          this.catConstant.scripts.membershipIntent.spend.cbor
+        )
+        .complete();
 
-      // const signedMembershipIntentTx = await this.wallet.signTx(
-      //   unsignedMembershipIntentTx,
-      //   true
-      // );
-      // const membershipIntentTxHash = await this.wallet.submitTx(
-      //   signedMembershipIntentTx
-      // );
+      const signedMembershipIntentTx = await this.wallet.signTx(
+        unsignedMembershipIntentTx,
+        true
+      );
+      const membershipIntentTxHash = await this.wallet.submitTx(
+        signedMembershipIntentTx
+      );
 
-      // const unsignedMemberTx = await txBuilder
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.member.mint.cbor)
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.member.spend.cbor)
-      //   .complete();
+      const unsignedMemberTx = await txBuilder
+        .txOut(address, [])
+        .txOutReferenceScript(this.catConstant.scripts.member.mint.cbor)
+        .txOut(address, [])
+        .txOutReferenceScript(this.catConstant.scripts.member.spend.cbor)
+        .complete();
 
-      // const signedMemberTx = await this.wallet.signTx(unsignedMemberTx, true);
-      // const memberTxHash = await this.wallet.submitTx(signedMemberTx);
+      const signedMemberTx = await this.wallet.signTx(unsignedMemberTx, true);
+      const memberTxHash = await this.wallet.submitTx(signedMemberTx);
 
-      // const unsignedProposeIntentTx = await txBuilder
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.proposeIntent.mint.cbor)
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.proposeIntent.spend.cbor)
-      //   .complete();
+      const unsignedProposeIntentTx = await txBuilder
+        .txOut(address, [])
+        .txOutReferenceScript(this.catConstant.scripts.proposeIntent.mint.cbor)
+        .txOut(address, [])
+        .txOutReferenceScript(this.catConstant.scripts.proposeIntent.spend.cbor)
+        .complete();
 
-      // const signedProposeIntentTx = await this.wallet.signTx(
-      //   unsignedProposeIntentTx,
-      //   true
-      // );
-      // const proposeIntentTxHash = await this.wallet.submitTx(
-      //   signedProposeIntentTx
-      // );
+      const signedProposeIntentTx = await this.wallet.signTx(
+        unsignedProposeIntentTx,
+        true
+      );
+      const proposeIntentTxHash = await this.wallet.submitTx(
+        signedProposeIntentTx
+      );
 
-      // const unsignedProposalTx = await txBuilder
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.proposal.mint.cbor)
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.proposal.spend.cbor)
-      //   .complete();
+      const unsignedProposalTx = await txBuilder
+        .txOut(address, [])
+        .txOutReferenceScript(this.catConstant.scripts.proposal.mint.cbor)
+        .txOut(address, [])
+        .txOutReferenceScript(this.catConstant.scripts.proposal.spend.cbor)
+        .complete();
 
-      // const signedProposalTx = await this.wallet.signTx(
-      //   unsignedProposalTx,
-      //   true
-      // );
-      // const proposalTxHash = await this.wallet.submitTx(signedProposalTx);
+      const signedProposalTx = await this.wallet.signTx(
+        unsignedProposalTx,
+        true
+      );
+      const proposalTxHash = await this.wallet.submitTx(signedProposalTx);
 
-      // const unsignedSignOffApprovalTx = await txBuilder
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.signOffApproval.mint.cbor)
-      //   .txOut(address, [{ unit: "lovelace", quantity: minUtxos.script }])
-      //   .txOutReferenceScript(scripts.signOffApproval.spend.cbor)
-      //   .complete();
+      const unsignedSignOffApprovalTx = await txBuilder
+        .txOut(address, [])
+        .txOutReferenceScript(
+          this.catConstant.scripts.signOffApproval.mint.cbor
+        )
+        .txOut(address, [])
+        .txOutReferenceScript(
+          this.catConstant.scripts.signOffApproval.spend.cbor
+        )
+        .complete();
 
-      // const signedSignOffApprovalTx = await this.wallet.signTx(
-      //   unsignedSignOffApprovalTx,
-      //   true
-      // );
-      // const signOffApprovalTxHash = await this.wallet.submitTx(
-      //   signedSignOffApprovalTx
-      // );
+      const signedSignOffApprovalTx = await this.wallet.signTx(
+        unsignedSignOffApprovalTx,
+        true
+      );
+      const signOffApprovalTxHash = await this.wallet.submitTx(
+        signedSignOffApprovalTx
+      );
 
       const unsignedTreasuryTx = await txBuilder
+        .txOut(address, [])
         .txOutReferenceScript(this.catConstant.scripts.treasury.spend.cbor)
+        .txOut(address, [])
         .txOutReferenceScript(this.catConstant.scripts.treasury.withdraw.cbor)
         .complete();
 
@@ -251,11 +259,11 @@ export class SetupTx extends Layer1Tx {
       const treasuryTxHash = await this.wallet.submitTx(signedTreasuryTx);
 
       return {
-        // membershipIntent: membershipIntentTxHash,
-        // member: memberTxHash,
-        // proposeIntent: proposeIntentTxHash,
-        // proposal: proposalTxHash,
-        // signOffApproval: signOffApprovalTxHash,
+        membershipIntent: membershipIntentTxHash,
+        member: memberTxHash,
+        proposeIntent: proposeIntentTxHash,
+        proposal: proposalTxHash,
+        signOffApproval: signOffApprovalTxHash,
         treasury: treasuryTxHash,
       };
     } catch (e) {

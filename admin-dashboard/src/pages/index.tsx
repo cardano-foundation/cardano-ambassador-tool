@@ -5,11 +5,10 @@ import {
   SetupTx,
   UserActionTx,
   CATConstants,
-  setupUtxo,
-  refTxInScripts,
+  RefTxInScripts,
+  SetupUtxos,
 } from "@sidan-lab/cardano-ambassador-tool";
 import { useState } from "react";
-// import { UTxO } from "@meshsdk/core";
 import { blockfrost, BlockfrostService } from "@/services";
 
 export default function Home() {
@@ -18,11 +17,101 @@ export default function Home() {
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
   const blockfrostService = new BlockfrostService();
+  const [address, setAddress] = useState<string>("");
 
   // Helper to get CATConstants instance
   const getCatConstants = () => {
     const network =
       (process.env.NEXT_PUBLIC_NETWORK as "mainnet" | "preprod") || "preprod";
+
+    const setupUtxo: SetupUtxos = {
+      oracle: {
+        txHash:
+          "327794068e2173acdb43531ddc649cd1e510d353ffc3de3ef3fb2306eda97f05",
+        outputIndex: 1,
+      },
+      counter: {
+        txHash:
+          "08cd85d71887af9a069bfce4f8337138a20005d0cd554fc34df950a932061c27",
+        outputIndex: 0,
+      },
+    };
+
+    const refTxInScripts: RefTxInScripts = {
+      membershipIntent: {
+        mint: {
+          txHash:
+            "ebe1909a1f0754b4065afa3b1f5eca6ef669ea613c6802de98a2c99b95362d4d",
+          outputIndex: 0,
+        },
+        spend: {
+          txHash:
+            "ebe1909a1f0754b4065afa3b1f5eca6ef669ea613c6802de98a2c99b95362d4d",
+          outputIndex: 1,
+        },
+      },
+      member: {
+        mint: {
+          txHash:
+            "9617e93dd4b3e75253d16ee90586e08b9f904c396f3a580580da09f820c42d0a",
+          outputIndex: 0,
+        },
+        spend: {
+          txHash:
+            "9617e93dd4b3e75253d16ee90586e08b9f904c396f3a580580da09f820c42d0a",
+          outputIndex: 1,
+        },
+      },
+      proposeIntent: {
+        mint: {
+          txHash:
+            "d476ac0425a1bdc53557bf1b9d52ad5204bc96a5b0a5ebf40a224b43e4e8d400",
+          outputIndex: 0,
+        },
+        spend: {
+          txHash:
+            "d476ac0425a1bdc53557bf1b9d52ad5204bc96a5b0a5ebf40a224b43e4e8d400",
+          outputIndex: 1,
+        },
+      },
+      proposal: {
+        mint: {
+          txHash:
+            "4f210c1f2116c77be28bb9ebd388eaa38517173450275ce2e97de0a45c256f0e",
+          outputIndex: 0,
+        },
+        spend: {
+          txHash:
+            "4f210c1f2116c77be28bb9ebd388eaa38517173450275ce2e97de0a45c256f0e",
+          outputIndex: 1,
+        },
+      },
+      signOffApproval: {
+        mint: {
+          txHash:
+            "1463e3c76637ec6e386d35857a8ed571451c8c7c6c5f3ee108af50ff0aa559b0",
+          outputIndex: 0,
+        },
+        spend: {
+          txHash:
+            "1463e3c76637ec6e386d35857a8ed571451c8c7c6c5f3ee108af50ff0aa559b0",
+          outputIndex: 1,
+        },
+      },
+      treasury: {
+        spend: {
+          txHash:
+            "d551b8f6d9d035436fcce241b3de032c8228c6f5076bd0ffd184c6dbc0ee3802",
+          outputIndex: 0,
+        },
+        withdrawal: {
+          txHash:
+            "d551b8f6d9d035436fcce241b3de032c8228c6f5076bd0ffd184c6dbc0ee3802",
+          outputIndex: 1,
+        },
+      },
+    };
+
     return new CATConstants(network, setupUtxo, refTxInScripts);
   };
 
@@ -58,15 +147,17 @@ export default function Home() {
 
   // State for UTxO inputs
   const [oracleUtxoHash, setOracleUtxoHash] = useState(
-    "f2c95746f252b609e03ca9447548589aa3def1a83bb0d7d67617be041dfef203"
+    "51da35838b2682b5727bd34979df324b56e6556ad5ed3cd5d2bdbcb5996b13fa"
   );
   const [oracleUtxoIndex, setOracleUtxoIndex] = useState("0");
   const [tokenUtxoHash, setTokenUtxoHash] = useState("");
   const [tokenUtxoIndex, setTokenUtxoIndex] = useState("");
   const [memberUtxoHash, setMemberUtxoHash] = useState("");
   const [memberUtxoIndex, setMemberUtxoIndex] = useState("");
-  const [counterUtxoHash, setCounterUtxoHash] = useState("");
-  const [counterUtxoIndex, setCounterUtxoIndex] = useState("");
+  const [counterUtxoHash, setCounterUtxoHash] = useState(
+    "7633a420f9bcf59ef3c889c5587e87c2e8c01ab0a61ede6efea72217c561478d"
+  );
+  const [counterUtxoIndex, setCounterUtxoIndex] = useState("0");
   const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState("");
   const [membershipIntentUtxoIndex, setMembershipIntentUtxoIndex] =
     useState("");
@@ -170,30 +261,36 @@ export default function Home() {
   };
 
   // State for other parameters
-  const [tokenPolicyId, setTokenPolicyId] = useState("");
-  const [tokenAssetName, setTokenAssetName] = useState("");
+  const [tokenPolicyId, setTokenPolicyId] = useState(
+    "1c24687602c866101d41aa64e39685ee7092f26af15c5329104141fd"
+  );
+  const [tokenAssetName, setTokenAssetName] = useState("6d657368");
   const [projectUrl, setProjectUrl] = useState("111");
   const [fundRequested, setFundRequested] = useState("1111111");
   const [receiver, setReceiver] = useState(
-    "addr_test1qzhm3fg7v9t9e4nrlw0z49cysmvzfy3xpmvxuht80aa3rvnm5tz7rfnph9ntszp2fclw5m334udzq49777gkhwkztsks4c69rg"
+    "addr_test1qzn9zp4r0u9j8upcf5vmwyp92rktxkguy82gqjsax5v3x9tpjch2tctwrlw8x5777gukav57r8jaezgmmhq0hp9areuqgpaw9k"
   );
   const [adminSigned, setAdminSigned] = useState<string[]>([
-    "afb8a51e61565cd663fb9e2a970486d82492260ed86e5d677f7b11b2",
+    "a65106a37f0b23f0384d19b7102550ecb3591c21d4804a1d35191315",
   ]);
   const [newAdmins, setNewAdmins] = useState<string[]>([]);
-  const [newAdminTenure, setNewAdminTenure] = useState("");
-  const [newMultiSigThreshold, setNewMultiSigThreshold] = useState("");
+  const [newAdminTenure, setNewAdminTenure] = useState("2y");
+  const [newMultiSigThreshold, setNewMultiSigThreshold] = useState("1");
 
   // Add new state variables for user info
-  const [fullName, setFullName] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [emailAddress, setEmailAddress] = useState("");
-  const [bio, setBio] = useState("");
+  const [fullName, setFullName] = useState("abcf");
+  const [displayName, setDisplayName] = useState("abcd");
+  const [emailAddress, setEmailAddress] = useState("abce");
+  const [bio, setBio] = useState("abcb");
 
   // Add new state variables for admin setup
-  const [admins, setAdmins] = useState<string[]>(["admin1"]);
+  const [admins, setAdmins] = useState<string[]>([
+    "a65106a37f0b23f0384d19b7102550ecb3591c21d4804a1d35191315",
+    "1195997a35c4f3f0b0d1edb2c3123a25897d9810e0545f950c61ae1f",
+    "b5ea75ba2eac9a884ba7c47110ab7f94f9c0306636e4df01f338920f",
+  ]);
   const [adminTenure, setAdminTenure] = useState("1y");
-  const [multiSigThreshold, setMultiSigThreshold] = useState("1");
+  const [multiSigThreshold, setMultiSigThreshold] = useState("2");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAction = async (action: () => Promise<any>) => {
@@ -257,9 +354,25 @@ export default function Home() {
               Mint Counter NFT
             </button>
 
+            {/* Add Counter UTxO input fields */}
+            <div className="col-span-2 bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">
+                Counter UTxO for Minting
+              </h4>
+              {renderUtxoInputs(
+                "Counter UTxO",
+                counterUtxoHash,
+                setCounterUtxoHash,
+                counterUtxoIndex,
+                setCounterUtxoIndex
+              )}
+            </div>
+
             {/* Add new Mint and Spend Oracle NFT section */}
             <div className="col-span-2 bg-gray-700 p-4 rounded">
-              <h4 className="text-lg font-medium mb-2">Mint and Spend Oracle NFT</h4>
+              <h4 className="text-lg font-medium mb-2">
+                Mint and Spend Oracle NFT
+              </h4>
               {renderUtxoInputs(
                 "Oracle UTxO",
                 oracleUtxoHash,
@@ -268,7 +381,9 @@ export default function Home() {
                 setOracleUtxoIndex
               )}
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Admin Addresses</label>
+                <label className="block text-sm font-medium mb-2">
+                  Admin Addresses
+                </label>
                 <textarea
                   value={admins.join("\n")}
                   onChange={(e) => setAdmins(e.target.value.split("\n"))}
@@ -346,12 +461,28 @@ export default function Home() {
               onClick={() =>
                 handleAction(async () => {
                   const setup = await getSetupTx();
-                  return await setup.txOutScript();
+                  return await setup.txOutScript(
+                    "addr_test1qqyxeduckrmffn26gjffda77nfu560xctycf00jcnr74p7vdx9gcw644ygkqgqcfm5nlrecqv0rzp0qcyw55q3lxcpkq093wet"
+                  );
                 })
               }
             >
               Tx Out Scripts
             </button>
+
+            {/* Add Address input field for Tx Out Scripts */}
+            <div className="col-span-2 bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">
+                Tx Out Scripts Address
+              </h4>
+              {renderInputField(
+                "Address",
+                address,
+                setAddress,
+                "text",
+                "Enter address for Tx Out Scripts"
+              )}
+            </div>
           </div>
         </div>
 
@@ -438,8 +569,16 @@ export default function Home() {
                 tokenUtxoIndex,
                 setTokenUtxoIndex
               )}
-              {renderInputField("Token Policy ID", tokenPolicyId, setTokenPolicyId)}
-              {renderInputField("Token Asset Name", tokenAssetName, setTokenAssetName)}
+              {renderInputField(
+                "Token Policy ID",
+                tokenPolicyId,
+                setTokenPolicyId
+              )}
+              {renderInputField(
+                "Token Asset Name",
+                tokenAssetName,
+                setTokenAssetName
+              )}
               {renderInputField("Full Name", fullName, setFullName)}
               {renderInputField("Display Name", displayName, setDisplayName)}
               {renderInputField("Email Address", emailAddress, setEmailAddress)}
@@ -501,7 +640,12 @@ export default function Home() {
                 memberUtxoIndex,
                 setMemberUtxoIndex
               )}
-              {renderInputField("Fund Requested", fundRequested, setFundRequested, "number")}
+              {renderInputField(
+                "Fund Requested",
+                fundRequested,
+                setFundRequested,
+                "number"
+              )}
               {renderInputField("Receiver", receiver, setReceiver)}
               {renderInputField("Project Details", projectUrl, setProjectUrl)}
               <button
