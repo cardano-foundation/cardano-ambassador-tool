@@ -22,13 +22,13 @@ export default function Home() {
     const setupUtxo: SetupUtxos = {
       oracle: {
         txHash:
-          "dd0d618c66d168700239ef66e4c4e4ae72fcb4d3054e3a1125b25256dde6ab3c",
-        outputIndex: 0,
+          "c30fc4006f636373b4946c7716ebc32da9cbc50704b1120f2112f8c7c943c463",
+        outputIndex: 2,
       },
       counter: {
         txHash:
-          "08cd85d71887af9a069bfce4f8337138a20005d0cd554fc34df950a932061c27",
-        outputIndex: 0,
+          "c51d27506b1f88a48e8d43bd41397c5bdfa89c3c39a3c41c07f828864da3e11b",
+        outputIndex: 2,
       },
     };
 
@@ -36,72 +36,72 @@ export default function Home() {
       membershipIntent: {
         mint: {
           txHash:
-            "01bcb84d158d00a85eeab4f77c705646d1e1791081d9a5df620bb7458e1a71a7",
+            "a8947c25fc23714fa09957c5e08f6987dc385b85a62d0fd908417d8df97053b1",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "a18fe21f5e3f6d6445146a68a8e53c371b53bbf9f362cabb82a4ae9bce1ec835",
-          outputIndex: 0,
+            "a8947c25fc23714fa09957c5e08f6987dc385b85a62d0fd908417d8df97053b1",
+          outputIndex: 1,
         },
       },
       member: {
         mint: {
           txHash:
-            "f5a79024fa898261a433315b64d0668313e2db0ac796552f2d972f0ee2c9c576",
+            "9fd9561cd7c863c3b72e099d2ca2768dbf2b77b46a605c0c0d03b76ae1df3d1c",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "f5a79024fa898261a433315b64d0668313e2db0ac796552f2d972f0ee2c9c576",
+            "9fd9561cd7c863c3b72e099d2ca2768dbf2b77b46a605c0c0d03b76ae1df3d1c",
           outputIndex: 1,
         },
       },
       proposeIntent: {
         mint: {
           txHash:
-            "d1d88b9acbba509aff54a73ae68b50bc47210cd7ec31acac8f87b1c193578c87",
+            "6d2678d39c2c6d7f7ec84c2a15ee6bdc5058e7139d3de1f7519eb8f84f01ee9d",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "d1d88b9acbba509aff54a73ae68b50bc47210cd7ec31acac8f87b1c193578c87",
+            "6d2678d39c2c6d7f7ec84c2a15ee6bdc5058e7139d3de1f7519eb8f84f01ee9d",
           outputIndex: 1,
         },
       },
       proposal: {
         mint: {
           txHash:
-            "c51d27506b1f88a48e8d43bd41397c5bdfa89c3c39a3c41c07f828864da3e11b",
+            "43fcd5c10ae95af47c3fde34d84ebe3e1a616592b4843ab1dc16d0ffc805eff4",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "c51d27506b1f88a48e8d43bd41397c5bdfa89c3c39a3c41c07f828864da3e11b",
+            "43fcd5c10ae95af47c3fde34d84ebe3e1a616592b4843ab1dc16d0ffc805eff4",
           outputIndex: 1,
         },
       },
       signOffApproval: {
         mint: {
           txHash:
-            "267ac52f3092db0500332871c9ad989b0ba00317ece22e395d066f10ba111d1c",
+            "a1d1e688adbe53b5c3b26cb8007f327f083ea6261d4c5a0a7617d888328683b8",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "267ac52f3092db0500332871c9ad989b0ba00317ece22e395d066f10ba111d1c",
+            "a1d1e688adbe53b5c3b26cb8007f327f083ea6261d4c5a0a7617d888328683b8",
           outputIndex: 1,
         },
       },
       treasury: {
         spend: {
           txHash:
-            "c30fc4006f636373b4946c7716ebc32da9cbc50704b1120f2112f8c7c943c463",
+            "8fbefe80a81e4057e7cc642e83a5784ad792591f0c0d744b29e40960d4afa6dd",
           outputIndex: 0,
         },
         withdrawal: {
           txHash:
-            "c30fc4006f636373b4946c7716ebc32da9cbc50704b1120f2112f8c7c943c463",
+            "8fbefe80a81e4057e7cc642e83a5784ad792591f0c0d744b29e40960d4afa6dd",
           outputIndex: 1,
         },
       },
@@ -142,22 +142,24 @@ export default function Home() {
 
   // State for UTxO inputs
   const [oracleUtxoHash, setOracleUtxoHash] = useState(
-    "3513a91b7c211ccfce41cbd7e46de8acedb3edec3f6312acb975167da73ae1bf"
+    "dcfe82ad65e07571784432a90971e4694f3328122769a7fac21bb1ecb9d4b4ac"
   );
   const [oracleUtxoIndex, setOracleUtxoIndex] = useState("0");
   const [tokenUtxoHash, setTokenUtxoHash] = useState(
-    "66a3f9a727c7e36491129760dbb0e291c7a3a54436485d93993ffaf85add0671"
+    "0bdf2ec35df71b4141a94a172e375c0a5bb10738310b23a0d814efad1af1f304"
   );
   const [tokenUtxoIndex, setTokenUtxoIndex] = useState("1");
   const [memberUtxoHash, setMemberUtxoHash] = useState("");
-  const [memberUtxoIndex, setMemberUtxoIndex] = useState("");
+  const [memberUtxoIndex, setMemberUtxoIndex] = useState("1");
   const [counterUtxoHash, setCounterUtxoHash] = useState(
-    "66a3f9a727c7e36491129760dbb0e291c7a3a54436485d93993ffaf85add0671"
+    "23d046f2ebd8011e12a33f99d5df2c9c532cf20a0473e64b95cceed6f03abe7e"
   );
   const [counterUtxoIndex, setCounterUtxoIndex] = useState("0");
-  const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState("");
+  const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState(
+    "0bdf2ec35df71b4141a94a172e375c0a5bb10738310b23a0d814efad1af1f304"
+  );
   const [membershipIntentUtxoIndex, setMembershipIntentUtxoIndex] =
-    useState("");
+    useState("0");
   const [proposeIntentUtxoHash, setProposeIntentUtxoHash] = useState("");
   const [proposeIntentUtxoIndex, setProposeIntentUtxoIndex] = useState("");
   const [proposalUtxoHash, setProposalUtxoHash] = useState("");
@@ -269,10 +271,15 @@ export default function Home() {
   );
   const [adminSigned, setAdminSigned] = useState<string[]>([
     "a65106a37f0b23f0384d19b7102550ecb3591c21d4804a1d35191315",
+    // "1195997a35c4f3f0b0d1edb2c3123a25897d9810e0545f950c61ae1f",
   ]);
-  const [newAdmins, setNewAdmins] = useState<string[]>([]);
+  const [newAdmins, setNewAdmins] = useState<string[]>([
+    "1195997a35c4f3f0b0d1edb2c3123a25897d9810e0545f950c61ae1f",
+    "a65106a37f0b23f0384d19b7102550ecb3591c21d4804a1d35191315",
+    "b5ea75ba2eac9a884ba7c47110ab7f94f9c0306636e4df01f338920f",
+  ]);
   const [newAdminTenure, setNewAdminTenure] = useState("2y");
-  const [newMultiSigThreshold, setNewMultiSigThreshold] = useState("1");
+  const [newMultiSigThreshold, setNewMultiSigThreshold] = useState("2");
 
   // Add new state variables for user info
   const [fullName, setFullName] = useState("abcf");
@@ -287,7 +294,7 @@ export default function Home() {
     "b5ea75ba2eac9a884ba7c47110ab7f94f9c0306636e4df01f338920f",
   ]);
   const [adminTenure, setAdminTenure] = useState("1y");
-  const [multiSigThreshold, setMultiSigThreshold] = useState("2");
+  const [multiSigThreshold, setMultiSigThreshold] = useState("1");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAction = async (action: () => Promise<any>) => {

@@ -33,9 +33,9 @@ import {
   stopCounter,
   rBurn,
   IProvider,
+  CATConstants,
   MembershipMetadata,
   membershipMetadata,
-  CATConstants,
 } from "../lib";
 import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
@@ -80,13 +80,12 @@ export class AdminActionTx extends Layer1Tx {
       assetName: tokenAssetName,
       metadata: memberData,
     } = getMembershipIntentDatum(membershipIntentUtxo);
-
     const metadata: MembershipMetadata = membershipMetadata(
       memberData.walletAddress,
-      memberData.fullName,
-      memberData.displayName,
-      memberData.emailAddress,
-      memberData.bio
+      stringToHex(memberData.fullName),
+      stringToHex(memberData.displayName),
+      stringToHex(memberData.emailAddress),
+      stringToHex(memberData.bio)
     );
     const newMemberDatum: MemberDatum = memberDatum(
       tokenPolicyId,
@@ -176,12 +175,15 @@ export class AdminActionTx extends Layer1Tx {
             quantity: "1",
           },
         ])
-        .txOutInlineDatumValue(newMemberDatum, "JSON");
+        .txOutInlineDatumValue(newMemberDatum, "JSON")
+        .setFee("1350000");
 
       for (const admin of adminSigned) {
         txBuilder.requiredSignerHash(admin);
       }
       const txHex = await txBuilder.complete();
+
+      console.log(txHex);
 
       return { txHex, counterUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
     } catch (e) {
@@ -238,6 +240,8 @@ export class AdminActionTx extends Layer1Tx {
 
     const txHex = await txBuilder.complete();
 
+    console.log(txHex);
+
     return { txHex };
   };
 
@@ -283,7 +287,8 @@ export class AdminActionTx extends Layer1Tx {
         (this.catConstant.scripts.member.mint.cbor.length / 2).toString(),
         this.catConstant.scripts.member.mint.hash
       )
-      .mintRedeemerValue(removeMember, "JSON");
+      .mintRedeemerValue(removeMember, "JSON")
+      .setFee("500000");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
@@ -793,13 +798,16 @@ export class AdminActionTx extends Layer1Tx {
           quantity: "1",
         },
       ])
-      .txOutInlineDatumValue(updatedOracleDatum, "JSON");
+      .txOutInlineDatumValue(updatedOracleDatum, "JSON")
+      .setFee("500000");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
     }
 
     const txHex = await txBuilder.complete();
+
+    console.log(txHex);
 
     return { txHex, txIndex: 0 };
   };
