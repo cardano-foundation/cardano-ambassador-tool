@@ -173,15 +173,15 @@ export class SetupTx extends Layer1Tx {
     const txBuilder = await this.newValidationTx();
     try {
       // const unsignedMembershipIntentTx = await txBuilder
-      //   // .txOut(address, [])
-      //   // .txOutReferenceScript(
-      //   //   this.catConstant.scripts.membershipIntent.mint.cbor
-      //   // )
+      //   .txOut(address, [])
+      //   .txOutReferenceScript(
+      //     this.catConstant.scripts.membershipIntent.mint.cbor
+      //   )
       //   .txOut(address, [])
       //   .txOutReferenceScript(
       //     this.catConstant.scripts.membershipIntent.spend.cbor
       //   )
-      //   .setFee("500000")
+      //   .setFee("610000")
       //   .complete();
 
       // const signedMembershipIntentTx = await this.wallet.signTx(
