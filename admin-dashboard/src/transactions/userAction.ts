@@ -42,12 +42,13 @@ export class UserActionTx extends Layer1Tx {
     bio: string
   ) => {
     const metadata: MembershipMetadata = membershipMetadata(
-      stringToHex(walletAddress),
+      walletAddress,
       stringToHex(fullName),
       stringToHex(displayName),
       stringToHex(emailAddress),
       stringToHex(bio)
     );
+
     const redeemer: ApplyMembership = applyMembership(
       tokenPolicyId,
       tokenAssetName, // todo: stringToHex tbc
