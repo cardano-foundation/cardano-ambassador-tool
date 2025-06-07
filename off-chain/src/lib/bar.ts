@@ -284,16 +284,11 @@ export type AddMember = ConStr0<[]>;
 
 export type RemoveMember = ConStr1<[]>;
 
-export type MemberSpendRedeemer =
-  | AdminRemoveMember
-  | MemberProposeProject
-  | AdminSignOffProject;
+export type MemberSpendRedeemer = AdminRemoveMember | AdminSignOffProject;
 
 export type AdminRemoveMember = ConStr0<[]>;
 
-export type MemberProposeProject = ConStr1<[]>;
-
-export type AdminSignOffProject = ConStr2<[]>;
+export type AdminSignOffProject = ConStr1<[]>;
 
 export type MemberDatum = ConStr0<
   [Tuple<[PolicyId, AssetName]>, Pairs<any, Integer>, Integer, any]

@@ -73,7 +73,6 @@ pub type MemberMintRedeemer {
 
 pub type MemberSpendRedeemer {
   AdminRemoveMember
-  MemberProposeProject
   AdminSignOffProject
 }
 

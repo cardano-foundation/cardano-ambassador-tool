@@ -31,7 +31,6 @@ import {
   CounterDatum,
   IncrementCount,
   MemberDatum,
-  MemberProposeProject,
   MembershipIntentDatum,
   MintProposal,
   MintSignOffApproval,
@@ -201,9 +200,7 @@ export const removeMember: RemoveMember = conStr1([]);
 
 export const adminRemoveMember: AdminRemoveMember = conStr0([]);
 
-export const memberProposeProject: MemberProposeProject = conStr1([]);
-
-export const adminSignOffProject: AdminSignOffProject = conStr2([]);
+export const adminSignOffProject: AdminSignOffProject = conStr1([]);
 // 4 - ProposeIntent
 
 export type ProposalMetadata = ConStr0<

@@ -42,16 +42,11 @@ validator propose_intent(oracle_nft: PolicyId) {
 
     when redeemer is {
       ProposeProject(fund_requested, receiver, member, metadata) -> {
-        expect [member_input] =
-          inputs_at_with_policy(inputs, member_address, member_token)
+        expect [member_ref_input] =
+          inputs_at_with_policy(reference_inputs, member_address, member_token)
         expect member_input_datum: MemberDatum =
-          output_inline_datum(member_input.output)
+          output_inline_datum(member_ref_input.output)
         let MemberDatum { token, .. } = member_input_datum
-
-        expect [member_output] =
-          outputs_at_with_policy(outputs, member_address, member_token)
-        let is_member_output_value_clean =
-          value_length(member_output.value) == 2
 
         expect [token_input] = inputs_with(inputs, token.1st, token.2nd)
         let token_owner = token_input.output.address
@@ -70,7 +65,7 @@ validator propose_intent(oracle_nft: PolicyId) {
 
         let propose_intent_asset_name =
           cbor.serialise(metadata) |> blake2b_256()
-        is_member_output_value_clean? && is_intent_output_value_clean? && is_intent_datum_correct? && only_minted_token(
+        is_intent_output_value_clean? && is_intent_datum_correct? && only_minted_token(
           mint,
           policy_id,
           propose_intent_asset_name,
