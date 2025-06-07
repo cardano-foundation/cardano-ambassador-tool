@@ -1,2 +1,2 @@
 export * from "./transactions";
-export * from "./lib";
+export * from "../../admin-dashboard/src/lib";

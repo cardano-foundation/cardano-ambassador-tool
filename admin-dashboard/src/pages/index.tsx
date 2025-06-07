@@ -1,15 +1,10 @@
 import Head from "next/head";
 import { CardanoWallet, MeshBadge, useWallet } from "@meshsdk/react";
-import {
-  AdminActionTx,
-  SetupTx,
-  UserActionTx,
-  CATConstants,
-  RefTxInScripts,
-  SetupUtxos,
-} from "@sidan-lab/cardano-ambassador-tool";
+
 import { useState } from "react";
 import { blockfrost, BlockfrostService } from "@/services";
+import { SetupUtxos, RefTxInScripts, CATConstants } from "@/lib";
+import { SetupTx, AdminActionTx, UserActionTx } from "@/transactions";
 
 export default function Home() {
   const { connected, wallet } = useWallet();
@@ -27,8 +22,8 @@ export default function Home() {
     const setupUtxo: SetupUtxos = {
       oracle: {
         txHash:
-          "327794068e2173acdb43531ddc649cd1e510d353ffc3de3ef3fb2306eda97f05",
-        outputIndex: 1,
+          "dd0d618c66d168700239ef66e4c4e4ae72fcb4d3054e3a1125b25256dde6ab3c",
+        outputIndex: 0,
       },
       counter: {
         txHash:
@@ -41,72 +36,72 @@ export default function Home() {
       membershipIntent: {
         mint: {
           txHash:
-            "ebe1909a1f0754b4065afa3b1f5eca6ef669ea613c6802de98a2c99b95362d4d",
+            "01bcb84d158d00a85eeab4f77c705646d1e1791081d9a5df620bb7458e1a71a7",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "ebe1909a1f0754b4065afa3b1f5eca6ef669ea613c6802de98a2c99b95362d4d",
-          outputIndex: 1,
+            "a18fe21f5e3f6d6445146a68a8e53c371b53bbf9f362cabb82a4ae9bce1ec835",
+          outputIndex: 0,
         },
       },
       member: {
         mint: {
           txHash:
-            "9617e93dd4b3e75253d16ee90586e08b9f904c396f3a580580da09f820c42d0a",
+            "f5a79024fa898261a433315b64d0668313e2db0ac796552f2d972f0ee2c9c576",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "9617e93dd4b3e75253d16ee90586e08b9f904c396f3a580580da09f820c42d0a",
+            "f5a79024fa898261a433315b64d0668313e2db0ac796552f2d972f0ee2c9c576",
           outputIndex: 1,
         },
       },
       proposeIntent: {
         mint: {
           txHash:
-            "d476ac0425a1bdc53557bf1b9d52ad5204bc96a5b0a5ebf40a224b43e4e8d400",
+            "d1d88b9acbba509aff54a73ae68b50bc47210cd7ec31acac8f87b1c193578c87",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "d476ac0425a1bdc53557bf1b9d52ad5204bc96a5b0a5ebf40a224b43e4e8d400",
+            "d1d88b9acbba509aff54a73ae68b50bc47210cd7ec31acac8f87b1c193578c87",
           outputIndex: 1,
         },
       },
       proposal: {
         mint: {
           txHash:
-            "4f210c1f2116c77be28bb9ebd388eaa38517173450275ce2e97de0a45c256f0e",
+            "c51d27506b1f88a48e8d43bd41397c5bdfa89c3c39a3c41c07f828864da3e11b",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "4f210c1f2116c77be28bb9ebd388eaa38517173450275ce2e97de0a45c256f0e",
+            "c51d27506b1f88a48e8d43bd41397c5bdfa89c3c39a3c41c07f828864da3e11b",
           outputIndex: 1,
         },
       },
       signOffApproval: {
         mint: {
           txHash:
-            "1463e3c76637ec6e386d35857a8ed571451c8c7c6c5f3ee108af50ff0aa559b0",
+            "267ac52f3092db0500332871c9ad989b0ba00317ece22e395d066f10ba111d1c",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "1463e3c76637ec6e386d35857a8ed571451c8c7c6c5f3ee108af50ff0aa559b0",
+            "267ac52f3092db0500332871c9ad989b0ba00317ece22e395d066f10ba111d1c",
           outputIndex: 1,
         },
       },
       treasury: {
         spend: {
           txHash:
-            "d551b8f6d9d035436fcce241b3de032c8228c6f5076bd0ffd184c6dbc0ee3802",
+            "c30fc4006f636373b4946c7716ebc32da9cbc50704b1120f2112f8c7c943c463",
           outputIndex: 0,
         },
         withdrawal: {
           txHash:
-            "d551b8f6d9d035436fcce241b3de032c8228c6f5076bd0ffd184c6dbc0ee3802",
+            "c30fc4006f636373b4946c7716ebc32da9cbc50704b1120f2112f8c7c943c463",
           outputIndex: 1,
         },
       },
@@ -147,15 +142,17 @@ export default function Home() {
 
   // State for UTxO inputs
   const [oracleUtxoHash, setOracleUtxoHash] = useState(
-    "51da35838b2682b5727bd34979df324b56e6556ad5ed3cd5d2bdbcb5996b13fa"
+    "3513a91b7c211ccfce41cbd7e46de8acedb3edec3f6312acb975167da73ae1bf"
   );
   const [oracleUtxoIndex, setOracleUtxoIndex] = useState("0");
-  const [tokenUtxoHash, setTokenUtxoHash] = useState("");
-  const [tokenUtxoIndex, setTokenUtxoIndex] = useState("");
+  const [tokenUtxoHash, setTokenUtxoHash] = useState(
+    "66a3f9a727c7e36491129760dbb0e291c7a3a54436485d93993ffaf85add0671"
+  );
+  const [tokenUtxoIndex, setTokenUtxoIndex] = useState("1");
   const [memberUtxoHash, setMemberUtxoHash] = useState("");
   const [memberUtxoIndex, setMemberUtxoIndex] = useState("");
   const [counterUtxoHash, setCounterUtxoHash] = useState(
-    "7633a420f9bcf59ef3c889c5587e87c2e8c01ab0a61ede6efea72217c561478d"
+    "66a3f9a727c7e36491129760dbb0e291c7a3a54436485d93993ffaf85add0671"
   );
   const [counterUtxoIndex, setCounterUtxoIndex] = useState("0");
   const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState("");
