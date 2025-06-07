@@ -4,8 +4,8 @@ use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
 use mocktail.{
   complete, mint, mock_policy_id, mock_tx_hash, mocktail_tx, ref_tx_in,
-  ref_tx_in_inline_datum, required_signer_hash, tx_in, tx_in_inline_datum,
-  tx_out, tx_out_inline_datum,
+  ref_tx_in_inline_datum, required_signer_hash, tx_in, tx_out,
+  tx_out_inline_datum,
 }
 use propose_intent/mint as propose_intent_mint
 use tests/utils.{
@@ -86,14 +86,14 @@ fn mock_propose_project_tx(test_case: ProposeProjectTestCase) -> Transaction {
         cbor.serialise(mock_metadata) |> blake2b_256(),
       )
     |> tx_in(is_token_inputed, mock_tx_hash(0), 0, input_value, mock_user_address)
-    |> tx_in(
+    |> ref_tx_in(
         is_member_inputed,
         mock_tx_hash(1),
         1,
         member_input_value,
         mock_member_address,
       )
-    |> tx_in_inline_datum(is_member_inputed, mock_member_datum)
+    |> ref_tx_in_inline_datum(is_member_inputed, mock_member_datum)
     |> tx_out(is_token_output_correct, mock_user_address, input_value)
     |> tx_out(is_member_output_correct, mock_member_address, member_input_value)
     |> tx_out(

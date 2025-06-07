@@ -8,11 +8,10 @@
 
 1. Mint - Redeemer `ProposeProject {Int, Addres, Int, Data}`
 
-   - only 1 input `Member` NFT from `Member` Spending Script
+   - 1 ref input `Member` NFT from `Member` Spending Script
    - check if 1 input with asset same as the datum in `Member` NFT
    - mint 1 `ProposeIntent` token with assetName = hash(datum)
    - output user token back to member
-   - output `Member` NFT to `Member` Spending Script with datum (Pending: Project) tbc
    - output `ProposeIntent` token to `ProposeIntent` Spending Script with `ProposalDatum` (project url, amount, address)
 
 2. Burn - Redeemer `ApproveProposal`
