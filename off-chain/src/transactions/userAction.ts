@@ -16,7 +16,7 @@ import {
   getTokenAssetNameByPolicyId,
   computeProposalMetadataHash,
   CATConstants,
-} from "../lib";
+} from "../../../off-chain/src/lib";
 import { hexToString, IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
 export class UserActionTx extends Layer1Tx {

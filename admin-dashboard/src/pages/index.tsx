@@ -3,8 +3,15 @@ import { CardanoWallet, MeshBadge, useWallet } from "@meshsdk/react";
 
 import { useState } from "react";
 import { blockfrost, BlockfrostService } from "@/services";
-import { SetupUtxos, RefTxInScripts, CATConstants } from "@/lib";
-import { SetupTx, AdminActionTx, UserActionTx } from "@/transactions";
+
+import {
+  SetupTx,
+  AdminActionTx,
+  UserActionTx,
+  CATConstants,
+  RefTxInScripts,
+  SetupUtxos,
+} from "@sidan-lab/cardano-ambassador-tool";
 
 export default function Home() {
   const { connected, wallet } = useWallet();
