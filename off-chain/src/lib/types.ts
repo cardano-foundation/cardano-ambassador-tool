@@ -177,17 +177,20 @@ export const membershipIntentDatum = (
 export const memberDatum = (
   tokenPolicyId: string,
   tokenAssetName: string,
-  completion: Map<string, number>,
+  completion: Map<ProposalData, number>,
   fundReceived: number,
   metaData: MembershipMetadata
 ): MemberDatum => {
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
-  const completionItems: [ByteString, Integer][] = Array.from(
+  const completionItems: [ProposalMetadata, Integer][] = Array.from(
     completion.entries()
-  ).map(([key, value]) => [byteString(stringToHex(key)), integer(value)]);
+  ).map(([key, value]) => [
+    proposalMetadata(key.projectDetails),
+    integer(value),
+  ]);
 
-  const completionPluts: Pairs<ByteString, Integer> = pairs<
-    ByteString,
+  const completionPluts: Pairs<ProposalMetadata, Integer> = pairs<
+    ProposalMetadata,
     Integer
   >(completionItems);
 
@@ -268,7 +271,7 @@ export type MemberData = {
 
 export type Member = {
   token: { policyId: string; assetName: string };
-  completion: Map<string, number>;
+  completion: Map<ProposalData, number>;
   fundReceived: number;
   metadata: MemberData;
 };

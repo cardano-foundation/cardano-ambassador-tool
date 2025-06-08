@@ -1,15 +1,17 @@
 import Head from "next/head";
 import { CardanoWallet, MeshBadge, useWallet } from "@meshsdk/react";
+
+import { useState } from "react";
+import { blockfrost, BlockfrostService } from "@/services";
+
 import {
-  AdminActionTx,
   SetupTx,
+  AdminActionTx,
   UserActionTx,
   CATConstants,
   RefTxInScripts,
   SetupUtxos,
 } from "@sidan-lab/cardano-ambassador-tool";
-import { useState } from "react";
-import { blockfrost, BlockfrostService } from "@/services";
 
 export default function Home() {
   const { connected, wallet } = useWallet();
@@ -27,13 +29,13 @@ export default function Home() {
     const setupUtxo: SetupUtxos = {
       oracle: {
         txHash:
-          "327794068e2173acdb43531ddc649cd1e510d353ffc3de3ef3fb2306eda97f05",
+          "6bd06a9b61ef72a660064119a346eea40f1cf9169c7fe5d9c41cb27b5b19d6f7",
         outputIndex: 1,
       },
       counter: {
         txHash:
-          "08cd85d71887af9a069bfce4f8337138a20005d0cd554fc34df950a932061c27",
-        outputIndex: 0,
+          "4e9ec5b577104f6926bbd676ea824d8d5dfbdeb9c8a2e470150d594bcc738d36",
+        outputIndex: 1,
       },
     };
 
@@ -41,72 +43,72 @@ export default function Home() {
       membershipIntent: {
         mint: {
           txHash:
-            "ebe1909a1f0754b4065afa3b1f5eca6ef669ea613c6802de98a2c99b95362d4d",
+            "a8947c25fc23714fa09957c5e08f6987dc385b85a62d0fd908417d8df97053b1",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "ebe1909a1f0754b4065afa3b1f5eca6ef669ea613c6802de98a2c99b95362d4d",
+            "a8947c25fc23714fa09957c5e08f6987dc385b85a62d0fd908417d8df97053b1",
           outputIndex: 1,
         },
       },
       member: {
         mint: {
           txHash:
-            "9617e93dd4b3e75253d16ee90586e08b9f904c396f3a580580da09f820c42d0a",
+            "9fd9561cd7c863c3b72e099d2ca2768dbf2b77b46a605c0c0d03b76ae1df3d1c",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "9617e93dd4b3e75253d16ee90586e08b9f904c396f3a580580da09f820c42d0a",
+            "9fd9561cd7c863c3b72e099d2ca2768dbf2b77b46a605c0c0d03b76ae1df3d1c",
           outputIndex: 1,
         },
       },
       proposeIntent: {
         mint: {
           txHash:
-            "d476ac0425a1bdc53557bf1b9d52ad5204bc96a5b0a5ebf40a224b43e4e8d400",
+            "6d2678d39c2c6d7f7ec84c2a15ee6bdc5058e7139d3de1f7519eb8f84f01ee9d",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "d476ac0425a1bdc53557bf1b9d52ad5204bc96a5b0a5ebf40a224b43e4e8d400",
+            "6d2678d39c2c6d7f7ec84c2a15ee6bdc5058e7139d3de1f7519eb8f84f01ee9d",
           outputIndex: 1,
         },
       },
       proposal: {
         mint: {
           txHash:
-            "4f210c1f2116c77be28bb9ebd388eaa38517173450275ce2e97de0a45c256f0e",
+            "43fcd5c10ae95af47c3fde34d84ebe3e1a616592b4843ab1dc16d0ffc805eff4",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "4f210c1f2116c77be28bb9ebd388eaa38517173450275ce2e97de0a45c256f0e",
+            "43fcd5c10ae95af47c3fde34d84ebe3e1a616592b4843ab1dc16d0ffc805eff4",
           outputIndex: 1,
         },
       },
       signOffApproval: {
         mint: {
           txHash:
-            "1463e3c76637ec6e386d35857a8ed571451c8c7c6c5f3ee108af50ff0aa559b0",
+            "a1d1e688adbe53b5c3b26cb8007f327f083ea6261d4c5a0a7617d888328683b8",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "1463e3c76637ec6e386d35857a8ed571451c8c7c6c5f3ee108af50ff0aa559b0",
+            "a1d1e688adbe53b5c3b26cb8007f327f083ea6261d4c5a0a7617d888328683b8",
           outputIndex: 1,
         },
       },
       treasury: {
         spend: {
           txHash:
-            "d551b8f6d9d035436fcce241b3de032c8228c6f5076bd0ffd184c6dbc0ee3802",
+            "8fbefe80a81e4057e7cc642e83a5784ad792591f0c0d744b29e40960d4afa6dd",
           outputIndex: 0,
         },
         withdrawal: {
           txHash:
-            "d551b8f6d9d035436fcce241b3de032c8228c6f5076bd0ffd184c6dbc0ee3802",
+            "8fbefe80a81e4057e7cc642e83a5784ad792591f0c0d744b29e40960d4afa6dd",
           outputIndex: 1,
         },
       },
@@ -147,26 +149,38 @@ export default function Home() {
 
   // State for UTxO inputs
   const [oracleUtxoHash, setOracleUtxoHash] = useState(
-    "51da35838b2682b5727bd34979df324b56e6556ad5ed3cd5d2bdbcb5996b13fa"
+    "e32a7c0204a2f624934b5fe32b850076787fc9a2d66e91756ff192c6efc774ac"
   );
   const [oracleUtxoIndex, setOracleUtxoIndex] = useState("0");
-  const [tokenUtxoHash, setTokenUtxoHash] = useState("");
-  const [tokenUtxoIndex, setTokenUtxoIndex] = useState("");
-  const [memberUtxoHash, setMemberUtxoHash] = useState("");
-  const [memberUtxoIndex, setMemberUtxoIndex] = useState("");
+  const [tokenUtxoHash, setTokenUtxoHash] = useState(
+    "4e9ec5b577104f6926bbd676ea824d8d5dfbdeb9c8a2e470150d594bcc738d36"
+  );
+  const [tokenUtxoIndex, setTokenUtxoIndex] = useState("1");
+  const [memberUtxoHash, setMemberUtxoHash] = useState(
+    "73f391f434690f5bf06fb84d009f4b3a9429b1fc4bfb2d45a31c4596ab03e038"
+  );
+  const [memberUtxoIndex, setMemberUtxoIndex] = useState("1");
   const [counterUtxoHash, setCounterUtxoHash] = useState(
-    "7633a420f9bcf59ef3c889c5587e87c2e8c01ab0a61ede6efea72217c561478d"
+    "1f2344f32e3ea769e58394719f3eea9a6170796de75884b80aa8df410a965b08"
   );
   const [counterUtxoIndex, setCounterUtxoIndex] = useState("0");
-  const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState("");
+  const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState(
+    "fa76cbf0d7f71d92dc8cce54d39b073ea61134edbab9381d309160a4cfa22cb5"
+  );
   const [membershipIntentUtxoIndex, setMembershipIntentUtxoIndex] =
-    useState("");
-  const [proposeIntentUtxoHash, setProposeIntentUtxoHash] = useState("");
-  const [proposeIntentUtxoIndex, setProposeIntentUtxoIndex] = useState("");
-  const [proposalUtxoHash, setProposalUtxoHash] = useState("");
-  const [proposalUtxoIndex, setProposalUtxoIndex] = useState("");
-  const [signOffApprovalUtxoHash, setSignOffApprovalUtxoHash] = useState("");
-  const [signOffApprovalUtxoIndex, setSignOffApprovalUtxoIndex] = useState("");
+    useState("0");
+  const [proposeIntentUtxoHash, setProposeIntentUtxoHash] = useState(
+    "4e9ec5b577104f6926bbd676ea824d8d5dfbdeb9c8a2e470150d594bcc738d36"
+  );
+  const [proposeIntentUtxoIndex, setProposeIntentUtxoIndex] = useState("0");
+  const [proposalUtxoHash, setProposalUtxoHash] = useState(
+    "79a30ce5681ce2356003031bcdb397ff793c9d9af2aea9b05b6843aca0156b83"
+  );
+  const [proposalUtxoIndex, setProposalUtxoIndex] = useState("0");
+  const [signOffApprovalUtxoHash, setSignOffApprovalUtxoHash] = useState(
+    "5312c84e52604673d90f65db7f58c2de321fcf70cdba61ff0d6ef97448018316"
+  );
+  const [signOffApprovalUtxoIndex, setSignOffApprovalUtxoIndex] = useState("0");
   const [treasuryUtxoInputs, setTreasuryUtxoInputs] = useState<
     { hash: string; index: string }[]
   >([{ hash: "", index: "" }]);
@@ -272,10 +286,15 @@ export default function Home() {
   );
   const [adminSigned, setAdminSigned] = useState<string[]>([
     "a65106a37f0b23f0384d19b7102550ecb3591c21d4804a1d35191315",
+    "1195997a35c4f3f0b0d1edb2c3123a25897d9810e0545f950c61ae1f",
   ]);
-  const [newAdmins, setNewAdmins] = useState<string[]>([]);
+  const [newAdmins, setNewAdmins] = useState<string[]>([
+    "1195997a35c4f3f0b0d1edb2c3123a25897d9810e0545f950c61ae1f",
+    "a65106a37f0b23f0384d19b7102550ecb3591c21d4804a1d35191315",
+    "b5ea75ba2eac9a884ba7c47110ab7f94f9c0306636e4df01f338920f",
+  ]);
   const [newAdminTenure, setNewAdminTenure] = useState("2y");
-  const [newMultiSigThreshold, setNewMultiSigThreshold] = useState("1");
+  const [newMultiSigThreshold, setNewMultiSigThreshold] = useState("2");
 
   // Add new state variables for user info
   const [fullName, setFullName] = useState("abcf");
@@ -290,7 +309,7 @@ export default function Home() {
     "b5ea75ba2eac9a884ba7c47110ab7f94f9c0306636e4df01f338920f",
   ]);
   const [adminTenure, setAdminTenure] = useState("1y");
-  const [multiSigThreshold, setMultiSigThreshold] = useState("2");
+  const [multiSigThreshold, setMultiSigThreshold] = useState("1");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAction = async (action: () => Promise<any>) => {
@@ -821,13 +840,6 @@ export default function Home() {
                 memberUtxoIndex,
                 setMemberUtxoIndex
               )}
-              <textarea
-                value={adminSigned.join("\n")}
-                onChange={(e) => setAdminSigned(e.target.value.split("\n"))}
-                placeholder="Enter admin signatures (one per line)"
-                className="w-full p-2 rounded bg-gray-700 text-white mb-2"
-                rows={3}
-              />
               <button
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
@@ -845,8 +857,7 @@ export default function Home() {
                     const adminAction = await getAdminActionTx();
                     return await adminAction.removeMember(
                       oracleUtxo,
-                      memberUtxo,
-                      adminSigned
+                      memberUtxo
                     );
                   })
                 }
@@ -1261,6 +1272,11 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
                     const counterUtxo = await fetchUtxo(
                       counterUtxoHash,
                       counterUtxoIndex,
@@ -1268,6 +1284,7 @@ export default function Home() {
                     );
                     const adminAction = await getAdminActionTx();
                     return await adminAction.stopCounter(
+                      oracleUtxo,
                       counterUtxo,
                       adminSigned
                     );
