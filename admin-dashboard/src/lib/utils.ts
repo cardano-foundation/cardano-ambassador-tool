@@ -46,11 +46,22 @@ export const getTokenAssetNameByPolicyId = (
   return "";
 };
 
+export const getOracleAdmins = (oracleUtxo: UTxO): string[] => {
+  const plutusData = oracleUtxo.output.plutusData!;
+  const datum: OracleDatum = deserializeDatum(plutusData);
+
+  const admins: string[] = datum.fields[0].list.map((item) => {
+    return item.bytes;
+  });
+
+  return admins;
+};
+
 export const updateOracleDatum = (
   oracleUtxo: UTxO,
   newAdmins: string[] | null,
   newAdminsTenure: string | null,
-  newAdminsVerificationKeys: number | null
+  newMultiSigThreshold: number | null
 ): OracleDatum => {
   const plutusData = oracleUtxo.output.plutusData!;
   const datum: OracleDatum = deserializeDatum(plutusData);
@@ -66,9 +77,7 @@ export const updateOracleDatum = (
     newAdminsTenure
       ? byteString(hexToString(newAdminsTenure))
       : datum.fields[1],
-    newAdminsVerificationKeys
-      ? integer(newAdminsVerificationKeys)
-      : datum.fields[2],
+    newMultiSigThreshold ? integer(newMultiSigThreshold) : datum.fields[2],
     datum.fields[3],
     datum.fields[4],
     datum.fields[5],
@@ -135,9 +144,14 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
   const policyId = datum.fields[0].list[0].bytes;
   const assetName = datum.fields[0].list[1].bytes;
 
-  const completion: Map<string, number> = new Map();
+  const completion: Map<ProposalData, number> = new Map();
   datum.fields[1].map.forEach((item) => {
-    completion.set(hexToString(item.k.bytes), Number(item.v.int));
+    completion.set(
+      {
+        projectDetails: hexToString(item.k.fields[0].bytes),
+      },
+      Number(item.v.int)
+    );
   });
 
   const fundReceived = Number(datum.fields[2].int);
@@ -157,12 +171,19 @@ export const updateMemberDatum = (
   const member: Member = getMemberDatum(memberUtxo);
   const signOffApproval: Proposal = getProposalDatum(signOffApprovalUtxo);
 
-  const updatedCompletions: Map<string, number> = new Map();
+  const updatedCompletions: Map<ProposalData, number> = new Map();
   member.completion.forEach((v, k) => {
-    updatedCompletions.set(stringToHex(k), v);
+    updatedCompletions.set(
+      {
+        projectDetails: stringToHex(k.projectDetails),
+      },
+      v
+    );
   });
   updatedCompletions.set(
-    stringToHex(signOffApproval.metadata.projectDetails),
+    {
+      projectDetails: stringToHex(signOffApproval.metadata.projectDetails),
+    },
     signOffApproval.fundRequested
   );
 
@@ -241,13 +262,10 @@ export const computeProposalMetadataHash = (
   metadata: ProposalMetadata
 ): string => {
   const bytes: string = serializeData(metadata, "JSON");
-  console.log("bytes", bytes);
 
   const hash = blake2b(Buffer.from(bytes, "hex"), undefined, 32);
-  console.log("hash", hash);
 
   const str = Buffer.from(hash.buffer).toString("hex");
-  console.log("str", str);
 
   return str;
 };

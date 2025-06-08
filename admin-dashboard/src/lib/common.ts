@@ -78,7 +78,6 @@ export class Layer1Tx {
     const txBuilder = this.newTxBuilder(evaluateTx);
     const { utxos } = await this.getWalletUtxos();
     const collateral = await this.wallet.getCollateral();
-    console.log(collateral[0]);
 
     if (!collateral || collateral.length === 0) {
       throw new Error("Collateral is undefined");

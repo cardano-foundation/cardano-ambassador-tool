@@ -20,6 +20,7 @@ import {
   List,
   PubKeyHash,
 } from "@meshsdk/core";
+import { ProposalMetadata } from "./types";
 
 const version = "V3";
 const networkId = 0; // 0 for testnet; 1 for mainnet
@@ -291,7 +292,7 @@ export type AdminRemoveMember = ConStr0<[]>;
 export type AdminSignOffProject = ConStr1<[]>;
 
 export type MemberDatum = ConStr0<
-  [Tuple<[PolicyId, AssetName]>, Pairs<any, Integer>, Integer, any]
+  [Tuple<[PolicyId, AssetName]>, Pairs<ProposalMetadata, Integer>, Integer, any]
 >;
 
 export type Data = any;

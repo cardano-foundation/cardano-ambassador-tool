@@ -17,7 +17,7 @@ import {
   computeProposalMetadataHash,
   CATConstants,
 } from "../lib";
-import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
+import { hexToString, IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
 export class UserActionTx extends Layer1Tx {
   constructor(
@@ -105,7 +105,7 @@ export class UserActionTx extends Layer1Tx {
       const txHex = await txBuilder.complete();
       console.log(txHex);
 
-      const signedTx = await this.wallet.signTx(txHex);
+      const signedTx = await this.wallet.signTx(txHex, true);
       await this.wallet.submitTx(signedTx);
 
       return { txHex, txIndex: 0 };
@@ -123,11 +123,13 @@ export class UserActionTx extends Layer1Tx {
     projectDetails: string
   ) => {
     const metadata: ProposalMetadata = proposalMetadata(
-      stringToHex(stringToHex(projectDetails))
+      stringToHex(projectDetails)
     );
-    const memberAssetName = getTokenAssetNameByPolicyId(
-      memberUtxo,
-      this.catConstant.scripts.member.mint.hash
+    const memberAssetName = hexToString(
+      getTokenAssetNameByPolicyId(
+        memberUtxo,
+        this.catConstant.scripts.member.mint.hash
+      )
     );
     const redeemer: ProposeProject = proposeProject(
       fundRequested,
@@ -186,7 +188,7 @@ export class UserActionTx extends Layer1Tx {
           },
         ])
         .txOutInlineDatumValue(datum, "JSON")
-        .setFee("400000");
+        .setFee("500000");
 
       if (tokenUtxo.output.plutusData) {
         txBuilder
@@ -197,16 +199,15 @@ export class UserActionTx extends Layer1Tx {
       }
 
       const txHex = await txBuilder.complete();
-      const signedTx = await this.wallet.signTx(txHex);
-      await this.wallet.submitTx(signedTx);
-
       console.log(txHex);
+
+      const signedTx = await this.wallet.signTx(txHex, true);
+      await this.wallet.submitTx(signedTx);
 
       return {
         txHex,
         proposeIntentUtxoTxIndex: 0,
         tokenUtxoTxIndex: 1,
-        memberUtxoTxIndex: 2,
       };
     } catch (e) {
       console.error(e);
