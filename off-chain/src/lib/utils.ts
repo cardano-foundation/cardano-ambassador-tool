@@ -46,11 +46,22 @@ export const getTokenAssetNameByPolicyId = (
   return "";
 };
 
+export const getOracleAdmins = (oracleUtxo: UTxO): string[] => {
+  const plutusData = oracleUtxo.output.plutusData!;
+  const datum: OracleDatum = deserializeDatum(plutusData);
+
+  const admins: string[] = datum.fields[0].list.map((item) => {
+    return item.bytes;
+  });
+
+  return admins;
+};
+
 export const updateOracleDatum = (
   oracleUtxo: UTxO,
   newAdmins: string[] | null,
   newAdminsTenure: string | null,
-  newAdminsVerificationKeys: number | null
+  newMultiSigThreshold: number | null
 ): OracleDatum => {
   const plutusData = oracleUtxo.output.plutusData!;
   const datum: OracleDatum = deserializeDatum(plutusData);
@@ -66,9 +77,7 @@ export const updateOracleDatum = (
     newAdminsTenure
       ? byteString(hexToString(newAdminsTenure))
       : datum.fields[1],
-    newAdminsVerificationKeys
-      ? integer(newAdminsVerificationKeys)
-      : datum.fields[2],
+    newMultiSigThreshold ? integer(newMultiSigThreshold) : datum.fields[2],
     datum.fields[3],
     datum.fields[4],
     datum.fields[5],
@@ -107,22 +116,42 @@ export const getMembershipIntentDatum = (
 
   const policyId = datum.fields[0].list[0].bytes;
   const assetName = datum.fields[0].list[1].bytes;
-  const metadata: MemberData = datum.fields[1];
+  const metadataPluts: MembershipMetadata = datum.fields[1];
 
+  const metadata: MemberData = {
+    walletAddress: serializeAddressObj(metadataPluts.fields[0]),
+    fullName: hexToString(metadataPluts.fields[1].bytes),
+    displayName: hexToString(metadataPluts.fields[2].bytes),
+    emailAddress: hexToString(metadataPluts.fields[3].bytes),
+    bio: hexToString(metadataPluts.fields[4].bytes),
+  };
   return { policyId, assetName, metadata };
 };
 
 export const getMemberDatum = (memberUtxo: UTxO): Member => {
   const plutusData = memberUtxo.output.plutusData!;
   const datum: MemberDatum = deserializeDatum(plutusData);
-  const metadata: MemberData = datum.fields[3];
+  const metadataPluts: MembershipMetadata = datum.fields[3];
+
+  const metadata: MemberData = {
+    walletAddress: serializeAddressObj(metadataPluts.fields[0]),
+    fullName: hexToString(metadataPluts.fields[1].bytes),
+    displayName: hexToString(metadataPluts.fields[2].bytes),
+    emailAddress: hexToString(metadataPluts.fields[3].bytes),
+    bio: hexToString(metadataPluts.fields[4].bytes),
+  };
 
   const policyId = datum.fields[0].list[0].bytes;
   const assetName = datum.fields[0].list[1].bytes;
 
-  const completion: Map<string, number> = new Map();
+  const completion: Map<ProposalData, number> = new Map();
   datum.fields[1].map.forEach((item) => {
-    completion.set(hexToString(item.k.bytes), Number(item.v.int));
+    completion.set(
+      {
+        projectDetails: hexToString(item.k.fields[0].bytes),
+      },
+      Number(item.v.int)
+    );
   });
 
   const fundReceived = Number(datum.fields[2].int);
@@ -142,12 +171,19 @@ export const updateMemberDatum = (
   const member: Member = getMemberDatum(memberUtxo);
   const signOffApproval: Proposal = getProposalDatum(signOffApprovalUtxo);
 
-  const updatedCompletions: Map<any, number> = new Map();
+  const updatedCompletions: Map<ProposalData, number> = new Map();
   member.completion.forEach((v, k) => {
-    updatedCompletions.set(stringToHex(k), v);
+    updatedCompletions.set(
+      {
+        projectDetails: stringToHex(k.projectDetails),
+      },
+      v
+    );
   });
   updatedCompletions.set(
-    signOffApproval.metadata,
+    {
+      projectDetails: stringToHex(signOffApproval.metadata.projectDetails),
+    },
     signOffApproval.fundRequested
   );
 
@@ -156,10 +192,10 @@ export const updateMemberDatum = (
 
   const memberMetadata: MembershipMetadata = membershipMetadata(
     member.metadata.walletAddress,
-    member.metadata.fullName,
-    member.metadata.displayName,
-    member.metadata.emailAddress,
-    member.metadata.bio
+    stringToHex(member.metadata.fullName),
+    stringToHex(member.metadata.displayName),
+    stringToHex(member.metadata.emailAddress),
+    stringToHex(member.metadata.bio)
   );
 
   const updatedMemberDatum: MemberDatum = memberDatum(
@@ -180,8 +216,11 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
   const fundRequested: number = Number(datum.fields[0].int);
   const receiver: string = serializeAddressObj(datum.fields[1]);
   const member: number = Number(datum.fields[2].int);
-  const metadata: ProposalData = datum.fields[3];
+  const metadataPluts: ProposalMetadata = datum.fields[3];
 
+  const metadata: ProposalData = {
+    projectDetails: hexToString(metadataPluts.fields[0].bytes),
+  };
   return {
     fundRequested: fundRequested,
     receiver: receiver,
@@ -223,8 +262,10 @@ export const computeProposalMetadataHash = (
   metadata: ProposalMetadata
 ): string => {
   const bytes: string = serializeData(metadata, "JSON");
+
   const hash = blake2b(Buffer.from(bytes, "hex"), undefined, 32);
-  const str = Buffer.from(hash.buffer).toString();
+
+  const str = Buffer.from(hash.buffer).toString("hex");
 
   return str;
 };

@@ -178,6 +178,17 @@ test s4_mint_fail_propose_project_with_no_oracle_inputed() fail {
   )
 }
 
+type Pm {
+  s: ByteArray,
+}
+
+test aaa() {
+  let m = Pm { s: "111" }
+  let cb = cbor.serialise(m) |> blake2b_256()
+
+  (cb == #"0715aa9bfb0d16f1bd4656a26feace28d5258067b48a0b7513e13b8936159f15")?
+}
+
 test s4_mint_fail_propose_project_with_incorrect_oracle_inputed() fail {
   let tx =
     mock_propose_project_tx(
