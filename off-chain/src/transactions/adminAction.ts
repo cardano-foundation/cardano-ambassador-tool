@@ -37,7 +37,7 @@ import {
   MembershipMetadata,
   membershipMetadata,
   getOracleAdmins,
-} from "../lib";
+} from "../../../off-chain/src/lib";
 import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
 export class AdminActionTx extends Layer1Tx {

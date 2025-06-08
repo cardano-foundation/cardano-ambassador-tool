@@ -6,7 +6,7 @@ import {
   IProvider,
   OracleDatum,
   CATConstants,
-} from "../lib";
+} from "../../../off-chain/src/lib";
 import { IWallet, resolveScriptHash, UTxO } from "@meshsdk/core";
 
 export class SetupTx extends Layer1Tx {
