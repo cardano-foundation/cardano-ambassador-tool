@@ -22,13 +22,13 @@ export default function Home() {
     const setupUtxo: SetupUtxos = {
       oracle: {
         txHash:
-          "c30fc4006f636373b4946c7716ebc32da9cbc50704b1120f2112f8c7c943c463",
-        outputIndex: 2,
+          "6bd06a9b61ef72a660064119a346eea40f1cf9169c7fe5d9c41cb27b5b19d6f7",
+        outputIndex: 1,
       },
       counter: {
         txHash:
-          "c51d27506b1f88a48e8d43bd41397c5bdfa89c3c39a3c41c07f828864da3e11b",
-        outputIndex: 2,
+          "4e9ec5b577104f6926bbd676ea824d8d5dfbdeb9c8a2e470150d594bcc738d36",
+        outputIndex: 1,
       },
     };
 
@@ -142,30 +142,38 @@ export default function Home() {
 
   // State for UTxO inputs
   const [oracleUtxoHash, setOracleUtxoHash] = useState(
-    "dcfe82ad65e07571784432a90971e4694f3328122769a7fac21bb1ecb9d4b4ac"
+    "e32a7c0204a2f624934b5fe32b850076787fc9a2d66e91756ff192c6efc774ac"
   );
   const [oracleUtxoIndex, setOracleUtxoIndex] = useState("0");
   const [tokenUtxoHash, setTokenUtxoHash] = useState(
-    "0bdf2ec35df71b4141a94a172e375c0a5bb10738310b23a0d814efad1af1f304"
+    "4e9ec5b577104f6926bbd676ea824d8d5dfbdeb9c8a2e470150d594bcc738d36"
   );
   const [tokenUtxoIndex, setTokenUtxoIndex] = useState("1");
-  const [memberUtxoHash, setMemberUtxoHash] = useState("");
+  const [memberUtxoHash, setMemberUtxoHash] = useState(
+    "73f391f434690f5bf06fb84d009f4b3a9429b1fc4bfb2d45a31c4596ab03e038"
+  );
   const [memberUtxoIndex, setMemberUtxoIndex] = useState("1");
   const [counterUtxoHash, setCounterUtxoHash] = useState(
-    "23d046f2ebd8011e12a33f99d5df2c9c532cf20a0473e64b95cceed6f03abe7e"
+    "1f2344f32e3ea769e58394719f3eea9a6170796de75884b80aa8df410a965b08"
   );
   const [counterUtxoIndex, setCounterUtxoIndex] = useState("0");
   const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState(
-    "0bdf2ec35df71b4141a94a172e375c0a5bb10738310b23a0d814efad1af1f304"
+    "fa76cbf0d7f71d92dc8cce54d39b073ea61134edbab9381d309160a4cfa22cb5"
   );
   const [membershipIntentUtxoIndex, setMembershipIntentUtxoIndex] =
     useState("0");
-  const [proposeIntentUtxoHash, setProposeIntentUtxoHash] = useState("");
-  const [proposeIntentUtxoIndex, setProposeIntentUtxoIndex] = useState("");
-  const [proposalUtxoHash, setProposalUtxoHash] = useState("");
-  const [proposalUtxoIndex, setProposalUtxoIndex] = useState("");
-  const [signOffApprovalUtxoHash, setSignOffApprovalUtxoHash] = useState("");
-  const [signOffApprovalUtxoIndex, setSignOffApprovalUtxoIndex] = useState("");
+  const [proposeIntentUtxoHash, setProposeIntentUtxoHash] = useState(
+    "4e9ec5b577104f6926bbd676ea824d8d5dfbdeb9c8a2e470150d594bcc738d36"
+  );
+  const [proposeIntentUtxoIndex, setProposeIntentUtxoIndex] = useState("0");
+  const [proposalUtxoHash, setProposalUtxoHash] = useState(
+    "79a30ce5681ce2356003031bcdb397ff793c9d9af2aea9b05b6843aca0156b83"
+  );
+  const [proposalUtxoIndex, setProposalUtxoIndex] = useState("0");
+  const [signOffApprovalUtxoHash, setSignOffApprovalUtxoHash] = useState(
+    "5312c84e52604673d90f65db7f58c2de321fcf70cdba61ff0d6ef97448018316"
+  );
+  const [signOffApprovalUtxoIndex, setSignOffApprovalUtxoIndex] = useState("0");
   const [treasuryUtxoInputs, setTreasuryUtxoInputs] = useState<
     { hash: string; index: string }[]
   >([{ hash: "", index: "" }]);
@@ -271,7 +279,7 @@ export default function Home() {
   );
   const [adminSigned, setAdminSigned] = useState<string[]>([
     "a65106a37f0b23f0384d19b7102550ecb3591c21d4804a1d35191315",
-    // "1195997a35c4f3f0b0d1edb2c3123a25897d9810e0545f950c61ae1f",
+    "1195997a35c4f3f0b0d1edb2c3123a25897d9810e0545f950c61ae1f",
   ]);
   const [newAdmins, setNewAdmins] = useState<string[]>([
     "1195997a35c4f3f0b0d1edb2c3123a25897d9810e0545f950c61ae1f",
@@ -825,13 +833,6 @@ export default function Home() {
                 memberUtxoIndex,
                 setMemberUtxoIndex
               )}
-              <textarea
-                value={adminSigned.join("\n")}
-                onChange={(e) => setAdminSigned(e.target.value.split("\n"))}
-                placeholder="Enter admin signatures (one per line)"
-                className="w-full p-2 rounded bg-gray-700 text-white mb-2"
-                rows={3}
-              />
               <button
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
@@ -849,8 +850,7 @@ export default function Home() {
                     const adminAction = await getAdminActionTx();
                     return await adminAction.removeMember(
                       oracleUtxo,
-                      memberUtxo,
-                      adminSigned
+                      memberUtxo
                     );
                   })
                 }
@@ -1265,6 +1265,11 @@ export default function Home() {
                 className="bg-red-500 hover:bg-red-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction(async () => {
+                    const oracleUtxo = await fetchUtxo(
+                      oracleUtxoHash,
+                      oracleUtxoIndex,
+                      "Oracle UTxO"
+                    );
                     const counterUtxo = await fetchUtxo(
                       counterUtxoHash,
                       counterUtxoIndex,
@@ -1272,6 +1277,7 @@ export default function Home() {
                     );
                     const adminAction = await getAdminActionTx();
                     return await adminAction.stopCounter(
+                      oracleUtxo,
                       counterUtxo,
                       adminSigned
                     );

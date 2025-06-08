@@ -36,6 +36,7 @@ import {
   CATConstants,
   MembershipMetadata,
   membershipMetadata,
+  getOracleAdmins,
 } from "../lib";
 import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
@@ -232,7 +233,8 @@ export class AdminActionTx extends Layer1Tx {
         ).toString(),
         this.catConstant.scripts.membershipIntent.mint.hash
       )
-      .mintRedeemerValue(rejectMember, "JSON");
+      .mintRedeemerValue(rejectMember, "JSON")
+      .setFee("700000");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
@@ -245,16 +247,12 @@ export class AdminActionTx extends Layer1Tx {
     return { txHex };
   };
 
-  // todo: handle multisig
-  removeMember = async (
-    oracleUtxo: UTxO,
-    memberUtxo: UTxO,
-    adminSigned: string[]
-  ) => {
+  removeMember = async (oracleUtxo: UTxO, memberUtxo: UTxO) => {
     const memberAssetName = getTokenAssetNameByPolicyId(
       memberUtxo,
       this.catConstant.scripts.member.mint.hash
     );
+    const admins = getOracleAdmins(oracleUtxo);
 
     const txBuilder = await this.newValidationTx(true);
     txBuilder
@@ -290,11 +288,13 @@ export class AdminActionTx extends Layer1Tx {
       .mintRedeemerValue(removeMember, "JSON")
       .setFee("500000");
 
-    for (const admin of adminSigned) {
+    for (const admin of admins) {
       txBuilder.requiredSignerHash(admin);
     }
 
     const txHex = await txBuilder.complete();
+
+    console.log(txHex);
 
     return { txHex };
   };
@@ -364,7 +364,8 @@ export class AdminActionTx extends Layer1Tx {
           (this.catConstant.scripts.proposal.mint.cbor.length / 2).toString(),
           this.catConstant.scripts.proposal.mint.hash
         )
-        .mintRedeemerValue(mintProposal, "JSON");
+        .mintRedeemerValue(mintProposal, "JSON")
+        .setFee("1800000");
 
       if (proposeIntentUtxo.output.plutusData) {
         txBuilder
@@ -392,6 +393,8 @@ export class AdminActionTx extends Layer1Tx {
         txBuilder.requiredSignerHash(admin);
       }
       const txHex = await txBuilder.complete();
+
+      console.log(txHex);
 
       return { txHex, txIndex: 0 };
     } catch (e) {
@@ -449,13 +452,16 @@ export class AdminActionTx extends Layer1Tx {
         ).toString(),
         this.catConstant.scripts.proposeIntent.mint.hash
       )
-      .mintRedeemerValue(rejectProposal, "JSON");
+      .mintRedeemerValue(rejectProposal, "JSON")
+      .setFee("700000");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
     }
 
     const txHex = await txBuilder.complete();
+
+    console.log(txHex);
 
     return { txHex };
   };
@@ -466,6 +472,8 @@ export class AdminActionTx extends Layer1Tx {
     proposalUtxo: UTxO,
     adminSigned: string[]
   ) => {
+    console.log(this.catConstant.scripts.treasury.spend.address);
+
     const proposalAssetName = getTokenAssetNameByPolicyId(
       proposalUtxo,
       this.catConstant.scripts.proposal.mint.hash
@@ -518,7 +526,8 @@ export class AdminActionTx extends Layer1Tx {
           ).toString(),
           this.catConstant.scripts.signOffApproval.mint.hash
         )
-        .mintRedeemerValue(mintSignOffApproval, "JSON");
+        .mintRedeemerValue(mintSignOffApproval, "JSON")
+        .setFee("700000");
 
       if (proposalUtxo.output.plutusData) {
         txBuilder
@@ -551,6 +560,8 @@ export class AdminActionTx extends Layer1Tx {
 
       const txHex = await txBuilder.complete();
 
+      console.log(txHex);
+
       return { txHex, txIndex: 0 };
     } catch (e) {
       console.error(e);
@@ -573,7 +584,7 @@ export class AdminActionTx extends Layer1Tx {
 
     const proposal: Proposal = getProposalDatum(signOffApprovalUtxo);
 
-    const updatedCounterDatum: MemberDatum = updateMemberDatum(
+    const updatedMemberDatum: MemberDatum = updateMemberDatum(
       memberUtxo,
       signOffApprovalUtxo
     );
@@ -583,23 +594,7 @@ export class AdminActionTx extends Layer1Tx {
     ]);
 
     try {
-      const txBuilder = this.newTxBuilder(true);
-      const { utxos } = await this.getWalletUtxos();
-      const collateral = await this.wallet.getCollateral();
-      if (!collateral || collateral.length === 0) {
-        throw new Error("Collateral is undefined");
-      }
-      txBuilder
-        .txInCollateral(
-          collateral[0]!.input.txHash,
-          collateral[0]!.input.outputIndex,
-          collateral[0]!.output.amount,
-          collateral[0]!.output.address
-        )
-        .changeAddress(
-          "addr_test1qzhm3fg7v9t9e4nrlw0z49cysmvzfy3xpmvxuht80aa3rvnm5tz7rfnph9ntszp2fclw5m334udzq49777gkhwkztsks4c69rg"
-        )
-        .selectUtxosFrom(utxos);
+      const txBuilder = await this.newValidationTx(true);
 
       txBuilder
         .readOnlyTxInReference(
@@ -667,7 +662,7 @@ export class AdminActionTx extends Layer1Tx {
             quantity: "1",
           },
         ])
-        .txOutInlineDatumValue(updatedCounterDatum, "JSON")
+        .txOutInlineDatumValue(updatedMemberDatum, "JSON")
 
         .withdrawalPlutusScriptV3()
         .withdrawal(this.catConstant.scripts.treasury.withdraw.address, "0")
@@ -679,7 +674,8 @@ export class AdminActionTx extends Layer1Tx {
           ).toString(),
           this.catConstant.scripts.treasury.withdraw.hash
         )
-        .withdrawalRedeemerValue("", "Mesh");
+        .withdrawalRedeemerValue("", "Mesh")
+        .setFee("1000000");
 
       for (const selectedUtxo of selectedUtxos) {
         txBuilder
@@ -711,6 +707,8 @@ export class AdminActionTx extends Layer1Tx {
       }
 
       const txHex = await txBuilder.complete();
+
+      console.log(txHex);
 
       return { txHex, treasuryUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
     } catch (e) {
@@ -760,6 +758,8 @@ export class AdminActionTx extends Layer1Tx {
     }
 
     const txHex = await txBuilder.complete();
+
+    console.log(txHex);
 
     return { txHex, txIndex: 0 };
   };
@@ -840,7 +840,8 @@ export class AdminActionTx extends Layer1Tx {
           quantity: "1",
         },
       ])
-      .txOutInlineDatumValue(updatedOracleDatum, "JSON");
+      .txOutInlineDatumValue(updatedOracleDatum, "JSON")
+      .setFee("700000");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
@@ -848,13 +849,23 @@ export class AdminActionTx extends Layer1Tx {
 
     const txHex = await txBuilder.complete();
 
+    console.log(txHex);
+
     return { txHex, txIndex: 0 };
   };
 
   // todo: handle multisig
-  stopCounter = async (counterUtxo: UTxO, adminSigned: string[]) => {
+  stopCounter = async (
+    oracleUtxo: UTxO,
+    counterUtxo: UTxO,
+    adminSigned: string[]
+  ) => {
     const txBuilder = await this.newValidationTx(true);
     txBuilder
+      .readOnlyTxInReference(
+        oracleUtxo.input.txHash,
+        oracleUtxo.input.outputIndex
+      )
       .spendingPlutusScriptV3()
       .txIn(
         counterUtxo.input.txHash,
@@ -869,13 +880,16 @@ export class AdminActionTx extends Layer1Tx {
       .mintPlutusScriptV3()
       .mint("-1", this.catConstant.scripts.counter.mint.hash, "")
       .mintingScript(this.catConstant.scripts.counter.mint.cbor)
-      .mintRedeemerValue(rBurn, "JSON");
+      .mintRedeemerValue(rBurn, "JSON")
+      .setFee("700000");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
     }
 
     const txHex = await txBuilder.complete();
+
+    console.log(txHex);
 
     return { txHex };
   };
