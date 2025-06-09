@@ -31,6 +31,12 @@ import {
 } from "./types";
 import { blake2b } from "blakejs";
 
+/**
+ *
+ * @param utxo
+ * @param policyId
+ * @returns assetName in hex
+ */
 export const getTokenAssetNameByPolicyId = (
   utxo: UTxO,
   policyId: string
@@ -46,6 +52,11 @@ export const getTokenAssetNameByPolicyId = (
   return "";
 };
 
+/**
+ *
+ * @param oracleUtxo
+ * @returns A list of pubKeyHash of admins
+ */
 export const getOracleAdmins = (oracleUtxo: UTxO): string[] => {
   const plutusData = oracleUtxo.output.plutusData!;
   const datum: OracleDatum = deserializeDatum(plutusData);
@@ -57,6 +68,14 @@ export const getOracleAdmins = (oracleUtxo: UTxO): string[] => {
   return admins;
 };
 
+/**
+ *
+ * @param oracleUtxo
+ * @param newAdmins A list of pubKeyHash of the new admins
+ * @param newAdminsTenure
+ * @param newMultiSigThreshold
+ * @returns
+ */
 export const updateOracleDatum = (
   oracleUtxo: UTxO,
   newAdmins: string[] | null,

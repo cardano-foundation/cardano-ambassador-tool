@@ -29,6 +29,19 @@ export class UserActionTx extends Layer1Tx {
     super(userWallet, address, provider, catConstant);
   }
 
+  /**
+   *
+   * @param oracleUtxo
+   * @param tokenUtxo
+   * @param tokenPolicyId
+   * @param tokenAssetName assetName in hex
+   * @param walletAddress address in bech32
+   * @param fullName
+   * @param displayName
+   * @param emailAddress
+   * @param bio
+   * @returns
+   */
   applyMembership = async (
     oracleUtxo: UTxO,
     tokenUtxo: UTxO,
@@ -49,12 +62,12 @@ export class UserActionTx extends Layer1Tx {
     );
     const redeemer: ApplyMembership = applyMembership(
       tokenPolicyId,
-      tokenAssetName, // todo: stringToHex tbc
+      tokenAssetName,
       metadata
     );
     const datum: MembershipIntentDatum = membershipIntentDatum(
       tokenPolicyId,
-      tokenAssetName, // todo: stringToHex tbc
+      tokenAssetName,
       metadata
     );
 
@@ -114,6 +127,16 @@ export class UserActionTx extends Layer1Tx {
     }
   };
 
+  /**
+   *
+   * @param oracleUtxo
+   * @param tokenUtxo
+   * @param memberUtxo
+   * @param fundRequested value in lovelace
+   * @param receiver address in bech32
+   * @param projectDetails
+   * @returns
+   */
   proposeProject = async (
     oracleUtxo: UTxO,
     tokenUtxo: UTxO,
