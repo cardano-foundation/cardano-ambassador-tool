@@ -1,8 +1,9 @@
 import Head from "next/head";
-import { CardanoWallet, MeshBadge, useWallet } from "@meshsdk/react";
-
+import { CardanoWallet, useWallet } from "@meshsdk/react";
+import Link from "next/link";
 import { useState } from "react";
 import { blockfrost, BlockfrostService } from "@/services";
+import Layout from "@/components/Layout";
 
 import {
   SetupTx,
@@ -29,13 +30,19 @@ export default function Home() {
     const setupUtxo: SetupUtxos = {
       oracle: {
         txHash:
+          process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH ||
           "1f2344f32e3ea769e58394719f3eea9a6170796de75884b80aa8df410a965b08",
-        outputIndex: 1,
+        outputIndex: parseInt(
+          process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX || "1"
+        ),
       },
       counter: {
         txHash:
+          process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH ||
           "e32a7c0204a2f624934b5fe32b850076787fc9a2d66e91756ff192c6efc774ac",
-        outputIndex: 1,
+        outputIndex: parseInt(
+          process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX || "1"
+        ),
       },
     };
 
@@ -43,73 +50,109 @@ export default function Home() {
       membershipIntent: {
         mint: {
           txHash:
+            process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_TX_HASH ||
             "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
-          outputIndex: 0,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_OUTPUT_INDEX || "0"
+          ),
         },
         spend: {
           txHash:
+            process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_TX_HASH ||
             "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
-          outputIndex: 1,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_OUTPUT_INDEX || "1"
+          ),
         },
       },
       member: {
         mint: {
           txHash:
+            process.env.NEXT_PUBLIC_MEMBER_MINT_TX_HASH ||
             "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
-          outputIndex: 0,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_MEMBER_MINT_OUTPUT_INDEX || "0"
+          ),
         },
         spend: {
           txHash:
+            process.env.NEXT_PUBLIC_MEMBER_SPEND_TX_HASH ||
             "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
-          outputIndex: 1,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_MEMBER_SPEND_OUTPUT_INDEX || "1"
+          ),
         },
       },
       proposeIntent: {
         mint: {
           txHash:
+            process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_TX_HASH ||
             "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
-          outputIndex: 0,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_OUTPUT_INDEX || "0"
+          ),
         },
         spend: {
           txHash:
+            process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_TX_HASH ||
             "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
-          outputIndex: 1,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_OUTPUT_INDEX || "1"
+          ),
         },
       },
       proposal: {
         mint: {
           txHash:
+            process.env.NEXT_PUBLIC_PROPOSAL_MINT_TX_HASH ||
             "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
-          outputIndex: 0,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_PROPOSAL_MINT_OUTPUT_INDEX || "0"
+          ),
         },
         spend: {
           txHash:
+            process.env.NEXT_PUBLIC_PROPOSAL_SPEND_TX_HASH ||
             "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
-          outputIndex: 1,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_PROPOSAL_SPEND_OUTPUT_INDEX || "1"
+          ),
         },
       },
       signOffApproval: {
         mint: {
           txHash:
+            process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_TX_HASH ||
             "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
-          outputIndex: 0,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_OUTPUT_INDEX || "0"
+          ),
         },
         spend: {
           txHash:
+            process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_TX_HASH ||
             "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
-          outputIndex: 1,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_OUTPUT_INDEX || "1"
+          ),
         },
       },
       treasury: {
         spend: {
           txHash:
+            process.env.NEXT_PUBLIC_TREASURY_SPEND_TX_HASH ||
             "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
-          outputIndex: 0,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_TREASURY_SPEND_OUTPUT_INDEX || "0"
+          ),
         },
         withdrawal: {
           txHash:
+            process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_TX_HASH ||
             "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
-          outputIndex: 1,
+          outputIndex: parseInt(
+            process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_OUTPUT_INDEX || "1"
+          ),
         },
       },
     };
@@ -149,11 +192,14 @@ export default function Home() {
 
   // State for UTxO inputs
   const [oracleUtxoHash, setOracleUtxoHash] = useState(
-    "5419ad9bb41f9b8d78a1fcfe885e3f45801af848280a1835c0d6b4db295a2553"
+    process.env.NEXT_PUBLIC_ORACLE_TX_HASH ||
+      "5419ad9bb41f9b8d78a1fcfe885e3f45801af848280a1835c0d6b4db295a2553"
   );
-  const [oracleUtxoIndex, setOracleUtxoIndex] = useState("0");
+  const [oracleUtxoIndex, setOracleUtxoIndex] = useState(
+    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0"
+  );
   const [tokenUtxoHash, setTokenUtxoHash] = useState(
-    "1bd1503b7ad956fb44476c92128684c4880cb886b0cd73f83557d107663558d3"
+    "99a10613f68981266eca8c748c3b76b8f697edb20ff2898c03f3526e87935bab"
   );
   const [tokenUtxoIndex, setTokenUtxoIndex] = useState("1");
   const [memberUtxoHash, setMemberUtxoHash] = useState(
@@ -1326,20 +1372,33 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gray-900 w-full text-white text-center">
+    <Layout>
       <Head>
-        <title>Mesh App on Cardano</title>
-        <meta name="description" content="A Cardano dApp powered my Mesh" />
+        <title>Cardano Ambassador Tool</title>
+        <meta name="description" content="A Cardano dApp powered by Mesh" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
-        <div className="mb-20">
+
+      <div className="flex flex-col items-center justify-center">
+        <div className="mb-8">
           <CardanoWallet />
         </div>
+
+        {/* Add navigation */}
+        <nav className="mb-8">
+          <ul className="flex space-x-4">
+            <li>
+              <Link
+                href="/admin"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Admin Dashboard
+              </Link>
+            </li>
+          </ul>
+        </nav>
+
         {renderTestButtons()}
-      </main>
-      <footer className="p-8 border-t border-gray-300 flex justify-center">
-        <MeshBadge isDark={true} />
-      </footer>
-    </div>
+      </div>
+    </Layout>
   );
 }
