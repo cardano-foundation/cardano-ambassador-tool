@@ -29,12 +29,12 @@ export default function Home() {
     const setupUtxo: SetupUtxos = {
       oracle: {
         txHash:
-          "6bd06a9b61ef72a660064119a346eea40f1cf9169c7fe5d9c41cb27b5b19d6f7",
+          "1f2344f32e3ea769e58394719f3eea9a6170796de75884b80aa8df410a965b08",
         outputIndex: 1,
       },
       counter: {
         txHash:
-          "4e9ec5b577104f6926bbd676ea824d8d5dfbdeb9c8a2e470150d594bcc738d36",
+          "e32a7c0204a2f624934b5fe32b850076787fc9a2d66e91756ff192c6efc774ac",
         outputIndex: 1,
       },
     };
@@ -43,72 +43,72 @@ export default function Home() {
       membershipIntent: {
         mint: {
           txHash:
-            "a8947c25fc23714fa09957c5e08f6987dc385b85a62d0fd908417d8df97053b1",
+            "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "a8947c25fc23714fa09957c5e08f6987dc385b85a62d0fd908417d8df97053b1",
+            "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
           outputIndex: 1,
         },
       },
       member: {
         mint: {
           txHash:
-            "9fd9561cd7c863c3b72e099d2ca2768dbf2b77b46a605c0c0d03b76ae1df3d1c",
+            "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "9fd9561cd7c863c3b72e099d2ca2768dbf2b77b46a605c0c0d03b76ae1df3d1c",
+            "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
           outputIndex: 1,
         },
       },
       proposeIntent: {
         mint: {
           txHash:
-            "6d2678d39c2c6d7f7ec84c2a15ee6bdc5058e7139d3de1f7519eb8f84f01ee9d",
+            "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "6d2678d39c2c6d7f7ec84c2a15ee6bdc5058e7139d3de1f7519eb8f84f01ee9d",
+            "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
           outputIndex: 1,
         },
       },
       proposal: {
         mint: {
           txHash:
-            "43fcd5c10ae95af47c3fde34d84ebe3e1a616592b4843ab1dc16d0ffc805eff4",
+            "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "43fcd5c10ae95af47c3fde34d84ebe3e1a616592b4843ab1dc16d0ffc805eff4",
+            "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
           outputIndex: 1,
         },
       },
       signOffApproval: {
         mint: {
           txHash:
-            "a1d1e688adbe53b5c3b26cb8007f327f083ea6261d4c5a0a7617d888328683b8",
+            "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
           outputIndex: 0,
         },
         spend: {
           txHash:
-            "a1d1e688adbe53b5c3b26cb8007f327f083ea6261d4c5a0a7617d888328683b8",
+            "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
           outputIndex: 1,
         },
       },
       treasury: {
         spend: {
           txHash:
-            "8fbefe80a81e4057e7cc642e83a5784ad792591f0c0d744b29e40960d4afa6dd",
+            "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
           outputIndex: 0,
         },
         withdrawal: {
           txHash:
-            "8fbefe80a81e4057e7cc642e83a5784ad792591f0c0d744b29e40960d4afa6dd",
+            "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
           outputIndex: 1,
         },
       },
@@ -149,24 +149,23 @@ export default function Home() {
 
   // State for UTxO inputs
   const [oracleUtxoHash, setOracleUtxoHash] = useState(
-    "e32a7c0204a2f624934b5fe32b850076787fc9a2d66e91756ff192c6efc774ac"
+    "5419ad9bb41f9b8d78a1fcfe885e3f45801af848280a1835c0d6b4db295a2553"
   );
   const [oracleUtxoIndex, setOracleUtxoIndex] = useState("0");
   const [tokenUtxoHash, setTokenUtxoHash] = useState(
-    "4e9ec5b577104f6926bbd676ea824d8d5dfbdeb9c8a2e470150d594bcc738d36"
+    "1bd1503b7ad956fb44476c92128684c4880cb886b0cd73f83557d107663558d3"
   );
   const [tokenUtxoIndex, setTokenUtxoIndex] = useState("1");
   const [memberUtxoHash, setMemberUtxoHash] = useState(
-    "73f391f434690f5bf06fb84d009f4b3a9429b1fc4bfb2d45a31c4596ab03e038"
+    "1bd1503b7ad956fb44476c92128684c4880cb886b0cd73f83557d107663558d3"
   );
   const [memberUtxoIndex, setMemberUtxoIndex] = useState("1");
   const [counterUtxoHash, setCounterUtxoHash] = useState(
-    "1f2344f32e3ea769e58394719f3eea9a6170796de75884b80aa8df410a965b08"
+    "1bd1503b7ad956fb44476c92128684c4880cb886b0cd73f83557d107663558d3"
   );
   const [counterUtxoIndex, setCounterUtxoIndex] = useState("0");
-  const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState(
-    "fa76cbf0d7f71d92dc8cce54d39b073ea61134edbab9381d309160a4cfa22cb5"
-  );
+  const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] =
+    useState("gg");
   const [membershipIntentUtxoIndex, setMembershipIntentUtxoIndex] =
     useState("0");
   const [proposeIntentUtxoHash, setProposeIntentUtxoHash] = useState(
@@ -285,7 +284,7 @@ export default function Home() {
     "addr_test1qzn9zp4r0u9j8upcf5vmwyp92rktxkguy82gqjsax5v3x9tpjch2tctwrlw8x5777gukav57r8jaezgmmhq0hp9areuqgpaw9k"
   );
   const [adminSigned, setAdminSigned] = useState<string[]>([
-    "a65106a37f0b23f0384d19b7102550ecb3591c21d4804a1d35191315",
+    // "a65106a37f0b23f0384d19b7102550ecb3591c21d4804a1d35191315",
     "1195997a35c4f3f0b0d1edb2c3123a25897d9810e0545f950c61ae1f",
   ]);
   const [newAdmins, setNewAdmins] = useState<string[]>([
