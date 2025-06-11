@@ -209,7 +209,7 @@ const Admin = () => {
       const pkh3 = deserializeAddress(addr3).pubKeyHash;
 
       return [pkh1, pkh2, pkh3];
-    } catch (error) {
+    } catch {
       throw new Error("Failed to get admin public key hashes");
     }
   };
@@ -344,6 +344,7 @@ const Admin = () => {
       }
     };
     initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -373,8 +374,7 @@ const Admin = () => {
           <button
             onClick={fetchUtxos}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-            disabled={state.loading}
-          >
+            disabled={state.loading}>
             Refresh UTXOs
           </button>
         </div>
@@ -390,8 +390,7 @@ const Admin = () => {
               }`}
               onClick={() =>
                 setState((prev) => ({ ...prev, selectedUtxo: utxo }))
-              }
-            >
+              }>
               <div className="font-semibold mb-2">UTXO #{index + 1}</div>
               <div className="text-sm break-all">
                 <div>Tx Hash: {utxo.input.txHash}</div>
@@ -422,8 +421,7 @@ const Admin = () => {
                   }
                 }}
                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50"
-                disabled={state.loading || !state.selectedUtxo}
-              >
+                disabled={state.loading || !state.selectedUtxo}>
                 {state.loading ? "Processing..." : "Approve Member"}
               </button>
             </div>
