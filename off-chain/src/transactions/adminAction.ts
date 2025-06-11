@@ -69,6 +69,14 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
+  /**
+   *
+   * @param oracleUtxo
+   * @param counterUtxo
+   * @param membershipIntentUtxo
+   * @param adminSigned The pubKeyHash of admins who are going to sign
+   * @returns
+   */
   approveMember = async (
     oracleUtxo: UTxO,
     counterUtxo: UTxO,
@@ -193,6 +201,13 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
+  /**
+   *
+   * @param oracleUtxo
+   * @param membershipIntentUtxo
+   * @param adminSigned The pubKeyHash of admins who are going to sign
+   * @returns
+   */
   rejectMember = async (
     oracleUtxo: UTxO,
     membershipIntentUtxo: UTxO,
@@ -300,6 +315,13 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
+  /**
+   *
+   * @param oracleUtxo
+   * @param proposeIntentUtxo
+   * @param adminSigned The pubKeyHash of admins who are going to sign
+   * @returns
+   */
   approveProposal = async (
     oracleUtxo: UTxO,
     proposeIntentUtxo: UTxO,
@@ -403,6 +425,13 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
+  /**
+   *
+   * @param oracleUtxo
+   * @param proposeIntentUtxo
+   * @param adminSigned The pubKeyHash of admins who are going to sign
+   * @returns
+   */
   rejectProposal = async (
     oracleUtxo: UTxO,
     proposeIntentUtxo: UTxO,
@@ -467,6 +496,13 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
+  /**
+   *
+   * @param oracleUtxo
+   * @param proposalUtxo
+   * @param adminSigned The pubKeyHash of admins who are going to sign
+   * @returns
+   */
   approveSignOff = async (
     oracleUtxo: UTxO,
     proposalUtxo: UTxO,
@@ -717,6 +753,14 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
+  /**
+   *
+   * @param oracleUtxo
+   * @param adminSigned The pubKeyHash of admins who are going to sign
+   * @param newAdmins A list of pubKeyHash of the new admins
+   * @param newAdminsTenure
+   * @returns
+   */
   rotateAdmin = async (
     oracleUtxo: UTxO,
     adminSigned: string[],
@@ -765,6 +809,13 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
+  /**
+   *
+   * @param oracleUtxo
+   * @param adminSigned The pubKeyHash of admins who are going to sign
+   * @param newMultiSigThreshold
+   * @returns
+   */
   updateThreshold = async (
     oracleUtxo: UTxO,
     adminSigned: string[],
@@ -813,6 +864,12 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
+  /**
+   *
+   * @param oracleUtxo
+   * @param adminSigned The pubKeyHash of admins who are going to sign
+   * @returns
+   */
   stopOracle = async (oracleUtxo: UTxO, adminSigned: string[]) => {
     const updatedOracleDatum: OracleDatum = updateOracleDatum(
       oracleUtxo,
@@ -855,6 +912,13 @@ export class AdminActionTx extends Layer1Tx {
   };
 
   // todo: handle multisig
+  /**
+   *
+   * @param oracleUtxo
+   * @param counterUtxo
+   * @param adminSigned The pubKeyHash of admins who are going to sign
+   * @returns
+   */
   stopCounter = async (
     oracleUtxo: UTxO,
     counterUtxo: UTxO,

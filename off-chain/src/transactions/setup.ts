@@ -57,7 +57,11 @@ export class SetupTx extends Layer1Tx {
   };
 
   /**
-   * Internal tx at setup
+   *
+   * @param utxo
+   * @param admins A list of pubKeyHash of the new admins
+   * @param adminTenure
+   * @param multiSigThreshold
    * @returns
    */
   mintSpendOracleNFT = async (
@@ -166,7 +170,8 @@ export class SetupTx extends Layer1Tx {
   };
 
   /**
-   * Internal tx at setup
+   *
+   * @param address The address txOutReferenceScript sends to in bech32
    * @returns
    */
   txOutScript = async (address: string) => {
