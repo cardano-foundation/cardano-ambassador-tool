@@ -1,0 +1,23 @@
+name = "aiken-lang/on-chain"
+version = "0.0.0"
+compiler = "v1.1.7"
+plutus = "v3"
+license = "Apache-2.0"
+description = "Aiken contracts for project 'aiken-lang/on-chain'"
+
+[repository]
+user = "aiken-lang"
+project = "on-chain"
+platform = "github"
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "v2.2.0"
+source = "github"
+
+[[dependencies]]
+name = "sidan-lab/vodka"
+version = "0.1.13"
+source = "github"
+
+[config]
