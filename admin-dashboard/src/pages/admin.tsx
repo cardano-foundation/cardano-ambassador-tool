@@ -1,7 +1,10 @@
-import { BlockfrostService } from "@/services";
 import React, { useState, useEffect } from "react";
 import { UTxO } from "@meshsdk/core";
 import Layout from "@/components/Layout";
+import {
+  parseMembershipIntentDatum,
+  fetchMembershipIntentUtxos,
+} from "@/utils/utils";
 
 const MEMBERSHIP_INTENT_ADDRESS =
   process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_ADDRESS ||
@@ -20,8 +23,6 @@ interface AdminState {
 }
 
 const Admin = () => {
-  const blockfrostService = new BlockfrostService();
-
   // State
   const [state, setState] = useState<AdminState>({
     loading: false,
@@ -36,17 +37,9 @@ const Admin = () => {
 
   // Fetch UTXOs
   const fetchUtxos = async () => {
-    const a = await blockfrostService.fetchUtxo(
-      "5419ad9bb41f9b8d78a1fcfe885e3f45801af848280a1835c0d6b4db295a2553",
-      0
-    );
-    console.log(a);
-
     try {
       setState((prev) => ({ ...prev, loading: true, error: null }));
-      const utxos = await blockfrostService.fetchAddressUTxOs(
-        MEMBERSHIP_INTENT_ADDRESS
-      );
+      const utxos = await fetchMembershipIntentUtxos();
       setState((prev) => ({ ...prev, utxos, loading: false }));
     } catch (err) {
       setState((prev) => ({
@@ -151,31 +144,57 @@ const Admin = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {state.utxos.map((utxo, index) => (
-            <div
-              key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
-              className={`border rounded p-4 cursor-pointer transition-colors ${
-                state.selectedUtxo === utxo
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-300 hover:border-blue-500"
-              }`}
-              onClick={() =>
-                setState((prev) => ({ ...prev, selectedUtxo: utxo }))
-              }
-            >
-              <div className="font-semibold mb-2">UTXO #{index + 1}</div>
-              <div className="text-sm break-all">
-                <div>Tx Hash: {utxo.input.txHash}</div>
-                <div>Output Index: {utxo.input.outputIndex}</div>
-                <div>
-                  Amount:{" "}
-                  {utxo.output.amount.find((asset) => asset.unit === "lovelace")
-                    ?.quantity || 0}{" "}
-                  lovelace
+          {state.utxos.map((utxo, index) => {
+            const membershipData = utxo.output.plutusData
+              ? parseMembershipIntentDatum(utxo.output.plutusData)
+              : null;
+
+            return (
+              <div
+                key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
+                className={`border rounded p-4 cursor-pointer transition-colors ${
+                  state.selectedUtxo === utxo
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-300 hover:border-blue-500"
+                }`}
+                onClick={() =>
+                  setState((prev) => ({ ...prev, selectedUtxo: utxo }))
+                }
+              >
+                <div className="font-semibold mb-2">UTXO #{index + 1}</div>
+                <div className="text-sm break-all">
+                  <div>Tx Hash: {utxo.input.txHash}</div>
+                  <div>Output Index: {utxo.input.outputIndex}</div>
+                  <div>
+                    Amount:{" "}
+                    {utxo.output.amount.find(
+                      (asset) => asset.unit === "lovelace"
+                    )?.quantity || 0}{" "}
+                    lovelace
+                  </div>
+                  {membershipData && (
+                    <div className="mt-2 pt-2 border-t border-gray-200">
+                      <div className="font-medium text-blue-600">
+                        Membership Intent Details:
+                      </div>
+                      <div>Full Name: {membershipData.metadata.fullName}</div>
+                      <div>
+                        Display Name: {membershipData.metadata.displayName}
+                      </div>
+                      <div>Email: {membershipData.metadata.emailAddress}</div>
+                      <div>Wallet: {membershipData.metadata.walletAddress}</div>
+                      <div className="mt-1">
+                        <span className="font-medium">Bio:</span>
+                        <p className="text-gray-600">
+                          {membershipData.metadata.bio}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {state.selectedUtxo && (
@@ -185,6 +204,48 @@ const Admin = () => {
               <div className="mb-4">
                 <div>Tx Hash: {state.selectedUtxo.input.txHash}</div>
                 <div>Output Index: {state.selectedUtxo.input.outputIndex}</div>
+                {state.selectedUtxo.output.plutusData && (
+                  <div className="mt-2">
+                    <h3 className="text-lg font-semibold mb-2">
+                      Membership Intent Details
+                    </h3>
+                    {(() => {
+                      const membershipData = parseMembershipIntentDatum(
+                        state.selectedUtxo.output.plutusData
+                      );
+                      if (membershipData) {
+                        return (
+                          <div className="bg-gray-50 p-3 rounded">
+                            <div>
+                              Full Name: {membershipData.metadata.fullName}
+                            </div>
+                            <div>
+                              Display Name:{" "}
+                              {membershipData.metadata.displayName}
+                            </div>
+                            <div>
+                              Email: {membershipData.metadata.emailAddress}
+                            </div>
+                            <div>
+                              Wallet: {membershipData.metadata.walletAddress}
+                            </div>
+                            <div className="mt-1">
+                              <span className="font-medium">Bio:</span>
+                              <p className="text-gray-600">
+                                {membershipData.metadata.bio}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="text-gray-500">
+                          No valid membership intent data
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
               <div className="mb-4">
                 <h3 className="text-lg font-semibold mb-2">Counter UTXO</h3>
