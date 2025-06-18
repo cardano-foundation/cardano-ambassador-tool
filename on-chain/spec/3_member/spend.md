@@ -24,5 +24,12 @@
    - check if 1 `ProposeIntent` token is minted
 
 3. Sign-off Proposal
+
    - Obtain the `treasury_withdrawal` script hash from oracle
    - Withdrawal script of `treasury_withdrawal` validating
+
+4. Update Metadata
+
+   - 1 input user token
+   - `Member` metadata is updated
+   - `Member` token sent back to `Member` address

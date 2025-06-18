@@ -5,7 +5,7 @@ use cardano/transaction.{OutputReference, Transaction, find_input}
 use cocktail.{only_minted_token, value_policy_info}
 use types.{
   AdminRemoveMember, AdminSignOffProject, MemberDatum, MemberSpendRedeemer,
-  OracleDatum,
+  MemberUpdateMetadata, OracleDatum,
 }
 use utils.{get_oracle_nft_datum}
 
@@ -39,6 +39,7 @@ validator member(oracle_nft: PolicyId) {
             |> has_key(treasury_withdrawal_credential)
         withdrawal_script_check?
       }
+      MemberUpdateMetadata -> False
     }
   }
 
