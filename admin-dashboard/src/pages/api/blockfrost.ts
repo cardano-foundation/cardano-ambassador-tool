@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { BlockfrostProvider } from "@meshsdk/core";
 
-const blockfrost = new BlockfrostProvider(process.env.BLOCKFROST_API_KEY || "");
+const blockfrost = new BlockfrostProvider(
+  process.env.BLOCKFROST_API_KEY_PREPROD || ""
+);
 
 export default async function handler(
   req: NextApiRequest,

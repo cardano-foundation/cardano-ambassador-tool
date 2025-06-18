@@ -1,5 +1,6 @@
 import { BlockfrostService } from "@/services";
 import {
+  BlockfrostProvider,
   UTxO,
   deserializeDatum,
   hexToString,
@@ -13,6 +14,12 @@ import {
 } from "@sidan-lab/cardano-ambassador-tool";
 
 const blockfrostService = new BlockfrostService();
+
+export function getProvider(network = "preprod") {
+  const provider = new BlockfrostProvider(`/api/blockfrost/${network}/`);
+  provider.setSubmitTxToBytes(false);
+  return provider;
+}
 
 const MEMBERSHIP_INTENT_ADDRESS =
   process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_ADDRESS ||
