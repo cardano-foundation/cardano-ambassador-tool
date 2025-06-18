@@ -124,3 +124,36 @@ test s2_spend_fail_process_intent_with_no_intent_burnt() {
     tx,
   )
 }
+
+type UpdateMetadataTestCase {
+  is_oracle_inputed: Bool,
+  is_datum_correct: Bool,
+  is_token_output_correct: Bool,
+  is_intent_output_correct: Bool,
+  is_intent_output_clean: Bool,
+}
+
+fn mock_update_metadata_tx(test_case: UpdateMetadataTestCase) -> Transaction {
+  let UpdateMetadataTestCase {
+    is_oracle_inputed,
+    is_datum_correct,
+    is_token_output_correct,
+    is_intent_output_correct,
+    is_intent_output_clean,
+  } = test_case
+
+  let input_value =
+    from_lovelace(20000000) |> add(mock_membership_intent_token, "", 1)
+
+  mocktail_tx()
+    |> ref_tx_in(
+        is_oracle_inputed,
+        mock_tx_hash(0),
+        0,
+        from_asset(mock_oracle_nft, "", 1),
+        mock_oracle_address,
+      )
+    |> ref_tx_in_inline_datum(is_oracle_inputed, mock_input_oracle_datum)
+    |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_membership_intent_address)
+    |> complete()
+}

@@ -3,7 +3,8 @@ use cardano/transaction.{
   DatumHash, InlineDatum, NoDatum, OutputReference, Transaction, find_input,
 }
 use cocktail.{
-  inputs_with, outputs_at_with, policy_only_minted_token, value_policy_info,
+  inputs_with, outputs_at_with_policy, policy_only_minted_token, value_length,
+  value_policy_info,
 }
 use types.{
   MembershipIntentDatum, MembershipIntentSpendRedeemer, OracleDatum,
@@ -51,14 +52,11 @@ validator membership_intent(oracle_nft: PolicyId) {
 
         let datum_check = new_membership_intent_input_datum.token == token
 
-        expect [_] =
-          outputs_at_with(
-            outputs,
-            own_input.output.address,
-            policy_id,
-            asset_name,
-          )
-        datum_check?
+        expect [intent_output] =
+          outputs_at_with_policy(outputs, own_input.output.address, policy_id)
+        let is_intent_output_value_clean =
+          value_length(intent_output.value) == 2
+        datum_check? && is_intent_output_value_clean?
       }
     }
   }
