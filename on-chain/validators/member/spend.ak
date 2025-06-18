@@ -4,8 +4,10 @@ use cardano/assets.{PolicyId}
 use cardano/transaction.{
   DatumHash, InlineDatum, NoDatum, OutputReference, Transaction, find_input,
 }
-use cocktail.{inputs_with,
-  only_minted_token, outputs_at_with, value_policy_info}
+use cocktail.{
+  inputs_with, only_minted_token, outputs_at_with, value_length,
+  value_policy_info,
+}
 use types.{
   AdminRemoveMember, AdminSignOffProject, MemberDatum, MemberSpendRedeemer,
   MemberUpdateMetadata, OracleDatum,
@@ -61,17 +63,21 @@ validator member(oracle_nft: PolicyId) {
         expect Some(new_membership_intent_input_datum) = datum
         expect Some((policy_id, asset_name, _)) =
           value_policy_info(own_input.output.value, member_token)
-        expect [_] =
+
+        expect [member_output] =
           outputs_at_with(
             outputs,
             own_input.output.address,
             policy_id,
             asset_name,
           )
+        let is_member_output_value_clean =
+          value_length(member_output.value) == 2
+
         let datum_check =
           new_membership_intent_input_datum.token == token && new_membership_intent_input_datum.completion == completion && new_membership_intent_input_datum.fund_recevied == fund_recevied
 
-        datum_check?
+        datum_check? && is_member_output_value_clean?
       }
     }
   }
