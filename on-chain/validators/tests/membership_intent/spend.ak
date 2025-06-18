@@ -10,6 +10,7 @@ use tests/utils.{
   mock_membership_intent_token, mock_new_admins, mock_oracle_address,
   mock_oracle_nft,
 }
+use types.{ProcessMembershipIntent}
 
 type ProcessIntentTestCase {
   is_oracle_inputed: Bool,
@@ -61,7 +62,7 @@ test s2_spend_success_process_intent() {
   membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
     None,
-    None,
+    ProcessMembershipIntent,
     mock_utxo_ref(0, 0),
     tx,
   )
@@ -80,7 +81,7 @@ test s2_spend_fail_process_intent_with_no_oracle_inputed() fail {
   !membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
     None,
-    None,
+    ProcessMembershipIntent,
     mock_utxo_ref(0, 0),
     tx,
   )
@@ -99,7 +100,7 @@ test s2_spend_fail_process_intent_with_incorrect_oracle_inputed() fail {
   !membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
     None,
-    None,
+    ProcessMembershipIntent,
     mock_utxo_ref(0, 0),
     tx,
   )
@@ -118,7 +119,7 @@ test s2_spend_fail_process_intent_with_no_intent_burnt() {
   !membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
     None,
-    None,
+    ProcessMembershipIntent,
     mock_utxo_ref(0, 0),
     tx,
   )

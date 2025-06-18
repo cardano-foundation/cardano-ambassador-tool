@@ -14,3 +14,10 @@
 1. Process Intent
 
    - `MembershipIntent` token in own input is burnt
+
+2. Update Metadata
+
+   - 1 input user token
+   - output bought in token back to person
+   - `MembershipIntent` metadata is updated
+   - `MembershipIntent` token sent back to `MembershipIntent` Spending Script

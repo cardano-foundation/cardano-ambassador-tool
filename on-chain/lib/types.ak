@@ -64,6 +64,11 @@ pub type MembershipIntentDatum {
   metadata: Data,
 }
 
+pub type MembershipIntentSpendRedeemer {
+  ProcessMembershipIntent
+  UpdateMembershipIntentMetadata
+}
+
 // 3 - Member
 
 pub type MemberMintRedeemer {
@@ -74,6 +79,7 @@ pub type MemberMintRedeemer {
 pub type MemberSpendRedeemer {
   AdminRemoveMember
   AdminSignOffProject
+  MemberUpdateMetadata
 }
 
 pub type MemberDatum {
