@@ -17,7 +17,9 @@ const ORACLE_OUTPUT_INDEX = parseInt(
   process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0"
 );
 
-const blockfrost = new BlockfrostProvider(process.env.BLOCKFROST_API_KEY || "");
+const blockfrost = new BlockfrostProvider(
+  process.env.BLOCKFROST_API_KEY_PREPROD || ""
+);
 
 // Helper functions
 const getWallet = (mnemonic: string): MeshWallet => {
