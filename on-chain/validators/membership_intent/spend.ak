@@ -24,13 +24,11 @@ validator membership_intent(oracle_nft: PolicyId) {
       reference_inputs |> get_oracle_nft_datum(oracle_nft)
     let OracleDatum { membership_intent_token, .. } = oracle_input_datum
     expect Some(own_input) = find_input(inputs, utxo)
-
+    expect Some((policy_id, asset_name, _)) =
+      value_policy_info(own_input.output.value, membership_intent_token)
     when redeemer is {
-      ProcessMembershipIntent -> {
-        expect Some((policy_id, asset_name, _)) =
-          value_policy_info(own_input.output.value, membership_intent_token)
+      ProcessMembershipIntent ->
         policy_only_minted_token(mint, policy_id, asset_name, -1)
-      }
       UpdateMembershipIntentMetadata -> {
         let membership_intent_input_data: Data =
           when own_input.output.datum is {
@@ -57,8 +55,8 @@ validator membership_intent(oracle_nft: PolicyId) {
           outputs_at_with(
             outputs,
             own_input.output.address,
-            membership_intent_token,
-            "",
+            policy_id,
+            asset_name,
           )
         datum_check?
       }
