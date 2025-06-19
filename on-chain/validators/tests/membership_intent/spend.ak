@@ -145,10 +145,16 @@ fn mock_update_metadata_tx(test_case: UpdateMetadataTestCase) -> Transaction {
     is_intent_output_datum_correct,
   } = test_case
 
-  let correct_intent_datum =
+  let input_intent_datum =
     MembershipIntentDatum {
       token: (mock_user_token.1st, mock_user_token.2nd),
       metadata: mock_metadata,
+    }
+
+  let correct_intent_datum =
+    MembershipIntentDatum {
+      token: (mock_user_token.1st, mock_user_token.2nd),
+      metadata: "aaa project",
     }
   let incorrect_intent_datum =
     MembershipIntentDatum {
@@ -169,7 +175,7 @@ fn mock_update_metadata_tx(test_case: UpdateMetadataTestCase) -> Transaction {
       )
     |> ref_tx_in_inline_datum(is_oracle_inputed, mock_input_oracle_datum)
     |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_membership_intent_address)
-    |> tx_in_inline_datum(True, correct_intent_datum)
+    |> tx_in_inline_datum(True, input_intent_datum)
     |> tx_out(
         True && is_intent_output_clean,
         mock_membership_intent_address,
@@ -211,7 +217,7 @@ test s2_spend_success_update_metadata() {
   let correct_intent_datum =
     MembershipIntentDatum {
       token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: mock_metadata,
+      metadata: "aaa project",
     }
   membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
@@ -237,7 +243,7 @@ test s2_spend_fail_update_metadata_with_no_oracle_inputed() fail {
   let correct_intent_datum =
     MembershipIntentDatum {
       token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: mock_metadata,
+      metadata: "aaa project",
     }
   membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
@@ -263,7 +269,7 @@ test s2_spend_fail_update_metadata_with_no_token_inputed() fail {
   let correct_intent_datum =
     MembershipIntentDatum {
       token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: mock_metadata,
+      metadata: "aaa project",
     }
   membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
@@ -289,7 +295,7 @@ test s2_spend_fail_update_metadata_with_incorrect_output_token() fail {
   let correct_intent_datum =
     MembershipIntentDatum {
       token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: mock_metadata,
+      metadata: "aaa project",
     }
   membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
@@ -315,7 +321,7 @@ test s2_spend_fail_update_metadata_with_intent_output_not_clean() {
   let correct_intent_datum =
     MembershipIntentDatum {
       token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: mock_metadata,
+      metadata: "aaa project",
     }
   !membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
