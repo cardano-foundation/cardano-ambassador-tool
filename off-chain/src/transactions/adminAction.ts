@@ -37,6 +37,7 @@ import {
   MembershipMetadata,
   membershipMetadata,
   getOracleAdmins,
+  processMembershipIntent,
 } from "../../../off-chain/src/lib";
 import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
 
@@ -131,7 +132,7 @@ export class AdminActionTx extends Layer1Tx {
           membershipIntentUtxo.output.amount,
           membershipIntentUtxo.output.address
         )
-        .txInRedeemerValue("", "Mesh")
+        .txInRedeemerValue(processMembershipIntent, "JSON")
         .spendingTxInReference(
           this.catConstant.refTxInScripts.membershipIntent.spend.txHash,
           this.catConstant.refTxInScripts.membershipIntent.spend.outputIndex,
@@ -227,7 +228,7 @@ export class AdminActionTx extends Layer1Tx {
         membershipIntentUtxo.output.amount,
         membershipIntentUtxo.output.address
       )
-      .txInRedeemerValue("", "Mesh")
+      .txInRedeemerValue(processMembershipIntent, "JSON")
       .spendingTxInReference(
         this.catConstant.refTxInScripts.membershipIntent.spend.txHash,
         this.catConstant.refTxInScripts.membershipIntent.spend.outputIndex,
