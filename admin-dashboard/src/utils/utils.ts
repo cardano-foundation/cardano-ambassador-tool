@@ -1,3 +1,13 @@
+import {
+  MembershipIntentDatum,
+  MemberData,
+  MembershipMetadata,
+  MemberDatum,
+  ProposalDatum,
+  ProposalData,
+  ProposalMetadata,
+  scripts,
+} from "@/lib";
 import { BlockfrostService } from "@/services";
 import {
   BlockfrostProvider,
@@ -6,27 +16,65 @@ import {
   hexToString,
   serializeAddressObj,
 } from "@meshsdk/core";
-import {
-  MemberData,
-  MemberDatum,
-  MembershipIntentDatum,
-  MembershipMetadata,
-} from "@sidan-lab/cardano-ambassador-tool";
+
+// ============================================================================
+// CONSTANTS AND CONFIGURATION
+// ============================================================================
 
 const blockfrostService = new BlockfrostService();
 
-export function getProvider(network = "preprod") {
+// Initialize scripts configuration
+const allScripts = scripts({
+  oracle: {
+    txHash:
+      process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH ||
+      "1f2344f32e3ea769e58394719f3eea9a6170796de75884b80aa8df410a965b08",
+    outputIndex: parseInt(
+      process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX || "1"
+    ),
+  },
+  counter: {
+    txHash:
+      process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH ||
+      "e32a7c0204a2f624934b5fe32b850076787fc9a2d66e91756ff192c6efc774ac",
+    outputIndex: parseInt(
+      process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX || "1"
+    ),
+  },
+});
+
+// Script addresses
+export const SCRIPT_ADDRESSES = {
+  MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
+  MEMBER_NFT: allScripts.member.spend.address,
+  PROPOSE_INTENT: allScripts.proposeIntent.spend.address,
+  PROPOSAL: allScripts.proposal.spend.address,
+  SIGN_OFF_APPROVAL: allScripts.signOffApproval.spend.address,
+} as const;
+
+// Policy IDs
+export const POLICY_IDS = {
+  MEMBER_NFT: allScripts.member.mint.hash,
+} as const;
+
+// ============================================================================
+// PROVIDER UTILITIES
+// ============================================================================
+
+/**
+ * Creates and configures a Blockfrost provider
+ * @param network The network to connect to (default: "preprod")
+ * @returns Configured BlockfrostProvider instance
+ */
+export function getProvider(network = "preprod"): BlockfrostProvider {
   const provider = new BlockfrostProvider(`/api/blockfrost/${network}/`);
   provider.setSubmitTxToBytes(false);
   return provider;
 }
 
-const MEMBERSHIP_INTENT_ADDRESS =
-  process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_ADDRESS ||
-  "addr_test1wz60g3e02uj5wj4tw5x0qdncuarcxk6eckha4h05wsrnv5qytd3pm";
-const MEMBER_NFT_ADDRESS =
-  process.env.NEXT_PUBLIC_MEMBER_NFT_ADDRESS ||
-  "addr_test1wq6ryevgkgj438l6j4weynx3tllnqzru6us36wgdcdr6mdcp70weg";
+// ============================================================================
+// DATUM PARSING UTILITIES
+// ============================================================================
 
 /**
  * Validates and converts Plutus data to MembershipIntentDatum
@@ -50,7 +98,7 @@ export const parseMembershipIntentDatum = (
     // Extract and validate metadata
     const metadataPluts: MembershipMetadata = datum.fields[1];
 
-    const metadata = {
+    const metadata: MemberData = {
       walletAddress: serializeAddressObj(metadataPluts.fields[0]),
       fullName: hexToString(metadataPluts.fields[1].bytes),
       displayName: hexToString(metadataPluts.fields[2].bytes),
@@ -69,49 +117,138 @@ export const parseMembershipIntentDatum = (
 };
 
 /**
- * Fetches membership intent UTxOs for a given address
- * @param address The wallet address to search for
- * @returns Array of matching UTxOs with their parsed data
+ * Validates and converts Plutus data to ProposalDatum
+ * @param plutusData The Plutus data to validate
+ * @returns The parsed ProposalDatum and ProposalData, or null if invalid
  */
-export const fetchMembershipIntentUtxos = async (): Promise<UTxO[]> => {
+export const parseProposalDatum = (
+  plutusData: string
+): { datum: ProposalDatum; metadata: ProposalData } | null => {
   try {
-    // Fetch all UTxOs at the membership intent address
-    const utxos = await blockfrostService.fetchAddressUTxOs(
-      MEMBERSHIP_INTENT_ADDRESS
-    );
+    const datum = deserializeDatum(plutusData);
+    if (
+      !datum ||
+      !datum.fields ||
+      typeof datum.fields[0]?.int === "undefined" ||
+      !datum.fields[1] ||
+      typeof datum.fields[2]?.int === "undefined" ||
+      !datum.fields[3]?.fields
+    ) {
+      return null;
+    }
 
-    // Filter UTxOs that have valid Plutus data and match the address
+    // Extract and validate metadata
+    const metadataPluts: ProposalMetadata = datum.fields[3];
+    const metadata: ProposalData = {
+      projectDetails: hexToString(metadataPluts.fields[0].bytes),
+    };
+
+    return {
+      datum: datum as ProposalDatum,
+      metadata,
+    };
+  } catch (error) {
+    console.error("Error parsing proposal datum:", error);
+    return null;
+  }
+};
+
+// ============================================================================
+// UTXO FETCHING UTILITIES
+// ============================================================================
+
+/**
+ * Generic function to fetch and validate UTxOs with Plutus data
+ * @param address The address to fetch UTxOs from
+ * @param parser Function to parse and validate the Plutus data
+ * @param errorContext Context for error messages
+ * @returns Array of valid UTxOs
+ */
+const fetchAndValidateUtxos = async <T>(
+  address: string,
+  parser: (plutusData: string) => T | null,
+  errorContext: string
+): Promise<UTxO[]> => {
+  try {
+    const utxos = await blockfrostService.fetchAddressUTxOs(address);
+
     const validUtxos = await Promise.all(
       utxos
-        .filter((utxo) => utxo.output.plutusData) // Only keep UTxOs with Plutus data
+        .filter((utxo) => utxo.output.plutusData)
         .map(async (utxo) => {
           try {
-            // Parse and validate the Plutus data
             const plutusData = utxo.output.plutusData;
-            if (!plutusData) {
-              return null;
-            }
+            if (!plutusData) return null;
 
-            const parsed = parseMembershipIntentDatum(plutusData);
-            if (!parsed) {
-              return null;
-            }
+            const parsed = parser(plutusData);
+            if (!parsed) return null;
 
             return utxo;
           } catch (error) {
-            console.error("Error parsing UTxO:", error);
+            console.error(`Error parsing ${errorContext} UTxO:`, error);
             return null;
           }
         })
     );
 
-    // Filter out null values and return valid UTxOs
     return validUtxos.filter((utxo): utxo is UTxO => utxo !== null);
   } catch (error) {
-    console.error("Error fetching membership intent UTxOs:", error);
+    console.error(`Error fetching ${errorContext} UTxOs:`, error);
     return [];
   }
 };
+
+/**
+ * Fetches membership intent UTxOs
+ * @returns Array of valid membership intent UTxOs
+ */
+export const fetchMembershipIntentUtxos = async (): Promise<UTxO[]> => {
+  return fetchAndValidateUtxos(
+    SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
+    parseMembershipIntentDatum,
+    "membership intent"
+  );
+};
+
+/**
+ * Fetches propose intent UTxOs
+ * @returns Array of valid propose intent UTxOs
+ */
+export const fetchProposeIntentUtxos = async (): Promise<UTxO[]> => {
+  return fetchAndValidateUtxos(
+    SCRIPT_ADDRESSES.PROPOSE_INTENT,
+    parseProposalDatum,
+    "propose intent"
+  );
+};
+
+/**
+ * Fetches proposal UTxOs
+ * @returns Array of valid proposal UTxOs
+ */
+export const fetchProposalUtxos = async (): Promise<UTxO[]> => {
+  return fetchAndValidateUtxos(
+    SCRIPT_ADDRESSES.PROPOSAL,
+    parseProposalDatum,
+    "proposal"
+  );
+};
+
+/**
+ * Fetches sign off approval UTxOs
+ * @returns Array of valid sign off approval UTxOs
+ */
+export const fetchSignOffApprovalUtxos = async (): Promise<UTxO[]> => {
+  return fetchAndValidateUtxos(
+    SCRIPT_ADDRESSES.SIGN_OFF_APPROVAL,
+    parseProposalDatum,
+    "sign off approval"
+  );
+};
+
+// ============================================================================
+// MEMBER UTXO UTILITIES
+// ============================================================================
 
 /**
  * Finds a member UTxO that matches the given address
@@ -120,7 +257,9 @@ export const fetchMembershipIntentUtxos = async (): Promise<UTxO[]> => {
  */
 export const findMemberUtxo = async (address: string): Promise<UTxO | null> => {
   try {
-    const utxos = await blockfrostService.fetchAddressUTxOs(MEMBER_NFT_ADDRESS);
+    const utxos = await blockfrostService.fetchAddressUTxOs(
+      SCRIPT_ADDRESSES.MEMBER_NFT
+    );
 
     // Filter out UTxOs without Plutus data
     const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
@@ -146,6 +285,36 @@ export const findMemberUtxo = async (address: string): Promise<UTxO | null> => {
     return null;
   }
 };
+
+/**
+ * Finds a member UTxO by asset name
+ * @param assetName The asset name to search for
+ * @returns The matching UTxO or null if not found
+ */
+export const findMemberUtxoByAssetName = async (
+  assetName: string
+): Promise<UTxO | null> => {
+  try {
+    const utxos = await blockfrostService.fetchAddressUTxOs(
+      SCRIPT_ADDRESSES.MEMBER_NFT
+    );
+    const tokenUnit = POLICY_IDS.MEMBER_NFT + assetName;
+
+    // Find the first UTxO that contains the asset
+    const matchingUtxo = utxos.find((utxo) =>
+      utxo.output.amount.some((asset) => asset.unit === tokenUnit)
+    );
+
+    return matchingUtxo || null;
+  } catch (error) {
+    console.error("Error finding member UTxO by asset:", error);
+    return null;
+  }
+};
+
+// ============================================================================
+// TOKEN UTXO UTILITIES
+// ============================================================================
 
 /**
  * Finds a token UTxO associated with a member UTxO
@@ -175,7 +344,6 @@ export const findTokenUtxo = async (memberUtxo: UTxO): Promise<UTxO | null> => {
 
     // Find UTxO containing the token
     const tokenUtxo = utxos.find((utxo) => {
-      // Check if UTxO contains the token
       return utxo.output.amount.some((asset) => asset.unit === tokenUnit);
     });
 
