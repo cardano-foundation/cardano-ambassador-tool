@@ -44,7 +44,6 @@ export class SetupTx extends Layer1Tx {
         .mint("1", policyId, "")
         .mintingScript(scriptCbor)
         .mintRedeemerValue(rMint, "JSON")
-        .setFee("228122")
         .complete();
 
       const signedTx = await this.wallet.signTx(unsignedTx, true);
@@ -100,7 +99,6 @@ export class SetupTx extends Layer1Tx {
         .mintRedeemerValue(rMint, "JSON")
         .txOut(oracleAddress, [{ unit: policyId, quantity: "1" }])
         .txOutInlineDatumValue(newOracleDatum, "JSON")
-        .setFee("300000")
         .complete();
 
       const signedTx = await this.wallet.signTx(unsignedTx, true);
@@ -134,7 +132,6 @@ export class SetupTx extends Layer1Tx {
 
         .txOut(counterAddress, [{ unit: policyId, quantity: "1" }])
         .txOutInlineDatumValue(couterInlineDatum, "JSON")
-        .setFee("300000")
         .complete();
 
       const signedTx = await this.wallet.signTx(unsignedTx, true);
@@ -157,7 +154,6 @@ export class SetupTx extends Layer1Tx {
     try {
       const unsignedTx = await txBuilder
         .registerStakeCertificate(treasuryWithdraw)
-        .setFee("300000")
         .complete();
 
       const signedTx = await this.wallet.signTx(unsignedTx, true);
@@ -186,7 +182,6 @@ export class SetupTx extends Layer1Tx {
       //   .txOutReferenceScript(
       //     this.catConstant.scripts.membershipIntent.spend.cbor
       //   )
-      //   .setFee("610000")
       //   .complete();
 
       // const signedMembershipIntentTx = await this.wallet.signTx(
@@ -202,7 +197,6 @@ export class SetupTx extends Layer1Tx {
       //   .txOutReferenceScript(this.catConstant.scripts.member.mint.cbor)
       //   .txOut(address, [])
       //   .txOutReferenceScript(this.catConstant.scripts.member.spend.cbor)
-      //   .setFee("700000")
       //   .complete();
 
       // const signedMemberTx = await this.wallet.signTx(unsignedMemberTx, true);
@@ -213,7 +207,6 @@ export class SetupTx extends Layer1Tx {
       //   .txOutReferenceScript(this.catConstant.scripts.proposeIntent.mint.cbor)
       //   .txOut(address, [])
       //   .txOutReferenceScript(this.catConstant.scripts.proposeIntent.spend.cbor)
-      //   .setFee("700000")
       //   .complete();
 
       // const signedProposeIntentTx = await this.wallet.signTx(
@@ -229,7 +222,6 @@ export class SetupTx extends Layer1Tx {
       //   .txOutReferenceScript(this.catConstant.scripts.proposal.mint.cbor)
       //   .txOut(address, [])
       //   .txOutReferenceScript(this.catConstant.scripts.proposal.spend.cbor)
-      //   .setFee("700000")
       //   .complete();
 
       // const signedProposalTx = await this.wallet.signTx(
@@ -247,7 +239,6 @@ export class SetupTx extends Layer1Tx {
       //   .txOutReferenceScript(
       //     this.catConstant.scripts.signOffApproval.spend.cbor
       //   )
-      //   .setFee("700000")
       //   .complete();
 
       // const signedSignOffApprovalTx = await this.wallet.signTx(
@@ -263,7 +254,6 @@ export class SetupTx extends Layer1Tx {
         .txOutReferenceScript(this.catConstant.scripts.treasury.spend.cbor)
         .txOut(address, [])
         .txOutReferenceScript(this.catConstant.scripts.treasury.withdraw.cbor)
-        .setFee("700000")
         .complete();
 
       const signedTreasuryTx = await this.wallet.signTx(

@@ -185,8 +185,7 @@ export class AdminActionTx extends Layer1Tx {
             quantity: "1",
           },
         ])
-        .txOutInlineDatumValue(newMemberDatum, "JSON")
-        .setFee("1350000");
+        .txOutInlineDatumValue(newMemberDatum, "JSON");
 
       for (const admin of adminSigned) {
         txBuilder.requiredSignerHash(admin);
@@ -249,8 +248,7 @@ export class AdminActionTx extends Layer1Tx {
         ).toString(),
         this.catConstant.scripts.membershipIntent.mint.hash
       )
-      .mintRedeemerValue(rejectMember, "JSON")
-      .setFee("700000");
+      .mintRedeemerValue(rejectMember, "JSON");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
@@ -301,8 +299,7 @@ export class AdminActionTx extends Layer1Tx {
         (this.catConstant.scripts.member.mint.cbor.length / 2).toString(),
         this.catConstant.scripts.member.mint.hash
       )
-      .mintRedeemerValue(removeMember, "JSON")
-      .setFee("500000");
+      .mintRedeemerValue(removeMember, "JSON");
 
     for (const admin of admins) {
       txBuilder.requiredSignerHash(admin);
@@ -387,8 +384,7 @@ export class AdminActionTx extends Layer1Tx {
           (this.catConstant.scripts.proposal.mint.cbor.length / 2).toString(),
           this.catConstant.scripts.proposal.mint.hash
         )
-        .mintRedeemerValue(mintProposal, "JSON")
-        .setFee("1800000");
+        .mintRedeemerValue(mintProposal, "JSON");
 
       if (proposeIntentUtxo.output.plutusData) {
         txBuilder
@@ -482,8 +478,7 @@ export class AdminActionTx extends Layer1Tx {
         ).toString(),
         this.catConstant.scripts.proposeIntent.mint.hash
       )
-      .mintRedeemerValue(rejectProposal, "JSON")
-      .setFee("700000");
+      .mintRedeemerValue(rejectProposal, "JSON");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
@@ -563,8 +558,7 @@ export class AdminActionTx extends Layer1Tx {
           ).toString(),
           this.catConstant.scripts.signOffApproval.mint.hash
         )
-        .mintRedeemerValue(mintSignOffApproval, "JSON")
-        .setFee("700000");
+        .mintRedeemerValue(mintSignOffApproval, "JSON");
 
       if (proposalUtxo.output.plutusData) {
         txBuilder
@@ -711,8 +705,7 @@ export class AdminActionTx extends Layer1Tx {
           ).toString(),
           this.catConstant.scripts.treasury.withdraw.hash
         )
-        .withdrawalRedeemerValue("", "Mesh")
-        .setFee("1000000");
+        .withdrawalRedeemerValue("", "Mesh");
 
       for (const selectedUtxo of selectedUtxos) {
         txBuilder
@@ -850,8 +843,7 @@ export class AdminActionTx extends Layer1Tx {
           quantity: "1",
         },
       ])
-      .txOutInlineDatumValue(updatedOracleDatum, "JSON")
-      .setFee("500000");
+      .txOutInlineDatumValue(updatedOracleDatum, "JSON");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
@@ -898,8 +890,7 @@ export class AdminActionTx extends Layer1Tx {
           quantity: "1",
         },
       ])
-      .txOutInlineDatumValue(updatedOracleDatum, "JSON")
-      .setFee("700000");
+      .txOutInlineDatumValue(updatedOracleDatum, "JSON");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
@@ -945,8 +936,7 @@ export class AdminActionTx extends Layer1Tx {
       .mintPlutusScriptV3()
       .mint("-1", this.catConstant.scripts.counter.mint.hash, "")
       .mintingScript(this.catConstant.scripts.counter.mint.cbor)
-      .mintRedeemerValue(rBurn, "JSON")
-      .setFee("700000");
+      .mintRedeemerValue(rBurn, "JSON");
 
     for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
