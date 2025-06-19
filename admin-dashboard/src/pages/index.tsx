@@ -3,12 +3,17 @@ import { CardanoWallet, useWallet } from "@meshsdk/react";
 import Link from "next/link";
 import { useState } from "react";
 import Layout from "@/components/Layout";
-import {
-  SetupTx,
-  UserActionTx,
-  CATConstants,
-} from "@sidan-lab/cardano-ambassador-tool";
+
 import { getProvider } from "@/utils/utils";
+import {
+  CATConstants,
+  MembershipMetadata,
+  membershipMetadata,
+  ProposalMetadata,
+  proposalMetadata,
+} from "@/lib";
+import { ScriptType, SetupTx, UserActionTx } from "@/transactions";
+import { stringToHex } from "@meshsdk/core";
 
 // Environment variables
 const ORACLE_TX_HASH =
@@ -190,6 +195,10 @@ export default function Home() {
   const [multiSigThreshold, setMultiSigThreshold] = useState("");
   const [walletAddress, setwalletAddress] = useState("");
 
+  // State for new metadata update functions
+  const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState("");
+  const [membershipIntentUtxoIndex, setMembershipIntentUtxoIndex] = useState("");
+
   const handleAction = async (action: string, params: any) => {
     try {
       setLoading(true);
@@ -294,7 +303,10 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const result = await setup.txOutScript(scriptAddress);
+          const result = await setup.txOutScript(
+            scriptAddress,
+            ScriptType.MembershipIntent
+          );
           setResult(JSON.stringify(result, null, 2));
           break;
         }
@@ -316,16 +328,21 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
+
+          const metadata: MembershipMetadata = membershipMetadata(
+            userData.walletAddress,
+            stringToHex(userData.fullName),
+            stringToHex(userData.displayName),
+            stringToHex(userData.emailAddress),
+            stringToHex(userData.bio)
+          );
+
           const result = await userAction.applyMembership(
             oracleUtxo,
             tokenUtxo,
             userData.tokenPolicyId,
             userData.tokenAssetName,
-            userData.walletAddress,
-            userData.fullName,
-            userData.displayName,
-            userData.emailAddress,
-            userData.bio
+            metadata
           );
           setResult(JSON.stringify(result, null, 2));
           break;
@@ -356,13 +373,94 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
+
+          const metadata: ProposalMetadata = proposalMetadata(
+            stringToHex(projectData.projectUrl)
+          );
+
           const result = await userAction.proposeProject(
             oracleUtxo,
             tokenUtxo,
             memberUtxo,
             Number(projectData.fundRequested),
             projectData.receiver,
-            projectData.projectUrl
+            metadata
+          );
+          setResult(JSON.stringify(result, null, 2));
+          break;
+        }
+
+        case "updateMembershipIntentMetadata": {
+          const { tokenUtxoHash, tokenUtxoIndex, membershipIntentUtxoHash, membershipIntentUtxoIndex, ...userData } = params;
+          const [oracleUtxos, tokenUtxos, membershipIntentUtxos] = await Promise.all([
+            blockfrost.fetchUTxOs(ORACLE_TX_HASH, ORACLE_OUTPUT_INDEX),
+            blockfrost.fetchUTxOs(tokenUtxoHash, parseInt(tokenUtxoIndex)),
+            blockfrost.fetchUTxOs(membershipIntentUtxoHash, parseInt(membershipIntentUtxoIndex)),
+          ]);
+          const oracleUtxo = oracleUtxos[0];
+          const tokenUtxo = tokenUtxos[0];
+          const membershipIntentUtxo = membershipIntentUtxos[0];
+          if (!oracleUtxo || !tokenUtxo || !membershipIntentUtxo) {
+            throw new Error("Failed to fetch required UTxOs");
+          }
+          const userAction = new UserActionTx(
+            address,
+            wallet,
+            blockfrost,
+            getCatConstants()
+          );
+
+          const metadata = membershipMetadata(
+            userData.walletAddress,
+            stringToHex(userData.fullName),
+            stringToHex(userData.displayName),
+            stringToHex(userData.emailAddress),
+            stringToHex(userData.bio)
+          );
+
+          const result = await userAction.updateMembershipIntentMetadata(
+            oracleUtxo,
+            tokenUtxo,
+            membershipIntentUtxo,
+            metadata
+          );
+          setResult(JSON.stringify(result, null, 2));
+          break;
+        }
+
+        case "updateMemberMetadata": {
+          const { tokenUtxoHash, tokenUtxoIndex, memberUtxoHash, memberUtxoIndex, ...userData } = params;
+          const [oracleUtxos, tokenUtxos, memberUtxos] = await Promise.all([
+            blockfrost.fetchUTxOs(ORACLE_TX_HASH, ORACLE_OUTPUT_INDEX),
+            blockfrost.fetchUTxOs(tokenUtxoHash, parseInt(tokenUtxoIndex)),
+            blockfrost.fetchUTxOs(memberUtxoHash, parseInt(memberUtxoIndex)),
+          ]);
+          const oracleUtxo = oracleUtxos[0];
+          const tokenUtxo = tokenUtxos[0];
+          const memberUtxo = memberUtxos[0];
+          if (!oracleUtxo || !tokenUtxo || !memberUtxo) {
+            throw new Error("Failed to fetch required UTxOs");
+          }
+          const userAction = new UserActionTx(
+            address,
+            wallet,
+            blockfrost,
+            getCatConstants()
+          );
+
+          const metadata = membershipMetadata(
+            userData.walletAddress,
+            stringToHex(userData.fullName),
+            stringToHex(userData.displayName),
+            stringToHex(userData.emailAddress),
+            stringToHex(userData.bio)
+          );
+
+          const result = await userAction.updateMemberMetadata(
+            oracleUtxo,
+            memberUtxo,
+            tokenUtxo,
+            metadata
           );
           setResult(JSON.stringify(result, null, 2));
           break;
@@ -575,21 +673,9 @@ export default function Home() {
                 tokenUtxoIndex,
                 setTokenUtxoIndex
               )}
-              {renderInputField(
-                "Token Policy ID",
-                tokenPolicyId,
-                setTokenPolicyId
-              )}
-              {renderInputField(
-                "Token Asset Name",
-                tokenAssetName,
-                setTokenAssetName
-              )}
-              {renderInputField(
-                "Wallet Address",
-                walletAddress,
-                setwalletAddress
-              )}
+              {renderInputField("Token Policy ID", tokenPolicyId, setTokenPolicyId)}
+              {renderInputField("Token Asset Name", tokenAssetName, setTokenAssetName)}
+              {renderInputField("Wallet Address", walletAddress, setwalletAddress)}
               {renderInputField("Full Name", fullName, setFullName)}
               {renderInputField("Display Name", displayName, setDisplayName)}
               {renderInputField("Email Address", emailAddress, setEmailAddress)}
@@ -614,6 +700,90 @@ export default function Home() {
               </button>
             </div>
 
+            {/* Update Membership Intent Metadata */}
+            <div className="bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">Update Membership Intent Metadata</h4>
+              {renderUtxoInputs(
+                "Token UTxO",
+                tokenUtxoHash,
+                setTokenUtxoHash,
+                tokenUtxoIndex,
+                setTokenUtxoIndex
+              )}
+              {renderUtxoInputs(
+                "Membership Intent UTxO",
+                membershipIntentUtxoHash,
+                setMembershipIntentUtxoHash,
+                membershipIntentUtxoIndex,
+                setMembershipIntentUtxoIndex
+              )}
+              {renderInputField("Wallet Address", walletAddress, setwalletAddress)}
+              {renderInputField("Full Name", fullName, setFullName)}
+              {renderInputField("Display Name", displayName, setDisplayName)}
+              {renderInputField("Email Address", emailAddress, setEmailAddress)}
+              {renderInputField("Bio", bio, setBio)}
+              <button
+                className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
+                onClick={() =>
+                  handleAction("updateMembershipIntentMetadata", {
+                    tokenUtxoHash,
+                    tokenUtxoIndex,
+                    membershipIntentUtxoHash,
+                    membershipIntentUtxoIndex,
+                    walletAddress,
+                    fullName,
+                    displayName,
+                    emailAddress,
+                    bio,
+                  })
+                }
+              >
+                Update Membership Intent Metadata
+              </button>
+            </div>
+
+            {/* Update Member Metadata */}
+            <div className="bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">Update Member Metadata</h4>
+              {renderUtxoInputs(
+                "Token UTxO",
+                tokenUtxoHash,
+                setTokenUtxoHash,
+                tokenUtxoIndex,
+                setTokenUtxoIndex
+              )}
+              {renderUtxoInputs(
+                "Member UTxO",
+                memberUtxoHash,
+                setMemberUtxoHash,
+                memberUtxoIndex,
+                setMemberUtxoIndex
+              )}
+              {renderInputField("Wallet Address", walletAddress, setwalletAddress)}
+              {renderInputField("Full Name", fullName, setFullName)}
+              {renderInputField("Display Name", displayName, setDisplayName)}
+              {renderInputField("Email Address", emailAddress, setEmailAddress)}
+              {renderInputField("Bio", bio, setBio)}
+              <button
+                className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
+                onClick={() =>
+                  handleAction("updateMemberMetadata", {
+                    tokenUtxoHash,
+                    tokenUtxoIndex,
+                    memberUtxoHash,
+                    memberUtxoIndex,
+                    walletAddress,
+                    fullName,
+                    displayName,
+                    emailAddress,
+                    bio,
+                  })
+                }
+              >
+                Update Member Metadata
+              </button>
+            </div>
+
             {/* Propose Project */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Propose Project</h4>
@@ -631,12 +801,7 @@ export default function Home() {
                 memberUtxoIndex,
                 setMemberUtxoIndex
               )}
-              {renderInputField(
-                "Fund Requested",
-                fundRequested,
-                setFundRequested,
-                "number"
-              )}
+              {renderInputField("Fund Requested", fundRequested, setFundRequested, "number")}
               {renderInputField("Receiver", receiver, setReceiver)}
               {renderInputField("Project Details", projectUrl, setProjectUrl)}
               <button

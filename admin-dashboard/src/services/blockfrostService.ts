@@ -50,6 +50,6 @@ export class BlockfrostService {
     } catch (error) {
       console.error("Error fetching address UTxOs:", error);
       throw error;
-    }
+  }
   };
 }

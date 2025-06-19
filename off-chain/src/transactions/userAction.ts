@@ -9,10 +9,6 @@ import {
   ProposalDatum,
   proposalDatum,
   IProvider,
-  MembershipMetadata,
-  membershipMetadata,
-  ProposalMetadata,
-  proposalMetadata,
   getTokenAssetNameByPolicyId,
   computeProposalMetadataHash,
   CATConstants,
@@ -23,7 +19,7 @@ import {
   getMemberDatum,
   memberUpdateMetadata,
 } from "../../../off-chain/src/lib";
-import { hexToString, IWallet, stringToHex, UTxO } from "@meshsdk/core";
+import { hexToString, IWallet, UTxO } from "@meshsdk/core";
 
 export class UserActionTx extends Layer1Tx {
   constructor(
@@ -42,10 +38,7 @@ export class UserActionTx extends Layer1Tx {
    * @param tokenPolicyId
    * @param tokenAssetName assetName in hex
    * @param walletAddress address in bech32
-   * @param fullName
-   * @param displayName
-   * @param emailAddress
-   * @param bio
+   * @param metadata
    * @returns
    */
   applyMembership = async (
@@ -53,19 +46,8 @@ export class UserActionTx extends Layer1Tx {
     tokenUtxo: UTxO,
     tokenPolicyId: string,
     tokenAssetName: string,
-    walletAddress: string,
-    fullName: string,
-    displayName: string,
-    emailAddress: string,
-    bio: string
+    metadata: any
   ) => {
-    const metadata: MembershipMetadata = membershipMetadata(
-      walletAddress,
-      stringToHex(fullName),
-      stringToHex(displayName),
-      stringToHex(emailAddress),
-      stringToHex(bio)
-    );
     const redeemer: ApplyMembership = applyMembership(
       tokenPolicyId,
       tokenAssetName,
@@ -136,32 +118,16 @@ export class UserActionTx extends Layer1Tx {
    *
    * @param oracleUtxo
    * @param tokenUtxo
-   * @param tokenPolicyId
-   * @param tokenAssetName
-   * @param walletAddress
-   * @param fullName
-   * @param displayName
-   * @param emailAddress
-   * @param bio
+   * @param membershipIntentUtxo
+   * @param metadata
    * @returns
    */
   updateMembershipIntentMetadata = async (
     oracleUtxo: UTxO,
     tokenUtxo: UTxO,
     membershipIntentUtxo: UTxO,
-    walletAddress: string,
-    fullName: string,
-    displayName: string,
-    emailAddress: string,
-    bio: string
+    metadata: any
   ) => {
-    const metadata: MembershipMetadata = membershipMetadata(
-      walletAddress,
-      stringToHex(fullName),
-      stringToHex(displayName),
-      stringToHex(emailAddress),
-      stringToHex(bio)
-    );
     const { policyId: intentPolicyId, assetName: intentAssetName } =
       getMembershipIntentDatum(membershipIntentUtxo);
     const updatedIntentDatum: MembershipIntentDatum = membershipIntentDatum(
@@ -236,33 +202,18 @@ export class UserActionTx extends Layer1Tx {
    * @param oracleUtxo
    * @param memberUtxo
    * @param tokenUtxo
-   * @param walletAddress
-   * @param fullName
-   * @param displayName
-   * @param emailAddress
-   * @param bio
+   * @param metadata
    * @returns
    */
   updateMemberMetadata = async (
     oracleUtxo: UTxO,
     memberUtxo: UTxO,
     tokenUtxo: UTxO,
-    walletAddress: string,
-    fullName: string,
-    displayName: string,
-    emailAddress: string,
-    bio: string
+    metadata: any
   ) => {
     const memberAssetName = getTokenAssetNameByPolicyId(
       memberUtxo,
       this.catConstant.scripts.member.mint.hash
-    );
-    const metadata: MembershipMetadata = membershipMetadata(
-      walletAddress,
-      stringToHex(fullName),
-      stringToHex(displayName),
-      stringToHex(emailAddress),
-      stringToHex(bio)
     );
     const {
       token: memberToken,
@@ -343,7 +294,7 @@ export class UserActionTx extends Layer1Tx {
    * @param memberUtxo
    * @param fundRequested value in lovelace
    * @param receiver address in bech32
-   * @param projectDetails
+   * @param metadata
    * @returns
    */
   proposeProject = async (
@@ -352,11 +303,8 @@ export class UserActionTx extends Layer1Tx {
     memberUtxo: UTxO,
     fundRequested: number,
     receiver: string,
-    projectDetails: string
+    metadata: any
   ) => {
-    const metadata: ProposalMetadata = proposalMetadata(
-      stringToHex(projectDetails)
-    );
     const memberAssetName = hexToString(
       getTokenAssetNameByPolicyId(
         memberUtxo,
