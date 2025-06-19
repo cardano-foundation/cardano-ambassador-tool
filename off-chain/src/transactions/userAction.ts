@@ -110,8 +110,7 @@ export class UserActionTx extends Layer1Tx {
             quantity: "1",
           },
         ])
-        .txOutInlineDatumValue(datum, "JSON")
-        .setFee("400000");
+        .txOutInlineDatumValue(datum, "JSON");
 
       if (tokenUtxo.output.plutusData) {
         txBuilder
@@ -210,8 +209,7 @@ export class UserActionTx extends Layer1Tx {
             quantity: "1",
           },
         ])
-        .txOutInlineDatumValue(updatedIntentDatum, "JSON")
-        .setFee("400000");
+        .txOutInlineDatumValue(updatedIntentDatum, "JSON");
 
       if (tokenUtxo.output.plutusData) {
         txBuilder
@@ -316,8 +314,7 @@ export class UserActionTx extends Layer1Tx {
             quantity: "1",
           },
         ])
-        .txOutInlineDatumValue(updatedMemberDatum, "JSON")
-        .setFee("1350000");
+        .txOutInlineDatumValue(updatedMemberDatum, "JSON");
 
       if (tokenUtxo.output.plutusData) {
         txBuilder
@@ -422,8 +419,7 @@ export class UserActionTx extends Layer1Tx {
             quantity: "1",
           },
         ])
-        .txOutInlineDatumValue(datum, "JSON")
-        .setFee("500000");
+        .txOutInlineDatumValue(datum, "JSON");
 
       if (tokenUtxo.output.plutusData) {
         txBuilder
