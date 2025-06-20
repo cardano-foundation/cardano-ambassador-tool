@@ -1,14 +1,3 @@
-import {
-  MembershipIntentDatum,
-  MemberData,
-  MembershipMetadata,
-  MemberDatum,
-  ProposalDatum,
-  ProposalData,
-  ProposalMetadata,
-  scripts,
-  Member,
-} from "@/lib";
 import { BlockfrostService } from "@/services";
 import {
   BlockfrostProvider,
@@ -17,6 +6,17 @@ import {
   hexToString,
   serializeAddressObj,
 } from "@meshsdk/core";
+import {
+  scripts,
+  MembershipIntentDatum,
+  MemberData,
+  MembershipMetadata,
+  MemberDatum,
+  Member,
+  ProposalData,
+  ProposalDatum,
+  ProposalMetadata,
+} from "@sidan-lab/cardano-ambassador-tool";
 
 // ============================================================================
 // Imports & Constants
