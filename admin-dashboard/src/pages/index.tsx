@@ -14,6 +14,7 @@ import {
   MembershipMetadata,
   membershipMetadata,
   proposalMetadata,
+  ScriptType,
 } from "@sidan-lab/cardano-ambassador-tool";
 
 // Environment variables

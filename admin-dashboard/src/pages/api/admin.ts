@@ -1,8 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { BlockfrostProvider } from "@meshsdk/core";
 import { deserializeAddress, MeshWallet } from "@meshsdk/core";
-import { CATConstants } from "@/lib";
-import { AdminActionTx } from "@/transactions";
+import {
+  CATConstants,
+  AdminActionTx,
+} from "@sidan-lab/cardano-ambassador-tool";
 
 // Environment variables (server-side only)
 const ADMIN_MNEMONIC_1 = process.env.ADMIN_MNEMONIC_1 || "";
