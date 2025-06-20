@@ -9,15 +9,17 @@ import {
   ProposalDatum,
   proposalDatum,
   IProvider,
-  MembershipMetadata,
-  membershipMetadata,
-  ProposalMetadata,
-  proposalMetadata,
   getTokenAssetNameByPolicyId,
   computeProposalMetadataHash,
   CATConstants,
+  updateMembershipIntentMetadata,
+  getMembershipIntentDatum,
+  MemberDatum,
+  memberDatum,
+  getMemberDatum,
+  memberUpdateMetadata,
 } from "../../../off-chain/src/lib";
-import { hexToString, IWallet, stringToHex, UTxO } from "@meshsdk/core";
+import { hexToString, IWallet, UTxO } from "@meshsdk/core";
 
 export class UserActionTx extends Layer1Tx {
   constructor(
@@ -36,10 +38,7 @@ export class UserActionTx extends Layer1Tx {
    * @param tokenPolicyId
    * @param tokenAssetName assetName in hex
    * @param walletAddress address in bech32
-   * @param fullName
-   * @param displayName
-   * @param emailAddress
-   * @param bio
+   * @param metadata
    * @returns
    */
   applyMembership = async (
@@ -47,19 +46,8 @@ export class UserActionTx extends Layer1Tx {
     tokenUtxo: UTxO,
     tokenPolicyId: string,
     tokenAssetName: string,
-    walletAddress: string,
-    fullName: string,
-    displayName: string,
-    emailAddress: string,
-    bio: string
+    metadata: any
   ) => {
-    const metadata: MembershipMetadata = membershipMetadata(
-      walletAddress,
-      stringToHex(fullName),
-      stringToHex(displayName),
-      stringToHex(emailAddress),
-      stringToHex(bio)
-    );
     const redeemer: ApplyMembership = applyMembership(
       tokenPolicyId,
       tokenAssetName,
@@ -76,14 +64,16 @@ export class UserActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
 
         .txIn(
           tokenUtxo.input.txHash,
           tokenUtxo.input.outputIndex,
           tokenUtxo.output.amount,
-          tokenUtxo.output.address
+          tokenUtxo.output.address,
+          0
         )
 
         .mintPlutusScriptV3()
@@ -104,8 +94,7 @@ export class UserActionTx extends Layer1Tx {
             quantity: "1",
           },
         ])
-        .txOutInlineDatumValue(datum, "JSON")
-        .setFee("400000");
+        .txOutInlineDatumValue(datum, "JSON");
 
       if (tokenUtxo.output.plutusData) {
         txBuilder
@@ -131,10 +120,189 @@ export class UserActionTx extends Layer1Tx {
    *
    * @param oracleUtxo
    * @param tokenUtxo
+   * @param membershipIntentUtxo
+   * @param metadata
+   * @returns
+   */
+  updateMembershipIntentMetadata = async (
+    oracleUtxo: UTxO,
+    tokenUtxo: UTxO,
+    membershipIntentUtxo: UTxO,
+    metadata: any
+  ) => {
+    const { policyId: intentPolicyId, assetName: intentAssetName } =
+      getMembershipIntentDatum(membershipIntentUtxo);
+    const updatedIntentDatum: MembershipIntentDatum = membershipIntentDatum(
+      intentPolicyId,
+      intentAssetName,
+      metadata
+    );
+
+    try {
+      const txBuilder = await this.newValidationTx();
+      txBuilder
+        .readOnlyTxInReference(
+          oracleUtxo.input.txHash,
+          oracleUtxo.input.outputIndex,
+          0
+        )
+
+        .txIn(
+          tokenUtxo.input.txHash,
+          tokenUtxo.input.outputIndex,
+          tokenUtxo.output.amount,
+          tokenUtxo.output.address,
+          0
+        )
+
+        .spendingPlutusScriptV3()
+        .txIn(
+          membershipIntentUtxo.input.txHash,
+          membershipIntentUtxo.input.outputIndex,
+          membershipIntentUtxo.output.amount,
+          membershipIntentUtxo.output.address,
+          0
+        )
+        .txInRedeemerValue(updateMembershipIntentMetadata, "JSON")
+        .spendingTxInReference(
+          this.catConstant.refTxInScripts.membershipIntent.spend.txHash,
+          this.catConstant.refTxInScripts.membershipIntent.spend.outputIndex,
+          (
+            this.catConstant.scripts.membershipIntent.spend.cbor.length / 2
+          ).toString(),
+          this.catConstant.scripts.membershipIntent.spend.hash
+        )
+        .txInInlineDatumPresent()
+
+        .txOut(this.catConstant.scripts.membershipIntent.spend.address, [
+          {
+            unit: this.catConstant.scripts.membershipIntent.mint.hash,
+            quantity: "1",
+          },
+        ])
+        .txOutInlineDatumValue(updatedIntentDatum, "JSON");
+
+      if (tokenUtxo.output.plutusData) {
+        txBuilder
+          .txOut(tokenUtxo.output.address, tokenUtxo.output.amount)
+          .txOutInlineDatumValue(tokenUtxo.output.plutusData, "CBOR");
+      } else {
+        txBuilder.txOut(tokenUtxo.output.address, tokenUtxo.output.amount);
+      }
+
+      const txHex = await txBuilder.complete();
+      console.log(txHex);
+
+      const signedTx = await this.wallet.signTx(txHex, true);
+      await this.wallet.submitTx(signedTx);
+
+      return { txHex, membershipIntentUtxoTxIndex: 0, userTokenUtxoTxIndex: 1 };
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  /**
+   *
+   * @param oracleUtxo
+   * @param memberUtxo
+   * @param tokenUtxo
+   * @param metadata
+   * @returns
+   */
+  updateMemberMetadata = async (
+    oracleUtxo: UTxO,
+    memberUtxo: UTxO,
+    tokenUtxo: UTxO,
+    metadata: any
+  ) => {
+    const memberAssetName = getTokenAssetNameByPolicyId(
+      memberUtxo,
+      this.catConstant.scripts.member.mint.hash
+    );
+    const {
+      token: memberToken,
+      completion,
+      fundReceived,
+    } = getMemberDatum(memberUtxo);
+    const updatedMemberDatum: MemberDatum = memberDatum(
+      memberToken.policyId,
+      memberToken.assetName,
+      completion,
+      fundReceived,
+      metadata
+    );
+
+    try {
+      const txBuilder = await this.newValidationTx(true);
+      txBuilder
+        .readOnlyTxInReference(
+          oracleUtxo.input.txHash,
+          oracleUtxo.input.outputIndex,
+          0
+        )
+
+        .txIn(
+          tokenUtxo.input.txHash,
+          tokenUtxo.input.outputIndex,
+          tokenUtxo.output.amount,
+          tokenUtxo.output.address,
+          0
+        )
+
+        .spendingPlutusScriptV3()
+        .txIn(
+          memberUtxo.input.txHash,
+          memberUtxo.input.outputIndex,
+          memberUtxo.output.amount,
+          memberUtxo.output.address,
+          0
+        )
+        .txInRedeemerValue(memberUpdateMetadata, "JSON")
+        .spendingTxInReference(
+          this.catConstant.refTxInScripts.member.spend.txHash,
+          this.catConstant.refTxInScripts.member.spend.outputIndex,
+          (this.catConstant.scripts.member.spend.cbor.length / 2).toString(),
+          this.catConstant.scripts.member.spend.hash
+        )
+        .txInInlineDatumPresent()
+
+        .txOut(this.catConstant.scripts.member.spend.address, [
+          {
+            unit: this.catConstant.scripts.member.mint.hash + memberAssetName,
+            quantity: "1",
+          },
+        ])
+        .txOutInlineDatumValue(updatedMemberDatum, "JSON");
+
+      if (tokenUtxo.output.plutusData) {
+        txBuilder
+          .txOut(tokenUtxo.output.address, tokenUtxo.output.amount)
+          .txOutInlineDatumValue(tokenUtxo.output.plutusData, "CBOR");
+      } else {
+        txBuilder.txOut(tokenUtxo.output.address, tokenUtxo.output.amount);
+      }
+
+      const txHex = await txBuilder.complete();
+      console.log(txHex);
+
+      const signedTx = await this.wallet.signTx(txHex, true);
+      await this.wallet.submitTx(signedTx);
+
+      return { txHex, memberUtxoTxIndex: 0, userTokenUtxoTxIndex: 1 };
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  /**
+   *
+   * @param oracleUtxo
+   * @param tokenUtxo
    * @param memberUtxo
    * @param fundRequested value in lovelace
    * @param receiver address in bech32
-   * @param projectDetails
+   * @param metadata
    * @returns
    */
   proposeProject = async (
@@ -143,11 +311,8 @@ export class UserActionTx extends Layer1Tx {
     memberUtxo: UTxO,
     fundRequested: number,
     receiver: string,
-    projectDetails: string
+    metadata: any
   ) => {
-    const metadata: ProposalMetadata = proposalMetadata(
-      stringToHex(projectDetails)
-    );
     const memberAssetName = hexToString(
       getTokenAssetNameByPolicyId(
         memberUtxo,
@@ -173,17 +338,20 @@ export class UserActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
         .readOnlyTxInReference(
           memberUtxo.input.txHash,
-          memberUtxo.input.outputIndex
+          memberUtxo.input.outputIndex,
+          0
         )
         .txIn(
           tokenUtxo.input.txHash,
           tokenUtxo.input.outputIndex,
           tokenUtxo.output.amount,
-          tokenUtxo.output.address
+          tokenUtxo.output.address,
+          0
         )
 
         .mintPlutusScriptV3()
@@ -210,8 +378,7 @@ export class UserActionTx extends Layer1Tx {
             quantity: "1",
           },
         ])
-        .txOutInlineDatumValue(datum, "JSON")
-        .setFee("500000");
+        .txOutInlineDatumValue(datum, "JSON");
 
       if (tokenUtxo.output.plutusData) {
         txBuilder

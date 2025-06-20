@@ -32,9 +32,11 @@ import {
   IncrementCount,
   MemberDatum,
   MembershipIntentDatum,
+  MemberUpdateMetadata,
   MintProposal,
   MintSignOffApproval,
   OracleDatum,
+  ProcessMembershipIntent,
   ProcessSignOff,
   ProposalDatum,
   ProposeProject,
@@ -46,6 +48,7 @@ import {
   RotateAdmin,
   StopCounter,
   StopOracle,
+  UpdateMembershipIntentMetadata,
   UpdateThreshold,
 } from "./bar";
 import { addrBech32ToPlutusDataObj } from "@meshsdk/core-csl";
@@ -172,6 +175,11 @@ export const membershipIntentDatum = (
   return conStr0([token, metaData]);
 };
 
+export const processMembershipIntent: ProcessMembershipIntent = conStr0([]);
+
+export const updateMembershipIntentMetadata: UpdateMembershipIntentMetadata =
+  conStr1([]);
+
 // 3 - Member
 
 export const memberDatum = (
@@ -204,6 +212,9 @@ export const removeMember: RemoveMember = conStr1([]);
 export const adminRemoveMember: AdminRemoveMember = conStr0([]);
 
 export const adminSignOffProject: AdminSignOffProject = conStr1([]);
+
+export const memberUpdateMetadata: MemberUpdateMetadata = conStr2([]);
+
 // 4 - ProposeIntent
 
 export type ProposalMetadata = ConStr0<
