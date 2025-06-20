@@ -64,14 +64,16 @@ export class UserActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
 
         .txIn(
           tokenUtxo.input.txHash,
           tokenUtxo.input.outputIndex,
           tokenUtxo.output.amount,
-          tokenUtxo.output.address
+          tokenUtxo.output.address,
+          0
         )
 
         .mintPlutusScriptV3()
@@ -141,14 +143,16 @@ export class UserActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
 
         .txIn(
           tokenUtxo.input.txHash,
           tokenUtxo.input.outputIndex,
           tokenUtxo.output.amount,
-          tokenUtxo.output.address
+          tokenUtxo.output.address,
+          0
         )
 
         .spendingPlutusScriptV3()
@@ -156,7 +160,8 @@ export class UserActionTx extends Layer1Tx {
           membershipIntentUtxo.input.txHash,
           membershipIntentUtxo.input.outputIndex,
           membershipIntentUtxo.output.amount,
-          membershipIntentUtxo.output.address
+          membershipIntentUtxo.output.address,
+          0
         )
         .txInRedeemerValue(updateMembershipIntentMetadata, "JSON")
         .spendingTxInReference(
@@ -233,14 +238,16 @@ export class UserActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
 
         .txIn(
           tokenUtxo.input.txHash,
           tokenUtxo.input.outputIndex,
           tokenUtxo.output.amount,
-          tokenUtxo.output.address
+          tokenUtxo.output.address,
+          0
         )
 
         .spendingPlutusScriptV3()
@@ -248,7 +255,8 @@ export class UserActionTx extends Layer1Tx {
           memberUtxo.input.txHash,
           memberUtxo.input.outputIndex,
           memberUtxo.output.amount,
-          memberUtxo.output.address
+          memberUtxo.output.address,
+          0
         )
         .txInRedeemerValue(memberUpdateMetadata, "JSON")
         .spendingTxInReference(
@@ -330,17 +338,20 @@ export class UserActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
         .readOnlyTxInReference(
           memberUtxo.input.txHash,
-          memberUtxo.input.outputIndex
+          memberUtxo.input.outputIndex,
+          0
         )
         .txIn(
           tokenUtxo.input.txHash,
           tokenUtxo.input.outputIndex,
           tokenUtxo.output.amount,
-          tokenUtxo.output.address
+          tokenUtxo.output.address,
+          0
         )
 
         .mintPlutusScriptV3()

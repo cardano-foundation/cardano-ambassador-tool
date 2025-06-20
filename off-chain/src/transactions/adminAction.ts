@@ -111,7 +111,8 @@ export class AdminActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
 
         .spendingPlutusScriptV3()
@@ -119,7 +120,8 @@ export class AdminActionTx extends Layer1Tx {
           counterUtxo.input.txHash,
           counterUtxo.input.outputIndex,
           counterUtxo.output.amount,
-          counterUtxo.output.address
+          counterUtxo.output.address,
+          0
         )
         .txInRedeemerValue(incrementCount, "JSON")
         .txInScript(this.catConstant.scripts.counter.spend.cbor)
@@ -130,7 +132,8 @@ export class AdminActionTx extends Layer1Tx {
           membershipIntentUtxo.input.txHash,
           membershipIntentUtxo.input.outputIndex,
           membershipIntentUtxo.output.amount,
-          membershipIntentUtxo.output.address
+          membershipIntentUtxo.output.address,
+          0
         )
         .txInRedeemerValue(processMembershipIntent, "JSON")
         .spendingTxInReference(
@@ -217,7 +220,8 @@ export class AdminActionTx extends Layer1Tx {
     txBuilder
       .readOnlyTxInReference(
         oracleUtxo.input.txHash,
-        oracleUtxo.input.outputIndex
+        oracleUtxo.input.outputIndex,
+        0
       )
 
       .spendingPlutusScriptV3()
@@ -225,7 +229,8 @@ export class AdminActionTx extends Layer1Tx {
         membershipIntentUtxo.input.txHash,
         membershipIntentUtxo.input.outputIndex,
         membershipIntentUtxo.output.amount,
-        membershipIntentUtxo.output.address
+        membershipIntentUtxo.output.address,
+        0
       )
       .txInRedeemerValue(processMembershipIntent, "JSON")
       .spendingTxInReference(
@@ -272,7 +277,8 @@ export class AdminActionTx extends Layer1Tx {
     txBuilder
       .readOnlyTxInReference(
         oracleUtxo.input.txHash,
-        oracleUtxo.input.outputIndex
+        oracleUtxo.input.outputIndex,
+        0
       )
 
       .spendingPlutusScriptV3()
@@ -280,7 +286,8 @@ export class AdminActionTx extends Layer1Tx {
         memberUtxo.input.txHash,
         memberUtxo.input.outputIndex,
         memberUtxo.output.amount,
-        memberUtxo.output.address
+        memberUtxo.output.address,
+        0
       )
       .txInRedeemerValue(adminRemoveMember, "JSON")
       .spendingTxInReference(
@@ -335,7 +342,8 @@ export class AdminActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
 
         .spendingPlutusScriptV3()
@@ -343,7 +351,8 @@ export class AdminActionTx extends Layer1Tx {
           proposeIntentUtxo.input.txHash,
           proposeIntentUtxo.input.outputIndex,
           proposeIntentUtxo.output.amount,
-          proposeIntentUtxo.output.address
+          proposeIntentUtxo.output.address,
+          0
         )
         .txInRedeemerValue("", "Mesh")
         .spendingTxInReference(
@@ -451,7 +460,8 @@ export class AdminActionTx extends Layer1Tx {
         proposeIntentUtxo.input.txHash,
         proposeIntentUtxo.input.outputIndex,
         proposeIntentUtxo.output.amount,
-        proposeIntentUtxo.output.address
+        proposeIntentUtxo.output.address,
+        0
       )
       .txInRedeemerValue("", "Mesh")
       .spendingTxInReference(
@@ -516,11 +526,18 @@ export class AdminActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
 
         .spendingPlutusScriptV3()
-        .txIn(proposalUtxo.input.txHash, proposalUtxo.input.outputIndex)
+        .txIn(
+          proposalUtxo.input.txHash,
+          proposalUtxo.input.outputIndex,
+          proposalUtxo.output.amount,
+          proposalUtxo.output.address,
+          0
+        )
         .txInRedeemerValue("", "Mesh")
         .spendingTxInReference(
           this.catConstant.refTxInScripts.proposal.spend.txHash,
@@ -630,7 +647,8 @@ export class AdminActionTx extends Layer1Tx {
       txBuilder
         .readOnlyTxInReference(
           oracleUtxo.input.txHash,
-          oracleUtxo.input.outputIndex
+          oracleUtxo.input.outputIndex,
+          0
         )
 
         .spendingPlutusScriptV3()
@@ -638,7 +656,8 @@ export class AdminActionTx extends Layer1Tx {
           signOffApprovalUtxo.input.txHash,
           signOffApprovalUtxo.input.outputIndex,
           signOffApprovalUtxo.output.amount,
-          signOffApprovalUtxo.output.address
+          signOffApprovalUtxo.output.address,
+          0
         )
         .txInRedeemerValue("", "Mesh")
         .spendingTxInReference(
@@ -656,7 +675,8 @@ export class AdminActionTx extends Layer1Tx {
           memberUtxo.input.txHash,
           memberUtxo.input.outputIndex,
           memberUtxo.output.amount,
-          memberUtxo.output.address
+          memberUtxo.output.address,
+          0
         )
         .txInRedeemerValue(adminSignOffProject, "JSON")
         .spendingTxInReference(
@@ -705,7 +725,8 @@ export class AdminActionTx extends Layer1Tx {
           ).toString(),
           this.catConstant.scripts.treasury.withdraw.hash
         )
-        .withdrawalRedeemerValue("", "Mesh");
+        .withdrawalRedeemerValue("", "Mesh")
+        .setFee("1200000");
 
       for (const selectedUtxo of selectedUtxos) {
         txBuilder
@@ -777,7 +798,8 @@ export class AdminActionTx extends Layer1Tx {
         oracleUtxo.input.txHash,
         oracleUtxo.input.outputIndex,
         oracleUtxo.output.amount,
-        oracleUtxo.output.address
+        oracleUtxo.output.address,
+        0
       )
       .txInRedeemerValue(redeemer, "JSON")
       .txInScript(this.catConstant.scripts.oracle.spend.cbor)
@@ -831,7 +853,8 @@ export class AdminActionTx extends Layer1Tx {
         oracleUtxo.input.txHash,
         oracleUtxo.input.outputIndex,
         oracleUtxo.output.amount,
-        oracleUtxo.output.address
+        oracleUtxo.output.address,
+        0
       )
       .txInRedeemerValue(redeemer, "JSON")
       .txInScript(this.catConstant.scripts.oracle.spend.cbor)
@@ -878,7 +901,8 @@ export class AdminActionTx extends Layer1Tx {
         oracleUtxo.input.txHash,
         oracleUtxo.input.outputIndex,
         oracleUtxo.output.amount,
-        oracleUtxo.output.address
+        oracleUtxo.output.address,
+        0
       )
       .txInRedeemerValue(stopOracle, "JSON")
       .txInScript(this.catConstant.scripts.oracle.spend.cbor)
@@ -920,14 +944,16 @@ export class AdminActionTx extends Layer1Tx {
     txBuilder
       .readOnlyTxInReference(
         oracleUtxo.input.txHash,
-        oracleUtxo.input.outputIndex
+        oracleUtxo.input.outputIndex,
+        0
       )
       .spendingPlutusScriptV3()
       .txIn(
         counterUtxo.input.txHash,
         counterUtxo.input.outputIndex,
         counterUtxo.output.amount,
-        counterUtxo.output.address
+        counterUtxo.output.address,
+        0
       )
       .txInRedeemerValue(stopCounter, "JSON")
       .txInScript(this.catConstant.scripts.counter.spend.cbor)

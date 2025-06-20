@@ -8,9 +8,7 @@ import { AdminActionTx } from "@/transactions";
 const ADMIN_MNEMONIC_1 = process.env.ADMIN_MNEMONIC_1 || "";
 const ADMIN_MNEMONIC_2 = process.env.ADMIN_MNEMONIC_2 || "";
 const ADMIN_MNEMONIC_3 = process.env.ADMIN_MNEMONIC_3 || "";
-const ORACLE_TX_HASH =
-  process.env.NEXT_PUBLIC_ORACLE_TX_HASH ||
-  "5419ad9bb41f9b8d78a1fcfe885e3f45801af848280a1835c0d6b4db295a2553";
+const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
 const ORACLE_OUTPUT_INDEX = parseInt(
   process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0"
 );
@@ -63,6 +61,8 @@ const multiSignAndSubmit = async (
   const admin1SignedTx = await admin1.signTx(unsignedTx.txHex, true);
   const admin12SignedTx = await admin2.signTx(admin1SignedTx, true);
   const allSignedTx = await admin3.signTx(admin12SignedTx, true);
+  console.log(allSignedTx);
+
   // Submit transaction
   return await admin2.submitTx(allSignedTx);
 };
@@ -72,19 +72,13 @@ const getCatConstants = () => {
 
   const SETUP_UTXO = {
     oracle: {
-      txHash:
-        process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH ||
-        "1f2344f32e3ea769e58394719f3eea9a6170796de75884b80aa8df410a965b08",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX || "1"
-      ),
+      txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
+      outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
     },
     counter: {
-      txHash:
-        process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH ||
-        "e32a7c0204a2f624934b5fe32b850076787fc9a2d66e91756ff192c6efc774ac",
+      txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
       outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX || "1"
+        process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!
       ),
     },
   };
@@ -93,17 +87,13 @@ const getCatConstants = () => {
   const REF_TX_IN_SCRIPTS = {
     membershipIntent: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_TX_HASH ||
-          "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
+        txHash: process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_TX_HASH ||
-          "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
+        txHash: process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -111,17 +101,13 @@ const getCatConstants = () => {
     },
     member: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_MEMBER_MINT_TX_HASH ||
-          "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
+        txHash: process.env.NEXT_PUBLIC_MEMBER_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_MEMBER_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_MEMBER_SPEND_TX_HASH ||
-          "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
+        txHash: process.env.NEXT_PUBLIC_MEMBER_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_MEMBER_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -129,17 +115,13 @@ const getCatConstants = () => {
     },
     proposeIntent: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_TX_HASH ||
-          "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
+        txHash: process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_TX_HASH ||
-          "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
+        txHash: process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -147,17 +129,13 @@ const getCatConstants = () => {
     },
     proposal: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_PROPOSAL_MINT_TX_HASH ||
-          "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
+        txHash: process.env.NEXT_PUBLIC_PROPOSAL_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_PROPOSAL_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_PROPOSAL_SPEND_TX_HASH ||
-          "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
+        txHash: process.env.NEXT_PUBLIC_PROPOSAL_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_PROPOSAL_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -165,17 +143,13 @@ const getCatConstants = () => {
     },
     signOffApproval: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_TX_HASH ||
-          "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
+        txHash: process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_TX_HASH ||
-          "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
+        txHash: process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -183,17 +157,13 @@ const getCatConstants = () => {
     },
     treasury: {
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_TREASURY_SPEND_TX_HASH ||
-          "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
+        txHash: process.env.NEXT_PUBLIC_TREASURY_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_TREASURY_SPEND_OUTPUT_INDEX || "0"
         ),
       },
       withdrawal: {
-        txHash:
-          process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_TX_HASH ||
-          "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
+        txHash: process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_OUTPUT_INDEX || "1"
         ),
@@ -348,6 +318,31 @@ export default async function handler(
         const unsignedTx = await adminAction.SignOff(
           oracleUtxo,
           signOffApprovalUtxo,
+          memberUtxo
+        );
+        if (!unsignedTx) throw new Error("Failed to create transaction");
+        const result = await multiSignAndSubmit(
+          unsignedTx,
+          admin1,
+          admin2,
+          admin3
+        );
+        return res.status(200).json({ result });
+      }
+      case "removeMember": {
+        const { memberUtxo } = params;
+        const { admin1, admin2, admin3 } = await getAdminWalletsAndPkh();
+        const oracleUtxo = await getOracleUtxo();
+        if (!oracleUtxo) throw new Error("Failed to fetch required UTxOs");
+        const address = await admin2.getChangeAddress();
+        const adminAction = new AdminActionTx(
+          address,
+          admin2,
+          blockfrost,
+          getCatConstants()
+        );
+        const unsignedTx = await adminAction.removeMember(
+          oracleUtxo,
           memberUtxo
         );
         if (!unsignedTx) throw new Error("Failed to create transaction");

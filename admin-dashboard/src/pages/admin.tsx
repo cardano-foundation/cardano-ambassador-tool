@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { UTxO } from "@meshsdk/core";
+import { hexToString, stringToHex, UTxO } from "@meshsdk/core";
 import Layout from "@/components/Layout";
 import {
   parseMembershipIntentDatum,
@@ -9,6 +9,8 @@ import {
   fetchSignOffApprovalUtxos,
   parseProposalDatum,
   findMemberUtxoByAssetName,
+  fetchMemberUtxos,
+  parseMemberDatum,
 } from "@/utils/utils";
 
 // Types
@@ -17,7 +19,6 @@ interface AdminState {
   error: string | null;
   result: string | null;
   utxos: UTxO[];
-  selectedUtxo: UTxO | null;
   adminsPkh: string[];
   counterUtxoHash: string;
   counterUtxoIndex: string;
@@ -30,7 +31,6 @@ const Admin = () => {
     error: null,
     result: null,
     utxos: [],
-    selectedUtxo: null,
     adminsPkh: [],
     counterUtxoHash: "",
     counterUtxoIndex: "",
@@ -41,23 +41,26 @@ const Admin = () => {
   const [proposalUtxos, setProposalUtxos] = useState<UTxO[]>([]);
   const [loadingExtra, setLoadingExtra] = useState(false);
   const [signOffApprovalUtxos, setSignOffApprovalUtxos] = useState<UTxO[]>([]);
+  const [memberUtxos, setMemberUtxos] = useState<UTxO[]>([]);
 
   // Fetch all UTXOs (membership intent, propose intent, proposal, sign off approval)
   const fetchAllUtxos = async () => {
     try {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       setLoadingExtra(true);
-      const [utxos, proposeIntent, proposal, signOffApproval] =
+      const [utxos, proposeIntent, proposal, signOffApproval, members] =
         await Promise.all([
           fetchMembershipIntentUtxos(),
           fetchProposeIntentUtxos(),
           fetchProposalUtxos(),
           fetchSignOffApprovalUtxos(),
+          fetchMemberUtxos(),
         ]);
       setState((prev) => ({ ...prev, utxos, loading: false }));
       setProposeIntentUtxos(proposeIntent);
       setProposalUtxos(proposal);
       setSignOffApprovalUtxos(signOffApproval);
+      setMemberUtxos(members);
     } catch (err) {
       setState((prev) => ({
         ...prev,
@@ -199,10 +202,9 @@ const Admin = () => {
       if (!utxo.output.plutusData) throw new Error("Missing proposal datum");
       const proposalData = parseProposalDatum(utxo.output.plutusData);
       if (!proposalData) throw new Error("Invalid proposal datum");
-
       // Find member UTxO using the asset name from proposal
       const memberUtxo = await findMemberUtxoByAssetName(
-        proposalData.datum.fields[2].int.toString()
+        stringToHex(proposalData.datum.fields[2].int.toString())
       );
       if (!memberUtxo) throw new Error("Member UTxO not found");
 
@@ -225,6 +227,48 @@ const Admin = () => {
       fetchAllUtxos();
     } catch (err: any) {
       setState((prev) => ({ ...prev, error: err.message, loading: false }));
+    }
+  };
+
+  const handleRemoveMember = async (memberUtxo: UTxO) => {
+    try {
+      setState((prev) => ({ ...prev, loading: true, error: null, result: null }));
+      const response = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "removeMember", memberUtxo }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to remove member");
+      setState((prev) => ({ ...prev, result: "Member removed successfully", loading: false }));
+      fetchAllUtxos();
+    } catch (err) {
+      setState((prev) => ({
+        ...prev,
+        error: err instanceof Error ? err.message : "Failed to remove member",
+        loading: false,
+      }));
+    }
+  };
+
+  const handleRejectMember = async (membershipIntentUtxo: UTxO) => {
+    try {
+      setState((prev) => ({ ...prev, loading: true, error: null, result: null }));
+      const response = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "rejectMember", membershipIntentUtxo }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to reject member");
+      setState((prev) => ({ ...prev, result: "Member rejected successfully", loading: false }));
+      fetchAllUtxos();
+    } catch (err) {
+      setState((prev) => ({
+        ...prev,
+        error: err instanceof Error ? err.message : "Failed to reject member",
+        loading: false,
+      }));
     }
   };
 
@@ -282,16 +326,10 @@ const Admin = () => {
                     projectDetails = parsed.metadata.projectDetails;
                   }
                 }
-                const isSelected = state.selectedUtxo === utxo;
                 return (
                   <tr
                     key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
-                    className={`cursor-pointer ${
-                      isSelected ? "bg-blue-900" : "hover:bg-gray-700"
-                    }`}
-                    onClick={() =>
-                      setState((prev) => ({ ...prev, selectedUtxo: utxo }))
-                    }
+                    className="hover:bg-gray-700 cursor-pointer"
                   >
                     <td className="px-4 py-2 border border-gray-700 text-gray-100">
                       {idx + 1}
@@ -338,15 +376,6 @@ const Admin = () => {
                           >
                             Approve SignOff
                           </button>
-                          <button
-                            className="bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 rounded"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSignOff(utxo);
-                            }}
-                          >
-                            SignOff
-                          </button>
                         </>
                       )}
                     </td>
@@ -365,6 +394,30 @@ const Admin = () => {
       <h2 className="text-lg font-semibold mb-2 text-gray-100">
         Membership Intent UTXOs
       </h2>
+      {/* Counter UTxO input fields for Approve */}
+      <div className="mb-4 flex gap-2 items-end">
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-200">Counter UTxO Tx Hash</label>
+          <input
+            type="text"
+            className="p-2 rounded border border-gray-700 bg-gray-800 text-gray-100"
+            value={state.counterUtxoHash}
+            onChange={e => setState(prev => ({ ...prev, counterUtxoHash: e.target.value }))}
+            placeholder="Counter Tx Hash"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-200">Counter UTxO Output Index</label>
+          <input
+            type="number"
+            className="p-2 rounded border border-gray-700 bg-gray-800 text-gray-100"
+            value={state.counterUtxoIndex}
+            onChange={e => setState(prev => ({ ...prev, counterUtxoIndex: e.target.value }))}
+            placeholder="Output Index"
+          />
+        </div>
+        <span className="ml-2 text-xs text-gray-400">(Required for Approve)</span>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg">
           <thead>
@@ -393,13 +446,16 @@ const Admin = () => {
               <th className="px-4 py-2 border border-gray-700 text-gray-200">
                 Bio
               </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {utxos.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={9}
                   className="text-center py-4 text-gray-400 bg-gray-800"
                 >
                   No UTXOs found
@@ -424,16 +480,10 @@ const Admin = () => {
                     bio = parsed.metadata.bio;
                   }
                 }
-                const isSelected = state.selectedUtxo === utxo;
                 return (
                   <tr
                     key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
-                    className={`cursor-pointer ${
-                      isSelected ? "bg-blue-900" : "hover:bg-gray-700"
-                    }`}
-                    onClick={() =>
-                      setState((prev) => ({ ...prev, selectedUtxo: utxo }))
-                    }
+                    className="hover:bg-gray-700 cursor-pointer"
                   >
                     <td className="px-4 py-2 border border-gray-700 text-gray-100">
                       {idx + 1}
@@ -458,6 +508,22 @@ const Admin = () => {
                     </td>
                     <td className="px-4 py-2 border border-gray-700 text-gray-100">
                       {bio}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      <button
+                        className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded mr-2"
+                        onClick={() => handleApproveMember(utxo)}
+                        disabled={state.loading || !state.counterUtxoHash || !state.counterUtxoIndex}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                        onClick={() => handleRejectMember(utxo)}
+                        disabled={state.loading}
+                      >
+                        Reject
+                      </button>
                     </td>
                   </tr>
                 );
@@ -514,16 +580,10 @@ const Admin = () => {
                     projectDetails = parsed.metadata.projectDetails;
                   }
                 }
-                const isSelected = state.selectedUtxo === utxo;
-  return (
+                return (
                   <tr
                     key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
-                    className={`cursor-pointer ${
-                      isSelected ? "bg-blue-900" : "hover:bg-gray-700"
-                    }`}
-                    onClick={() =>
-                      setState((prev) => ({ ...prev, selectedUtxo: utxo }))
-                    }
+                    className="hover:bg-gray-700 cursor-pointer"
                   >
                     <td className="px-4 py-2 border border-gray-700 text-gray-100">
                       {idx + 1}
@@ -546,6 +606,96 @@ const Admin = () => {
                         }}
                       >
                         SignOff
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderMemberTable = (utxos: UTxO[]) => (
+    <div className="mb-10">
+      <h2 className="text-lg font-semibold mb-2 text-gray-100">Member UTXOs</h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">#</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Tx Hash</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Output Index</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Full Name</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Display Name</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Email</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Wallet</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Bio</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Fund Received</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Completion Map</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {utxos.length === 0 ? (
+              <tr>
+                <td colSpan={11} className="text-center py-4 text-gray-400 bg-gray-800">
+                  No UTXOs found
+                </td>
+              </tr>
+            ) : (
+              utxos.map((utxo, idx) => {
+                let fullName = "-",
+                  displayName = "-",
+                  email = "-",
+                  wallet = "-",
+                  bio = "-",
+                  fundReceived = "-",
+                  completionMap: string | JSX.Element = "-";
+                if (utxo.output.plutusData) {
+                  const parsed = parseMemberDatum(utxo.output.plutusData);
+                  if (parsed && parsed.member) {
+                    fullName = parsed.member.metadata.fullName;
+                    displayName = parsed.member.metadata.displayName;
+                    email = parsed.member.metadata.emailAddress;
+                    wallet = parsed.member.metadata.walletAddress;
+                    bio = parsed.member.metadata.bio;
+                    fundReceived = parsed.member.fundReceived.toString();
+                    const entries = Array.from(parsed.member.completion.entries());
+                    if (entries.length > 0) {
+                      completionMap = (
+                        <ul className="text-xs text-gray-200">
+                          {entries.map(([proj, value], i) => (
+                            <li key={i}>
+                              <span className="font-semibold">{proj.projectDetails}:</span> {value}
+                            </li>
+                          ))}
+                        </ul>
+                      );
+                    }
+                  }
+                }
+                return (
+                  <tr key={`${utxo.input.txHash}-${utxo.input.outputIndex}`} className="hover:bg-gray-700 cursor-pointer">
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{idx + 1}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">{utxo.input.txHash}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{utxo.input.outputIndex}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{fullName}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{displayName}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{email}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">{wallet}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{bio}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{fundReceived}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{completionMap}</td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      <button
+                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                        onClick={() => handleRemoveMember(utxo)}
+                        disabled={state.loading}
+                      >
+                        Remove
                       </button>
                     </td>
                   </tr>
@@ -607,115 +757,7 @@ const Admin = () => {
         {/* Proposal UTXOs Table */}
         {renderProposalTable(proposalUtxos, "Proposal UTXOs", "proposal")}
         {renderSignOffApprovalTable(signOffApprovalUtxos)}
-
-        {state.selectedUtxo && (
-          <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 p-4 shadow-lg z-50">
-            <div className="max-w-4xl mx-auto text-gray-100 relative">
-              {/* Cancel Button */}
-              <button
-                className="absolute top-2 right-2 bg-gray-700 text-gray-200 px-3 py-1 rounded hover:bg-gray-600 focus:outline-none"
-                onClick={() =>
-                  setState((prev) => ({ ...prev, selectedUtxo: null }))
-                }
-                aria-label="Cancel"
-              >
-                Cancel
-              </button>
-              <h2 className="text-xl font-bold mb-4">Selected UTXO</h2>
-              <div className="mb-4">
-                <div>Tx Hash: {state.selectedUtxo.input.txHash}</div>
-                <div>Output Index: {state.selectedUtxo.input.outputIndex}</div>
-                {state.selectedUtxo.output.plutusData && (
-                  <div className="mt-2">
-                    <h3 className="text-lg font-semibold mb-2">
-                      Membership Intent Details
-                    </h3>
-                    {(() => {
-                      const membershipData = parseMembershipIntentDatum(
-                        state.selectedUtxo.output.plutusData
-                      );
-                      if (membershipData) {
-                        return (
-                          <div className="bg-gray-800 p-3 rounded">
-                            <div>
-                              Full Name: {membershipData.metadata.fullName}
-                            </div>
-                            <div>
-                              Display Name:{" "}
-                              {membershipData.metadata.displayName}
-                            </div>
-                            <div>
-                              Email: {membershipData.metadata.emailAddress}
-                            </div>
-                            <div>
-                              Wallet: {membershipData.metadata.walletAddress}
-                            </div>
-                            <div className="mt-1">
-                              <span className="font-medium">Bio:</span>
-                              <p className="text-gray-300">
-                                {membershipData.metadata.bio}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      }
-                      return (
-                        <div className="text-gray-400">
-                          No valid membership intent data
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
-              </div>
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">Counter UTXO</h3>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Counter TxHash"
-                    className="flex-1 p-2 rounded border border-gray-700 bg-gray-800 text-gray-100"
-                    value={state.counterUtxoHash}
-                    onChange={(e) =>
-                      setState((prev) => ({
-                        ...prev,
-                        counterUtxoHash: e.target.value,
-                      }))
-                    }
-                  />
-                  <input
-                    type="number"
-                    placeholder="OutputIndex"
-                    className="w-32 p-2 rounded border border-gray-700 bg-gray-800 text-gray-100"
-                    value={state.counterUtxoIndex}
-                    onChange={(e) =>
-                      setState((prev) => ({
-                        ...prev,
-                        counterUtxoIndex: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  if (state.selectedUtxo) {
-                    handleApproveMember(state.selectedUtxo);
-                  }
-                }}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50"
-                disabled={
-                  state.loading ||
-                  !state.selectedUtxo ||
-                  !state.counterUtxoHash ||
-                  !state.counterUtxoIndex
-                }
-              >
-                {state.loading ? "Processing..." : "Approve Member"}
-              </button>
-            </div>
-          </div>
-        )}
+        {renderMemberTable(memberUtxos)}
       </div>
     </Layout>
   );
