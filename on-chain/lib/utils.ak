@@ -1,7 +1,7 @@
 use aiken/collection/list.{concat}
 use aiken/crypto.{VerificationKeyHash}
 use cardano/address.{Address}
-use cardano/assets.{AssetName, PolicyId, quantity_of}
+use cardano/assets.{AssetName, PolicyId, Value, quantity_of}
 use cardano/transaction.{DatumHash, InlineDatum, Input, NoDatum, Output}
 use cocktail.{convert_int_to_bytes, inputs_at_with, output_inline_datum}
 use types.{
@@ -118,4 +118,18 @@ pub fn updated_member_datum(
     }
 
   updated_datum
+}
+
+pub fn output_at_with_value(
+  outputs: List<Output>,
+  address: Address,
+  value: Value,
+) -> List<Output> {
+  list.filter(
+    outputs,
+    fn(output) {
+      let are_values_equal = output.value == value
+      are_values_equal && output.address == address
+    },
+  )
 }

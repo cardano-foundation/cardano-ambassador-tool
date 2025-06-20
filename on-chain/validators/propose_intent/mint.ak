@@ -4,14 +4,14 @@ use cardano/assets.{PolicyId}
 use cardano/transaction.{Transaction}
 use cocktail.{
   inputs_at_with_policy, inputs_with, only_minted_token, output_inline_datum,
-  outputs_at_with, outputs_at_with_policy, policy_only_minted_token,
-  value_length, value_policy_info,
+  outputs_at_with_policy, policy_only_minted_token, value_length,
+  value_policy_info,
 }
 use types.{
   ApproveProposal, MemberDatum, OracleDatum, ProposalDatum,
   ProposeIntentMintRedeemer, ProposeProject, RejectProposal,
 }
-use utils.{get_oracle_nft_datum, has_enough_signers}
+use utils.{get_oracle_nft_datum, has_enough_signers, output_at_with_value}
 
 validator propose_intent(oracle_nft: PolicyId) {
   mint(
@@ -50,7 +50,8 @@ validator propose_intent(oracle_nft: PolicyId) {
 
         expect [token_input] = inputs_with(inputs, token.1st, token.2nd)
         let token_owner = token_input.output.address
-        expect [_] = outputs_at_with(outputs, token_owner, token.1st, token.2nd)
+        expect [_] =
+          output_at_with_value(outputs, token_owner, token_input.output.value)
 
         expect [intent_output] =
           outputs_at_with_policy(outputs, propose_intent_address, policy_id)

@@ -3,17 +3,21 @@ import { CardanoWallet, useWallet } from "@meshsdk/react";
 import Link from "next/link";
 import { useState } from "react";
 import Layout from "@/components/Layout";
-import {
-  SetupTx,
-  UserActionTx,
-  CATConstants,
-} from "@sidan-lab/cardano-ambassador-tool";
+
 import { getProvider } from "@/utils/utils";
 
+import { stringToHex } from "@meshsdk/core";
+import {
+  CATConstants,
+  SetupTx,
+  UserActionTx,
+  MembershipMetadata,
+  membershipMetadata,
+  proposalMetadata,
+} from "@sidan-lab/cardano-ambassador-tool";
+
 // Environment variables
-const ORACLE_TX_HASH =
-  process.env.NEXT_PUBLIC_ORACLE_TX_HASH ||
-  "5419ad9bb41f9b8d78a1fcfe885e3f45801af848280a1835c0d6b4db295a2553";
+const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
 const ORACLE_OUTPUT_INDEX = parseInt(
   process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0"
 );
@@ -26,19 +30,13 @@ const getCatConstants = () => {
 
   const SETUP_UTXO = {
     oracle: {
-      txHash:
-        process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH ||
-        "1f2344f32e3ea769e58394719f3eea9a6170796de75884b80aa8df410a965b08",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX || "1"
-      ),
+      txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
+      outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
     },
     counter: {
-      txHash:
-        process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH ||
-        "e32a7c0204a2f624934b5fe32b850076787fc9a2d66e91756ff192c6efc774ac",
+      txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
       outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX || "1"
+        process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!
       ),
     },
   };
@@ -47,17 +45,13 @@ const getCatConstants = () => {
   const REF_TX_IN_SCRIPTS = {
     membershipIntent: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_TX_HASH ||
-          "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
+        txHash: process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_TX_HASH ||
-          "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
+        txHash: process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -65,17 +59,13 @@ const getCatConstants = () => {
     },
     member: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_MEMBER_MINT_TX_HASH ||
-          "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
+        txHash: process.env.NEXT_PUBLIC_MEMBER_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_MEMBER_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_MEMBER_SPEND_TX_HASH ||
-          "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
+        txHash: process.env.NEXT_PUBLIC_MEMBER_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_MEMBER_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -83,17 +73,13 @@ const getCatConstants = () => {
     },
     proposeIntent: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_TX_HASH ||
-          "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
+        txHash: process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_TX_HASH ||
-          "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
+        txHash: process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -101,17 +87,13 @@ const getCatConstants = () => {
     },
     proposal: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_PROPOSAL_MINT_TX_HASH ||
-          "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
+        txHash: process.env.NEXT_PUBLIC_PROPOSAL_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_PROPOSAL_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_PROPOSAL_SPEND_TX_HASH ||
-          "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
+        txHash: process.env.NEXT_PUBLIC_PROPOSAL_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_PROPOSAL_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -119,17 +101,13 @@ const getCatConstants = () => {
     },
     signOffApproval: {
       mint: {
-        txHash:
-          process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_TX_HASH ||
-          "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
+        txHash: process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_OUTPUT_INDEX || "0"
         ),
       },
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_TX_HASH ||
-          "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
+        txHash: process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_OUTPUT_INDEX || "1"
         ),
@@ -137,17 +115,13 @@ const getCatConstants = () => {
     },
     treasury: {
       spend: {
-        txHash:
-          process.env.NEXT_PUBLIC_TREASURY_SPEND_TX_HASH ||
-          "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
+        txHash: process.env.NEXT_PUBLIC_TREASURY_SPEND_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_TREASURY_SPEND_OUTPUT_INDEX || "0"
         ),
       },
       withdrawal: {
-        txHash:
-          process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_TX_HASH ||
-          "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
+        txHash: process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_TX_HASH!,
         outputIndex: parseInt(
           process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_OUTPUT_INDEX || "1"
         ),
@@ -168,8 +142,6 @@ export default function Home() {
   // State for UTxO inputs
   const [tokenUtxoHash, setTokenUtxoHash] = useState("");
   const [tokenUtxoIndex, setTokenUtxoIndex] = useState("");
-  const [memberUtxoHash, setMemberUtxoHash] = useState("");
-  const [memberUtxoIndex, setMemberUtxoIndex] = useState("");
   const [counterUtxoHash, setCounterUtxoHash] = useState("");
   const [counterUtxoIndex, setCounterUtxoIndex] = useState("");
   const [utxoHash, setUtxoHash] = useState("");
@@ -189,6 +161,21 @@ export default function Home() {
   const [adminTenure, setAdminTenure] = useState("");
   const [multiSigThreshold, setMultiSigThreshold] = useState("");
   const [walletAddress, setwalletAddress] = useState("");
+
+  // State for ScriptType selection in Tx Out Scripts
+  const [selectedScriptType, setSelectedScriptType] = useState<ScriptType>(
+    ScriptType.MembershipIntent
+  );
+
+  // Helper for ScriptType dropdown options
+  const scriptTypeOptions = Object.entries(ScriptType).map(([key, value]) => ({
+    key,
+    value,
+    label: key
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase())
+      .trim(),
+  }));
 
   const handleAction = async (action: string, params: any) => {
     try {
@@ -229,11 +216,15 @@ export default function Home() {
             utxoHash,
             utxoIndex,
           } = params;
+          const walletUtxos = await wallet.getUtxos();
+          const walletUtxo = walletUtxos[0]!;
+          console.log(walletUtxo);
           const utxos = await blockfrost.fetchUTxOs(
             utxoHash,
             parseInt(utxoIndex)
           );
           const paramUtxo = utxos[0];
+          console.log(paramUtxo);
           if (!paramUtxo) {
             throw new Error("Failed to fetch UTxO");
           }
@@ -294,7 +285,10 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const result = await setup.txOutScript(scriptAddress);
+          const result = await setup.txOutScript(
+            scriptAddress,
+            selectedScriptType
+          );
           setResult(JSON.stringify(result, null, 2));
           break;
         }
@@ -316,53 +310,161 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
+
+          const metadata: MembershipMetadata = membershipMetadata(
+            userData.walletAddress,
+            stringToHex(userData.fullName),
+            stringToHex(userData.displayName),
+            stringToHex(userData.emailAddress),
+            stringToHex(userData.bio)
+          );
+
           const result = await userAction.applyMembership(
             oracleUtxo,
             tokenUtxo,
             userData.tokenPolicyId,
             userData.tokenAssetName,
-            userData.walletAddress,
-            userData.fullName,
-            userData.displayName,
-            userData.emailAddress,
-            userData.bio
+            metadata
           );
           setResult(JSON.stringify(result, null, 2));
           break;
         }
 
         case "proposeProject": {
-          const {
-            tokenUtxoHash,
-            tokenUtxoIndex,
-            memberUtxoHash,
-            memberUtxoIndex,
-            ...projectData
-          } = params;
-          const [oracleUtxos, tokenUtxos, memberUtxos] = await Promise.all([
-            blockfrost.fetchUTxOs(ORACLE_TX_HASH, ORACLE_OUTPUT_INDEX),
-            blockfrost.fetchUTxOs(tokenUtxoHash, parseInt(tokenUtxoIndex)),
-            blockfrost.fetchUTxOs(memberUtxoHash, parseInt(memberUtxoIndex)),
-          ]);
+          // Find member UTxO by wallet address
+          const userAddress = await wallet.getChangeAddress();
+          const memberUtxo = await import("@/utils/utils").then((utils) =>
+            utils.findMemberUtxo(userAddress)
+          );
+          if (!memberUtxo) {
+            throw new Error("No member UTxO found for this address");
+          }
+          // Find token UTxO by member UTxO
+          const tokenUtxo = await import("@/utils/utils").then((utils) =>
+            utils.findTokenUtxoByMemberUtxo(memberUtxo)
+          );
+          if (!tokenUtxo) {
+            throw new Error("No token UTxO found for this member");
+          }
+          // Find oracle UTxO
+          const oracleUtxos = await blockfrost.fetchUTxOs(
+            ORACLE_TX_HASH,
+            ORACLE_OUTPUT_INDEX
+          );
           const oracleUtxo = oracleUtxos[0];
-          const tokenUtxo = tokenUtxos[0];
-          const memberUtxo = memberUtxos[0];
-          if (!oracleUtxo || !tokenUtxo || !memberUtxo) {
-            throw new Error("Failed to fetch required UTxOs");
+          if (!oracleUtxo) {
+            throw new Error("Failed to fetch required oracle UTxO");
           }
           const userAction = new UserActionTx(
-            address,
+            userAddress,
             wallet,
             blockfrost,
             getCatConstants()
           );
+          const metadata = proposalMetadata(stringToHex(params.projectUrl));
           const result = await userAction.proposeProject(
             oracleUtxo,
             tokenUtxo,
             memberUtxo,
-            Number(projectData.fundRequested),
-            projectData.receiver,
-            projectData.projectUrl
+            Number(params.fundRequested),
+            params.receiver,
+            metadata
+          );
+          setResult(JSON.stringify(result, null, 2));
+          break;
+        }
+
+        case "updateMembershipIntentMetadata": {
+          // Find membership intent UTxO by wallet address
+          const userAddress = await wallet.getChangeAddress();
+          const membershipIntentUtxo = await import("@/utils/utils").then(
+            (utils) => utils.findMembershipIntentUtxo(userAddress)
+          );
+          if (!membershipIntentUtxo) {
+            throw new Error("No membership intent UTxO found for this address");
+          }
+          // Find token UTxO by membership intent UTxO
+          const tokenUtxo = await import("@/utils/utils").then((utils) =>
+            utils.findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo)
+          );
+          if (!tokenUtxo) {
+            throw new Error("No token UTxO found for this membership intent");
+          }
+          // Find oracle UTxO
+          const oracleUtxos = await blockfrost.fetchUTxOs(
+            ORACLE_TX_HASH,
+            ORACLE_OUTPUT_INDEX
+          );
+          const oracleUtxo = oracleUtxos[0];
+          if (!oracleUtxo) {
+            throw new Error("Failed to fetch required oracle UTxO");
+          }
+          const userAction = new UserActionTx(
+            userAddress,
+            wallet,
+            blockfrost,
+            getCatConstants()
+          );
+          const metadata = membershipMetadata(
+            params.walletAddress,
+            stringToHex(params.fullName),
+            stringToHex(params.displayName),
+            stringToHex(params.emailAddress),
+            stringToHex(params.bio)
+          );
+          const result = await userAction.updateMembershipIntentMetadata(
+            oracleUtxo,
+            tokenUtxo,
+            membershipIntentUtxo,
+            metadata
+          );
+          setResult(JSON.stringify(result, null, 2));
+          break;
+        }
+
+        case "updateMemberMetadata": {
+          // Find member UTxO by wallet address
+          const userAddress = await wallet.getChangeAddress();
+          const memberUtxo = await import("@/utils/utils").then((utils) =>
+            utils.findMemberUtxo(userAddress)
+          );
+          if (!memberUtxo) {
+            throw new Error("No member UTxO found for this address");
+          }
+          // Find token UTxO by member UTxO
+          const tokenUtxo = await import("@/utils/utils").then((utils) =>
+            utils.findTokenUtxoByMemberUtxo(memberUtxo)
+          );
+          if (!tokenUtxo) {
+            throw new Error("No token UTxO found for this member");
+          }
+          // Find oracle UTxO
+          const oracleUtxos = await blockfrost.fetchUTxOs(
+            ORACLE_TX_HASH,
+            ORACLE_OUTPUT_INDEX
+          );
+          const oracleUtxo = oracleUtxos[0];
+          if (!oracleUtxo) {
+            throw new Error("Failed to fetch required oracle UTxO");
+          }
+          const userAction = new UserActionTx(
+            userAddress,
+            wallet,
+            blockfrost,
+            getCatConstants()
+          );
+          const metadata = membershipMetadata(
+            params.walletAddress,
+            stringToHex(params.fullName),
+            stringToHex(params.displayName),
+            stringToHex(params.emailAddress),
+            stringToHex(params.bio)
+          );
+          const result = await userAction.updateMemberMetadata(
+            oracleUtxo,
+            memberUtxo,
+            tokenUtxo,
+            metadata
           );
           setResult(JSON.stringify(result, null, 2));
           break;
@@ -550,6 +652,25 @@ export default function Home() {
               <h4 className="text-lg font-medium mb-2">
                 Tx Out Scripts Address
               </h4>
+              {/* Dropdown for ScriptType selection */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium mb-1">
+                  Choose Script Type
+                </label>
+                <select
+                  className="w-full p-2 rounded bg-gray-700 text-white"
+                  value={selectedScriptType}
+                  onChange={(e) =>
+                    setSelectedScriptType(e.target.value as ScriptType)
+                  }
+                >
+                  {scriptTypeOptions.map((opt) => (
+                    <option key={opt.key} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
               {renderInputField(
                 "Address",
                 address,
@@ -614,23 +735,69 @@ export default function Home() {
               </button>
             </div>
 
+            {/* Update Membership Intent Metadata */}
+            <div className="bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">
+                Update Membership Intent Metadata
+              </h4>
+              {renderInputField(
+                "Wallet Address",
+                walletAddress,
+                setwalletAddress
+              )}
+              {renderInputField("Full Name", fullName, setFullName)}
+              {renderInputField("Display Name", displayName, setDisplayName)}
+              {renderInputField("Email Address", emailAddress, setEmailAddress)}
+              {renderInputField("Bio", bio, setBio)}
+              <button
+                className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
+                onClick={() =>
+                  handleAction("updateMembershipIntentMetadata", {
+                    walletAddress,
+                    fullName,
+                    displayName,
+                    emailAddress,
+                    bio,
+                  })
+                }
+              >
+                Update Membership Intent Metadata
+              </button>
+            </div>
+
+            {/* Update Member Metadata */}
+            <div className="bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">
+                Update Member Metadata
+              </h4>
+              {renderInputField(
+                "Wallet Address",
+                walletAddress,
+                setwalletAddress
+              )}
+              {renderInputField("Full Name", fullName, setFullName)}
+              {renderInputField("Display Name", displayName, setDisplayName)}
+              {renderInputField("Email Address", emailAddress, setEmailAddress)}
+              {renderInputField("Bio", bio, setBio)}
+              <button
+                className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
+                onClick={() =>
+                  handleAction("updateMemberMetadata", {
+                    walletAddress,
+                    fullName,
+                    displayName,
+                    emailAddress,
+                    bio,
+                  })
+                }
+              >
+                Update Member Metadata
+              </button>
+            </div>
+
             {/* Propose Project */}
             <div className="bg-gray-700 p-4 rounded">
               <h4 className="text-lg font-medium mb-2">Propose Project</h4>
-              {renderUtxoInputs(
-                "Token UTxO",
-                tokenUtxoHash,
-                setTokenUtxoHash,
-                tokenUtxoIndex,
-                setTokenUtxoIndex
-              )}
-              {renderUtxoInputs(
-                "Member UTxO",
-                memberUtxoHash,
-                setMemberUtxoHash,
-                memberUtxoIndex,
-                setMemberUtxoIndex
-              )}
               {renderInputField(
                 "Fund Requested",
                 fundRequested,
@@ -643,10 +810,6 @@ export default function Home() {
                 className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
                 onClick={() =>
                   handleAction("proposeProject", {
-                    tokenUtxoHash,
-                    tokenUtxoIndex,
-                    memberUtxoHash,
-                    memberUtxoIndex,
                     fundRequested,
                     receiver,
                     projectUrl,

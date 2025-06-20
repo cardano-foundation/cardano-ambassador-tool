@@ -20,7 +20,6 @@ import {
   List,
   PubKeyHash,
 } from "@meshsdk/core";
-import { ProposalMetadata } from "./types";
 
 const version = "V3";
 const networkId = 0; // 0 for testnet; 1 for mainnet
@@ -110,7 +109,9 @@ export class MembershipIntentSpendBlueprint extends SpendingBlueprint {
 
   params = (data: [PolicyId]): [PolicyId] => data;
   datum = (data: MembershipIntentDatum): MembershipIntentDatum => data;
-  redeemer = (data: Data): Data => data;
+  redeemer = (
+    data: MembershipIntentSpendRedeemer
+  ): MembershipIntentSpendRedeemer => data;
 }
 
 export class OracleMintBlueprint extends MintingBlueprint {
@@ -285,14 +286,19 @@ export type AddMember = ConStr0<[]>;
 
 export type RemoveMember = ConStr1<[]>;
 
-export type MemberSpendRedeemer = AdminRemoveMember | AdminSignOffProject;
+export type MemberSpendRedeemer =
+  | AdminRemoveMember
+  | AdminSignOffProject
+  | MemberUpdateMetadata;
 
 export type AdminRemoveMember = ConStr0<[]>;
 
 export type AdminSignOffProject = ConStr1<[]>;
 
+export type MemberUpdateMetadata = ConStr2<[]>;
+
 export type MemberDatum = ConStr0<
-  [Tuple<[PolicyId, AssetName]>, Pairs<ProposalMetadata, Integer>, Integer, any]
+  [Tuple<[PolicyId, AssetName]>, Pairs<any, Integer>, Integer, any]
 >;
 
 export type Data = any;
@@ -307,6 +313,14 @@ export type ApplyMembership = ConStr0<[PolicyId, AssetName, any]>;
 export type ApproveMember = ConStr1<[]>;
 
 export type RejectMember = ConStr2<[]>;
+
+export type MembershipIntentSpendRedeemer =
+  | ProcessMembershipIntent
+  | UpdateMembershipIntentMetadata;
+
+export type ProcessMembershipIntent = ConStr0<[]>;
+
+export type UpdateMembershipIntentMetadata = ConStr1<[]>;
 
 export type MembershipIntentDatum = ConStr0<
   [Tuple<[PolicyId, AssetName]>, any]
