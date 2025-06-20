@@ -5,14 +5,16 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 
 import { getProvider } from "@/utils/utils";
+
+import { stringToHex } from "@meshsdk/core";
 import {
   CATConstants,
+  SetupTx,
+  UserActionTx,
   MembershipMetadata,
   membershipMetadata,
   proposalMetadata,
-} from "@/lib";
-import { ScriptType, SetupTx, UserActionTx } from "@/transactions";
-import { stringToHex } from "@meshsdk/core";
+} from "@sidan-lab/cardano-ambassador-tool";
 
 // Environment variables
 const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
@@ -140,8 +142,6 @@ export default function Home() {
   // State for UTxO inputs
   const [tokenUtxoHash, setTokenUtxoHash] = useState("");
   const [tokenUtxoIndex, setTokenUtxoIndex] = useState("");
-  const [memberUtxoHash, setMemberUtxoHash] = useState("");
-  const [memberUtxoIndex, setMemberUtxoIndex] = useState("");
   const [counterUtxoHash, setCounterUtxoHash] = useState("");
   const [counterUtxoIndex, setCounterUtxoIndex] = useState("");
   const [utxoHash, setUtxoHash] = useState("");
@@ -162,19 +162,19 @@ export default function Home() {
   const [multiSigThreshold, setMultiSigThreshold] = useState("");
   const [walletAddress, setwalletAddress] = useState("");
 
-  // State for new metadata update functions
-  const [membershipIntentUtxoHash, setMembershipIntentUtxoHash] = useState("");
-  const [membershipIntentUtxoIndex, setMembershipIntentUtxoIndex] =
-    useState("");
-
   // State for ScriptType selection in Tx Out Scripts
-  const [selectedScriptType, setSelectedScriptType] = useState<ScriptType>(ScriptType.MembershipIntent);
+  const [selectedScriptType, setSelectedScriptType] = useState<ScriptType>(
+    ScriptType.MembershipIntent
+  );
 
   // Helper for ScriptType dropdown options
   const scriptTypeOptions = Object.entries(ScriptType).map(([key, value]) => ({
     key,
     value,
-    label: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim(),
+    label: key
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase())
+      .trim(),
   }));
 
   const handleAction = async (action: string, params: any) => {
@@ -660,10 +660,14 @@ export default function Home() {
                 <select
                   className="w-full p-2 rounded bg-gray-700 text-white"
                   value={selectedScriptType}
-                  onChange={e => setSelectedScriptType(e.target.value as ScriptType)}
+                  onChange={(e) =>
+                    setSelectedScriptType(e.target.value as ScriptType)
+                  }
                 >
-                  {scriptTypeOptions.map(opt => (
-                    <option key={opt.key} value={opt.value}>{opt.label}</option>
+                  {scriptTypeOptions.map((opt) => (
+                    <option key={opt.key} value={opt.value}>
+                      {opt.label}
+                    </option>
                   ))}
                 </select>
               </div>
