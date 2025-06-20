@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { hexToString, stringToHex, UTxO } from "@meshsdk/core";
+import { stringToHex, UTxO } from "@meshsdk/core";
 import Layout from "@/components/Layout";
 import {
   parseMembershipIntentDatum,
@@ -232,15 +232,25 @@ const Admin = () => {
 
   const handleRemoveMember = async (memberUtxo: UTxO) => {
     try {
-      setState((prev) => ({ ...prev, loading: true, error: null, result: null }));
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+        error: null,
+        result: null,
+      }));
       const response = await fetch("/api/admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "removeMember", memberUtxo }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Failed to remove member");
-      setState((prev) => ({ ...prev, result: "Member removed successfully", loading: false }));
+      if (!response.ok)
+        throw new Error(data.error || "Failed to remove member");
+      setState((prev) => ({
+        ...prev,
+        result: "Member removed successfully",
+        loading: false,
+      }));
       fetchAllUtxos();
     } catch (err) {
       setState((prev) => ({
@@ -253,15 +263,25 @@ const Admin = () => {
 
   const handleRejectMember = async (membershipIntentUtxo: UTxO) => {
     try {
-      setState((prev) => ({ ...prev, loading: true, error: null, result: null }));
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+        error: null,
+        result: null,
+      }));
       const response = await fetch("/api/admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "rejectMember", membershipIntentUtxo }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Failed to reject member");
-      setState((prev) => ({ ...prev, result: "Member rejected successfully", loading: false }));
+      if (!response.ok)
+        throw new Error(data.error || "Failed to reject member");
+      setState((prev) => ({
+        ...prev,
+        result: "Member rejected successfully",
+        loading: false,
+      }));
       fetchAllUtxos();
     } catch (err) {
       setState((prev) => ({
@@ -397,26 +417,39 @@ const Admin = () => {
       {/* Counter UTxO input fields for Approve */}
       <div className="mb-4 flex gap-2 items-end">
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-200">Counter UTxO Tx Hash</label>
+          <label className="block text-sm font-medium mb-1 text-gray-200">
+            Counter UTxO Tx Hash
+          </label>
           <input
             type="text"
             className="p-2 rounded border border-gray-700 bg-gray-800 text-gray-100"
             value={state.counterUtxoHash}
-            onChange={e => setState(prev => ({ ...prev, counterUtxoHash: e.target.value }))}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, counterUtxoHash: e.target.value }))
+            }
             placeholder="Counter Tx Hash"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-200">Counter UTxO Output Index</label>
+          <label className="block text-sm font-medium mb-1 text-gray-200">
+            Counter UTxO Output Index
+          </label>
           <input
             type="number"
             className="p-2 rounded border border-gray-700 bg-gray-800 text-gray-100"
             value={state.counterUtxoIndex}
-            onChange={e => setState(prev => ({ ...prev, counterUtxoIndex: e.target.value }))}
+            onChange={(e) =>
+              setState((prev) => ({
+                ...prev,
+                counterUtxoIndex: e.target.value,
+              }))
+            }
             placeholder="Output Index"
           />
         </div>
-        <span className="ml-2 text-xs text-gray-400">(Required for Approve)</span>
+        <span className="ml-2 text-xs text-gray-400">
+          (Required for Approve)
+        </span>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg">
@@ -513,7 +546,11 @@ const Admin = () => {
                       <button
                         className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded mr-2"
                         onClick={() => handleApproveMember(utxo)}
-                        disabled={state.loading || !state.counterUtxoHash || !state.counterUtxoIndex}
+                        disabled={
+                          state.loading ||
+                          !state.counterUtxoHash ||
+                          !state.counterUtxoIndex
+                        }
                       >
                         Approve
                       </button>
@@ -625,23 +662,48 @@ const Admin = () => {
         <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg">
           <thead>
             <tr>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">#</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Tx Hash</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Output Index</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Full Name</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Display Name</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Email</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Wallet</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Bio</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Fund Received</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Completion Map</th>
-              <th className="px-4 py-2 border border-gray-700 text-gray-200">Actions</th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                #
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Tx Hash
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Output Index
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Full Name
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Display Name
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Email
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Wallet
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Bio
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Fund Received
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Completion Map
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {utxos.length === 0 ? (
               <tr>
-                <td colSpan={11} className="text-center py-4 text-gray-400 bg-gray-800">
+                <td
+                  colSpan={11}
+                  className="text-center py-4 text-gray-400 bg-gray-800"
+                >
                   No UTXOs found
                 </td>
               </tr>
@@ -663,13 +725,18 @@ const Admin = () => {
                     wallet = parsed.member.metadata.walletAddress;
                     bio = parsed.member.metadata.bio;
                     fundReceived = parsed.member.fundReceived.toString();
-                    const entries = Array.from(parsed.member.completion.entries());
+                    const entries = Array.from(
+                      parsed.member.completion.entries()
+                    );
                     if (entries.length > 0) {
                       completionMap = (
                         <ul className="text-xs text-gray-200">
                           {entries.map(([proj, value], i) => (
                             <li key={i}>
-                              <span className="font-semibold">{proj.projectDetails}:</span> {value}
+                              <span className="font-semibold">
+                                {proj.projectDetails}:
+                              </span>{" "}
+                              {value}
                             </li>
                           ))}
                         </ul>
@@ -678,17 +745,40 @@ const Admin = () => {
                   }
                 }
                 return (
-                  <tr key={`${utxo.input.txHash}-${utxo.input.outputIndex}`} className="hover:bg-gray-700 cursor-pointer">
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{idx + 1}</td>
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">{utxo.input.txHash}</td>
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{utxo.input.outputIndex}</td>
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{fullName}</td>
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{displayName}</td>
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{email}</td>
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">{wallet}</td>
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{bio}</td>
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{fundReceived}</td>
-                    <td className="px-4 py-2 border border-gray-700 text-gray-100">{completionMap}</td>
+                  <tr
+                    key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
+                    className="hover:bg-gray-700 cursor-pointer"
+                  >
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {idx + 1}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {utxo.input.txHash}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {utxo.input.outputIndex}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {fullName}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {displayName}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {email}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {wallet}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {bio}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {fundReceived}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {completionMap}
+                    </td>
                     <td className="px-4 py-2 border border-gray-700 text-gray-100">
                       <button
                         className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
