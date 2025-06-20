@@ -36,12 +36,12 @@ fn mock_apply_membership_tx(test_case: ApplyMembershipTestCase) -> Transaction {
     is_intent_output_datum_correct,
   } = test_case
 
-  let correct_user_token_datum =
+  let correct_intent_datum =
     MembershipIntentDatum {
       token: (mock_user_token.1st, mock_user_token.2nd),
       metadata: mock_metadata,
     }
-  let incorrect_user_token_datum =
+  let incorrect_intent_datum =
     MembershipIntentDatum {
       token: (mock_policy_id(999), "incorrect"),
       metadata: mock_metadata,
@@ -79,14 +79,8 @@ fn mock_apply_membership_tx(test_case: ApplyMembershipTestCase) -> Transaction {
         mock_membership_intent_address,
         input_value |> add(mock_policy_id(999), "", 1),
       )
-    |> tx_out_inline_datum(
-        is_intent_output_datum_correct,
-        correct_user_token_datum,
-      )
-    |> tx_out_inline_datum(
-        !is_intent_output_datum_correct,
-        incorrect_user_token_datum,
-      )
+    |> tx_out_inline_datum(is_intent_output_datum_correct, correct_intent_datum)
+    |> tx_out_inline_datum(!is_intent_output_datum_correct, incorrect_intent_datum)
     |> complete()
 }
 

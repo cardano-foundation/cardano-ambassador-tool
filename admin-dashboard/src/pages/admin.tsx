@@ -1,155 +1,17 @@
-import { blockfrost, BlockfrostService } from "@/services";
-import { deserializeAddress, MeshWallet } from "@meshsdk/core";
 import React, { useState, useEffect } from "react";
-import { UTxO } from "@meshsdk/core";
+import { stringToHex, UTxO } from "@meshsdk/core";
 import Layout from "@/components/Layout";
 import {
-  AdminActionTx,
-  CATConstants,
-} from "@sidan-lab/cardano-ambassador-tool";
-
-const blockfrostService = new BlockfrostService();
-
-// Environment variables
-const ADMIN_MNEMONIC_1 = process.env.NEXT_PUBLIC_ADMIN_MNEMONIC_1 || "";
-const ADMIN_MNEMONIC_2 = process.env.NEXT_PUBLIC_ADMIN_MNEMONIC_2 || "";
-const ADMIN_MNEMONIC_3 = process.env.NEXT_PUBLIC_ADMIN_MNEMONIC_3 || "";
-
-const MEMBERSHIP_INTENT_ADDRESS =
-  process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_ADDRESS ||
-  "addr_test1wz60g3e02uj5wj4tw5x0qdncuarcxk6eckha4h05wsrnv5qytd3pm";
-
-// Setup UTxOs
-const SETUP_UTXO = {
-  oracle: {
-    txHash:
-      process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH ||
-      "1f2344f32e3ea769e58394719f3eea9a6170796de75884b80aa8df410a965b08",
-    outputIndex: parseInt(
-      process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX || "1"
-    ),
-  },
-  counter: {
-    txHash:
-      process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH ||
-      "e32a7c0204a2f624934b5fe32b850076787fc9a2d66e91756ff192c6efc774ac",
-    outputIndex: parseInt(
-      process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX || "1"
-    ),
-  },
-};
-
-// Reference Transaction Scripts
-const REF_TX_IN_SCRIPTS = {
-  membershipIntent: {
-    mint: {
-      txHash:
-        process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_TX_HASH ||
-        "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_OUTPUT_INDEX || "0"
-      ),
-    },
-    spend: {
-      txHash:
-        process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_TX_HASH ||
-        "394eae3278555db8f77c2b56c82b47a9efe6bf5b713bc8dcdc2f293a74cec02a",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_OUTPUT_INDEX || "1"
-      ),
-    },
-  },
-  member: {
-    mint: {
-      txHash:
-        process.env.NEXT_PUBLIC_MEMBER_MINT_TX_HASH ||
-        "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_MEMBER_MINT_OUTPUT_INDEX || "0"
-      ),
-    },
-    spend: {
-      txHash:
-        process.env.NEXT_PUBLIC_MEMBER_SPEND_TX_HASH ||
-        "79ef5c8906b4419ba59198409bdc6ec3f6a4c297ae70b75022d24b36ff6a07db",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_MEMBER_SPEND_OUTPUT_INDEX || "1"
-      ),
-    },
-  },
-  proposeIntent: {
-    mint: {
-      txHash:
-        process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_TX_HASH ||
-        "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_OUTPUT_INDEX || "0"
-      ),
-    },
-    spend: {
-      txHash:
-        process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_TX_HASH ||
-        "66ef88ec0a34fca6ce6c083a2b8e5fd80cbd533c6a45fa725a9ed7b59f64f9e6",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_OUTPUT_INDEX || "1"
-      ),
-    },
-  },
-  proposal: {
-    mint: {
-      txHash:
-        process.env.NEXT_PUBLIC_PROPOSAL_MINT_TX_HASH ||
-        "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_PROPOSAL_MINT_OUTPUT_INDEX || "0"
-      ),
-    },
-    spend: {
-      txHash:
-        process.env.NEXT_PUBLIC_PROPOSAL_SPEND_TX_HASH ||
-        "15e40234dc2e6edfe10c45f4920e6866901d1aa2af7d95af9ff16aefbfb24137",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_PROPOSAL_SPEND_OUTPUT_INDEX || "1"
-      ),
-    },
-  },
-  signOffApproval: {
-    mint: {
-      txHash:
-        process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_TX_HASH ||
-        "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_OUTPUT_INDEX || "0"
-      ),
-    },
-    spend: {
-      txHash:
-        process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_TX_HASH ||
-        "1bf5379292dde4b825842b4c9b96d73d48f2c649fcee91b6c4d72a8cb9196739",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_OUTPUT_INDEX || "1"
-      ),
-    },
-  },
-  treasury: {
-    spend: {
-      txHash:
-        process.env.NEXT_PUBLIC_TREASURY_SPEND_TX_HASH ||
-        "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_TREASURY_SPEND_OUTPUT_INDEX || "0"
-      ),
-    },
-    withdrawal: {
-      txHash:
-        process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_TX_HASH ||
-        "7e9c7e48dfdd72ff480abe5a00f4ffadfc6f6e8f03861d62816275a12741a474",
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_OUTPUT_INDEX || "1"
-      ),
-    },
-  },
-};
+  parseMembershipIntentDatum,
+  fetchMembershipIntentUtxos,
+  fetchProposeIntentUtxos,
+  fetchProposalUtxos,
+  fetchSignOffApprovalUtxos,
+  parseProposalDatum,
+  findMemberUtxoByAssetName,
+  fetchMemberUtxos,
+  parseMemberDatum,
+} from "@/utils/utils";
 
 // Types
 interface AdminState {
@@ -157,105 +19,70 @@ interface AdminState {
   error: string | null;
   result: string | null;
   utxos: UTxO[];
-  selectedUtxo: UTxO | null;
   adminsPkh: string[];
+  counterUtxoHash: string;
+  counterUtxoIndex: string;
 }
 
-// Helper functions
-const getWallet = (mnemonic: string): MeshWallet => {
-  return new MeshWallet({
-    networkId: 0,
-    fetcher: blockfrost,
-    submitter: blockfrost,
-    key: {
-      type: "mnemonic",
-      words: mnemonic.split(","),
-    },
-  });
-};
-
-const getCatConstants = () => {
-  const network =
-    (process.env.NEXT_PUBLIC_NETWORK as "mainnet" | "preprod") || "preprod";
-  return new CATConstants(network, SETUP_UTXO, REF_TX_IN_SCRIPTS);
-};
-
 const Admin = () => {
-  // Initialize wallets
-  const admin1 = getWallet(ADMIN_MNEMONIC_1);
-  const admin2 = getWallet(ADMIN_MNEMONIC_2);
-  const admin3 = getWallet(ADMIN_MNEMONIC_3);
-
   // State
   const [state, setState] = useState<AdminState>({
     loading: false,
     error: null,
     result: null,
     utxos: [],
-    selectedUtxo: null,
     adminsPkh: [],
+    counterUtxoHash: "",
+    counterUtxoIndex: "",
   });
 
-  // Get admin public key hashes
-  const getAdminsPks = async (): Promise<string[]> => {
-    try {
-      const addr1 = await admin1.getChangeAddress();
-      const pkh1 = deserializeAddress(addr1).pubKeyHash;
+  // New state for ProposeIntent and Proposal UTXOs
+  const [proposeIntentUtxos, setProposeIntentUtxos] = useState<UTxO[]>([]);
+  const [proposalUtxos, setProposalUtxos] = useState<UTxO[]>([]);
+  const [loadingExtra, setLoadingExtra] = useState(false);
+  const [signOffApprovalUtxos, setSignOffApprovalUtxos] = useState<UTxO[]>([]);
+  const [memberUtxos, setMemberUtxos] = useState<UTxO[]>([]);
 
-      const addr2 = await admin2.getChangeAddress();
-      const pkh2 = deserializeAddress(addr2).pubKeyHash;
-
-      const addr3 = await admin3.getChangeAddress();
-      const pkh3 = deserializeAddress(addr3).pubKeyHash;
-
-      return [pkh1, pkh2, pkh3];
-    } catch {
-      throw new Error("Failed to get admin public key hashes");
-    }
-  };
-
-  // Fetch UTXOs
-  const fetchUtxos = async () => {
+  // Fetch all UTXOs (membership intent, propose intent, proposal, sign off approval)
+  const fetchAllUtxos = async () => {
     try {
       setState((prev) => ({ ...prev, loading: true, error: null }));
-      const utxos = await blockfrost.fetchAddressUTxOs(
-        MEMBERSHIP_INTENT_ADDRESS
-      );
+      setLoadingExtra(true);
+      const [utxos, proposeIntent, proposal, signOffApproval, members] =
+        await Promise.all([
+          fetchMembershipIntentUtxos(),
+          fetchProposeIntentUtxos(),
+          fetchProposalUtxos(),
+          fetchSignOffApprovalUtxos(),
+          fetchMemberUtxos(),
+        ]);
       setState((prev) => ({ ...prev, utxos, loading: false }));
+      setProposeIntentUtxos(proposeIntent);
+      setProposalUtxos(proposal);
+      setSignOffApprovalUtxos(signOffApproval);
+      setMemberUtxos(members);
     } catch (err) {
       setState((prev) => ({
         ...prev,
         error: err instanceof Error ? err.message : "Failed to fetch UTXOs",
         loading: false,
       }));
+    } finally {
+      setLoadingExtra(false);
     }
   };
 
-  // Fetch specific UTXO
-  const fetchUtxo = async (
-    hash: string,
-    index: string,
-    label: string
-  ): Promise<UTxO> => {
-    if (!hash || !index) {
-      throw new Error(
-        `Please provide both Transaction Hash and Output Index for ${label}`
-      );
-    }
-    try {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
-      const utxo = await blockfrostService.fetchUtxo(hash, parseInt(index));
-      setState((prev) => ({ ...prev, loading: false }));
-      return utxo;
-    } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        error: JSON.stringify(error, null, 2),
-        loading: false,
-      }));
-      throw error;
-    }
-  };
+  // Helper to call admin API
+  async function callAdminAction(action: string, params: any) {
+    const response = await fetch("/api/admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, ...params }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Action failed");
+    return data;
+  }
 
   // Handle approve member action
   const handleApproveMember = async (membershipIntentUtxo: UTxO) => {
@@ -267,52 +94,24 @@ const Admin = () => {
         result: null,
       }));
 
-      // Fetch required UTXOs
-      const [oracleUtxo, counterUtxo] = await Promise.all([
-        fetchUtxo(
-          process.env.NEXT_PUBLIC_ORACLE_TX_HASH ||
-            "5419ad9bb41f9b8d78a1fcfe885e3f45801af848280a1835c0d6b4db295a2553",
-          process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
-          "Oracle UTxO"
-        ),
-        fetchUtxo(
-          process.env.NEXT_PUBLIC_COUNTER_TX_HASH ||
-            "1bd1503b7ad956fb44476c92128684c4880cb886b0cd73f83557d107663558d3",
-          process.env.NEXT_PUBLIC_COUNTER_OUTPOUT_INDEX || "0",
-          "Counter UTxO"
-        ),
-      ]);
+      const response = await fetch("/api/admin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "approveMember",
+          membershipIntentUtxo,
+          counterUtxoHash: state.counterUtxoHash,
+          counterUtxoIndex: state.counterUtxoIndex,
+        }),
+      });
 
-      // Get admin public key hashes
-      const adminsPkh = state.adminsPkh;
+      const data = await response.json();
 
-      // Create and execute transaction
-      const address = await admin2.getChangeAddress();
-      const adminAction = new AdminActionTx(
-        address,
-        admin2,
-        blockfrost,
-        getCatConstants()
-      );
-
-      const unsignedTx = await adminAction.approveMember(
-        oracleUtxo,
-        counterUtxo,
-        membershipIntentUtxo,
-        adminsPkh
-      );
-
-      if (!unsignedTx) {
-        throw new Error("Failed to create transaction");
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to approve member");
       }
-
-      // Multi-sign transaction
-      const admin1SignedTx = await admin1.signTx(unsignedTx.txHex, true);
-      const admin12SignedTx = await admin2.signTx(admin1SignedTx, true);
-      const allSignedTx = await admin3.signTx(admin12SignedTx, true);
-
-      // Submit transaction
-      await admin2.submitTx(allSignedTx);
 
       setState((prev) => ({
         ...prev,
@@ -328,24 +127,676 @@ const Admin = () => {
     }
   };
 
+  // Handler functions for ProposeIntent UTXOs
+  const handleApproveProposal = async (utxo: UTxO) => {
+    try {
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+        result: null,
+        error: null,
+      }));
+      const result = await callAdminAction("approveProposal", {
+        proposeIntentUtxo: utxo,
+      });
+      setState((prev) => ({
+        ...prev,
+        result: "Proposal approved: " + JSON.stringify(result),
+        loading: false,
+      }));
+      fetchAllUtxos();
+    } catch (err: any) {
+      setState((prev) => ({ ...prev, error: err.message, loading: false }));
+    }
+  };
+
+  const handleRejectProposal = async (utxo: UTxO) => {
+    try {
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+        result: null,
+        error: null,
+      }));
+      const result = await callAdminAction("rejectProposal", {
+        proposeIntentUtxo: utxo,
+      });
+      setState((prev) => ({
+        ...prev,
+        result: "Proposal rejected: " + JSON.stringify(result),
+        loading: false,
+      }));
+      fetchAllUtxos();
+    } catch (err: any) {
+      setState((prev) => ({ ...prev, error: err.message, loading: false }));
+    }
+  };
+
+  // Handler functions for Proposal UTXOs
+  const handleApproveSignOff = async (utxo: UTxO) => {
+    try {
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+        result: null,
+        error: null,
+      }));
+      const result = await callAdminAction("approveSignOff", {
+        proposalUtxo: utxo,
+      });
+      setState((prev) => ({
+        ...prev,
+        result: "SignOff approved: " + JSON.stringify(result),
+        loading: false,
+      }));
+      fetchAllUtxos();
+    } catch (err: any) {
+      setState((prev) => ({ ...prev, error: err.message, loading: false }));
+    }
+  };
+
+  // Handler functions for SignOffApproval UTxOs
+  const handleSignOff = async (utxo: UTxO) => {
+    try {
+      // Get member asset name from proposal datum
+      if (!utxo.output.plutusData) throw new Error("Missing proposal datum");
+      const proposalData = parseProposalDatum(utxo.output.plutusData);
+      if (!proposalData) throw new Error("Invalid proposal datum");
+      // Find member UTxO using the asset name from proposal
+      const memberUtxo = await findMemberUtxoByAssetName(
+        stringToHex(proposalData.datum.fields[2].int.toString())
+      );
+      if (!memberUtxo) throw new Error("Member UTxO not found");
+
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+        result: null,
+        error: null,
+      }));
+      const result = await callAdminAction("SignOff", {
+        proposalUtxo: utxo,
+        signOffApprovalUtxo: utxo,
+        memberUtxo,
+      });
+      setState((prev) => ({
+        ...prev,
+        result: "SignOff completed: " + JSON.stringify(result),
+        loading: false,
+      }));
+      fetchAllUtxos();
+    } catch (err: any) {
+      setState((prev) => ({ ...prev, error: err.message, loading: false }));
+    }
+  };
+
+  const handleRemoveMember = async (memberUtxo: UTxO) => {
+    try {
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+        error: null,
+        result: null,
+      }));
+      const response = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "removeMember", memberUtxo }),
+      });
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.error || "Failed to remove member");
+      setState((prev) => ({
+        ...prev,
+        result: "Member removed successfully",
+        loading: false,
+      }));
+      fetchAllUtxos();
+    } catch (err) {
+      setState((prev) => ({
+        ...prev,
+        error: err instanceof Error ? err.message : "Failed to remove member",
+        loading: false,
+      }));
+    }
+  };
+
+  const handleRejectMember = async (membershipIntentUtxo: UTxO) => {
+    try {
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+        error: null,
+        result: null,
+      }));
+      const response = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "rejectMember", membershipIntentUtxo }),
+      });
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.error || "Failed to reject member");
+      setState((prev) => ({
+        ...prev,
+        result: "Member rejected successfully",
+        loading: false,
+      }));
+      fetchAllUtxos();
+    } catch (err) {
+      setState((prev) => ({
+        ...prev,
+        error: err instanceof Error ? err.message : "Failed to reject member",
+        loading: false,
+      }));
+    }
+  };
+
   // Initial setup
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        const adminsPkh = await getAdminsPks();
-        setState((prev) => ({ ...prev, adminsPkh }));
-        await fetchUtxos();
-      } catch (error) {
-        setState((prev) => ({
-          ...prev,
-          error:
-            error instanceof Error ? error.message : "Failed to initialize",
-        }));
-      }
-    };
-    initialize();
+    fetchAllUtxos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Table render helpers
+  const renderProposalTable = (
+    utxos: UTxO[],
+    title: string,
+    type: "proposeIntent" | "proposal"
+  ) => (
+    <div className="mb-8">
+      <h2 className="text-lg font-semibold mb-2 text-gray-100">{title}</h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                #
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Tx Hash
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Output Index
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Project Details
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {utxos.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="text-center py-4 text-gray-400 bg-gray-800"
+                >
+                  No UTXOs found
+                </td>
+              </tr>
+            ) : (
+              utxos.map((utxo, idx) => {
+                let projectDetails = "-";
+                if (utxo.output.plutusData) {
+                  const parsed = parseProposalDatum(utxo.output.plutusData);
+                  if (parsed && parsed.metadata) {
+                    projectDetails = parsed.metadata.projectDetails;
+                  }
+                }
+                return (
+                  <tr
+                    key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
+                    className="hover:bg-gray-700 cursor-pointer"
+                  >
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {idx + 1}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {utxo.input.txHash}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {utxo.input.outputIndex}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {projectDetails}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {type === "proposeIntent" ? (
+                        <>
+                          <button
+                            className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded mr-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleApproveProposal(utxo);
+                            }}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRejectProposal(utxo);
+                            }}
+                          >
+                            Reject
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded mr-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleApproveSignOff(utxo);
+                            }}
+                          >
+                            Approve SignOff
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderMembershipIntentTable = (utxos: UTxO[]) => (
+    <div className="mb-10">
+      <h2 className="text-lg font-semibold mb-2 text-gray-100">
+        Membership Intent UTXOs
+      </h2>
+      {/* Counter UTxO input fields for Approve */}
+      <div className="mb-4 flex gap-2 items-end">
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-200">
+            Counter UTxO Tx Hash
+          </label>
+          <input
+            type="text"
+            className="p-2 rounded border border-gray-700 bg-gray-800 text-gray-100"
+            value={state.counterUtxoHash}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, counterUtxoHash: e.target.value }))
+            }
+            placeholder="Counter Tx Hash"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-200">
+            Counter UTxO Output Index
+          </label>
+          <input
+            type="number"
+            className="p-2 rounded border border-gray-700 bg-gray-800 text-gray-100"
+            value={state.counterUtxoIndex}
+            onChange={(e) =>
+              setState((prev) => ({
+                ...prev,
+                counterUtxoIndex: e.target.value,
+              }))
+            }
+            placeholder="Output Index"
+          />
+        </div>
+        <span className="ml-2 text-xs text-gray-400">
+          (Required for Approve)
+        </span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                #
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Tx Hash
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Output Index
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Full Name
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Display Name
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Email
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Wallet
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Bio
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {utxos.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={9}
+                  className="text-center py-4 text-gray-400 bg-gray-800"
+                >
+                  No UTXOs found
+                </td>
+              </tr>
+            ) : (
+              utxos.map((utxo, idx) => {
+                let fullName = "-",
+                  displayName = "-",
+                  email = "-",
+                  wallet = "-",
+                  bio = "-";
+                if (utxo.output.plutusData) {
+                  const parsed = parseMembershipIntentDatum(
+                    utxo.output.plutusData
+                  );
+                  if (parsed && parsed.metadata) {
+                    fullName = parsed.metadata.fullName;
+                    displayName = parsed.metadata.displayName;
+                    email = parsed.metadata.emailAddress;
+                    wallet = parsed.metadata.walletAddress;
+                    bio = parsed.metadata.bio;
+                  }
+                }
+                return (
+                  <tr
+                    key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
+                    className="hover:bg-gray-700 cursor-pointer"
+                  >
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {idx + 1}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {utxo.input.txHash}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {utxo.input.outputIndex}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {fullName}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {displayName}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {email}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {wallet}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {bio}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      <button
+                        className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded mr-2"
+                        onClick={() => handleApproveMember(utxo)}
+                        disabled={
+                          state.loading ||
+                          !state.counterUtxoHash ||
+                          !state.counterUtxoIndex
+                        }
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                        onClick={() => handleRejectMember(utxo)}
+                        disabled={state.loading}
+                      >
+                        Reject
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderSignOffApprovalTable = (utxos: UTxO[]) => (
+    <div className="mb-8">
+      <h2 className="text-lg font-semibold mb-2 text-gray-100">
+        SignOff Approval UTXOs
+      </h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                #
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Tx Hash
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Output Index
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Project Details
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {utxos.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="text-center py-4 text-gray-400 bg-gray-800"
+                >
+                  No UTXOs found
+                </td>
+              </tr>
+            ) : (
+              utxos.map((utxo, idx) => {
+                let projectDetails = "-";
+                if (utxo.output.plutusData) {
+                  const parsed = parseProposalDatum(utxo.output.plutusData);
+                  if (parsed && parsed.metadata) {
+                    projectDetails = parsed.metadata.projectDetails;
+                  }
+                }
+                return (
+                  <tr
+                    key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
+                    className="hover:bg-gray-700 cursor-pointer"
+                  >
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {idx + 1}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {utxo.input.txHash}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {utxo.input.outputIndex}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {projectDetails}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      <button
+                        className="bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 rounded"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSignOff(utxo);
+                        }}
+                      >
+                        SignOff
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderMemberTable = (utxos: UTxO[]) => (
+    <div className="mb-10">
+      <h2 className="text-lg font-semibold mb-2 text-gray-100">Member UTXOs</h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                #
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Tx Hash
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Output Index
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Full Name
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Display Name
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Email
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Wallet
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Bio
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Fund Received
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Completion Map
+              </th>
+              <th className="px-4 py-2 border border-gray-700 text-gray-200">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {utxos.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={11}
+                  className="text-center py-4 text-gray-400 bg-gray-800"
+                >
+                  No UTXOs found
+                </td>
+              </tr>
+            ) : (
+              utxos.map((utxo, idx) => {
+                let fullName = "-",
+                  displayName = "-",
+                  email = "-",
+                  wallet = "-",
+                  bio = "-",
+                  fundReceived = "-",
+                  completionMap: string | JSX.Element = "-";
+                if (utxo.output.plutusData) {
+                  const parsed = parseMemberDatum(utxo.output.plutusData);
+                  if (parsed && parsed.member) {
+                    fullName = parsed.member.metadata.fullName;
+                    displayName = parsed.member.metadata.displayName;
+                    email = parsed.member.metadata.emailAddress;
+                    wallet = parsed.member.metadata.walletAddress;
+                    bio = parsed.member.metadata.bio;
+                    fundReceived = parsed.member.fundReceived.toString();
+                    const entries = Array.from(
+                      parsed.member.completion.entries()
+                    );
+                    if (entries.length > 0) {
+                      completionMap = (
+                        <ul className="text-xs text-gray-200">
+                          {entries.map(([proj, value], i) => (
+                            <li key={i}>
+                              <span className="font-semibold">
+                                {proj.projectDetails}:
+                              </span>{" "}
+                              {value}
+                            </li>
+                          ))}
+                        </ul>
+                      );
+                    }
+                  }
+                }
+                return (
+                  <tr
+                    key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
+                    className="hover:bg-gray-700 cursor-pointer"
+                  >
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {idx + 1}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {utxo.input.txHash}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {utxo.input.outputIndex}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {fullName}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {displayName}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {email}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100 break-all">
+                      {wallet}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {bio}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {fundReceived}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      {completionMap}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-700 text-gray-100">
+                      <button
+                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+                        onClick={() => handleRemoveMember(utxo)}
+                        disabled={state.loading}
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 
   return (
     <Layout>
@@ -355,6 +806,11 @@ const Admin = () => {
         {state.loading && (
           <div className="fixed top-0 left-0 right-0 bg-blue-500 text-white p-2 text-center">
             Loading...
+          </div>
+        )}
+        {loadingExtra && (
+          <div className="fixed top-0 left-0 right-0 bg-blue-400 text-white p-2 text-center z-50">
+            Loading proposal/proposeIntent UTXOs...
           </div>
         )}
 
@@ -372,61 +828,26 @@ const Admin = () => {
 
         <div className="mb-6">
           <button
-            onClick={fetchUtxos}
+            onClick={fetchAllUtxos}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-            disabled={state.loading}>
+            disabled={state.loading || loadingExtra}
+          >
             Refresh UTXOs
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {state.utxos.map((utxo, index) => (
-            <div
-              key={`${utxo.input.txHash}-${utxo.input.outputIndex}`}
-              className={`border rounded p-4 cursor-pointer transition-colors ${
-                state.selectedUtxo === utxo
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-300 hover:border-blue-500"
-              }`}
-              onClick={() =>
-                setState((prev) => ({ ...prev, selectedUtxo: utxo }))
-              }>
-              <div className="font-semibold mb-2">UTXO #{index + 1}</div>
-              <div className="text-sm break-all">
-                <div>Tx Hash: {utxo.input.txHash}</div>
-                <div>Output Index: {utxo.input.outputIndex}</div>
-                <div>
-                  Amount:{" "}
-                  {utxo.output.amount.find((asset) => asset.unit === "lovelace")
-                    ?.quantity || 0}{" "}
-                  lovelace
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {renderMembershipIntentTable(state.utxos)}
 
-        {state.selectedUtxo && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 p-4 shadow-lg">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-xl font-bold mb-4">Selected UTXO</h2>
-              <div className="mb-4">
-                <div>Tx Hash: {state.selectedUtxo.input.txHash}</div>
-                <div>Output Index: {state.selectedUtxo.input.outputIndex}</div>
-              </div>
-              <button
-                onClick={() => {
-                  if (state.selectedUtxo) {
-                    handleApproveMember(state.selectedUtxo);
-                  }
-                }}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50"
-                disabled={state.loading || !state.selectedUtxo}>
-                {state.loading ? "Processing..." : "Approve Member"}
-              </button>
-            </div>
-          </div>
+        {/* ProposeIntent UTXOs Table */}
+        {renderProposalTable(
+          proposeIntentUtxos,
+          "Propose Intent UTXOs",
+          "proposeIntent"
         )}
+        {/* Proposal UTXOs Table */}
+        {renderProposalTable(proposalUtxos, "Proposal UTXOs", "proposal")}
+        {renderSignOffApprovalTable(signOffApprovalUtxos)}
+        {renderMemberTable(memberUtxos)}
       </div>
     </Layout>
   );
