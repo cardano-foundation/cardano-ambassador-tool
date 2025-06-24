@@ -1,12 +1,10 @@
 use aiken/collection/pairs.{has_key}
 use cardano/address.{Credential, Script}
 use cardano/assets.{PolicyId}
-use cardano/transaction.{
-  DatumHash, InlineDatum, NoDatum, OutputReference, Transaction, find_input,
-}
+use cardano/transaction.{OutputReference, Transaction, find_input}
 use cocktail.{
-  inputs_with, only_minted_token, outputs_at_with, value_length,
-  value_policy_info,
+  inputs_with, only_minted_token, output_inline_datum, outputs_at_with,
+  value_length, value_policy_info,
 }
 use types.{
   AdminRemoveMember, AdminSignOffProject, MemberDatum, MemberSpendRedeemer,
@@ -16,7 +14,7 @@ use utils.{get_oracle_nft_datum, output_at_with_value}
 
 validator member(oracle_nft: PolicyId) {
   spend(
-    datum: Option<MemberDatum>,
+    datum_opt: Option<MemberDatum>,
     redeemer: MemberSpendRedeemer,
     input: OutputReference,
     self: Transaction,
@@ -46,13 +44,8 @@ validator member(oracle_nft: PolicyId) {
         withdrawal_script_check?
       }
       MemberUpdateMetadata -> {
-        let member_input_data: Data =
-          when own_input.output.datum is {
-            NoDatum -> fail @"Member input does not contain any datum"
-            DatumHash(_) -> fail @"Member input datum must be inlined"
-            InlineDatum(data) -> data
-          }
-        expect old_member_input_datum: MemberDatum = member_input_data
+        expect Some(old_member_input_datum) = datum_opt
+
         let MemberDatum { token, completion, fund_recevied, .. } =
           old_member_input_datum
 
@@ -60,7 +53,7 @@ validator member(oracle_nft: PolicyId) {
         let token_owner = token_input.output.address
         expect [_] =
           output_at_with_value(outputs, token_owner, token_input.output.value)
-        expect Some(new_membership_intent_input_datum) = datum
+
         expect Some((policy_id, asset_name, _)) =
           value_policy_info(own_input.output.value, member_token)
 
@@ -71,12 +64,13 @@ validator member(oracle_nft: PolicyId) {
             policy_id,
             asset_name,
           )
-        let is_member_output_value_clean =
-          value_length(member_output.value) == 2
+        expect new_membership_intent_input_datum: MemberDatum =
+          output_inline_datum(member_output)
 
         let datum_check =
           new_membership_intent_input_datum.token == token && new_membership_intent_input_datum.completion == completion && new_membership_intent_input_datum.fund_recevied == fund_recevied
-
+        let is_member_output_value_clean =
+          value_length(member_output.value) == 2
         datum_check? && is_member_output_value_clean?
       }
     }

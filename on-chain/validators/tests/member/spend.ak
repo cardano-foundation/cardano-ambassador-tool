@@ -321,7 +321,7 @@ fn mock_update_metadata_tx(test_case: UpdateMetadataTestCase) -> Transaction {
     |> complete()
 }
 
-test s2_spend_success_update_metadata() {
+test s3_spend_success_update_metadata() {
   let tx =
     mock_update_metadata_tx(
       UpdateMetadataTestCase {
@@ -333,23 +333,16 @@ test s2_spend_success_update_metadata() {
       },
     )
 
-  let correct_member_datum =
-    MemberDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      completion: [],
-      fund_recevied: 0,
-      metadata: "aaa project",
-    }
   member_spend.member.spend(
     mock_oracle_nft,
-    Some(correct_member_datum),
+    Some(mock_member_datum),
     MemberUpdateMetadata,
     mock_utxo_ref(0, 0),
     tx,
   )
 }
 
-test s2_spend_fail_update_metadata_with_no_oracle_inputed() fail {
+test s3_spend_fail_update_metadata_with_no_oracle_inputed() fail {
   let tx =
     mock_update_metadata_tx(
       UpdateMetadataTestCase {
@@ -361,23 +354,16 @@ test s2_spend_fail_update_metadata_with_no_oracle_inputed() fail {
       },
     )
 
-  let correct_member_datum =
-    MemberDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      completion: [],
-      fund_recevied: 0,
-      metadata: "aaa project",
-    }
   member_spend.member.spend(
     mock_oracle_nft,
-    Some(correct_member_datum),
+    Some(mock_member_datum),
     MemberUpdateMetadata,
     mock_utxo_ref(0, 0),
     tx,
   )
 }
 
-test s2_spend_fail_update_metadata_with_no_token_inputed() fail {
+test s3_spend_fail_update_metadata_with_no_token_inputed() fail {
   let tx =
     mock_update_metadata_tx(
       UpdateMetadataTestCase {
@@ -389,23 +375,16 @@ test s2_spend_fail_update_metadata_with_no_token_inputed() fail {
       },
     )
 
-  let correct_member_datum =
-    MemberDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      completion: [],
-      fund_recevied: 0,
-      metadata: "aaa project",
-    }
   member_spend.member.spend(
     mock_oracle_nft,
-    Some(correct_member_datum),
+    Some(mock_member_datum),
     MemberUpdateMetadata,
     mock_utxo_ref(0, 0),
     tx,
   )
 }
 
-test s2_spend_fail_update_metadata_with_incorrect_output_token() fail {
+test s3_spend_fail_update_metadata_with_incorrect_output_token() fail {
   let tx =
     mock_update_metadata_tx(
       UpdateMetadataTestCase {
@@ -417,23 +396,16 @@ test s2_spend_fail_update_metadata_with_incorrect_output_token() fail {
       },
     )
 
-  let correct_member_datum =
-    MemberDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      completion: [],
-      fund_recevied: 0,
-      metadata: "aaa project",
-    }
   member_spend.member.spend(
     mock_oracle_nft,
-    Some(correct_member_datum),
+    Some(mock_member_datum),
     MemberUpdateMetadata,
     mock_utxo_ref(0, 0),
     tx,
   )
 }
 
-test s2_spend_fail_update_metadata_with_member_output_not_clean() {
+test s3_spend_fail_update_metadata_with_member_output_not_clean() {
   let tx =
     mock_update_metadata_tx(
       UpdateMetadataTestCase {
@@ -445,23 +417,16 @@ test s2_spend_fail_update_metadata_with_member_output_not_clean() {
       },
     )
 
-  let correct_member_datum =
-    MemberDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      completion: [],
-      fund_recevied: 0,
-      metadata: "aaa project",
-    }
   !member_spend.member.spend(
     mock_oracle_nft,
-    Some(correct_member_datum),
+    Some(mock_member_datum),
     MemberUpdateMetadata,
     mock_utxo_ref(0, 0),
     tx,
   )
 }
 
-test s2_spend_fail_update_metadata_with_incorrect_member_output_datum() {
+test s3_spend_fail_update_metadata_with_incorrect_member_output_datum() {
   let tx =
     mock_update_metadata_tx(
       UpdateMetadataTestCase {
@@ -473,16 +438,9 @@ test s2_spend_fail_update_metadata_with_incorrect_member_output_datum() {
       },
     )
 
-  let incorrect_member_datum =
-    MemberDatum {
-      token: (mock_policy_id(999), "incorrect"),
-      completion: [],
-      fund_recevied: 10,
-      metadata: "aaa project",
-    }
   !member_spend.member.spend(
     mock_oracle_nft,
-    Some(incorrect_member_datum),
+    Some(mock_member_datum),
     MemberUpdateMetadata,
     mock_utxo_ref(0, 0),
     tx,

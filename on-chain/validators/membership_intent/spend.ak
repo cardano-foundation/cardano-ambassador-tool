@@ -1,10 +1,8 @@
 use cardano/assets.{PolicyId}
-use cardano/transaction.{
-  DatumHash, InlineDatum, NoDatum, OutputReference, Transaction, find_input,
-}
+use cardano/transaction.{OutputReference, Transaction, find_input}
 use cocktail.{
-  inputs_with, outputs_at_with_policy, policy_only_minted_token, value_length,
-  value_policy_info,
+  inputs_with, output_inline_datum, outputs_at_with_policy,
+  policy_only_minted_token, value_length, value_policy_info,
 }
 use types.{
   MembershipIntentDatum, MembershipIntentSpendRedeemer, OracleDatum,
@@ -14,7 +12,7 @@ use utils.{get_oracle_nft_datum, output_at_with_value}
 
 validator membership_intent(oracle_nft: PolicyId) {
   spend(
-    datum: Option<MembershipIntentDatum>,
+    datum_opt: Option<MembershipIntentDatum>,
     redeemer: MembershipIntentSpendRedeemer,
     utxo: OutputReference,
     self: Transaction,
@@ -31,16 +29,8 @@ validator membership_intent(oracle_nft: PolicyId) {
       ProcessMembershipIntent ->
         policy_only_minted_token(mint, policy_id, asset_name, -1)
       UpdateMembershipIntentMetadata -> {
-        let membership_intent_input_data: Data =
-          when own_input.output.datum is {
-            NoDatum ->
-              fail @"Membership Intent input does not contain any datum"
-            DatumHash(_) ->
-              fail @"Membership Intent input datum must be inlined"
-            InlineDatum(data) -> data
-          }
-        expect old_membership_intent_input_datum: MembershipIntentDatum =
-          membership_intent_input_data
+        expect Some(old_membership_intent_input_datum) = datum_opt
+
         let MembershipIntentDatum { token, .. } =
           old_membership_intent_input_datum
 
@@ -48,12 +38,14 @@ validator membership_intent(oracle_nft: PolicyId) {
         let token_owner = token_input.output.address
         expect [_] =
           output_at_with_value(outputs, token_owner, token_input.output.value)
-        expect Some(new_membership_intent_input_datum) = datum
-
-        let datum_check = new_membership_intent_input_datum.token == token
 
         expect [intent_output] =
           outputs_at_with_policy(outputs, own_input.output.address, policy_id)
+
+        expect new_membership_intent_input_datum: MembershipIntentDatum =
+          output_inline_datum(intent_output)
+        let datum_check = new_membership_intent_input_datum.token == token
+
         let is_intent_output_value_clean =
           value_length(intent_output.value) == 2
         datum_check? && is_intent_output_value_clean?
