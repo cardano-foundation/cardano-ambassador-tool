@@ -214,14 +214,14 @@ test s2_spend_success_update_metadata() {
       },
     )
 
-  let correct_intent_datum =
-    MembershipIntentDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: "aaa project",
-    }
   membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
-    Some(correct_intent_datum),
+    Some(
+      MembershipIntentDatum {
+        token: (mock_user_token.1st, mock_user_token.2nd),
+        metadata: mock_metadata,
+      },
+    ),
     UpdateMembershipIntentMetadata,
     mock_utxo_ref(0, 0),
     tx,
@@ -240,14 +240,14 @@ test s2_spend_fail_update_metadata_with_no_oracle_inputed() fail {
       },
     )
 
-  let correct_intent_datum =
-    MembershipIntentDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: "aaa project",
-    }
   membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
-    Some(correct_intent_datum),
+    Some(
+      MembershipIntentDatum {
+        token: (mock_user_token.1st, mock_user_token.2nd),
+        metadata: mock_metadata,
+      },
+    ),
     UpdateMembershipIntentMetadata,
     mock_utxo_ref(0, 0),
     tx,
@@ -266,14 +266,14 @@ test s2_spend_fail_update_metadata_with_no_token_inputed() fail {
       },
     )
 
-  let correct_intent_datum =
-    MembershipIntentDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: "aaa project",
-    }
   membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
-    Some(correct_intent_datum),
+    Some(
+      MembershipIntentDatum {
+        token: (mock_user_token.1st, mock_user_token.2nd),
+        metadata: mock_metadata,
+      },
+    ),
     UpdateMembershipIntentMetadata,
     mock_utxo_ref(0, 0),
     tx,
@@ -292,14 +292,14 @@ test s2_spend_fail_update_metadata_with_incorrect_output_token() fail {
       },
     )
 
-  let correct_intent_datum =
-    MembershipIntentDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: "aaa project",
-    }
   membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
-    Some(correct_intent_datum),
+    Some(
+      MembershipIntentDatum {
+        token: (mock_user_token.1st, mock_user_token.2nd),
+        metadata: mock_metadata,
+      },
+    ),
     UpdateMembershipIntentMetadata,
     mock_utxo_ref(0, 0),
     tx,
@@ -318,14 +318,14 @@ test s2_spend_fail_update_metadata_with_intent_output_not_clean() {
       },
     )
 
-  let correct_intent_datum =
-    MembershipIntentDatum {
-      token: (mock_user_token.1st, mock_user_token.2nd),
-      metadata: "aaa project",
-    }
   !membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
-    Some(correct_intent_datum),
+    Some(
+      MembershipIntentDatum {
+        token: (mock_user_token.1st, mock_user_token.2nd),
+        metadata: mock_metadata,
+      },
+    ),
     UpdateMembershipIntentMetadata,
     mock_utxo_ref(0, 0),
     tx,
@@ -344,14 +344,14 @@ test s2_spend_fail_update_metadata_with_incorrect_intent_output_datum() {
       },
     )
 
-  let incorrect_intent_datum =
-    MembershipIntentDatum {
-      token: (mock_policy_id(999), "incorrect"),
-      metadata: mock_metadata,
-    }
   !membership_intent_spend.membership_intent.spend(
     mock_oracle_nft,
-    Some(incorrect_intent_datum),
+    Some(
+      MembershipIntentDatum {
+        token: (mock_user_token.1st, mock_user_token.2nd),
+        metadata: mock_metadata,
+      },
+    ),
     UpdateMembershipIntentMetadata,
     mock_utxo_ref(0, 0),
     tx,
