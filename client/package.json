@@ -10,7 +10,7 @@
     "prepare": "husky",
     "commitlint": "commitlint --edit",
     "type-check": "tsc --project tsconfig.json --noEmit",
-    "format":     "prettier --write ."
+    "format": "prettier --write ."
   },
   "dependencies": {
     "next": "15.3.4",
