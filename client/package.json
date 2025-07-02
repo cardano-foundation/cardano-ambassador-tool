@@ -9,8 +9,8 @@
     "lint": "eslint . --ext .ts,.tsx --ignore-path .gitignore --fix",
     "prepare": "husky",
     "commitlint": "commitlint --edit",
-    "type-check": "tsc --noEmit",
-    "format": "prettier --write ."
+    "type-check": "tsc --project tsconfig.json --noEmit",
+    "format":     "prettier --write ."
   },
   "dependencies": {
     "next": "15.3.4",
