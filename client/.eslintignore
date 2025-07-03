@@ -1,7 +1,0 @@
-node_modules/
-.next/
-out/
-build/
-*.config.js
-*.config.ts
-*.config.mjs
