@@ -29,8 +29,6 @@ This project uses [Husky](https://typicode.github.io/husky/) and [lint-staged](h
 
 Make sure to run `npm run prepare` after cloning to install Git hooks.
 
-## Project Structure
-
 
 
 ## Commit Guidelines
