@@ -14,6 +14,12 @@
     "format": "prettier --write ./src ./public *.{js,ts,json,md}",
     "precommit": "npm run lint && npm run type-check && npm run format"
   },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "next": "15.3.4",
     "react": "^19.0.0",
