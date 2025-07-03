@@ -1,6 +1,7 @@
 import Image from "next/image";
 const n: number = "this is a string";
-const m4: number = "this is a string";
+const m478: number = "this is a string";
+const m4789: number = "this is a string";
 const m6: number = "this is a string";
 
 export default function Home() {

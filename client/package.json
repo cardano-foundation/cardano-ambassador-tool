@@ -8,17 +8,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint ./src --ext .ts,.tsx --ignore-path .gitignore --fix",
-    "prepare": "husky .husky",
+    "prepare": "cd .. && husky ./client/.husky",
     "commitlint": "commitlint --edit",
     "type-check": "tsc --project tsconfig.json --noEmit",
     "format": "prettier --write ./src ./public *.{js,ts,json,md}",
     "precommit": "npm run lint && npm run type-check && npm run format"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ]
+    "*.{js,jsx,ts,tsx,json,css,md}": "prettier --write"
   },
   "dependencies": {
     "next": "15.3.4",
