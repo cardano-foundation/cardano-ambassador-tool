@@ -2,15 +2,17 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx --ignore-path .gitignore --fix",
+    "lint": "eslint ./src --ext .ts,.tsx --ignore-path .gitignore --fix",
     "prepare": "husky",
     "commitlint": "commitlint --edit",
     "type-check": "tsc --project tsconfig.json --noEmit",
-    "format": "prettier --write ."
+    "format": "prettier --write ./src ./public *.{js,ts,json,md}",
+    "precommit": "npm run lint && npm run type-check && npm run format"
   },
   "dependencies": {
     "next": "15.3.4",
@@ -18,8 +20,8 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
@@ -30,9 +32,15 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.0.0",
+    "prettier-plugin-tailwindcss": "^0.6.8",
     "tailwindcss": "^4",
     "typescript": "^5.8.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
   }
 }
