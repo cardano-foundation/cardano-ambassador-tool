@@ -35,9 +35,22 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# IDE
+# IDE files - should never be committed
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
-# OS
+# OS generated files
 Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Husky hooks - should never be committed
+.husky/
+.husky/*
