@@ -20,7 +20,7 @@ In the `client` directory, you can run:
 - `npm run prepare` - Sets up Husky Git hooks for pre-commit and commit-msg.
 - `npm run commitlint` - Checks commit messages against conventional commit standards.
 
-## Makefile Workflow Automation
+## Make commands
 
 A **Makefile** is included to streamline common development tasks. Use these commands in the `client` directory:
 
