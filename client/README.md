@@ -20,6 +20,24 @@ In the `client` directory, you can run:
 - `npm run prepare` - Sets up Husky Git hooks for pre-commit and commit-msg.
 - `npm run commitlint` - Checks commit messages against conventional commit standards.
 
+## Makefile Workflow Automation
+
+A **Makefile** is included to streamline common development tasks. Use these commands in the `client` directory:
+
+| Command           | Description                                 |
+|-------------------|---------------------------------------------|
+| `make init`       | Complete first-time project setup           |
+| `make install`    | Install dependencies and set up hooks       |
+| `make setup-hooks`| Set up Git hooks using Husky                |
+| `make dev`        | Start the development server                |
+| `make build`      | Build the app for production                |
+| `make lint`       | Run ESLint                                  |
+| `make format`     | Format code with Prettier                   |
+| `make type-check` | Run TypeScript type checking                |
+| `make clean`      | Clean build files                           |
+
+> **Tip:** Run `make help` to see all available commands.
+
 ## Git Hooks and Code Quality
 
 This project uses [Husky](https://typicode.github.io/husky/) and [lint-staged](https://github.com/okonet/lint-staged) to enforce code quality:
