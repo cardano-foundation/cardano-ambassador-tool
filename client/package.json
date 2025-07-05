@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ./src --ext .ts,.tsx --ignore-path .gitignore --fix",
+    "lint": "eslint ./src --fix",
     "prepare": "cd .. && husky ./client/.husky",
     "commitlint": "commitlint --edit",
     "type-check": "tsc --project tsconfig.json --noEmit",
