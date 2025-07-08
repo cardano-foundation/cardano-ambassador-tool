@@ -1,26 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-sunset-50:  oklch(0.88 0.08 25deg);
+  --color-sunset-100: oklch(0.82 0.12 25deg);
+  --color-sunset-200: oklch(0.76 0.15 25deg);
+  --color-sunset-300: oklch(0.70 0.18 25deg);
+  --color-sunset-400: oklch(0.64 0.20 25deg);
+  --color-sunset-500: oklch(0.58 0.22 25deg);
+
+  --color-black-50:   oklch(0.58 0 0deg);
+  --color-black-100:  oklch(0.46 0 0deg);
+  --color-black-200:  oklch(0.38 0 0deg);
+  --color-black-300:  oklch(0.29 0 0deg);
+  --color-black-400:  oklch(0.20 0 0deg);
+  --color-black-500:  oklch(0.12 0 0deg);
+
+  --color-white-50:   oklch(0.58 0 0deg);
+  --color-white-100:  oklch(0.67 0 0deg);
+  --color-white-200:  oklch(0.76 0 0deg);
+  --color-white-300:  oklch(0.85 0 0deg);
+  --color-white-400:  oklch(0.93 0 0deg);
+  --color-white-500:  oklch(1.00 0 0deg);
+
+  --color-gray-50: var(--color-white-500);
+  --color-gray-100: var(--color-white-400);
+  --color-gray-200: var(--color-white-300);
+  --color-gray-300: var(--color-white-200);
+  --color-gray-400: var(--color-white-100);
+  --color-gray-500: var(--color-white-50);
+  --color-gray-600: var(--color-black-50);
+  --color-gray-700: var(--color-black-100);
+  --color-gray-800: var(--color-black-200);
+  --color-gray-900: var(--color-black-300);
+  --color-gray-950: var(--color-black-500);
+
+  --color-muted-foreground: var(--color-black-200);
+
+
+  --animate-fade-in: fade-in 0.3s ease-in-out;
+  --animate-slide-in: slide-in 0.3s ease-out;
+
+  @keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-in { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --color-background: var(--color-white-500);
+  --color-foreground: var(--color-black-200);
+  --color-primary: var(--color-sunset-500);
+  --color-secondary: var(--color-black-100);
+  --color-accent: var(--color-sunset-400);
+  --color-muted: var(--color-white-400);
+  --color-muted-foreground: var(--color-black-100);
+  --color-border: var(--color-white-300);
+  --color-input: var(--color-white-400);
+  --color-ring: var(--color-sunset-500);
+  --color-card: var(--color-white-500);
+  --color-card-foreground: var(--color-black-500);
+  --color-popover: var(--color-white-500);
+  --color-popover-foreground: var(--color-black-500);
+
+  color-scheme: light;
+}
+
+.dark {
+  --color-background: var(--color-black-400);
+  --color-foreground: var(--color-white-500);
+  --color-card: var(--color-black-300);
+  --color-card-foreground: var(--color-white-500);
+  --color-popover: var(--color-black-300);
+  --color-popover-foreground: var(--color-white-500);
+  --color-muted: var(--color-black-300);
+  --color-muted-foreground: var(--color-white-200);
+  --color-border: var(--color-black-200);
+  --color-input: var(--color-black-300);
+
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.light) {
+    --color-background: var(--color-black-400);
+    --color-foreground: var(--color-white-500);
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
