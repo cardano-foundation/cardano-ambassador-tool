@@ -1,26 +1,95 @@
+@import url("https://fonts.googleapis.com/css2?family=Chivo&display=swap");
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-script: 'Chivo';
+  --color-sunset-50:  oklch(0.8208 0.100577 19.4501);
+  --color-sunset-100: oklch(0.7882 0.1227 20.8);
+  --color-sunset-200: oklch(0.7578 0.1448 21.56);
+  --color-sunset-300: oklch(0.7297 0.1665 22.49);
+  --color-sunset-400: oklch(0.7043 0.1873 23.55);
+  --color-sunset-500: oklch(0.6821 0.2064 24.74);
+
+  --color-black-50:   oklch(0.6292 0.0012 197.13);
+  --color-black-100:  oklch(0.5478 0.0012 197.12);
+  --color-black-200:  oklch(0.4631 0.0013 197.11);
+  --color-black-300:  oklch(0.3743 0.0014 197.1);
+  --color-black-400:  oklch(0.283 0.0029 196.99);
+  --color-black-500:  oklch(0.18 0.0032 196.87);
+
+  --color-white-50:   oklch(0.6292 0.0012 197.13);
+  --color-white-100:  oklch(0.7049 0.0012 197.13);
+  --color-white-200:  oklch(0.7818 0.0011 197.13);
+  --color-white-300:  oklch(0.8568 0.0011 197.14);
+  --color-white-400:  oklch(0.928 0 0);
+  --color-white-500:  oklch(1 0 0);
+
+  --color-gray-50: var(--color-white-500);
+  --color-gray-100: var(--color-white-400);
+  --color-gray-200: var(--color-white-300);
+  --color-gray-300: var(--color-white-200);
+  --color-gray-400: var(--color-white-100);
+  --color-gray-500: var(--color-white-50);
+  --color-gray-600: var(--color-black-50);
+  --color-gray-700: var(--color-black-100);
+  --color-gray-800: var(--color-black-200);
+  --color-gray-900: var(--color-black-300);
+  --color-gray-950: var(--color-black-500);
+
+  --color-muted-foreground: var(--color-black-200);
+
+
+  --animate-fade-in: fade-in 0.3s ease-in-out;
+  --animate-slide-in: slide-in 0.3s ease-out;
+
+  @keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-in { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --color-background: var(--color-white-500);
+  --color-foreground: var(--color-black-200);
+  --color-primary: var(--color-sunset-500);
+  --color-secondary: var(--color-black-100);
+  --color-accent: var(--color-sunset-400);
+  --color-muted: var(--color-white-400);
+  --color-muted-foreground: var(--color-black-100);
+  --color-border: var(--color-white-300);
+  --color-input: var(--color-white-400);
+  --color-ring: var(--color-sunset-500);
+  --color-card: var(--color-white-500);
+  --color-card-foreground: var(--color-black-500);
+  --color-popover: var(--color-white-500);
+  --color-popover-foreground: var(--color-black-500);
+
+  color-scheme: light;
+}
+
+.dark {
+  --color-background: var(--color-black-400);
+  --color-foreground: var(--color-white-500);
+  --color-card: var(--color-black-300);
+  --color-card-foreground: var(--color-white-500);
+  --color-popover: var(--color-black-300);
+  --color-popover-foreground: var(--color-white-500);
+  --color-muted: var(--color-black-300);
+  --color-muted-foreground: var(--color-white-200);
+  --color-border: var(--color-black-200);
+  --color-input: var(--color-black-300);
+
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.light) {
+    --color-background: var(--color-black-400);
+    --color-foreground: var(--color-white-500);
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-script);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
