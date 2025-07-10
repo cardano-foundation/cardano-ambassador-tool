@@ -1,22 +1,8 @@
 import { ThemeToggle } from "./ThemeToggle";
-import {
-  ButtonHTMLAttributes,
-  HTMLAttributes,
-  InputHTMLAttributes,
-  ReactNode,
-} from "react";
+import { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  className?: string;
-}
-
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
-  className?: string;
-}
-
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
 }
 
@@ -68,32 +54,6 @@ export function SecondaryButton({
     >
       {children}
     </button>
-  );
-}
-
-export function Card({ children, className = "", ...props }: CardProps) {
-  return (
-    <div
-      className={`bg-card text-card-foreground rounded-lg border border-border shadow-sm p-6 transition-colors ${className}`}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
-
-export function Input({ className = "", ...props }: InputProps) {
-  return (
-    <input
-      className={`w-full px-3 py-2 border border-input
-          bg-background text-muted-foreground rounded-md
-          transition-colors focus:outline-none
-          focus:ring-1
-          focus:ring-ring
-          focus:border-transparent
-          placeholder:text-muted-foreground ${className}`}
-      {...props}
-    />
   );
 }
 
