@@ -88,67 +88,6 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-card text-card-foreground rounded-lg border border-border shadow-sm p-6 transition-colors">
-              <Title level="5" className="text-card-foreground mb-4">
-                Sunset Color Scale
-              </Title>
-              <div className="grid grid-cols-6 gap-2 mb-4">
-                <div className="bg-sunset-50 h-12 rounded flex items-center justify-center text-xs font-medium">
-                  50
-                </div>
-                <div className="bg-sunset-100 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  100
-                </div>
-                <div className="bg-sunset-200 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  200
-                </div>
-                <div className="bg-sunset-300 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  300
-                </div>
-                <div className="bg-sunset-400 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  400
-                </div>
-                <div className="bg-sunset-500 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  500
-                </div>
-              </div>
-              <Paragraph size="body-3" className="text-muted-foreground">
-                Sunset Orange palette - primary brand colors
-              </Paragraph>
-            </div>
-
-            <div className="bg-card text-card-foreground rounded-lg border border-border shadow-sm p-6 transition-colors">
-              <Title level="5" className="text-card-foreground mb-4">
-                Gray Color Scale
-              </Title>
-              <div className="grid grid-cols-6 gap-2 mb-4">
-                <div className="bg-gray-100 h-12 rounded flex items-center justify-center text-xs font-medium text-gray-800">
-                  100
-                </div>
-                <div className="bg-gray-200 h-12 rounded flex items-center justify-center text-xs font-medium text-gray-800">
-                  200
-                </div>
-                <div className="bg-gray-300 h-12 rounded flex items-center justify-center text-xs font-medium text-gray-800">
-                  300
-                </div>
-                <div className="bg-black-50 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  50
-                </div>
-                <div className="bg-black-400 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  400
-                </div>
-                <div className="bg-black-500 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  500
-                </div>
-              </div>
-              <Paragraph size="body-3" className="text-muted-foreground">
-                Neutral grays - backgrounds and text
-              </Paragraph>
-            </div>
-          </div>
-
           <div className="bg-background text-card-foreground rounded-lg border border-border shadow-sm p-6 transition-colors">
             <Title level="4" className="text-card-foreground mb-6">
               New Components Testing
