@@ -45,7 +45,7 @@ export default function Dropdown({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={cn(
           "inline-flex w-full justify-between items-center rounded-md border px-3 py-4 text-sm transition-colors focus-visible:outline-none",
-          "bg-background border-border",
+          "bg-background  dark:bg-card border-border",
           disabled && "opacity-50 cursor-not-allowed",
           isOpen && " ",
         )}

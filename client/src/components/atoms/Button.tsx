@@ -17,7 +17,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+        "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transform transition-all duration-200 ease-in-out active:scale-95 hover:shadow-lg",
 
         {
           "h-8 px-3 text-sm": size === "sm",

@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Chivo&display=swap");
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.4631 0.0013 197.11);
@@ -21,7 +22,7 @@
   --muted: oklch(0.3743 0.0014 197.1);
   --muted-foreground: oklch(0.7818 0.0011 197.13);
   --border: oklch(0.4631 0.0013 197.11);
-  --card: oklch(0.3743 0.0014 197.1);
+  --card: oklch(0.283 0.0029 196.99);
   --card-foreground: oklch(1 0 0);
   --input: oklch(0.3743 0.0014 197.1);
 }
@@ -63,13 +64,92 @@
   --font-family-sans: 'Chivo', ui-sans-serif, system-ui, sans-serif;
 }
 
+:root,
+.dark {
+  transition:
+    --background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --foreground 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --muted 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --muted-foreground 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --border 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --card 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --card-foreground 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --input 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: 'Chivo', sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-*:not([class*="border-"]) {
-  border-color: var(--border);
+button,
+input,
+select,
+textarea,
+[role="button"],
+[tabindex="0"] {
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[class*="card"],
+[class*="bg-"],
+[class*="text-"],
+[class*="border-"] {
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-pulse,
+.animate-spin,
+.animate-bounce,
+[class*="animate-"] {
+  transition: none !important;
+}
+
+
+:focus-visible {
+  transition:
+    outline 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+svg,
+svg *,
+[class*="icon"] {
+  transition:
+    fill 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+[class*="gradient"],
+[class*="bg-gradient"] {
+  transition:
+    background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
