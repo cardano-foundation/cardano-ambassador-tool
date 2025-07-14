@@ -8,11 +8,7 @@ import Dropdown from "@/components/atoms/Dropdown";
 import Checkbox from "@/components/atoms/Checkbox";
 import Button from "@/components/atoms/Button";
 import TextArea from "@/components/atoms/TextArea";
-import Card, {
-  FormCard,
-  AmbassadorCard,
-  StatsCard,
-} from "@/components/atoms/Card";
+import Card, { CardHeader, CardContent } from "@/components/atoms/Card";
 import { useState } from "react";
 
 export default function HomePage() {
@@ -46,10 +42,11 @@ export default function HomePage() {
               Welcome to Ambassador Tool
             </Title>
             <Paragraph size="body-2" className="text-muted-foreground">
-              Comprehensive component library with card system
+              Comprehensive component library with universal card system
             </Paragraph>
           </div>
-          <Card variant="flat" padding="md">
+
+          <Card padding="md">
             <Title level="6" className="text-card-foreground mb-4">
               Theme Color Examples
             </Title>
@@ -80,7 +77,8 @@ export default function HomePage() {
               </Title>
             </div>
           </Card>
-          <Card variant="form" padding="lg" className="w-full">
+
+          <Card padding="lg" className="w-full">
             <Paragraph
               size="body-3"
               className="font-semibold text-card-foreground mb-4"
@@ -135,7 +133,8 @@ export default function HomePage() {
               </div>
             </div>
           </Card>
-          <Card variant="form" padding="lg" className="w-full">
+
+          <Card padding="lg" className="w-full">
             <Title level="4" className="text-card-foreground mb-6">
               Component Testing Suite
             </Title>
@@ -231,8 +230,16 @@ export default function HomePage() {
                   <Button variant="secondary" size="md" className="w-full">
                     Secondary
                   </Button>
-                  <Button variant="outline" size="md" className="w-full">
-                    Outline
+                  <Button variant="ghost" size="md" className="w-full">
+                    wallets
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="md"
+                    rounded="full"
+                    className="w-full"
+                  >
+                    Create account
                   </Button>
                 </div>
               </div>
@@ -263,90 +270,92 @@ export default function HomePage() {
               </div>
             </div>
           </Card>
-          <FormCard
-            title="Interactive Form Example"
-            subtitle="Test your form components with real interactions"
-            className="w-full max-w-none"
-            actions={
-              <div className="flex">
-                <Button variant="primary" className="flex-1">
-                  Submit Form
-                </Button>
-              </div>
-            }
-          >
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <Card padding="lg" className="w-full max-w-none">
+            <CardHeader
+              title="Interactive Form Example"
+              subtitle="Test your form components with real interactions"
+            />
+            <CardContent>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Input
+                    label="Code"
+                    placeholder="ABC123"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+
+                  <Input label="Phone" placeholder="+1 (555) 123-4567" />
+                </div>
+
                 <Input
-                  label="Code"
-                  placeholder="ABC123"
-                  value={formData.name}
+                  label="Email Address"
+                  placeholder="john.doe@example.com"
+                  type="email"
+                  value={formData.email}
                   onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
+                    setFormData({ ...formData, email: e.target.value })
                   }
                 />
 
-                <Input label="Phone" placeholder="+1 (555) 123-4567" />
-              </div>
-
-              <Input
-                label="Email Address"
-                placeholder="john.doe@example.com"
-                type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
-
-              <Input
-                label="Full Address"
-                placeholder="Enter your complete address"
-              />
-              <TextArea
-                label="Description"
-                rows={4}
-                errorMessage="Please enter a valid description."
-              />
-
-              <div className="space-y-2">
-                <Paragraph
-                  size="body-4"
-                  as="label"
-                  className="text-muted-foreground"
-                >
-                  Country
-                </Paragraph>
-                <Dropdown
-                  options={dropdownOptions}
-                  value={formData.country}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, country: value })
-                  }
-                  placeholder="Select your country..."
+                <Input
+                  label="Full Address"
+                  placeholder="Enter your complete address"
                 />
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  checked={formData.notifications}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, notifications: checked })
-                  }
+                <TextArea
+                  label="Description"
+                  rows={4}
+                  errorMessage="Please enter a valid description."
                 />
-                <Paragraph size="body-4" as="span">
-                  I agree to receive notifications and updates
-                </Paragraph>
+
+                <div className="space-y-2">
+                  <Paragraph
+                    size="body-4"
+                    as="label"
+                    className="text-muted-foreground"
+                  >
+                    Country
+                  </Paragraph>
+                  <Dropdown
+                    options={dropdownOptions}
+                    value={formData.country}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, country: value })
+                    }
+                    placeholder="Select your country..."
+                  />
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    checked={formData.notifications}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, notifications: checked })
+                    }
+                  />
+                  <Paragraph size="body-4" as="span">
+                    I agree to receive notifications and updates
+                  </Paragraph>
+                </div>
+
+                <div className="pt-2">
+                  <Button variant="primary" className="w-full">
+                    Submit Form
+                  </Button>
+                </div>
               </div>
-            </div>
-          </FormCard>
-          <Card variant="form" padding="lg" className="w-full">
+            </CardContent>
+          </Card>
+          <Card padding="lg" className="w-full">
             <Title level="4" className="text-content mb-6">
               Typography Specifications
             </Title>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <Card variant="flat" padding="md">
+                <Card padding="md">
                   <Paragraph
                     size="body-4"
                     as="label"
@@ -360,7 +369,7 @@ export default function HomePage() {
                   </Paragraph>
                 </Card>
 
-                <Card variant="flat" padding="md">
+                <Card padding="md">
                   <Paragraph
                     size="body-4"
                     as="label"
@@ -375,7 +384,7 @@ export default function HomePage() {
               </div>
 
               <div className="space-y-4">
-                <Card variant="flat" padding="md">
+                <Card padding="md">
                   <Paragraph
                     size="body-4"
                     as="label"
@@ -388,7 +397,7 @@ export default function HomePage() {
                   </Paragraph>
                 </Card>
 
-                <Card variant="flat" padding="md">
+                <Card padding="md">
                   <Paragraph
                     size="body-4"
                     as="label"
@@ -403,49 +412,229 @@ export default function HomePage() {
               </div>
             </div>
           </Card>
+
           <section>
             <Title level="4" className="text-card-foreground mb-6">
               Statistics Cards
             </Title>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              <StatsCard value="1,234" label="Total Users" />
-              <StatsCard value="567" label="Active Today" />
-              <StatsCard value="89%" label="Success Rate" />
-              <StatsCard value="234" label="Pending" />
-              <StatsCard value="#12" label="Your Rank" />
+              <Card padding="sm" className="text-center">
+                <Title level="5" className="text-card-foreground mb-1">
+                  1,234
+                </Title>
+                <Paragraph size="body-4" className="text-muted-foreground">
+                  Total Users
+                </Paragraph>
+              </Card>
+              <Card padding="sm" className="text-center">
+                <Title level="5" className="text-card-foreground mb-1">
+                  567
+                </Title>
+                <Paragraph size="body-4" className="text-muted-foreground">
+                  Active Today
+                </Paragraph>
+              </Card>
+              <Card padding="sm" className="text-center">
+                <Title level="5" className="text-card-foreground mb-1">
+                  89%
+                </Title>
+                <Paragraph size="body-4" className="text-muted-foreground">
+                  Success Rate
+                </Paragraph>
+              </Card>
+              <Card padding="sm" className="text-center">
+                <Title level="5" className="text-card-foreground mb-1">
+                  234
+                </Title>
+                <Paragraph size="body-4" className="text-muted-foreground">
+                  Pending
+                </Paragraph>
+              </Card>
+              <Card padding="sm" className="text-center">
+                <Title level="5" className="text-card-foreground mb-1">
+                  #12
+                </Title>
+                <Paragraph size="body-4" className="text-muted-foreground">
+                  Your Rank
+                </Paragraph>
+              </Card>
             </div>
           </section>
+
           <section>
             <Title level="4" className="text-card-foreground mb-6">
               Ambassador Directory
             </Title>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              <AmbassadorCard
-                name="Augustine Franchelis"
-                country="Argentina"
-                status="Follow"
-                onProfileClick={() => console.log("View Augustine's profile")}
-              />
-              <AmbassadorCard
-                name="Alexandra D."
-                country="Romania"
-                status="Follow"
-              />
-              <AmbassadorCard
-                name="Andreas Sosilo"
-                country="Indonesia"
-                status="Pending"
-              />
-              <AmbassadorCard
-                name="Benjamin Baani"
-                country="Ghana"
-                status="Follow"
-              />
-              <AmbassadorCard
-                name="Clara Martinez"
-                country="Spain"
-                status="Following"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              <Card
+                padding="md"
+                className="w-full max-w-[280px] mx-auto aspect-[4/3] text-center"
+              >
+                <div className="flex flex-col items-center justify-between h-full py-2">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center mx-auto">
+                      <Title level="6" className="text-white text-lg font-bold">
+                        AF
+                      </Title>
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center px-2">
+                    <Title
+                      level="6"
+                      className="text-card-foreground leading-tight mb-2 text-base"
+                    >
+                      Augustine Franchelis
+                    </Title>
+                    <Paragraph
+                      size="body-4"
+                      className="text-muted-foreground text-sm"
+                    >
+                      Argentina
+                    </Paragraph>
+                  </div>
+                  <div className="flex-shrink-0 w-full">
+                    <Button variant="primary" size="sm" className="w-full">
+                      Follow
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+
+              <Card
+                padding="md"
+                className="w-full max-w-[280px] mx-auto aspect-[4/3] text-center"
+              >
+                <div className="flex flex-col items-center justify-between h-full py-2">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center mx-auto">
+                      <Title level="6" className="text-white text-lg font-bold">
+                        AD
+                      </Title>
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center px-2">
+                    <Title
+                      level="6"
+                      className="text-card-foreground leading-tight mb-2 text-base"
+                    >
+                      Alexandra D.
+                    </Title>
+                    <Paragraph
+                      size="body-4"
+                      className="text-muted-foreground text-sm"
+                    >
+                      Romania
+                    </Paragraph>
+                  </div>
+                  <div className="flex-shrink-0 w-full">
+                    <Button variant="primary" size="sm" className="w-full">
+                      Follow
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+
+              <Card
+                padding="md"
+                className="w-full max-w-[280px] mx-auto aspect-[4/3] text-center"
+              >
+                <div className="flex flex-col items-center justify-between h-full py-2">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mx-auto">
+                      <Title level="6" className="text-white text-lg font-bold">
+                        AS
+                      </Title>
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center px-2">
+                    <Title
+                      level="6"
+                      className="text-card-foreground leading-tight mb-2 text-base"
+                    >
+                      Andreas Sosilo
+                    </Title>
+                    <Paragraph
+                      size="body-4"
+                      className="text-muted-foreground text-sm"
+                    >
+                      Indonesia
+                    </Paragraph>
+                  </div>
+                  <div className="flex-shrink-0 w-full">
+                    <Button variant="secondary" size="sm" className="w-full">
+                      Pending
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+
+              <Card
+                padding="md"
+                className="w-full max-w-[280px] mx-auto aspect-[4/3] text-center"
+              >
+                <div className="flex flex-col items-center justify-between h-full py-2">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center mx-auto">
+                      <Title level="6" className="text-white text-lg font-bold">
+                        BB
+                      </Title>
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center px-2">
+                    <Title
+                      level="6"
+                      className="text-card-foreground leading-tight mb-2 text-base"
+                    >
+                      Benjamin Baani
+                    </Title>
+                    <Paragraph
+                      size="body-4"
+                      className="text-muted-foreground text-sm"
+                    >
+                      Ghana
+                    </Paragraph>
+                  </div>
+                  <div className="flex-shrink-0 w-full">
+                    <Button variant="primary" size="sm" className="w-full">
+                      Follow
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+
+              <Card
+                padding="md"
+                className="w-full max-w-[280px] mx-auto aspect-[4/3] text-center"
+              >
+                <div className="flex flex-col items-center justify-between h-full py-2">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center mx-auto">
+                      <Title level="6" className="text-white text-lg font-bold">
+                        CM
+                      </Title>
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center px-2">
+                    <Title
+                      level="6"
+                      className="text-card-foreground leading-tight mb-2 text-base"
+                    >
+                      Clara Martinez
+                    </Title>
+                    <Paragraph
+                      size="body-4"
+                      className="text-muted-foreground text-sm"
+                    >
+                      Spain
+                    </Paragraph>
+                  </div>
+                  <div className="flex-shrink-0 w-full">
+                    <Button variant="secondary" size="sm" className="w-full">
+                      Following
+                    </Button>
+                  </div>
+                </div>
+              </Card>
             </div>
           </section>
         </div>
