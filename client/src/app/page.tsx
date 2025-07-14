@@ -1,227 +1,453 @@
-import {
-  Navigation,
-  Card,
-  PrimaryButton,
-  SecondaryButton,
-  Input,
-} from "@/components/ui-components";
+"use client";
+import { Navigation } from "@/components/ui-components";
+import Title from "@/components/atoms/Title";
+import Paragraph from "@/components/atoms/Paragraph";
+import Input from "@/components/atoms/Input";
+import Switch from "@/components/atoms/Switch";
+import Dropdown from "@/components/atoms/Dropdown";
+import Checkbox from "@/components/atoms/Checkbox";
+import Button from "@/components/atoms/Button";
+import TextArea from "@/components/atoms/TextArea";
+import Card, {
+  FormCard,
+  AmbassadorCard,
+  StatsCard,
+} from "@/components/atoms/Card";
+import { useState } from "react";
 
 export default function HomePage() {
+  const [switchChecked, setSwitchChecked] = useState(false);
+  const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [dropdownValue, setDropdownValue] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    country: "",
+    notifications: false,
+    newsletter: false,
+  });
+
+  const dropdownOptions = [
+    { value: "us", label: "United States" },
+    { value: "uk", label: "United Kingdom" },
+    { value: "ca", label: "Canada" },
+    { value: "au", label: "Australia" },
+    { value: "de", label: "Germany" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
 
       <main className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-4">
+          <div className="text-center space-y-2">
+            <Title level="2" className="text-sunset-500">
               Welcome to Ambassador Tool
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Testing color palette with Tailwind CSS 4 and theme switching
-              capabilities.
-            </p>
+            </Title>
+            <Paragraph size="body-2" className="text-muted-foreground">
+              Comprehensive component library with card system
+            </Paragraph>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <h2 className="text-xl font-semibold text-card-foreground mb-4">
-                Primary Actions
-              </h2>
-              <div className="space-y-3">
-                <PrimaryButton className="w-full">Primary Button</PrimaryButton>
-                <SecondaryButton className="w-full">
-                  Secondary Button
-                </SecondaryButton>
-                <button className="w-full px-4 py-2 bg-accent hover:bg-sunset-300 text-white rounded-md transition-colors">
-                  Accent Button
-                </button>
+          <Card variant="flat" padding="md">
+            <Title level="6" className="text-card-foreground mb-4">
+              Theme Color Examples
+            </Title>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Title
+                level="4"
+                className="text-black-500 text-sm sm:text-lg lg:text-xl"
+              >
+                text-black-500
+              </Title>
+              <Title
+                level="4"
+                className="text-sunset-500 text-sm sm:text-lg lg:text-xl"
+              >
+                text-sunset-500
+              </Title>
+              <Title
+                level="4"
+                className="text-black-200 text-sm sm:text-lg lg:text-xl"
+              >
+                text-black-200
+              </Title>
+              <Title
+                level="4"
+                className="text-sunset-200 text-sm sm:text-lg lg:text-xl"
+              >
+                text-sunset-200
+              </Title>
+            </div>
+          </Card>
+          <Card variant="form" padding="lg" className="w-full">
+            <Paragraph
+              size="body-3"
+              className="font-semibold text-card-foreground mb-4"
+            >
+              Input Component States
+            </Paragraph>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div>
+                <Paragraph
+                  size="body-4"
+                  className="font-medium text-muted-foreground mb-3"
+                >
+                  Default
+                </Paragraph>
+                <Input label="Name" placeholder="Type here..." />
               </div>
-            </Card>
-
-            <Card>
-              <h2 className="text-xl font-semibold text-card-foreground mb-4">
-                Form Example
-              </h2>
-              <div className="space-y-3">
-                <Input placeholder="Enter your name" />
-                <Input placeholder="Enter your email" type="email" />
-                <textarea
-                  placeholder="Your message"
-                  className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:ring-1 focus:ring-ring"
-                  rows={3}
+              <div>
+                <Paragraph
+                  size="body-4"
+                  className="font-medium text-muted-foreground mb-3"
+                >
+                  Error
+                </Paragraph>
+                <Input
+                  label="Error Input"
+                  placeholder="Type here..."
+                  error={true}
+                  errorMessage="Required field"
                 />
-                <PrimaryButton className="w-full">Submit</PrimaryButton>
               </div>
-            </Card>
-
-            <Card>
-              <h2 className="text-xl font-semibold text-card-foreground mb-4">
-                Notifications
-              </h2>
-              <div className="space-y-3">
-                <div className="p-3 bg-sunset-50 border border-sunset-200 text-sunset-500 rounded-md">
-                  <p className="font-medium">Success!</p>
-                  <p className="text-sm">Your action was completed.</p>
-                </div>
-                <div className="p-3 bg-muted border border-border text-muted-foreground rounded-md">
-                  <p className="font-medium">Info</p>
-                  <p className="text-sm">Some information.</p>
-                </div>
-                <div className="p-3 bg-gray-100 border border-gray-300 text-gray-800 rounded-md">
-                  <p className="font-medium">Warning</p>
-                  <p className="text-sm">Please check this carefully.</p>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <h2 className="text-xl font-semibold text-card-foreground mb-4">
-                Sunset Color Scale
-              </h2>
-              <div className="grid grid-cols-6 gap-2 mb-4">
-                <div className="bg-sunset-50 h-12 rounded flex items-center justify-center text-xs font-medium">
-                  50
-                </div>
-                <div className="bg-sunset-100 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  100
-                </div>
-                <div className="bg-sunset-200 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  200
-                </div>
-                <div className="bg-sunset-300 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  300
-                </div>
-                <div className="bg-sunset-400 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  400
-                </div>
-                <div className="bg-sunset-500 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  500
-                </div>
-              </div>
-              <p className="text-muted-foreground text-sm">
-                Sunset Orange palette - primary brand colors
-              </p>
-            </Card>
-
-            <Card>
-              <h2 className="text-xl font-semibold text-card-foreground mb-4">
-                Gray Color Scale
-              </h2>
-              <div className="grid grid-cols-6 gap-2 mb-4">
-                <div className="bg-gray-100 h-12 rounded flex items-center justify-center text-xs font-medium text-gray-800">
-                  100
-                </div>
-                <div className="bg-gray-200 h-12 rounded flex items-center justify-center text-xs font-medium text-gray-800">
-                  200
-                </div>
-                <div className="bg-gray-300 h-12 rounded flex items-center justify-center text-xs font-medium text-gray-800">
-                  300
-                </div>
-                <div className="bg-gray-600 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  600
-                </div>
-                <div className="bg-gray-800 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  800
-                </div>
-                <div className="bg-gray-900 h-12 rounded flex items-center justify-center text-xs font-medium text-white">
-                  900
-                </div>
-              </div>
-              <p className="text-muted-foreground text-sm">
-                Neutral grays - backgrounds and text
-              </p>
-            </Card>
-          </div>
-
-          <Card>
-            <h2 className="text-xl font-semibold text-card-foreground mb-4">
-              Interactive Elements
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <h3 className="font-medium text-foreground mb-2">
-                  Navigation Links
-                </h3>
-                <nav className="space-y-1">
-                  <a
-                    href="#"
-                    className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
-                  >
-                    Dashboard
-                  </a>
-                  <a
-                    href="#"
-                    className="block px-3 py-2 text-foreground bg-muted rounded-md"
-                  >
-                    Current Page
-                  </a>
-                  <a
-                    href="#"
-                    className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
-                  >
-                    Settings
-                  </a>
-                  <a
-                    href="#"
-                    className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
-                  >
-                    Profile
-                  </a>
-                </nav>
+                <Paragraph
+                  size="body-4"
+                  className="font-medium text-card-foreground mb-3"
+                >
+                  Disabled
+                </Paragraph>
+                <Input
+                  label="Disabled Input"
+                  placeholder="Cannot edit"
+                  disabled={true}
+                />
               </div>
-
               <div>
-                <h3 className="font-medium text-foreground mb-2">
-                  Form Controls
-                </h3>
-                <div className="space-y-2">
-                  <select className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:ring-1 focus:ring-ring">
-                    <option>Select option</option>
-                    <option>Option 1</option>
-                    <option>Option 2</option>
-                  </select>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 text-primary border-input rounded focus:ring-ring"
+                <Paragraph
+                  size="body-4"
+                  className="font-medium text-card-foreground mb-3"
+                >
+                  With Value
+                </Paragraph>
+                <Input label="Filled Input" value="Sample text" readOnly />
+              </div>
+            </div>
+          </Card>
+          <Card variant="form" padding="lg" className="w-full">
+            <Title level="4" className="text-card-foreground mb-6">
+              Component Testing Suite
+            </Title>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="space-y-4">
+                <Paragraph
+                  size="body-2"
+                  className="font-semibold text-card-foreground mb-4"
+                >
+                  Switch Component
+                </Paragraph>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={switchChecked}
+                      onCheckedChange={setSwitchChecked}
                     />
-                    <label className="text-foreground">Checkbox option</label>
+                    <Paragraph size="body-4" as="span">
+                      Interactive Switch
+                    </Paragraph>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      name="radio"
-                      className="w-4 h-4 text-primary border-input focus:ring-ring"
-                    />
-                    <label className="text-foreground">Radio option</label>
+                  <div className="flex items-center space-x-3">
+                    <Switch checked={true} />
+                    <Paragraph size="body-4" as="span">
+                      Always On
+                    </Paragraph>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Switch disabled />
+                    <Paragraph
+                      size="body-4"
+                      as="span"
+                      className="text-muted-foreground"
+                    >
+                      Disabled
+                    </Paragraph>
                   </div>
                 </div>
               </div>
-
-              <div>
-                <h3 className="font-medium text-foreground mb-2">
-                  Status Indicators
-                </h3>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-sunset-500 rounded-full"></div>
-                    <span className="text-foreground">Active</span>
+              <div className="space-y-4">
+                <Paragraph
+                  size="body-2"
+                  className="font-semibold text-card-foreground mb-4"
+                >
+                  Checkbox Component
+                </Paragraph>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <Checkbox
+                      checked={checkboxChecked}
+                      onCheckedChange={setCheckboxChecked}
+                    />
+                    <Paragraph size="body-4" as="span">
+                      Interactive Checkbox
+                    </Paragraph>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                    <span className="text-muted-foreground">Inactive</span>
+                  <div className="flex items-center space-x-3">
+                    <Checkbox checked={true} />
+                    <Paragraph size="body-4" as="span">
+                      Always Checked
+                    </Paragraph>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-accent rounded-full"></div>
-                    <span className="text-foreground">Pending</span>
+                  <div className="flex items-center space-x-3">
+                    <Checkbox indeterminate={true} />
+                    <Paragraph size="body-4" as="span">
+                      Indeterminate
+                    </Paragraph>
                   </div>
+                  <div className="flex items-center space-x-3">
+                    <Checkbox disabled />
+                    <Paragraph
+                      size="body-4"
+                      as="span"
+                      className="text-muted-foreground"
+                    >
+                      Disabled
+                    </Paragraph>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <Paragraph
+                  size="body-2"
+                  className="font-semibold text-card-foreground mb-4"
+                >
+                  Button Variants
+                </Paragraph>
+                <div className="space-y-3">
+                  <Button variant="primary" size="md" className="w-full">
+                    Primary
+                  </Button>
+                  <Button variant="secondary" size="md" className="w-full">
+                    Secondary
+                  </Button>
+                  <Button variant="outline" size="md" className="w-full">
+                    Outline
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <Paragraph
+                  size="body-2"
+                  className="font-semibold text-card-foreground mb-4"
+                >
+                  Dropdown Component
+                </Paragraph>
+                <div className="space-y-3">
+                  <Dropdown
+                    options={dropdownOptions}
+                    value={dropdownValue}
+                    onValueChange={setDropdownValue}
+                    placeholder="Select country..."
+                  />
+                  <Dropdown
+                    options={[
+                      { value: "admin", label: "Administrator" },
+                      { value: "user", label: "User" },
+                      { value: "guest", label: "Guest" },
+                    ]}
+                    placeholder="Select role..."
+                    disabled
+                  />
                 </div>
               </div>
             </div>
           </Card>
+          <FormCard
+            title="Interactive Form Example"
+            subtitle="Test your form components with real interactions"
+            className="w-full max-w-none"
+            actions={
+              <div className="flex">
+                <Button variant="primary" className="flex-1">
+                  Submit Form
+                </Button>
+              </div>
+            }
+          >
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Input
+                  label="Code"
+                  placeholder="ABC123"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                />
+
+                <Input label="Phone" placeholder="+1 (555) 123-4567" />
+              </div>
+
+              <Input
+                label="Email Address"
+                placeholder="john.doe@example.com"
+                type="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+              />
+
+              <Input
+                label="Full Address"
+                placeholder="Enter your complete address"
+              />
+              <TextArea
+                label="Description"
+                rows={4}
+                errorMessage="Please enter a valid description."
+              />
+
+              <div className="space-y-2">
+                <Paragraph
+                  size="body-4"
+                  as="label"
+                  className="text-muted-foreground"
+                >
+                  Country
+                </Paragraph>
+                <Dropdown
+                  options={dropdownOptions}
+                  value={formData.country}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, country: value })
+                  }
+                  placeholder="Select your country..."
+                />
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <Checkbox
+                  checked={formData.notifications}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, notifications: checked })
+                  }
+                />
+                <Paragraph size="body-4" as="span">
+                  I agree to receive notifications and updates
+                </Paragraph>
+              </div>
+            </div>
+          </FormCard>
+          <Card variant="form" padding="lg" className="w-full">
+            <Title level="4" className="text-content mb-6">
+              Typography Specifications
+            </Title>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <Card variant="flat" padding="md">
+                  <Paragraph
+                    size="body-4"
+                    as="label"
+                    className="text-muted-foreground mb-2"
+                  >
+                    BODY/B-1
+                  </Paragraph>
+                  <Paragraph size="body-1">
+                    AaBbCc - Chivo Medium, 20px/30px - Perfect for important
+                    content
+                  </Paragraph>
+                </Card>
+
+                <Card variant="flat" padding="md">
+                  <Paragraph
+                    size="body-4"
+                    as="label"
+                    className="text-muted-foreground mb-2"
+                  >
+                    BODY/B-2
+                  </Paragraph>
+                  <Paragraph size="body-2">
+                    AaBbCc - Chivo Regular, 18px/28px - Standard body text
+                  </Paragraph>
+                </Card>
+              </div>
+
+              <div className="space-y-4">
+                <Card variant="flat" padding="md">
+                  <Paragraph
+                    size="body-4"
+                    as="label"
+                    className="text-muted-foreground mb-2"
+                  >
+                    BODY/B-3
+                  </Paragraph>
+                  <Paragraph size="body-3">
+                    AaBbCc - Chivo Regular, 16px/24px - Secondary content
+                  </Paragraph>
+                </Card>
+
+                <Card variant="flat" padding="md">
+                  <Paragraph
+                    size="body-4"
+                    as="label"
+                    className="text-muted-foreground mb-2"
+                  >
+                    BODY/B-4
+                  </Paragraph>
+                  <Paragraph size="body-4">
+                    AaBbCc - Chivo Regular, 16px/24px - Small text and labels
+                  </Paragraph>
+                </Card>
+              </div>
+            </div>
+          </Card>
+          <section>
+            <Title level="4" className="text-card-foreground mb-6">
+              Statistics Cards
+            </Title>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              <StatsCard value="1,234" label="Total Users" />
+              <StatsCard value="567" label="Active Today" />
+              <StatsCard value="89%" label="Success Rate" />
+              <StatsCard value="234" label="Pending" />
+              <StatsCard value="#12" label="Your Rank" />
+            </div>
+          </section>
+          <section>
+            <Title level="4" className="text-card-foreground mb-6">
+              Ambassador Directory
+            </Title>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              <AmbassadorCard
+                name="Augustine Franchelis"
+                country="Argentina"
+                status="Follow"
+                onProfileClick={() => console.log("View Augustine's profile")}
+              />
+              <AmbassadorCard
+                name="Alexandra D."
+                country="Romania"
+                status="Follow"
+              />
+              <AmbassadorCard
+                name="Andreas Sosilo"
+                country="Indonesia"
+                status="Pending"
+              />
+              <AmbassadorCard
+                name="Benjamin Baani"
+                country="Ghana"
+                status="Follow"
+              />
+              <AmbassadorCard
+                name="Clara Martinez"
+                country="Spain"
+                status="Following"
+              />
+            </div>
+          </section>
         </div>
       </main>
     </div>

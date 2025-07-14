@@ -64,7 +64,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted hover:bg-muted/80 transition-colors"
+      className="flex items-center gap-2 px-3 py-2 rounded-md bg-background hover:bg-muted/80 transition-colors"
       aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
       <span className="text-lg">{theme === "dark" ? "🌙" : "☀️"}</span>

@@ -1,8 +1,33 @@
 @import url("https://fonts.googleapis.com/css2?family=Chivo&display=swap");
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.4631 0.0013 197.11);
+  --muted: oklch(0.967 0.003 264.542);
+  --muted-foreground: oklch(0.556 0 0);
+  --border: oklch(0.872 0.01 258.338);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.4631 0.0013 197.11);
+  --input: oklch(1 0 0);
+  --primary: oklch(0.6821 0.2064 24.74);
+  --accent: oklch(0.7043 0.1873 23.55);
+  --ring: oklch(0.6821 0.2064 24.74);
+}
+
+.dark {
+  --background: oklch(0.283 0.0029 196.99);
+  --foreground: oklch(1 0 0);
+  --muted: oklch(0.3743 0.0014 197.1);
+  --muted-foreground: oklch(0.7818 0.0011 197.13);
+  --border: oklch(0.4631 0.0013 197.11);
+  --card: oklch(0.283 0.0029 196.99);
+  --card-foreground: oklch(1 0 0);
+  --input: oklch(0.3743 0.0014 197.1);
+}
 
 @theme {
-  --font-script: 'Chivo';
   --color-sunset-50:  oklch(0.8208 0.100577 19.4501);
   --color-sunset-100: oklch(0.7882 0.1227 20.8);
   --color-sunset-200: oklch(0.7578 0.1448 21.56);
@@ -24,72 +49,107 @@
   --color-white-400:  oklch(0.928 0 0);
   --color-white-500:  oklch(1 0 0);
 
-  --color-gray-50: var(--color-white-500);
-  --color-gray-100: var(--color-white-400);
-  --color-gray-200: var(--color-white-300);
-  --color-gray-300: var(--color-white-200);
-  --color-gray-400: var(--color-white-100);
-  --color-gray-500: var(--color-white-50);
-  --color-gray-600: var(--color-black-50);
-  --color-gray-700: var(--color-black-100);
-  --color-gray-800: var(--color-black-200);
-  --color-gray-900: var(--color-black-300);
-  --color-gray-950: var(--color-black-500);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-ring: var(--ring);
 
-  --color-muted-foreground: var(--color-black-200);
-
-
-  --animate-fade-in: fade-in 0.3s ease-in-out;
-  --animate-slide-in: slide-in 0.3s ease-out;
-
-  @keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes slide-in { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  --font-family-sans: 'Chivo', ui-sans-serif, system-ui, sans-serif;
 }
 
-:root {
-  --color-background: var(--color-white-500);
-  --color-foreground: var(--color-black-200);
-  --color-primary: var(--color-sunset-500);
-  --color-secondary: var(--color-black-100);
-  --color-accent: var(--color-sunset-400);
-  --color-muted: var(--color-white-400);
-  --color-muted-foreground: var(--color-black-100);
-  --color-border: var(--color-white-300);
-  --color-input: var(--color-white-400);
-  --color-ring: var(--color-sunset-500);
-  --color-card: var(--color-white-500);
-  --color-card-foreground: var(--color-black-500);
-  --color-popover: var(--color-white-500);
-  --color-popover-foreground: var(--color-black-500);
-
-  color-scheme: light;
-}
-
+:root,
 .dark {
-  --color-background: var(--color-black-400);
-  --color-foreground: var(--color-white-500);
-  --color-card: var(--color-black-300);
-  --color-card-foreground: var(--color-white-500);
-  --color-popover: var(--color-black-300);
-  --color-popover-foreground: var(--color-white-500);
-  --color-muted: var(--color-black-300);
-  --color-muted-foreground: var(--color-white-200);
-  --color-border: var(--color-black-200);
-  --color-input: var(--color-black-300);
-
-  color-scheme: dark;
+  transition:
+    --background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --foreground 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --muted 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --muted-foreground 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --border 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --card 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --card-foreground 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    --input 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --color-background: var(--color-black-400);
-    --color-foreground: var(--color-white-500);
-  }
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 
 body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  font-family: var(--font-script);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Chivo', sans-serif;
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button,
+input,
+select,
+textarea,
+[role="button"],
+[tabindex="0"] {
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[class*="card"],
+[class*="bg-"],
+[class*="text-"],
+[class*="border-"] {
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-pulse,
+.animate-spin,
+.animate-bounce,
+[class*="animate-"] {
+  transition: none !important;
+}
+
+
+:focus-visible {
+  transition:
+    outline 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+svg,
+svg *,
+[class*="icon"] {
+  transition:
+    fill 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+[class*="gradient"],
+[class*="bg-gradient"] {
+  transition:
+    background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
