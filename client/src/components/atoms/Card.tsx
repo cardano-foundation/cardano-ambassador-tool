@@ -28,7 +28,7 @@ export default function Card({
     <div
       className={cn(
         "bg-card rounded-xl shadow-[0px_3px_4px_rgba(0,0,0,0.03)]",
-        "border border-border",
+        "outline outline-1 outline-offset-[-1px] outline-border",
         "transition-all duration-200 ease-in-out",
 
         {
@@ -41,7 +41,7 @@ export default function Card({
         clickable && [
           "cursor-pointer",
           "hover:shadow-[0px_3px_8px_rgba(0,0,0,0.08)]",
-          "hover:border-muted",
+          "hover:outline-muted",
           "active:scale-[0.98]",
         ],
 
