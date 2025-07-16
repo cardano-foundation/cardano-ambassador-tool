@@ -2,14 +2,18 @@ import React from "react";
 import { cn } from "@/utils/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost";
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "nav";
   size?: "sm" | "md" | "lg";
+  rounded?: "lg" | "full";
   children: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 export default function Button({
   variant = "primary",
   size = "md",
+  rounded = "lg",
+  fullWidth = false,
   className,
   children,
   ...props
@@ -17,27 +21,40 @@ export default function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transform transition-all duration-200 ease-in-out active:scale-95 hover:shadow-lg",
+        variant === "nav"
+          ? "flex items-start justify-start font-medium transition-all duration-200 ease-in-out"
+          : "inline-flex items-center justify-center font-medium transition-all duration-200 ease-in-out",
+
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sunset-500 focus-visible:ring-offset-2",
+        "disabled:opacity-50 disabled:pointer-events-none",
+
+        variant !== "nav" && "active:scale-[0.98] hover:scale-[1.02]",
+
+        variant === "nav"
+          ? {}
+          : {
+              "h-9 px-4 text-sm": size === "sm",
+              "h-11 px-6 text-sm": size === "md",
+              "h-12 px-8 text-base": size === "lg",
+            },
 
         {
-          "h-8 px-3 text-sm": size === "sm",
-          "h-10 px-4 text-sm": size === "md",
-          "h-12 px-6 text-base": size === "lg",
+          "rounded-lg": rounded === "lg",
+          "rounded-full": rounded === "full",
         },
 
         {
-          "bg-sunset-500 text-white border-border": variant === "primary",
-
-          "bg-sunset-100 border-sunset-500 text-sunset-500 ":
+          "bg-sunset-500 text-white hover:bg-sunset-400": variant === "primary",
+          "bg-sunset-50 text-sunset-500 border border-sunset-500":
             variant === "secondary",
-
-          "border border-gray-300 bg-transparent text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-800":
+          "bg-background border border-sunset-500 text-sunset-500":
             variant === "outline",
-
-          "text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800":
+          "bg-background text-black-500 shadow-[0px_0px_8px_rgba(0,0,0,0.15)]":
             variant === "ghost",
+          "bg-transparent hover:bg-muted text-foreground": variant === "nav",
         },
 
+        fullWidth && "w-full",
         className,
       )}
       {...props}
