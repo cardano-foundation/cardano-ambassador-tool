@@ -4,7 +4,7 @@
 |Milestones|[Milestones](https://milestones.projectcatalyst.io/projects/1300032)
 |Challenge|F13: Cardano Open: Developers|
 |Budget|ADA 110,000.00|
-|Started|February 1, 2024|
+|Started|February 1, 2025|
 
 
 
