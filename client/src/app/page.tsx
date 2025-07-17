@@ -6,21 +6,11 @@ import Switch from "@/components/atoms/Switch";
 import Dropdown from "@/components/atoms/Dropdown";
 import Checkbox from "@/components/atoms/Checkbox";
 import Button from "@/components/atoms/Button";
-import SideNavigation from "@/components/Navigation/SideNavigation";
-import TopNavigationTabs from "@/components/Navigation/TopNavigation";
+import TopNav from "@/components/Navigation/TabNav";
 import TextArea from "@/components/atoms/TextArea";
 import ThemeToggle from "@/components/ThemeToggle";
 import Card, { CardHeader, CardContent } from "@/components/atoms/Card";
 import { useState } from "react";
-
-interface NavigationItem {
-  id: string;
-  label: string;
-  href?: string;
-  icon?: React.ComponentType;
-  active?: boolean;
-  onClick?: () => void;
-}
 
 interface TabItem {
   id: string;
@@ -36,10 +26,6 @@ export default function HomePage() {
   const [dropdownValue, setDropdownValue] = useState("");
   const [activeTab, setActiveTab] = useState("topics");
 
-  const handleNavigationClick = (item: NavigationItem) => {
-    console.log("Navigation clicked:", item);
-    // Handle navigation here if needed
-  };
 
   const topNavTabs: TabItem[] = [
     { id: "topics", label: "Topics" },
@@ -76,7 +62,7 @@ export default function HomePage() {
         return (
           <div className="space-y-8">
             <div className="text-center space-y-2">
-              <Title level="2" className="text-sunset-500">
+              <Title level="2" className="text-primary">
                 Welcome to Ambassador Tool
               </Title>
               <Paragraph size="body-2" className="text-muted-foreground">
@@ -97,9 +83,9 @@ export default function HomePage() {
                 </Title>
                 <Title
                   level="4"
-                  className="text-sunset-500 text-sm sm:text-lg lg:text-xl"
+                  className="text-primary-500 text-sm sm:text-lg lg:text-xl"
                 >
-                  text-sunset-500
+                  text-primary-500
                 </Title>
                 <Title
                   level="4"
@@ -109,9 +95,9 @@ export default function HomePage() {
                 </Title>
                 <Title
                   level="4"
-                  className="text-sunset-200 text-sm sm:text-lg lg:text-xl"
+                  className="text-primary-200 text-sm sm:text-lg lg:text-xl"
                 >
-                  text-sunset-200
+                  text-primary-200
                 </Title>
               </div>
             </Card>
@@ -612,30 +598,27 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      <SideNavigation onItemClick={handleNavigationClick} />
-      <div className="flex-1">
-        <div className="bg-background px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Paragraph size="body-4" className="text-muted-foreground">
-              Ambassador Tool
-            </Paragraph>
-          </div>
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-          </div>
+    <div>
+      <div className="bg-background px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Paragraph size="body-4" className="text-muted-foreground">
+            Ambassador Tool
+          </Paragraph>
         </div>
-        <div className="bg-background border-b border-border px-6">
-          <TopNavigationTabs
-            tabs={topNavTabs}
-            activeTabId={activeTab}
-            onTabChange={handleTabChange}
-          />
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
         </div>
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {renderActiveSection()}
-        </main>
       </div>
+      <div className="bg-background border-b border-border px-6">
+        <TopNav
+          tabs={topNavTabs}
+          activeTabId={activeTab}
+          onTabChange={handleTabChange}
+        />
+      </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {renderActiveSection()}
+      </main>
     </div>
   );
 }

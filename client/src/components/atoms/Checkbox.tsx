@@ -36,16 +36,16 @@ export default function Checkbox({
         "inline-flex h-6 w-6 items-center justify-center rounded-md border-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
 
         isChecked || indeterminate
-          ? "bg-sunset-500 border-sunset-500 text-white"
+          ? "bg-primary-500 border-primary-500 text-white"
           : "border-border bg-white",
 
         isChecked || indeterminate
-          ? "dark:bg-sunset-500 dark:border-sunset-500"
+          ? "dark:bg-primary-500 dark:border-primary-500"
           : "dark:border-border dark:bg-neutral-700",
 
         disabled && "opacity-50 cursor-not-allowed",
 
-        className,
+        className
       )}
     >
       {isChecked && !indeterminate && (

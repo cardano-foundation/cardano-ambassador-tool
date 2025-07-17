@@ -36,7 +36,7 @@ export default function Dropdown({
     <div
       className={cn(
         "relative inline-block text-left w-full min-w-0 sm:min-w-[200px]",
-        className,
+        className
       )}
     >
       <button
@@ -47,13 +47,13 @@ export default function Dropdown({
           "inline-flex w-full justify-between items-center rounded-md border px-3 py-4 text-sm transition-colors focus-visible:outline-none",
           "bg-background  dark:bg-card border-border",
           disabled && "opacity-50 cursor-not-allowed",
-          isOpen && " ",
+          isOpen && " "
         )}
       >
         <span
           className={cn(
             selectedOption ? "text-foreground" : "text-muted-foreground",
-            "truncate mr-2",
+            "truncate mr-2"
           )}
         >
           {selectedOption ? selectedOption.label : placeholder}
@@ -61,7 +61,7 @@ export default function Dropdown({
         <svg
           className={cn(
             "h-4 w-4 transition-transform text-muted-foreground flex-shrink-0",
-            isOpen && "rotate-180",
+            isOpen && "rotate-180"
           )}
           fill="none"
           stroke="currentColor"
@@ -86,7 +86,7 @@ export default function Dropdown({
                 className={cn(
                   "flex w-full justify-between items-center px-4 py-3 text-left text-sm transition-colors",
                   "text-muted-foreground hover:bg-muted",
-                  value === option.value && "bg-sunset-100 text-sunset-500",
+                  value === option.value && "bg-primary-100 text-primary-500"
                 )}
               >
                 <span className="flex-1 truncate mr-2">{option.label}</span>

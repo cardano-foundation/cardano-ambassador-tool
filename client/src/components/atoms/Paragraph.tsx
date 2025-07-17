@@ -11,6 +11,7 @@ const paragraphSizes = {
   "body-2": "text-[18px] font-normal leading-[28px]",
   "body-3": "text-[16px] font-normal leading-[24px]",
   "body-4": "text-[16px] font-normal leading-[24px]",
+  "body-5": "text-[12px] font-normal leading-[24px]",
 } as const;
 
 export default function Paragraph({
@@ -23,7 +24,7 @@ export default function Paragraph({
   return (
     <Component
       className={cn(
-        "font-['Chivo'] text-foreground",
+        "font-['Chivo'] text-foreground ",
         paragraphSizes[size],
         className,
       )}

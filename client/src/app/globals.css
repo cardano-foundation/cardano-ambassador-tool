@@ -1,9 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Chivo&display=swap");
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+@import './font.css';
+
 :root {
   --background: oklch(1 0 0);
-  --foreground: oklch(0.4631 0.0013 197.11);
+  --background-light: #F8F9FB;
   --muted: oklch(0.967 0.003 264.542);
   --muted-foreground: oklch(0.556 0 0);
   --border: oklch(0.928 0.006 264.531);
@@ -17,8 +18,8 @@
 }
 
 .dark {
-  --background: oklch(0.283 0.0029 196.99);
-  --foreground: oklch(1 0 0);
+  --background: #282A2A;
+  --background-light: #404141;
   --muted: oklch(0.3743 0.0014 197.1);
   --muted-foreground: oklch(0.7818 0.0011 197.13);
   --border: oklch(0.4631 0.0013 197.11);
@@ -29,33 +30,33 @@
 }
 
 @theme {
-  --color-sunset-50:  oklch(0.8208 0.100577 19.4501);
-  --color-sunset-100: oklch(0.7882 0.1227 20.8);
-  --color-sunset-200: oklch(0.7578 0.1448 21.56);
-  --color-sunset-300: oklch(0.7297 0.1665 22.49);
-  --color-sunset-400: oklch(0.7043 0.1873 23.55);
-  --color-sunset-500: oklch(0.6821 0.2064 24.74);
+  --color-primary-50: oklch(0.8208 0.100577 19.4501);
+  --color-primary-100: oklch(0.7882 0.1227 20.8);
+  --color-primary-200: oklch(0.7578 0.1448 21.56);
+  --color-primary-300: oklch(0.7297 0.1665 22.49);
+  --color-primary-400: oklch(0.7043 0.1873 23.55);
+  --color-primary-500: oklch(0.6821 0.2064 24.74);
 
-  --color-black-50:   oklch(0.6292 0.0012 197.13);
-  --color-black-100:  oklch(0.5478 0.0012 197.12);
-  --color-black-200:  oklch(0.4631 0.0013 197.11);
-  --color-black-300:  oklch(0.3743 0.0014 197.1);
-  --color-black-400:  oklch(0.283 0.0029 196.99);
-  --color-black-500:  oklch(0.18 0.0032 196.87);
+  --color-black-50: oklch(0.6292 0.0012 197.13);
+  --color-black-100: oklch(0.5478 0.0012 197.12);
+  --color-black-200: oklch(0.4631 0.0013 197.11);
+  --color-black-300: oklch(0.3743 0.0014 197.1);
+  --color-black-400: oklch(0.283 0.0029 196.99);
+  --color-black-500: oklch(0.18 0.0032 196.87);
 
-  --color-white-50:   oklch(0.6292 0.0012 197.13);
-  --color-white-100:  oklch(0.7049 0.0012 197.13);
-  --color-white-200:  oklch(0.7818 0.0011 197.13);
-  --color-white-300:  oklch(0.8568 0.0011 197.14);
-  --color-white-400:  oklch(0.928 0 0);
-  --color-white-500:  oklch(1 0 0);
+  --color-white-50: oklch(0.6292 0.0012 197.13);
+  --color-white-100: oklch(0.7049 0.0012 197.13);
+  --color-white-200: oklch(0.7818 0.0011 197.13);
+  --color-white-300: oklch(0.8568 0.0011 197.14);
+  --color-white-400: oklch(0.928 0 0);
+  --color-white-500: oklch(1 0 0);
 
 
-  --color-neutral-900:  oklch(0.2046 0 0);
+  --color-neutral-900: oklch(0.2046 0 0);
 
 
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background-light: var(--background-light);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
@@ -67,8 +68,8 @@
   --color-ring: var(--ring);
   --color-neutral: var(--neutral);
 
-  --font-family-sans: 'Chivo', ui-sans-serif, system-ui, sans-serif;
 }
+
 
 :root,
 .dark {
@@ -98,8 +99,8 @@
 
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-background);
+  color: var(--color-foreground, var(--foreground));
   font-family: 'Chivo', sans-serif;
   transition:
     background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
@@ -113,11 +114,11 @@ textarea,
 [role="button"],
 [tabindex="0"] {
   -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   transition:
     background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
@@ -168,6 +169,7 @@ svg *,
     background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 @media (max-width: 768px) {
   button {
     min-height: 44px;

@@ -17,7 +17,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       className,
       ...props
     },
-    ref,
+    ref
   ) => {
     return (
       <div className="relative w-full">
@@ -28,8 +28,8 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             "w-full px-3 py-3 rounded-md border transition-colors",
             "text-sm font-normal font-['Chivo'] leading-none",
             "bg-background dark:bg-card border-border placeholder:text-muted-foreground",
-            "focus:outline-none focus:!border-sunset-300 focus:ring-2 focus:ring-sunset-300/20",
-            "hover:!border-sunset-300",
+            "focus:outline-none focus:!border-primary-300 focus:ring-2 focus:ring-primary-300/20",
+            "hover:!border-primary-300",
             // Add top margin when label exists to make room for it
             label && "mt-[22px]",
 
@@ -39,11 +39,11 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             ],
 
             error && [
-              "!border-sunset-500",
-              "focus:!border-sunset-500 focus:ring-sunset-500/20",
+              "!border-primary-500",
+              "focus:!border-primary-500 focus:ring-primary-500/20",
             ],
 
-            className,
+            className
           )}
           {...props}
         />
@@ -54,7 +54,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
               "absolute left-0 top-[-1px] text-sm font-normal font-['Chivo'] leading-none",
               "text-muted-foreground",
               disabled && "opacity-50",
-              error && "text-sunset-500",
+              error && "text-primary-500"
             )}
           >
             {label}
@@ -62,13 +62,13 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         )}
 
         {error && errorMessage && (
-          <div className="mt-1 text-xs text-sunset-500 font-normal font-['Chivo']">
+          <div className="mt-1 text-xs text-primary-500 font-normal font-['Chivo']">
             {errorMessage}
           </div>
         )}
       </div>
     );
-  },
+  }
 );
 
 TextArea.displayName = "TextArea";
