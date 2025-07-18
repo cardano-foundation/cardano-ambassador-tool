@@ -26,7 +26,6 @@ export default function HomePage() {
   const [dropdownValue, setDropdownValue] = useState("");
   const [activeTab, setActiveTab] = useState("topics");
 
-
   const topNavTabs: TabItem[] = [
     { id: "topics", label: "Topics" },
     { id: "components", label: "Components" },
@@ -60,9 +59,9 @@ export default function HomePage() {
     switch (activeTab) {
       case "topics":
         return (
-          <div className="space-y-8">
+          <div className="space-y-8 h-full">
             <div className="text-center space-y-2">
-              <Title level="2" className="text-primary">
+              <Title level="2" className="">
                 Welcome to Ambassador Tool
               </Title>
               <Paragraph size="body-2" className="text-muted-foreground">
@@ -83,9 +82,9 @@ export default function HomePage() {
                 </Title>
                 <Title
                   level="4"
-                  className="text-primary-500 text-sm sm:text-lg lg:text-xl"
+                  className="text-primary-base text-sm sm:text-lg lg:text-xl"
                 >
-                  text-primary-500
+                  text-primary-base
                 </Title>
                 <Title
                   level="4"
@@ -154,7 +153,7 @@ export default function HomePage() {
 
       case "components":
         return (
-          <div className="space-y-8">
+          <div className="space-y-8 h-full">
             <Card padding="lg" className="w-full">
               <Paragraph
                 size="body-3"
@@ -598,7 +597,7 @@ export default function HomePage() {
   };
 
   return (
-    <div>
+    <div className="h-full">
       <div className="bg-background px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Paragraph size="body-4" className="text-muted-foreground">

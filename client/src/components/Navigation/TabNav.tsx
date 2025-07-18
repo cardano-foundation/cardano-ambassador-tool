@@ -56,7 +56,7 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
                 className={cn(
                   "text-sm  leading-none  duration-200 transition-all",
                   isActive
-                    ? "text-primary-500 font-bold"
+                    ? "text-primary-base font-bold"
                     : "text-neutral-500 font-normal hover:text-neutral-700"
                 )}
               >

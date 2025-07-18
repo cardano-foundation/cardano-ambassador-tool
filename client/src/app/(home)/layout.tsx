@@ -1,20 +1,15 @@
 "use client";
 import { ThemeProvider } from "@/components/ThemeToggle";
-import "./globals.css";
+import "../app.css";
 import SideNav from "@/components/Navigation/SideNav";
-import { usePathname } from "next/navigation";
+import Footer from "@/components/Footer";
 
-export default function RootLayout({
+export default function DefaultLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const handleNavigationClick = () => {};
-
-  const pathname = usePathname();
-  const hideNavRoutes = ["/onboarding"];
-  const showNav = !hideNavRoutes.includes(pathname);
-
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -43,9 +38,15 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <div className="min-h-screen flex">
-            {showNav && <SideNav onItemClick={handleNavigationClick} />}
-            <div className="flex-1"> {children}</div>
-          </div>
+            <SideNav onItemClick={handleNavigationClick} />
+            <div className="flex-1 min-h-screen ">
+              {" "}
+              {children}
+              <div className="sticky bottom-0">
+                <Footer />
+              </div>
+            </div>
+          </div>{" "}
         </ThemeProvider>
       </body>
     </html>

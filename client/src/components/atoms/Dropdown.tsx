@@ -86,7 +86,7 @@ export default function Dropdown({
                 className={cn(
                   "flex w-full justify-between items-center px-4 py-3 text-left text-sm transition-colors",
                   "text-muted-foreground hover:bg-muted",
-                  value === option.value && "bg-primary-100 text-primary-500"
+                  value === option.value && "bg-primary-100 text-primary-base"
                 )}
               >
                 <span className="flex-1 truncate mr-2">{option.label}</span>

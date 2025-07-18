@@ -23,7 +23,7 @@ const WalletList = () => {
             height={24}
             className="rounded"
           />
-          <span className="capitalize font-bold text-[16px]">{`${wallet.name.includes("Wallet") ? wallet.name : wallet.name + " wallet"} `}</span>
+          <span className="capitalize font-normal text-[16px]">{`${wallet.name.includes("Wallet") ? wallet.name : wallet.name + " wallet"} `}</span>
         </Button>
       ))}
     </>

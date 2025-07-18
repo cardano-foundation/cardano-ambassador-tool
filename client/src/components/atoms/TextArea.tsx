@@ -26,11 +26,10 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           disabled={disabled}
           className={cn(
             "w-full px-3 py-3 rounded-md border transition-colors",
-            "text-sm font-normal font-['Chivo'] leading-none",
+            "text-sm font-normal leading-none",
             "bg-background dark:bg-card border-border placeholder:text-muted-foreground",
-            "focus:outline-none focus:!border-primary-300 focus:ring-2 focus:ring-primary-300/20",
-            "hover:!border-primary-300",
-            // Add top margin when label exists to make room for it
+            "focus:outline-none focus:border-primary-300 focus:ring-1 focus:ring-primary-300/20",
+            "hover:border-primary-300",
             label && "mt-[22px]",
 
             disabled && [
@@ -51,10 +50,10 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         {label && (
           <label
             className={cn(
-              "absolute left-0 top-[-1px] text-sm font-normal font-['Chivo'] leading-none",
+              "absolute left-0 top-[-1px] text-sm font-normal leading-none",
               "text-muted-foreground",
               disabled && "opacity-50",
-              error && "text-primary-500"
+              error && "text-primary-base"
             )}
           >
             {label}
@@ -62,7 +61,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         )}
 
         {error && errorMessage && (
-          <div className="mt-1 text-xs text-primary-500 font-normal font-['Chivo']">
+          <div className="mt-1 text-xs text-primary-base font-normal">
             {errorMessage}
           </div>
         )}

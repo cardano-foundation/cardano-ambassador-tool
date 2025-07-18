@@ -44,17 +44,17 @@ export default function Button({
         },
 
         {
-          "bg-primary-500 text-white hover:bg-primary-400":
+          "bg-primary-base text-white hover:bg-primary-400":
             variant === "primary",
-          "bg-primary-50 text-primary-500 border border-primary-500":
+          "bg-primary-50 text-primary-base border-2 border-primary-base":
             variant === "secondary",
-          "bg-foreground border border-primary-500 text-primary-500":
+          "bg-muted border-2 border-primary-base text-primary-base":
             variant === "outline",
-          "bg-background-light text-black-500 shadow-[0px_0px_8px_rgba(0,0,0,0.15)]":
+          "bg-muted text-black-500 shadow-[0px_0px_8px_rgba(0,0,0,0.15)]":
             variant === "ghost",
-          "bg-transparent hover:bg-muted text-foreground": variant === "nav",
+          "bg-muted hover:bg-muted text-foreground":
+            variant === "nav",
         },
-
         fullWidth && "w-full",
         className
       )}
