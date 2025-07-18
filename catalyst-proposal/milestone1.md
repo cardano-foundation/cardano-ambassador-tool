@@ -42,7 +42,7 @@ The ideation process with Ambassadors to share needs and ideas for tooling to im
 
 Dedicated channels have been set up at the Cardano Foundation – Ambassadors Slack, which is a private Slack server hosted by the Cardano Foundation. The channel was created on **December 31**.
 
-An additional **Discord Group Chat** has been initiated to communicate and coordinate on the development of the Ambassador tools with members of SIDAN Lab, Lidonation, and **Sebastian Aravena**, Cardano Foundation Manager for the Ambassadors program.
+> An additional **Discord Group Chat** has been initiated to communicate and coordinate on the development of the Ambassador tools with members of SIDAN Lab, Lidonation, and **Sebastian Aravena**, Cardano Foundation Manager for the Ambassadors program.
 
 ---
 
@@ -53,7 +53,7 @@ We translated all insights and feedback from Ambassadors into a simple list whic
 
 ---
 
-## Conclusion
+## And thats it for now
 
 The ideation was successful and gave us clear ideas and direction on the tools we want to build, namely two tools:
 
