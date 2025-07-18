@@ -68,3 +68,5 @@ The further steps of this proposal will focus on executing workloads to realize 
 ---
 
 > **Milestone 2 has also been completed** and the project is currently executing **Milestone 3**. The Proof of Achievement (PoA) for Milestone 2 will be submitted after Milestone Reviewers assess and approve Milestone 1.
+
+For more insights, we track our milestone progress on a respective github repository at: https://github.com/sidan-lab/cardano-ambassador-tool/tree/main/catalyst-proposal
