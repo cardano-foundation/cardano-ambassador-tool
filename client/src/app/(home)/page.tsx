@@ -210,9 +210,8 @@ export default function HomePage() {
       />
 
       <div className="flex items-center justify-between">
-        <Paragraph size="sm" className="text-muted-foreground">
-          Showing {displayedAmbassadors.length} of {filteredAmbassadors.length}{" "}
-          Users
+        <Paragraph size="sm" className="text-neutral">
+          Showing {displayedAmbassadors.length} Users
         </Paragraph>
       </div>
 
@@ -240,30 +239,11 @@ export default function HomePage() {
           >
             <Paragraph
               size="base"
-              className="text-xs font-medium text-primary-400"
+              className="text-base font-medium text-primary-400"
             >
               Show more Ambassadors
             </Paragraph>
           </button>
-        </div>
-      )}
-
-      {filteredAmbassadors.length === 0 && (
-        <div className="text-center py-12">
-          <Paragraph size="base" className="text-muted-foreground">
-            No ambassadors found matching your criteria.
-          </Paragraph>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setSearchTerm("");
-              setSelectedRegion("all");
-            }}
-            className="mt-2 text-primary-base hover:text-primary-400"
-          >
-            Clear filters
-          </Button>
         </div>
       )}
     </div>
