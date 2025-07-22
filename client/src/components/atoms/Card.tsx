@@ -75,7 +75,7 @@ export function CardHeader({
           </Title>
         )}
         {subtitle && (
-          <Paragraph size="body-3" className="text-muted-foreground">
+          <Paragraph size="base" className="text-muted-foreground">
             {subtitle}
           </Paragraph>
         )}
