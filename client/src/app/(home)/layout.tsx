@@ -1,13 +1,12 @@
-"use client";
+import React from "react";
+import ToastContainer from "@/components/toast/toast";
 import { ThemeProvider } from "@/components/ThemeToggle";
-import "../app.css";
 import SideNav from "@/components/Navigation/SideNav";
 import Footer from "@/components/Footer";
-import ToastContainer from "@/components/toast/toast";
 
-export default function DefaultLayout({
+export default function HomeLayout({
   children,
-}: Readonly<{
+}:Readonly<{
   children: React.ReactNode;
 }>) {
 
