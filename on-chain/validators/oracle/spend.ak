@@ -28,7 +28,7 @@ validator oracle {
         outputs_at_with_policy(outputs, own_address, oracle_nft_policy),
       )
     is {
-      (RotateAdmin(new_admins, new_admin_tenure), [only_output]) -> {
+      (RotateAdmin { new_admins, new_admin_tenure }, [only_output]) -> {
         let is_new_admins_signed =
           has_all_signers(new_admins, extra_signatories)
 
@@ -44,7 +44,7 @@ validator oracle {
         let is_output_datum_updated = only_output_datum == updated_output_datum
         is_new_admins_signed? && is_output_value_clean? && is_output_datum_updated?
       }
-      (UpdateThreshold(new_threshold), [only_output]) -> {
+      (UpdateThreshold { new_threshold }, [only_output]) -> {
         let is_output_value_clean = value_length(only_output.value) == 2
 
         expect only_output_datum: OracleDatum = output_inline_datum(only_output)

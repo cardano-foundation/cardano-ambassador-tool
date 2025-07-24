@@ -10,7 +10,7 @@ use types.{
   AdminRemoveMember, AdminSignOffProject, MemberDatum, MemberSpendRedeemer,
   MemberUpdateMetadata, OracleDatum,
 }
-use utils.{get_oracle_nft_datum, output_at_with_value}
+use utils.{get_oracle_nft_datum}
 
 validator member(oracle_nft: PolicyId) {
   spend(
@@ -51,8 +51,7 @@ validator member(oracle_nft: PolicyId) {
 
         expect [token_input] = inputs_with(inputs, token.1st, token.2nd)
         let token_owner = token_input.output.address
-        expect [_] =
-          output_at_with_value(outputs, token_owner, token_input.output.value)
+        expect [_] = outputs_at_with(outputs, token_owner, token.1st, token.2nd)
 
         expect Some((policy_id, asset_name, _)) =
           value_policy_info(own_input.output.value, member_token)

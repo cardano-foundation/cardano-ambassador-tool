@@ -2,7 +2,7 @@
   "name": "@sidan-lab/cardano-ambassador-tool",
   "description": "The Typescript SDK for the Cardano Ambassador Tool",
   "license": "Apache-2.0",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "homepage": "https://github.com/sidan-lab/cardano-ambassador-tool",
   "author": {
     "name": "SIDAN Lab",
