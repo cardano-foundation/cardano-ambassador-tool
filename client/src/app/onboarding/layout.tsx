@@ -7,6 +7,7 @@ import Paragraph from "@/components/atoms/Paragraph";
 import Title from "@/components/atoms/Title";
 import AppLogo from "@/components/atoms/Logo";
 import Button from "@/components/atoms/Button";
+import ToastContainer from "@/components/toast/toast";
 
 export default function DefaultLayout({
   children,
@@ -59,6 +60,7 @@ export default function DefaultLayout({
                   </div>
                 </div>
                 {children}
+                <ToastContainer />
                 <div className=" bottom-0 w-full">
                   <Footer />
                 </div>

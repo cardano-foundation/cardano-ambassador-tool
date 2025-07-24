@@ -879,8 +879,8 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="381.063"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="white" stop-opacity="0.2" />
-            <stop offset="1" stopColor="white" stop-opacity="0.5" />
+            <stop stopColor="white" stopOpacity="0.2" />
+            <stop offset="1" stopColor="white" stopOpacity="0.5" />
           </linearGradient>
           <linearGradient
             id="paint1_linear_793_3325"
@@ -890,8 +890,8 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="402.677"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="white" stop-opacity="0.2" />
-            <stop offset="1" stopColor="white" stop-opacity="0.5" />
+            <stop stopColor="white" stopOpacity="0.2" />
+            <stop offset="1" stopColor="white" stopOpacity="0.5" />
           </linearGradient>
           <linearGradient
             id="paint2_linear_793_3325"
@@ -901,8 +901,8 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="424.292"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="white" stop-opacity="0.2" />
-            <stop offset="1" stopColor="white" stop-opacity="0.5" />
+            <stop stopColor="white" stopOpacity="0.2" />
+            <stop offset="1" stopColor="white" stopOpacity="0.5" />
           </linearGradient>
           <linearGradient
             id="paint3_linear_793_3325"
@@ -912,7 +912,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="283.652"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#494C52" stop-opacity="0.7" />
+            <stop stopColor="#494C52" stopOpacity="0.7" />
             <stop offset="1" stopColor="#A4ABB8" />
           </linearGradient>
           <linearGradient
@@ -923,7 +923,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="305.267"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#494C52" stop-opacity="0.7" />
+            <stop stopColor="#494C52" stopOpacity="0.7" />
             <stop offset="1" stopColor="#A4ABB8" />
           </linearGradient>
           <linearGradient
@@ -934,7 +934,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="326.881"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#494C52" stop-opacity="0.7" />
+            <stop stopColor="#494C52" stopOpacity="0.7" />
             <stop offset="1" stopColor="#A4ABB8" />
           </linearGradient>
           <linearGradient
@@ -945,7 +945,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="41.1745"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#494C52" stop-opacity="0.7" />
+            <stop stopColor="#494C52" stopOpacity="0.7" />
             <stop offset="1" stopColor="#A4ABB8" />
           </linearGradient>
           <linearGradient
@@ -956,7 +956,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="62.8475"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#494C52" stop-opacity="0.7" />
+            <stop stopColor="#494C52" stopOpacity="0.7" />
             <stop offset="1" stopColor="#A4ABB8" />
           </linearGradient>
           <linearGradient
@@ -967,7 +967,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="84.4618"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#494C52" stop-opacity="0.7" />
+            <stop stopColor="#494C52" stopOpacity="0.7" />
             <stop offset="1" stopColor="#A4ABB8" />
           </linearGradient>
           <linearGradient
@@ -978,7 +978,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
             y2="122.55"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="white" stop-opacity="0" />
+            <stop stopColor="white" stopOpacity="0" />
             <stop offset="0.6" stopColor="white" />
           </linearGradient>
         </defs>

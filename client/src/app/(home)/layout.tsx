@@ -3,13 +3,13 @@ import { ThemeProvider } from "@/components/ThemeToggle";
 import "../app.css";
 import SideNav from "@/components/Navigation/SideNav";
 import Footer from "@/components/Footer";
+import ToastContainer from "@/components/toast/toast";
 
 export default function DefaultLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const handleNavigationClick = () => {};
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -38,10 +38,11 @@ export default function DefaultLayout({
       <body>
         <ThemeProvider>
           <div className="min-h-screen flex">
-            <SideNav onItemClick={handleNavigationClick} />
+            <SideNav />
             <div className="flex-1 min-h-screen ">
               {" "}
               {children}
+              <ToastContainer />
               <div className="sticky bottom-0">
                 <Footer />
               </div>

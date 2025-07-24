@@ -54,3 +54,6 @@ ehthumbs.db
 # Husky hooks - should never be committed
 .husky/
 .husky/*.husky/
+
+.env*
+!.env.example

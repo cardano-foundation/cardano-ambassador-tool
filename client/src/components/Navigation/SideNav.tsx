@@ -60,14 +60,13 @@ interface NavigationItem {
 interface SideNavigationProps {
   items?: NavigationItem[];
   activeItemId?: string;
-  onItemClick?: (item: NavigationItem) => void;
   className?: string;
 }
 
 const defaultNavigationItems: NavigationItem[] = [
   { id: "home", label: "Home", href: "/", active: true },
   { id: "learn", label: "Learn", href: "/learn" },
-  { id: "ambassador", label: "Become an Ambassador", href: "/onboarding" },
+  { id: "ambassador", label: "Become an Ambassador", href: "/onboarding/sign-up" },
   { id: "about", label: "About", href: "/about" },
   { id: "ambassadors1", label: "Ambassadors", href: "/ambassadors" },
 ];
