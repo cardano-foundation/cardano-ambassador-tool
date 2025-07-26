@@ -55,3 +55,6 @@ The development and coordination of the tools happens in close synchronisation a
 
 Notice:
 > No funds are allocated to the Cardano Foundation
+
+
+And thats it for now, the work on Milestone 3 is in full progress. Thanks for your review and assessment, we hope that all information is provided to approve of the completion of the second milestone of this proposal
