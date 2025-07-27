@@ -3,13 +3,14 @@ import ToastContainer from "@/components/toast/toast";
 import { ThemeProvider } from "@/components/ThemeToggle";
 import SideNav from "@/components/Navigation/SideNav";
 import Footer from "@/components/Footer";
+import "../app.css";
+import TopNavBar from "@/components/Navigation/TopNavBar";
 
 export default function HomeLayout({
   children,
-}:Readonly<{
+}: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -40,9 +41,12 @@ export default function HomeLayout({
             <SideNav />
             <div className="flex-1 min-h-screen ">
               {" "}
+              <div className="sticky top-0 z-20">
+                <TopNavBar />
+              </div>
               {children}
               <ToastContainer />
-              <div className="sticky bottom-0">
+              <div className=" bottom-0">
                 <Footer />
               </div>
             </div>

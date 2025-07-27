@@ -33,9 +33,9 @@ export default function Button({
         variant === "nav"
           ? {}
           : {
-              "h-9 px-4 text-sm": size === "sm",
-              "h-11 px-6 text-sm": size === "md",
-              "h-12 px-8 text-base": size === "lg",
+              "py-2 px-4 text-sm": size === "sm",
+              "py-3 px-6 text-sm": size === "md",
+              "py-4 px-8 text-base": size === "lg",
             },
 
         {
@@ -44,9 +44,9 @@ export default function Button({
         },
 
         {
-          "bg-primary-base text-white hover:bg-primary-400":
+          "bg-primary-base text-white hover:bg-primary-400 primary":
             variant === "primary",
-          "bg-primary-50 text-primary-base border-2 border-primary-base":
+          "bg-primary-50 text-primary-base border-2 border-primary-base secondary":
             variant === "secondary",
           "bg-muted border-2 border-primary-base text-primary-base":
             variant === "outline",

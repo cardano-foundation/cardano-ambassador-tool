@@ -1,8 +1,6 @@
-/* src/app.css */
 
 @import "tailwindcss";
 @import './font.css';
-/* Keep your font import */
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -158,6 +156,24 @@ textarea,
     box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--color-text-primary);
+}
+
+/* Primary button: white text always */
+button.primary {
+  color: white;
+}
+
+/* Secondary button default (light mode) */
+button.secondary {
+  color: var(--color-text-primary);
+  /* Or any other default */
+}
+
+/* Dark mode styles for secondary */
+@media (prefers-color-scheme: dark) {
+  button.secondary {
+    color: red;
+  }
 }
 
 input:not([tabindex]),

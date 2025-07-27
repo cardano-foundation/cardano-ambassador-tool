@@ -78,11 +78,11 @@ const SubmitIntent = () => {
           </Paragraph>
         </div>
 
-        <div className="pt-2  w-ful">
+        {/* <div className="pt-2  w-full">
           <Button variant="primary" className="w-full">
             Create Account
           </Button>
-        </div>
+        </div> */}
       </div>
     </>
   );

@@ -28,7 +28,7 @@ export default function Card({
     <div
       className={cn(
         "bg-card rounded-xl shadow-[0px_3px_4px_rgba(0,0,0,0.03)]",
-        "outline outline-1 outline-offset-[-1px] outline-border",
+        "outline-1 outline-offset-[-1px] outline-border",
         "transition-all duration-200 ease-in-out",
 
         {

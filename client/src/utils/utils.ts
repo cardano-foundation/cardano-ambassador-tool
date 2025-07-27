@@ -20,9 +20,20 @@ import {
   CATConstants,
 } from "@sidan-lab/cardano-ambassador-tool";
 import { BlockfrostService } from "@/services";
+import { toast } from "@/components/toast/toast-manager";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function copyToClipboard(text: string) {
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      toast.success("Copied!", text)
+    })
+    .catch(err => {
+      toast.error("Failed to copy:", err)
+    });
 }
 
 
