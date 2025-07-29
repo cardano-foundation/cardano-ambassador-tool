@@ -9,8 +9,8 @@ interface ParagraphProps extends HTMLAttributes<HTMLElement> {
 const paragraphSizes = {
   xl: "text-xl font-medium leading-[30px]",
   lg: "text-lg font-normal leading-[28px]",
-  base: "text-base font-normal leading-[16px]",
-  sm: "text-sm font-normal leading-[16px]",
+  base: "text-base font-normal leading-[24px]",
+  sm: "text-sm font-normal leading-[24px]",
   xs: "text-xs font-normal leading-[16px]",
 } as const;
 
@@ -23,11 +23,7 @@ export default function Paragraph({
 }: ParagraphProps) {
   return (
     <Component
-      className={cn(
-        "",
-        paragraphSizes[size],
-        className
-      )}
+      className={cn('leading-[28px]', paragraphSizes[size], className)}
       {...props}
     >
       {children}

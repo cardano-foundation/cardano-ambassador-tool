@@ -6,12 +6,13 @@ interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
 }
 
 const titleSizes = {
-  "1": "text-[72px] leading-[68px]",
-  "2": "text-[48px] leading-[52px]",
-  "3": "text-[44px] leading-[52px]",
-  "4": "text-[40px] leading-[44px]",
-  "5": "text-[32px] leading-[40px]",
-  "6": "text-[27px] leading-[32px]",
+  '1': 'text-[72px] leading-[68px]',
+  '2': 'text-[48px] leading-[52px]',
+  '3': 'text-[44px] leading-[52px]',
+  '4': 'text-[40px] leading-[44px]',
+  '5': 'text-[32px] leading-[40px]',
+  '6': 'text-[27px] leading-[32px]',
+  '7': 'text-[24px] leading-[32px]',
 } as const;
 
 export default function Title({

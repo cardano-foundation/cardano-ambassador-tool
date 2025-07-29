@@ -14,8 +14,8 @@ type WalletListProps = {
 
 const WalletList = ({ onConnected, onDisconnected }: WalletListProps) => {
   const isFirstRender = useRef(true);
-  // const hasConnectedRef = useRef(false);
-  // const hasDisconnectedRef = useRef(false);
+  const hasConnectedRef = useRef(false);
+  const hasDisconnectedRef = useRef(false);
 
   const walletList = useWalletList();
   const { connected, name, connecting, connect, disconnect, error, address } =
@@ -38,12 +38,13 @@ const WalletList = ({ onConnected, onDisconnected }: WalletListProps) => {
       return;
     }
 
-    // if (connected && !hasConnectedRef.current && address) {
-    //   hasConnectedRef.current = true;
-    //   hasDisconnectedRef.current = false;
-    //   toast.success('Success!', 'Wallet connected');
-    //   onConnected?.(address);
-    // }
+    if (connected && !hasConnectedRef.current && address) {
+      hasConnectedRef.current = true;
+      hasDisconnectedRef.current = false;
+      toast.success('Success!', 'Wallet connected');
+      onConnected?.(address);
+    }
+    
 
     // if (!connected && !hasDisconnectedRef.current) {
     //   hasDisconnectedRef.current = true;
@@ -70,7 +71,7 @@ const WalletList = ({ onConnected, onDisconnected }: WalletListProps) => {
                 e.stopPropagation();
                 disconnect();
                 connect(wallet.id, true);
-                console.log({ name });
+                console.log({ wallet });
               }}
             >
               <Image

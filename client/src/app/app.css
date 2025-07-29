@@ -172,7 +172,7 @@ button.secondary {
 /* Dark mode styles for secondary */
 @media (prefers-color-scheme: dark) {
   button.secondary {
-    color: red;
+    color: var(--color-text-primary);
   }
 }
 

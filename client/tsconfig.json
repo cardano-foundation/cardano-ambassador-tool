@@ -34,6 +34,9 @@
       ],
       "@services/*": [
         "./src/services/*"
+      ],
+      "@types": [
+        "./types.ts"
       ]
     }
   },
