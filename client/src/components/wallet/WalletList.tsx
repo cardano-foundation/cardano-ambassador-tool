@@ -7,7 +7,9 @@ import Button from '../atoms/Button';
 import { toast } from '../toast/toast-manager';
 
 const WalletList = () => {
+  
   const walletList = useWalletList();
+
   const { connected, name, connecting, connect, disconnect } = useWallet();
 
   return (
