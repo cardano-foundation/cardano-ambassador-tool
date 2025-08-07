@@ -102,7 +102,6 @@ function SignUp() {
   async function getAssetsDetails() {
     const utxos = await wallet.getUtxos();
     const assets = await wallet.getPolicyIdAssets(policyId);
-       console.log({ policyId });
 
     // Flatten UTXOs and filter for assets that match policyId
     const utxoAssets = utxos.flatMap((utxo) =>

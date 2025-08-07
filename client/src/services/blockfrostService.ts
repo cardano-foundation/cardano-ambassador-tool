@@ -4,7 +4,7 @@ export class BlockfrostService {
   fetchUtxo = async (txHash: string, outputIndex: number): Promise<UTxO> => {
     try {
       const response = await fetch("/api/blockfrost", {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
@@ -30,7 +30,7 @@ export class BlockfrostService {
   fetchAddressUTxOs = async (address: string): Promise<UTxO[]> => {
     try {
       const response = await fetch("/api/blockfrost", {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },

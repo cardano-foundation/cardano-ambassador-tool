@@ -1,3 +1,4 @@
+'use client';
 
 import Button from '@/components/atoms/Button';
 import { CardHeader } from '@/components/atoms/Card';
@@ -5,11 +6,10 @@ import Checkbox from '@/components/atoms/Checkbox';
 import Input from '@/components/atoms/Input';
 import Paragraph from '@/components/atoms/Paragraph';
 import TextArea from '@/components/atoms/TextArea';
-import { useState } from 'react';
+import { applyMembership } from '@/services/memberService';
 import { useWallet } from '@meshsdk/react';
 import { MemberTokenDetail } from '@types';
-import { applyMembership } from '@/services/memberService';
-
+import { useState } from 'react';
 
 const SubmitIntent = ({ asset }: { asset?: MemberTokenDetail }) => {
   const { address, wallet } = useWallet();
@@ -27,7 +27,8 @@ const SubmitIntent = ({ asset }: { asset?: MemberTokenDetail }) => {
   });
 
   const handleSubmit = async () => {
-    if (!wallet || !address || !asset?.txHash || asset.outputIndex === null) return;
+    if (!wallet || !address || !asset?.txHash || asset.outputIndex === null)
+      return;
 
     const payload = {
       tokenUtxoHash: asset.txHash,
