@@ -1,7 +1,11 @@
-"use client";
-import React, { useState } from "react";
-import Link from "next/link";
-import AppLogo from "../atoms/Logo";
+'use client';
+import Title from '@/components/atoms/Title';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import AppLogo from '../atoms/Logo';
+import SettingsIcon from '../atoms/SettingsIcon';
+import UsersIcon from '../atoms/UsersIcon';
 
 const GridIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -52,65 +56,186 @@ interface NavigationItem {
   id: string;
   label: string;
   href: string;
-  icon?: React.ComponentType;
+  icon?: React.ComponentType<{ className?: string }>;
   active?: boolean;
   onClick?: () => void;
 }
 
-interface SideNavigationProps {
-  items?: NavigationItem[];
-  activeItemId?: string;
-  className?: string;
+interface NavigationSection {
+  title?: string;
+  items: NavigationItem[];
 }
 
-const defaultNavigationItems: NavigationItem[] = [
-  { id: "home", label: "Home", href: "/", active: true },
-  { id: "learn", label: "Learn", href: "/learn" },
-  { id: "ambassador", label: "Become an Ambassador", href: "/onboarding/sign-up" },
-  { id: "about", label: "About", href: "/about" },
-  { id: "ambassadors1", label: "Ambassadors", href: "/ambassadors" },
+interface SideNavigationProps {
+  sections?: NavigationSection[];
+  activeItemId?: string;
+  className?: string;
+  isAdmin?: boolean;
+}
+
+const defaultNavigationSections: NavigationSection[] = [
+  {
+    items: [
+      { id: 'home', label: 'Home', href: '/', icon: GridIcon },
+      { id: 'learn', label: 'Learn', href: '/learn', icon: GridIcon },
+      { id: 'about', label: 'About', href: '/about', icon: GridIcon },
+      {
+        id: 'ambassador',
+        label: 'Become an Ambassador',
+        href: '/sign-up',
+        icon: GridIcon,
+      },
+    ],
+  },
 ];
 
+const memberToolsSection: NavigationSection = {
+  title: 'Member Tools',
+  items: [
+    {
+      id: 'submissions',
+      label: 'Submissions',
+      href: '/dashboard/submissions',
+      icon: UsersIcon,
+    },
+    {
+      id: 'dashboard',
+      label: 'Profile',
+      href: '/dashboard',
+      icon: SettingsIcon,
+    },
+  ],
+};
+
+const adminToolsSection: NavigationSection = {
+  title: 'Admin Tools',
+  items: [
+    {
+      id: 'manage-ambassadors',
+      label: 'Manage Ambassadors',
+      href: '/manage/ambassadors',
+      icon: UsersIcon,
+    },
+    {
+      id: 'membership-intent',
+      label: 'Membership intent',
+      href: '/manage/membership',
+      icon: SettingsIcon,
+    },
+    {
+      id: 'proposal-intent',
+      label: 'Proposal intent',
+      href: '/manage/proposals',
+      icon: SettingsIcon,
+    },
+  ],
+};
+
 const SideNav: React.FC<SideNavigationProps> = ({
-  items = defaultNavigationItems,
-  activeItemId = " ",
-  className = "",
+  sections = defaultNavigationSections,
+  activeItemId = '',
+  className = '',
+  isAdmin = true,
 }) => {
-  const [currentActiveId] = useState(activeItemId);
+  const pathname = usePathname();
+  const getInitialActiveId = () => {
+    const allItems = [
+      ...defaultNavigationSections.flatMap((s) => s.items),
+      ...memberToolsSection.items,
+      ...adminToolsSection.items,
+    ];
+    const matchingItem = allItems.find((item) => item.href === pathname);
+    return matchingItem?.id || activeItemId || '';
+  };
+
+  const [currentActiveId, setCurrentActiveId] = useState(getInitialActiveId);
+
+  useEffect(() => {
+    const allItems = [
+      ...defaultNavigationSections.flatMap((s) => s.items),
+      ...memberToolsSection.items,
+      ...adminToolsSection.items,
+    ];
+
+    const matchingItem = allItems.find((item) => item.href === pathname);
+    if (matchingItem) {
+      setCurrentActiveId(matchingItem.id);
+    }
+  }, [pathname]);
+
+  const allSections = [...sections];
+
+  if (isAdmin) {
+    allSections.push(adminToolsSection);
+    allSections.push(memberToolsSection);
+  } else {
+    allSections.push(memberToolsSection);
+  }
 
   return (
     <div
-      className={`w-80 bg-background border-r border-border h-screen sticky top-0 hidden lg:block ${className}`}
+      className={`bg-background border-border sticky top-0 hidden h-screen w-80 border-r lg:block ${className}`}
     >
-      <div className=" p-6 flex justify-start items-center">
+      <div className="flex items-center justify-start p-6">
         <AppLogo />
       </div>
-      <div className="py-6">
-        <nav className="space-y-1">
-          {items.map((item) => {
-            const IconComponent = item.icon || GridIcon;
-            const isActive = item.id === currentActiveId;
 
-            return (
-              <Link
-                prefetch
-                key={item.id}
-                href={item.href}
-                className={`w-full flex items-center space-x-3 px-6 py-3 text-left rounded-r-lg transition-colors duration-200 hover:bg-muted group ${
-                  isActive ? "bg-muted" : ""
-                }`}
-              >
-                {" "}
-                <div className="w-5 h-5 flex items-center justify-center text-muted-foreground group-hover:text-foreground flex-shrink-0">
-                  <IconComponent />{" "}
-                </div>{" "}
-                <span className="text-base font-normal text-neutral flex-1 text-left">
-                  {item.label}{" "}
-                </span>
-              </Link>
-            );
-          })}
-        </nav>
+      <div className="space-y-8 py-6">
+        {allSections.map((section, sectionIndex) => (
+          <div key={sectionIndex}>
+
+            {section.title && (
+              <div className="mb-3 px-6">
+                <Title
+                  level="3"
+                  className="text-neutral text-base leading-normal font-normal tracking-wide"
+                >
+                  {section.title}
+                </Title>
+              </div>
+            )}
+
+            <nav className="space-y-1">
+              {section.items.map((item) => {
+                const IconComponent = item.icon || GridIcon;
+                const isActive = item.id === currentActiveId;
+
+                return (
+                  <Link
+                    prefetch
+                    key={item.id}
+                    href={item.href}
+                    className={`hover:bg-muted group flex w-full items-center space-x-3 rounded-r-lg px-6 py-3 text-left transition-colors duration-200 ${
+                      isActive ? 'bg-muted' : ''
+                    }`}
+                  >
+                    <div
+                      className={`flex h-5 w-5 flex-shrink-0 items-center justify-center transition-colors duration-200 ${
+                        isActive ? 'text-primary' : 'text-muted-foreground'
+                      }`}
+                    >
+                      <IconComponent className="h-5 w-5" />
+                    </div>
+                    <span
+                      className={`flex-1 text-left text-base transition-colors duration-200 ${
+                        isActive
+                          ? 'text-primary font-medium'
+                          : 'text-neutral font-medium'
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {sectionIndex === 0 && (
+              <div className="border-border mx-6 mt-6 border-b"></div>
+            )}
+
+          </div>
+        ))}
       </div>
     </div>
   );
