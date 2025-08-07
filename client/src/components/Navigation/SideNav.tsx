@@ -1,7 +1,8 @@
 'use client';
 import Title from '@/components/atoms/Title';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import AppLogo from '../atoms/Logo';
 import SettingsIcon from '../atoms/SettingsIcon';
 import UsersIcon from '../atoms/UsersIcon';
@@ -75,7 +76,7 @@ interface SideNavigationProps {
 const defaultNavigationSections: NavigationSection[] = [
   {
     items: [
-      { id: 'home', label: 'Home', href: '/', icon: GridIcon, active: true },
+      { id: 'home', label: 'Home', href: '/', icon: GridIcon },
       { id: 'learn', label: 'Learn', href: '/learn', icon: GridIcon },
       { id: 'about', label: 'About', href: '/about', icon: GridIcon },
       {
@@ -136,7 +137,31 @@ const SideNav: React.FC<SideNavigationProps> = ({
   className = '',
   isAdmin = true,
 }) => {
-  const [currentActiveId] = useState(activeItemId);
+  const pathname = usePathname();
+  const getInitialActiveId = () => {
+    const allItems = [
+      ...defaultNavigationSections.flatMap(s => s.items),
+      ...memberToolsSection.items,
+      ...adminToolsSection.items
+    ];
+    const matchingItem = allItems.find(item => item.href === pathname);
+    return matchingItem?.id || activeItemId || '';
+  };
+
+  const [currentActiveId, setCurrentActiveId] = useState(getInitialActiveId);
+
+  useEffect(() => {
+    const allItems = [
+      ...defaultNavigationSections.flatMap(s => s.items),
+      ...memberToolsSection.items,
+      ...adminToolsSection.items
+    ];
+
+    const matchingItem = allItems.find(item => item.href === pathname);
+    if (matchingItem) {
+      setCurrentActiveId(matchingItem.id);
+    }
+  }, [pathname]);
 
   const allSections = [...sections];
 
@@ -182,10 +207,22 @@ const SideNav: React.FC<SideNavigationProps> = ({
                       isActive ? 'bg-muted' : ''
                     }`}
                   >
-                    <div className="text-muted-foreground group-hover:text-foreground flex h-5 w-5 flex-shrink-0 items-center justify-center">
+                    <div
+                      className={`flex h-5 w-5 flex-shrink-0 items-center justify-center transition-colors duration-200 ${
+                        isActive
+                          ? 'text-primary'
+                          : 'text-muted-foreground'
+                      }`}
+                    >
                       <IconComponent className="h-5 w-5" />
                     </div>
-                    <span className="text-neutral flex-1 text-left text-base font-normal">
+                    <span
+                      className={`flex-1 text-left text-base transition-colors duration-200 ${
+                        isActive
+                          ? 'text-primary font-medium'
+                          : 'text-neutral font-medium'
+                      }`}
+                    >
                       {item.label}
                     </span>
                   </Link>
