@@ -1,8 +1,8 @@
 'use client';
 import Title from '@/components/atoms/Title';
 import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import AppLogo from '../atoms/Logo';
 import SettingsIcon from '../atoms/SettingsIcon';
 import UsersIcon from '../atoms/UsersIcon';
@@ -82,7 +82,7 @@ const defaultNavigationSections: NavigationSection[] = [
       {
         id: 'ambassador',
         label: 'Become an Ambassador',
-        href: '/onboarding/sign-up',
+        href: '/sign-up',
         icon: GridIcon,
       },
     ],
@@ -95,13 +95,13 @@ const memberToolsSection: NavigationSection = {
     {
       id: 'submissions',
       label: 'Submissions',
-      href: '/members/submissions',
+      href: '/dashboard/submissions',
       icon: UsersIcon,
     },
     {
-      id: 'profile',
+      id: 'dashboard',
       label: 'Profile',
-      href: '/members/profile',
+      href: '/dashboard',
       icon: SettingsIcon,
     },
   ],
@@ -113,19 +113,19 @@ const adminToolsSection: NavigationSection = {
     {
       id: 'manage-ambassadors',
       label: 'Manage Ambassadors',
-      href: '/admin/ambassadors',
+      href: '/manage/ambassadors',
       icon: UsersIcon,
     },
     {
       id: 'membership-intent',
       label: 'Membership intent',
-      href: '/admin/membership',
+      href: '/manage/membership',
       icon: SettingsIcon,
     },
     {
       id: 'proposal-intent',
       label: 'Proposal intent',
-      href: '/admin/proposals',
+      href: '/manage/proposals',
       icon: SettingsIcon,
     },
   ],
@@ -140,11 +140,11 @@ const SideNav: React.FC<SideNavigationProps> = ({
   const pathname = usePathname();
   const getInitialActiveId = () => {
     const allItems = [
-      ...defaultNavigationSections.flatMap(s => s.items),
+      ...defaultNavigationSections.flatMap((s) => s.items),
       ...memberToolsSection.items,
-      ...adminToolsSection.items
+      ...adminToolsSection.items,
     ];
-    const matchingItem = allItems.find(item => item.href === pathname);
+    const matchingItem = allItems.find((item) => item.href === pathname);
     return matchingItem?.id || activeItemId || '';
   };
 
@@ -152,12 +152,12 @@ const SideNav: React.FC<SideNavigationProps> = ({
 
   useEffect(() => {
     const allItems = [
-      ...defaultNavigationSections.flatMap(s => s.items),
+      ...defaultNavigationSections.flatMap((s) => s.items),
       ...memberToolsSection.items,
-      ...adminToolsSection.items
+      ...adminToolsSection.items,
     ];
 
-    const matchingItem = allItems.find(item => item.href === pathname);
+    const matchingItem = allItems.find((item) => item.href === pathname);
     if (matchingItem) {
       setCurrentActiveId(matchingItem.id);
     }
@@ -167,6 +167,7 @@ const SideNav: React.FC<SideNavigationProps> = ({
 
   if (isAdmin) {
     allSections.push(adminToolsSection);
+    allSections.push(memberToolsSection);
   } else {
     allSections.push(memberToolsSection);
   }
@@ -182,6 +183,7 @@ const SideNav: React.FC<SideNavigationProps> = ({
       <div className="space-y-8 py-6">
         {allSections.map((section, sectionIndex) => (
           <div key={sectionIndex}>
+
             {section.title && (
               <div className="mb-3 px-6">
                 <Title
@@ -209,9 +211,7 @@ const SideNav: React.FC<SideNavigationProps> = ({
                   >
                     <div
                       className={`flex h-5 w-5 flex-shrink-0 items-center justify-center transition-colors duration-200 ${
-                        isActive
-                          ? 'text-primary'
-                          : 'text-muted-foreground'
+                        isActive ? 'text-primary' : 'text-muted-foreground'
                       }`}
                     >
                       <IconComponent className="h-5 w-5" />
@@ -229,9 +229,11 @@ const SideNav: React.FC<SideNavigationProps> = ({
                 );
               })}
             </nav>
+
             {sectionIndex === 0 && (
               <div className="border-border mx-6 mt-6 border-b"></div>
             )}
+
           </div>
         ))}
       </div>
