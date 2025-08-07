@@ -1,13 +1,29 @@
 import type { NextConfig } from "next";
+import CopyPlugin from 'copy-webpack-plugin';
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@foxglove/crc'],
   reactStrictMode: true,
-  webpack: function (config) {
+  webpack: function (config, { isServer }) {
+
     config.experiments = {
       asyncWebAssembly: true,
       layers: true,
     };
+
+    if (isServer) {
+      config.plugins.push(
+        new CopyPlugin({
+          patterns: [
+            {
+              from: './public/whisky_js_bg.wasm',
+              to: '../server/vendor-chunks/whisky_js_bg.wasm',
+              noErrorOnMissing: true,
+            },
+          ],
+        })
+      );
+    }
+
     return config;
   },
 };

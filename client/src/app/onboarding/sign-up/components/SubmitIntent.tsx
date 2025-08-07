@@ -8,7 +8,7 @@ import TextArea from '@/components/atoms/TextArea';
 import { useState } from 'react';
 import { useWallet } from '@meshsdk/react';
 import { MemberTokenDetail } from '@types';
-import { applyMembership } from '@/services';
+import { applyMembership } from '@/services/memberService';
 
 
 const SubmitIntent = ({ asset }: { asset?: MemberTokenDetail }) => {

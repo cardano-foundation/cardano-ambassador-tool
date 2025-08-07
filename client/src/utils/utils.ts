@@ -18,8 +18,8 @@ import {
   ProposalDatum,
   ProposalMetadata,
 } from "@sidan-lab/cardano-ambassador-tool";
-import { BlockfrostService } from "@/services";
 import { toast } from "@/components/toast/toast-manager";
+import { BlockfrostService } from "@/services/blockfrostService";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -462,3 +462,11 @@ export function shortenString(address: string) {
   if (!address) return '';
   return `${address.substring(0, 15)}...${address.substring(address.length - 8)}`;
 };
+
+
+
+
+
+
+
+

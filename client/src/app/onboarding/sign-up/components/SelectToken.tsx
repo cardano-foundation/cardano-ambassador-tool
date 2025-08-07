@@ -9,68 +9,23 @@ import { hexToString } from '@meshsdk/core';
 import { useWallet } from '@meshsdk/react';
 import { MemberTokenDetail } from '@types';
 import { Copy, ExternalLink } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 const SelectToken = ({
   setAsset,
   goNext,
   goBack,
+  walletAssets,
+  setSelectedAssetName,
+  selectedAssetName,
 }: {
   setAsset: (asset: MemberTokenDetail | undefined) => void;
   goBack?: () => void;
   goNext?: () => void;
+  walletAssets: MemberTokenDetail[];
+  setSelectedAssetName: (name: string | null) => void;
+  selectedAssetName: string | null;
 }) => {
-  const { address, wallet } = useWallet();
-  const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
-
-  const [walletAssets, setWalletAssets] = useState<MemberTokenDetail[]>([]);
-  const [selectedAssetName, setSelectedAssetName] = useState<string | null>(
-    null,
-  );
-
-  useEffect(() => {
-    const fetchAssets = async () => {
-      if (wallet) {
-        const assets = await getAssetsDetails();
-        setWalletAssets(assets);
-      }
-    };
-
-    fetchAssets();
-  }, [wallet, address]);
-
-  async function getAssetsDetails() {
-    const utxos = await wallet.getUtxos();
-    const assets = await wallet.getPolicyIdAssets(policyId);
-
-    console.log({ utxos, assets, policyId });
-
-    // Flatten UTXOs and filter for assets that match policyId
-    const utxoAssets = utxos.flatMap((utxo) =>
-      utxo.output.amount
-        .filter((amt) => amt.unit.startsWith(policyId))
-        .map((amt) => ({
-          unit: amt.unit,
-          quantity: amt.quantity,
-          txHash: utxo.input.txHash,
-          outputIndex: utxo.input.outputIndex,
-        })),
-    );
-
-    // Enrich the wallet assets with matching UTXO info
-    const enrichedAssets = assets.map((asset) => {
-      const matchingUtxo = utxoAssets.find(
-        (utxoAsset) => utxoAsset.unit === asset.unit,
-      );
-      return {
-        ...asset,
-        txHash: matchingUtxo?.txHash || null,
-        outputIndex: matchingUtxo?.outputIndex ?? null,
-      };
-    });
-
-    return enrichedAssets;
-  }
+  const { address } = useWallet();
 
   return (
     <>
@@ -107,7 +62,7 @@ const SelectToken = ({
                 className="group border-white-400 hover:border-primary-base/30 peer-checked:border-primary-base/30 flex w-full cursor-pointer items-start gap-4 rounded-lg border px-5 py-4 text-sm transition-all"
               >
                 <div className="group-peer-checked:border-primary mt-1.5 flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors">
-                  <div className="group-peer-checked:bg-primary group-peer-checked:block hidden size-2 rounded-full bg-white transition-colors" />
+                  <div className="group-peer-checked:bg-primary hidden size-2 rounded-full bg-white transition-colors group-peer-checked:block" />
                 </div>
 
                 {/* Token Info */}

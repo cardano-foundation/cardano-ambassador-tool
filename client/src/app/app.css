@@ -138,7 +138,7 @@ body {
 |
 */
 button,
-input,
+input:not([type="radio"]),
 select,
 textarea,
 [role="button"],
@@ -176,7 +176,7 @@ button.secondary {
   }
 }
 
-input:not([tabindex]),
+input:not([tabindex]):not([type="radio"]),
 select:not([tabindex]),
 textarea:not([tabindex]) {
   background-color: var(--color-muted);

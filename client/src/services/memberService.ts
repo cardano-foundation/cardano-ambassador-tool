@@ -10,7 +10,7 @@ const ORACLE_OUTPUT_INDEX = parseInt(
     process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0"
 );
 
-const blockfrost = getProvider();
+const blockfrost =  getProvider();
 
 export const applyMembership = async (payload: MembershipIntentPayoad) => {
         const { tokenUtxoHash, tokenUtxoIndex, address, wallet, tokenPolicyId, tokenAssetName, userMetadata } = payload;

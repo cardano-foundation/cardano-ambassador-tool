@@ -24,5 +24,6 @@
   },
   "compileOnSave": false,
   "exclude": ["node_modules", "dist"],
-  "include": ["src", "src/lib"]
+  "include": ["src", "src/lib",
+    "src/workers/**/*.ts"]
 }

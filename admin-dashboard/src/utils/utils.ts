@@ -127,7 +127,7 @@ export function parseMemberDatum(
     const assetName = datum.fields[0].list[1].bytes;
 
     const completion: Map<ProposalData, number> = new Map();
-    datum.fields[1].map.forEach((item) => {
+    datum.fields[1].map.forEach((item: { k: { fields: { bytes: string; }[]; }; v: { int: any; }; }) => {
       completion.set(
         {
           projectDetails: hexToString(item.k.fields[0].bytes),
@@ -227,7 +227,7 @@ async function fetchAndValidateUtxos<T>(
  * Fetches membership intent UTxOs
  * @returns Array of valid membership intent UTxOs
  */
-export async function fetchMembershipIntentUtxos(): Promise<UTxO[]> {
+export async function fetchMembershipIntentUtxos(): Promise<UTxO[]> {  
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     parseMembershipIntentDatum,
@@ -424,6 +424,7 @@ export async function findTokenUtxoByMembershipIntentUtxo(
     const datum: MembershipIntentDatum = deserializeDatum(
       membershipIntentUtxo.output.plutusData
     );
+    
     const metadataPluts: MembershipMetadata = datum.fields[1];
     const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
     const policyId = datum.fields[0].list[0].bytes;

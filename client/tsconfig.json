@@ -37,7 +37,7 @@
       ],
       "@types": [
         "./types.ts"
-      ]
+      ],
     }
   },
   "include": [
@@ -45,7 +45,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "utxoSync.worker.ts"  ],
   "exclude": [
     "node_modules"
   ]

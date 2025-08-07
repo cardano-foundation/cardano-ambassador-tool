@@ -48,10 +48,9 @@ export default function Button({
             variant === 'primary',
           'bg-primary-50 text-primary-base border-primary-base secondary border-2':
             variant === 'secondary',
-          ' border-primary-base text-primary-base border-2':
+          'border-primary-base text-primary-base border-2':
             variant === 'outline',
-          'text-black-500 shadow-[0px_0px_8px_rgba(0,0,0,0.15)]':
-            variant === 'ghost',
+          'text-black-500 border-white-400 border': variant === 'ghost',
           'hover:bg-muted text-foreground bg-white-400': variant === 'nav',
         },
         fullWidth && 'w-full',

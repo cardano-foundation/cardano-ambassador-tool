@@ -1,13 +1,13 @@
-"use client";
-import React from "react";
-import ThemeToggle from "@/components/ThemeToggle";
-import Button from "@/components/atoms/Button";
-import NotificationIcon from "@/components/atoms/NotificationIcon";
-import Breadcrumb from "@/components/atoms/Breadcrumbs";
+'use client';
+import ThemeToggle from '@/components/ThemeToggle';
+import Breadcrumb from '@/components/atoms/Breadcrumbs';
+import Button from '@/components/atoms/Button';
+import NotificationIcon from '@/components/atoms/NotificationIcon';
+import UserAvatar from '../atoms/UserAvatar';
 
 export default function TopNavBar() {
   return (
-    <div className="bg-background px-3 sm:px-6 py-4 sm:py-6 flex items-center justify-between ">
+    <div className="bg-background flex items-center justify-between px-3 py-4 sm:px-6 sm:py-6">
       <div className="flex-shrink-0">
         <Breadcrumb />
       </div>
@@ -16,13 +16,11 @@ export default function TopNavBar() {
         <Button
           variant="outline"
           size="sm"
-          className="p-2 bg-background border-none"
+          className="bg-background border-none p-2"
         >
           <NotificationIcon />
         </Button>
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center flex-shrink-0">
-          <span className="text-white text-sm font-semibold">JD</span>
-        </div>
+        <UserAvatar size="size-8" name={'kk'} />
       </div>
     </div>
   );

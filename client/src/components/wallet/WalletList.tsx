@@ -3,56 +3,12 @@
 import { useWallet, useWalletList } from '@meshsdk/react';
 import { X } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useRef } from 'react';
 import Button from '../atoms/Button';
 import { toast } from '../toast/toast-manager';
 
-type WalletListProps = {
-  onConnected?: (wallet: string) => void;
-  onDisconnected?: () => void;
-};
-
-const WalletList = ({ onConnected, onDisconnected }: WalletListProps) => {
-  const isFirstRender = useRef(true);
-  const hasConnectedRef = useRef(false);
-  const hasDisconnectedRef = useRef(false);
-
+const WalletList = () => {
   const walletList = useWalletList();
-  const { connected, name, connecting, connect, disconnect, error, address } =
-    useWallet();
-
-  // Show error toast
-  useEffect(() => {
-    if (!error) return;
-
-    return toast.error(
-      'Wallet Error!',
-      `${error.toString().replace('[BrowserWallet] ', '').replace('Error: ', '')}`,
-    );
-  }, [error]);
-
-  // Skip first render to avoid false connect/disconnect messages
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    if (connected && !hasConnectedRef.current && address) {
-      hasConnectedRef.current = true;
-      hasDisconnectedRef.current = false;
-      toast.success('Success!', 'Wallet connected');
-      onConnected?.(address);
-    }
-    
-
-    // if (!connected && !hasDisconnectedRef.current) {
-    //   hasDisconnectedRef.current = true;
-    //   hasConnectedRef.current = false;
-    //   toast.warning('Disconnected!', 'Wallet disconnected');
-    //   onDisconnected?.();
-    // }
-  }, [connected, onConnected, onDisconnected, address]);
+  const { connected, name, connecting, connect, disconnect } = useWallet();
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -65,13 +21,13 @@ const WalletList = ({ onConnected, onDisconnected }: WalletListProps) => {
               disabled={connecting}
               variant="ghost"
               className={`flex min-w-80 items-center justify-start gap-4 px-20 ${
-                isConnected ? 'border-primary-300/20! border!' : ''
+                isConnected ? 'border-primary-400! border!' : ''
               }`}
               onClick={(e) => {
                 e.stopPropagation();
                 disconnect();
                 connect(wallet.id, true);
-                console.log({ wallet });
+                toast.success('Success!', 'Wallet connected');
               }}
             >
               <Image
@@ -92,6 +48,7 @@ const WalletList = ({ onConnected, onDisconnected }: WalletListProps) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     disconnect();
+                    toast.warning('Warning!', 'Wallet disconnected');
                   }}
                   className="absolute right-3 z-10 flex cursor-pointer items-center rounded p-1"
                   title="Disconnect"
