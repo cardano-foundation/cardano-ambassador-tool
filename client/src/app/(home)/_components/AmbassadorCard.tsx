@@ -96,7 +96,7 @@ export default function AmbassadorCard({
 
   return (
     <Card clickable className="h-full">
-      <CardContent className="space-y-3 py-4 text-center sm:space-y-4 sm:py-6">
+      <CardContent className="flex h-full flex-col items-center justify-between space-y-3 py-4 text-center sm:space-y-4 sm:py-6">
         <UserAvatar size="size-16" name={ambassador.name} />
 
         <Title

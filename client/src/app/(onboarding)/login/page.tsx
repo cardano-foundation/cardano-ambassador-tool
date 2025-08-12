@@ -10,7 +10,6 @@ import { useWallet } from '@meshsdk/react';
 
 const Login = () => {
   const { address } = useWallet();
-    const { syncAllData, syncData } = useUtxoSync();
 
 
   const handleSubmit = async () => {
@@ -29,18 +28,6 @@ const Login = () => {
         <Paragraph size="sm">Use a supported Cardano wallet:</Paragraph>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between">
-        <Button
-          variant="primary"
-          className="w-full"
-          onClick={() => syncData('membership_intent')}
-        >
-          Sync membership_intents
-        </Button>
-        <span className="text-muted-foreground text-sm">
-          
-        </span>
-      </div>
 
       <WalletList />
 

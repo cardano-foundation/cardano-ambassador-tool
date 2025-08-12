@@ -3,16 +3,30 @@ self.importScripts("sql-wasm.js");
 
 self.onmessage = async function (e) {
 
-  console.log(e.data);
-  
-  const { action, context, contexts, apiBaseUrl, existingDb } = e.data;
 
+  const { action, context, contexts, apiBaseUrl, existingDb } = e.data;
+  console.log({ storedD, existingDb, SQL });
   const SQL = await initSqlJs({ locateFile: () => "/sql-wasm.wasm" });
   let db;
+
+
+
+  // Try loading from localStorage if no `existingDb` passed in
+  let storedDb = null;
+  if (!existingDb) {
+    const stored = localStorage.getItem("utxoDb");
+    if (stored) {
+      storedDb = new Uint8Array(JSON.parse(stored));
+    }
+  }
+
+  
 
   if (existingDb) {
     const uint8Array = new Uint8Array(existingDb);
     db = new SQL.Database(uint8Array);
+  } else if (storedDb) {
+    db = new SQL.Database(storedDb);
   } else {
     db = new SQL.Database();
   }
@@ -55,7 +69,10 @@ self.onmessage = async function (e) {
 
   // Fetch and insert UTxOs for one context
   async function fetchAndStoreContext(contextName) {
-    try {
+    // try {
+
+    console.log({contextName});
+    
       const res = await fetch(`${apiBaseUrl}/api/utxos`, {
         method: "POST",
         headers: {
@@ -66,12 +83,15 @@ self.onmessage = async function (e) {
 
       const utxos = await res.json();
 
+      console.log({ utxos });
+      
+
       if (Array.isArray(utxos)) {
         utxos.forEach((utxo) => insertUtxo(utxo, contextName));
       }
-    } catch (err) {
-      console.error(`Error fetching context "${contextName}":`, err);
-    }
+    // } catch (err) {
+    //   console.error(`Error fetching context "${contextName}":`, err);
+    // }
   }
 
   // Perform action
@@ -80,13 +100,26 @@ self.onmessage = async function (e) {
   }
 
   if (action === "seedAll" && Array.isArray(contexts)) {
-    for (const ctx of contexts) {
-      await fetchAndStoreContext(ctx);
-    }
+    const results = await Promise.allSettled(
+      contexts.map(ctx => fetchAndStoreContext(ctx))
+    );
+
+    results.forEach((result, i) => {
+      if (result.status === "rejected") {
+        console.error(`Failed to seed context ${contexts[i]}:`, result.reason);
+      }
+    });
+
+    console.log({ results });
+    
   }
 
-  // Return updated DB
+  // Export DB
   const exported = db.export();
+
+  // Save to localStorage every time we update
+  localStorage.setItem("utxoDb", JSON.stringify(Array.from(exported)));
+
+  // Send updated DB back to main thread
   self.postMessage({ db: Array.from(exported) });
-  
 };

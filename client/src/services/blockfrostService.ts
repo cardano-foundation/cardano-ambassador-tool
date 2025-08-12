@@ -3,13 +3,12 @@ import { UTxO } from "@meshsdk/core";
 export class BlockfrostService {
   fetchUtxo = async (txHash: string, outputIndex: number): Promise<UTxO> => {
     try {
-      const response = await fetch("/api/blockfrost", {
+      const response = await fetch("/api/utxo", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          action: "fetchUTxOs",
           params: { txHash, outputIndex },
         }),
       });
@@ -29,13 +28,13 @@ export class BlockfrostService {
 
   fetchAddressUTxOs = async (address: string): Promise<UTxO[]> => {
     try {
-      const response = await fetch("/api/blockfrost", {
+      const response = await fetch("/api/utxos", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          action: "fetchAddressUTxOs",
+          context: "fetchAddressUTxOs",
           params: { address },
         }),
       });

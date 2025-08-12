@@ -1,16 +1,21 @@
-import type { Unit } from '@meshsdk/core';
 
-const ADMIN_PUBKEYS = (process.env.ADMIN_PUBKEYS || '').split(','); 
+import { findAdmins, findMemberUtxo } from '@/utils';
+import { deserializeAddress, } from '@meshsdk/core';
 
 
-export function resolveRoles(pubKeyHash: string, assets: Unit[]): string[] {
+export async function resolveRoles(address: string): Promise<string[]> {
+
+    const memberUtxo = await findMemberUtxo(address);
+
     const roles = [];
 
-    if (ADMIN_PUBKEYS.includes(pubKeyHash)) {
+    const adminsPubk = await findAdmins();
+
+    if (adminsPubk && adminsPubk.includes(deserializeAddress(address).pubKeyHash)) {
         roles.push('admin');
     }
 
-    if (assets.some((a) => a.startsWith(process.env.AMBASSADOR_POLICY_ID!))) {
+    if (memberUtxo) {
         roles.push('ambassador');
     }
 

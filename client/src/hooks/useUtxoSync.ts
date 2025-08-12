@@ -1,4 +1,5 @@
-// src/hooks/useUtxoSync.ts
+'use client'
+
 import { useEffect, useRef } from "react";
 
 type SyncContext =

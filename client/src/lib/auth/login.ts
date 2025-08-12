@@ -1,18 +1,14 @@
 'use server';
 
-import { createSession, deleteSession } from './session';
 import {
     FormState,
     LoginFormSchema,
 } from '../definition';
 
-export async function SignIn(
-    formData: FormData,
-): Promise<FormState> {
+export async function SignIn(formData: FormData): Promise<FormState> {
     const validatedFields = LoginFormSchema.safeParse({
         address: formData.get('address'),
     });
-    const errorMessage = { message: 'Invalid login credentials.' };
 
     if (!validatedFields.success) {
         const formatted = validatedFields.error.format();
@@ -23,9 +19,6 @@ export async function SignIn(
             },
         };
     }
-    await createSession(validatedFields.data.address);
-}
 
-export async function logout() {
-    deleteSession();
+    return { success: true }; 
 }

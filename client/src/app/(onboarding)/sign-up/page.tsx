@@ -46,7 +46,7 @@ function SignUp() {
     {
       name: 'Intent Form',
       component: selectedAssetName ? (
-        <SubmitIntent asset={asset} />
+        <SubmitIntent asset={asset} goNext={() => goNext()} />
       ) : (
         <TokenNotFound />
       ),
