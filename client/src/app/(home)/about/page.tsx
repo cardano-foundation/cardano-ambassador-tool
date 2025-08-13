@@ -1,5 +1,10 @@
-import ComingSoon from '@/components/atoms/ComingSoon';
+"use client";
+import { TableTestPage } from '../components/TableTestPage';
 
-export default function AboutPage() {
-  return <ComingSoon />;
+export default function Home() {
+  return (
+    <div>
+      <TableTestPage />
+    </div>
+  );
 }
