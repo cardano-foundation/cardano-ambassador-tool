@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
       layers: true,
     };
 
+    config.resolve.fallback = {
+      fs: false,
+    };
+
     if (isServer) {
       config.plugins.push(
         new CopyPlugin({

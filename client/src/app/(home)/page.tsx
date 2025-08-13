@@ -4,7 +4,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import { mockAmbassadors } from '@/data/mockAmbassadors';
 import React, { useMemo, useState } from 'react';
-import AmbassadorCard from './components/AmbassadorCard';
+import AmbassadorCard from './_components/AmbassadorCard';
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');

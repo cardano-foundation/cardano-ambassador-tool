@@ -1,5 +1,6 @@
 'use client';
 
+import { toast } from "@/components/toast/toast-manager";
 import { getCatConstants } from "@/utils";
 import { getProvider } from "@/utils";
 import { IWallet, stringToHex } from "@meshsdk/core";
@@ -31,11 +32,21 @@ export const applyMembership = async (payload: MembershipIntentPayoad) => {
     ]);
 
     if (!oracleUtxos?.length) {
-        throw new Error("Unexpected error during membership application.");
+        toast.error('Submission Failed!', 'Unexpected error during membership application.')
+        return {
+            success: true,
+            message: 'Membership successfully applied.',
+            data: null,
+        };
     }
 
     if (!tokenUtxos?.length) {
-        throw new Error("Unexpected error during membership application.");
+        toast.error('Submission Failed!', 'Unexpected error during membership application.');
+        return {
+            success: false,
+            message: 'Membership successfully applied.',
+            data: null,
+        };
     }
 
     const oracleUtxo = oracleUtxos[0];
@@ -60,7 +71,12 @@ export const applyMembership = async (payload: MembershipIntentPayoad) => {
     );
 
     if (!result) {
-        throw new Error("Unexpected error during membership application.");
+        toast.error('Submission Failed!', 'Unexpected error during membership application.');
+        return {
+            success: false,
+            message: 'Membership successfully applied.',
+            data: null,
+        };
     }
 
     return {

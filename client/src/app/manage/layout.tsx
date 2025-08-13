@@ -1,9 +1,13 @@
+'use client';
+
 import Footer from '@/components/Footer';
 import SideNav from '@/components/Navigation/SideNav';
 import TopNavBar from '@/components/Navigation/TopNavBar';
 import { ThemeProvider } from '@/components/ThemeToggle';
 import ToastContainer from '@/components/toast/toast';
+import { DbProvider } from '@/context/DbContext';
 import React from 'react';
+import { UserProvider } from '../../context/UserContext';
 import '../app.css';
 
 export default function HomeLayout({
@@ -37,17 +41,21 @@ export default function HomeLayout({
       </head>
       <body>
         <ThemeProvider>
-          <div className="flex min-h-screen">
-            <SideNav />
-            <div className="flex min-h-screen flex-1 flex-col">
-              <div className="sticky top-0 z-20">
-                <TopNavBar />
+          <UserProvider>
+            <DbProvider>
+              <div className="flex min-h-screen">
+                <SideNav />
+                <div className="flex min-h-screen flex-1 flex-col">
+                  <div className="sticky top-0 z-20">
+                    <TopNavBar />
+                  </div>
+                  <main className="flex-1">{children}</main>
+                  <Footer />
+                  <ToastContainer />
+                </div>
               </div>
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <ToastContainer />
-            </div>
-          </div>
+            </DbProvider>
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>

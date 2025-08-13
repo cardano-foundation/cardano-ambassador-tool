@@ -6,12 +6,19 @@ import Checkbox from '@/components/atoms/Checkbox';
 import Input from '@/components/atoms/Input';
 import Paragraph from '@/components/atoms/Paragraph';
 import TextArea from '@/components/atoms/TextArea';
+import { toast } from '@/components/toast/toast-manager';
 import { applyMembership } from '@/services/memberService';
 import { useWallet } from '@meshsdk/react';
 import { MemberTokenDetail } from '@types';
 import { useState } from 'react';
 
-const SubmitIntent = ({ asset }: { asset?: MemberTokenDetail }) => {
+const SubmitIntent = ({
+  asset,
+  goNext,
+}: {
+  asset?: MemberTokenDetail;
+  goNext?: () => void;
+}) => {
   const { address, wallet } = useWallet();
 
   const [formData, setFormData] = useState({
@@ -47,7 +54,9 @@ const SubmitIntent = ({ asset }: { asset?: MemberTokenDetail }) => {
 
     try {
       const result = await applyMembership(payload);
-      console.log('Membership applied:', result);
+      if (result.success) {
+        goNext;
+      }
     } catch (error) {
       console.error('Failed to apply membership:', error);
     }

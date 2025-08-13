@@ -1,5 +1,5 @@
 import { IWallet } from "@meshsdk/core";
-import {  Quantity, Unit } from '@meshsdk/core';
+import { Quantity, Unit } from '@meshsdk/core';
 
 
 export interface MembershipIntentPayoad {
@@ -8,8 +8,8 @@ export interface MembershipIntentPayoad {
     userMetadata: MemberMetadata;
     wallet: IWallet;
     address: string;
-    tokenPolicyId:string
-    tokenAssetName:string
+    tokenPolicyId: string
+    tokenAssetName: string
 }
 
 export interface MemberMetadata {
@@ -28,3 +28,16 @@ export type MemberTokenDetail = {
     fingerprint: string;
     quantity: Quantity;
 };
+
+
+export interface NavigationItem {
+    id: string;
+    label: string;
+    href: string;
+    icon?: React.ComponentType<{ className?: string }>;
+}
+
+export interface NavigationSection {
+    title?: string;
+    items: NavigationItem[];
+}

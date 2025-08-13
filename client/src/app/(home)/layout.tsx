@@ -1,10 +1,14 @@
-import React from "react";
-import ToastContainer from "@/components/toast/toast";
-import { ThemeProvider } from "@/components/ThemeToggle";
-import SideNav from "@/components/Navigation/SideNav";
-import Footer from "@/components/Footer";
-import "../app.css";
-import TopNavBar from "@/components/Navigation/TopNavBar";
+'use client';
+import Footer from '@/components/Footer';
+import SideNav from '@/components/Navigation/SideNav';
+import TopNavBar from '@/components/Navigation/TopNavBar';
+import { ThemeProvider } from '@/components/ThemeToggle';
+import ToastContainer from '@/components/toast/toast';
+import { DbProvider } from '@/context/DbContext';
+import { MeshProvider } from '@meshsdk/react';
+import React from 'react';
+import { UserProvider } from '../../context/UserContext';
+import '../app.css';
 
 export default function HomeLayout({
   children,
@@ -37,20 +41,26 @@ export default function HomeLayout({
       </head>
       <body>
         <ThemeProvider>
-          <div className="min-h-screen flex">
-            <SideNav />
-            <div className="flex-1 min-h-screen ">
-              {" "}
-              <div className="sticky top-0 z-20">
-                <TopNavBar />
-              </div>
-              {children}
-              <ToastContainer />
-              <div className=" bottom-0">
-                <Footer />
-              </div>
-            </div>
-          </div>{" "}
+          <MeshProvider>
+            <UserProvider>
+              <DbProvider>
+                <div className="flex min-h-screen">
+                  <SideNav />
+                  <div className="min-h-screen flex-1">
+                    {' '}
+                    <div className="sticky top-0 z-20">
+                      <TopNavBar />
+                    </div>
+                    {children}
+                    <ToastContainer />
+                    <div className="bottom-0">
+                      <Footer />
+                    </div>
+                  </div>
+                </div>{' '}
+              </DbProvider>
+            </UserProvider>
+          </MeshProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -17,6 +17,7 @@ import {
   ProposalData,
   ProposalDatum,
   ProposalMetadata,
+  OracleDatum,
 } from "@sidan-lab/cardano-ambassador-tool";
 import { toast } from "@/components/toast/toast-manager";
 import { BlockfrostService } from "@/services/blockfrostService";
@@ -456,6 +457,47 @@ export async function findTokenUtxoByMembershipIntentUtxo(
     return null;
   }
 }
+
+/**
+ * Finds a token UTxO associated with a membership intent UTxO
+ * @param membershipIntentUtxo The membership intent UTxO to find the associated token for
+ * @returns array of admins pubkHash or null
+ */
+export async function findAdmins(): Promise<string[] | null> {
+
+  const blockfrost = getProvider();
+
+  const utxos = (await blockfrost.fetchUTxOs(
+    process.env.NEXT_PUBLIC_ORACLE_TX_HASH!, parseInt(process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX!)
+  ))[0];
+
+  if (!utxos.output.plutusData) {
+    console.error("Member UTxO does not contain Plutus data");
+    return null;
+  }
+  const datum: OracleDatum = deserializeDatum(
+    utxos.output.plutusData
+  );
+  const adminList = datum.fields[0].list.map((item: any) => {
+    if (item.bytes) {
+      return item.bytes;
+    }
+    if (item.fields) {
+      return item.fields.map((f: any) => f.bytes || f);
+    }
+    return item;
+  });
+
+  if (!adminList.length) {
+    return null;
+
+  }
+
+  return adminList
+
+}
+
+
 
 
 export function shortenString(address: string) {

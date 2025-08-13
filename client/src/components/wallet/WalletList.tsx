@@ -3,14 +3,19 @@
 import { useWallet, useWalletList } from '@meshsdk/react';
 import { X } from 'lucide-react';
 import Image from 'next/image';
+import { useEffect } from 'react';
 import Button from '../atoms/Button';
 import { toast } from '../toast/toast-manager';
 
 const WalletList = () => {
-  
   const walletList = useWalletList();
 
-  const { connected, name, connecting, connect, disconnect } = useWallet();
+  const { connected, name, connecting, connect, disconnect, setPersist } =
+    useWallet();
+
+  useEffect(() => {
+    setPersist(true);
+  }, [setPersist]);
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -27,6 +32,7 @@ const WalletList = () => {
               }`}
               onClick={(e) => {
                 e.stopPropagation();
+                setPersist(true);
                 disconnect();
                 connect(wallet.id, true);
                 toast.success('Success!', 'Wallet connected');

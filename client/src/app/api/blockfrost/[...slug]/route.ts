@@ -5,9 +5,7 @@ import { toBytes } from '@meshsdk/common';
 export async function GET(req: Request, context: { params: { slug: string[] } }) {
 
   try {
-    const { params } = context;
-    const { slug } = params;
-
+    const { slug } = await context.params; 
 
     const network = slug[0];
     let key = process.env.BLOCKFROST_API_KEY_PREPROD;
@@ -45,10 +43,7 @@ export async function GET(req: Request, context: { params: { slug: string[] } })
 
 export async function POST(req: Request, context: { params: { slug: string[] } }) {
   try {
-    const { params } = context;
-    const { slug } = params; 
-
-    console.log({ slug });
+    const { slug } = await context.params;
 
     const network = slug[0];
     const endpoint = slug.slice(1).join('/');
