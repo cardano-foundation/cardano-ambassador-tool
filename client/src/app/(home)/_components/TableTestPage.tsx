@@ -63,7 +63,7 @@ export function TableTestPage() {
       sortable: true,
       copyable: true, 
       cell: (value: string) => (
-        <span className="font-medium text-neutral">{value}</span>
+        <span className="font-normal text-neutral">{value}</span>
       )
     },
     {
@@ -72,7 +72,7 @@ export function TableTestPage() {
       sortable: true,
       cell: (value: string) => (
         <div className="flex items-center text-neutral gap-2">
-          <span className="text-base">{getCountryFlag(value)}</span>
+          <span className="text-xs">{getCountryFlag(value)}</span>
           <span>{value}</span>
         </div>
       ),

@@ -1,5 +1,5 @@
 "use client";
-import { TableTestPage } from '../components/TableTestPage';
+import { TableTestPage } from '../_components/TableTestPage';
 
 export default function Home() {
   return (

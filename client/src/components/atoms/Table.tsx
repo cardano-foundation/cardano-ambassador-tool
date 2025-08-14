@@ -9,8 +9,7 @@ type ColumnDef<T> = {
   sortable?: boolean;
   copyable?: boolean;
   getCopyText?: (value: any, row: T) => string;
-  truncate?: boolean | number; // Truncate long text
-  priority?: 'high' | 'medium' | 'low'; // Optional: for responsive behavior
+  truncate?: boolean | number;
 };
 
 type TableProps<T> = {
@@ -22,7 +21,7 @@ type TableProps<T> = {
   searchPlaceholder?: string;
   className?: string;
   onCopy?: (text: string, column: string) => void;
-  autoSize?: boolean; // Enable automatic column sizing (default: true)
+  autoSize?: boolean;
 };
 
 export function Table<T>({
@@ -97,11 +96,11 @@ export function Table<T>({
 
   const filteredData = useMemo(() => {
     if (!searchTerm) return data;
-    
+    const searchLower = searchTerm.toLowerCase();
     return data.filter((row) => 
       columns.some((column) => {
         const value = row[column.accessor];
-        return value?.toString().toLowerCase().includes(searchTerm.toLowerCase());
+        return value?.toString().toLowerCase().includes(searchLower);
       })
     );
   }, [data, searchTerm, columns]);
