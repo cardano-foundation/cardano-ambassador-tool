@@ -1,6 +1,6 @@
 'use client';
 
-import { Table, ColumnDef } from '@/components/atoms/Table';
+import { Table, ColumnDef } from '@/components/Table/Table';
 import Button from '@/components/atoms/Button';
 import { mockAmbassadors, Ambassador } from '@/data/mockAmbassadors';
 
