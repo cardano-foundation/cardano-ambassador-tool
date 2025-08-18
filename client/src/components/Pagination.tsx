@@ -26,7 +26,7 @@ export function Pagination({
   onPageSizeChange,
   pageSizeOptions = [10, 20, 50, 100],
   showPageSizeSelector = true,
-  maxVisiblePages = 4
+  maxVisiblePages = 5
 }: PaginationProps) {
   const handlePrevious = () => {
     if (currentPage > 1) {
