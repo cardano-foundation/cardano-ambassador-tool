@@ -4,6 +4,7 @@ import { useWallet } from '@meshsdk/react';
 import { MemberTokenDetail } from '@types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { SingleRowStepper } from '@/components/atoms/Stepper';
 import ConnectWallet from './components/ConnectWallet';
 import SelectToken from './components/SelectToken';
 import SubmissionSuccess from './components/SubmissionSuccess';
@@ -53,7 +54,7 @@ function SignUp() {
       showProgress: !selectedAssetName,
     },
     {
-      name: 'Succes',
+      name: 'Success',
       component: <SubmissionSuccess />,
       showProgress: !selectedAssetName,
     },
@@ -87,6 +88,13 @@ function SignUp() {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
+  const handleStepClick = (stepIndex: number) => {
+    if (stepIndex < currentStep) {
+      setDirection(stepIndex < currentStep ? -1 : 1);
+      setCurrentStep(stepIndex);
+    }
+  };
+
   useEffect(() => {
     const fetchAssets = async () => {
       if (wallet && currentStep == 1) {
@@ -97,7 +105,7 @@ function SignUp() {
     };
 
     fetchAssets();
-  }, [ address,steps]);
+  }, [address, steps]);
 
   async function getAssetsDetails() {
     const utxos = await wallet.getUtxos();
@@ -132,27 +140,18 @@ function SignUp() {
 
   return (
     <div className="h-full w-full gap-8 p-6 lg:p-24">
-      {/* Breadcrumbs */}
-      <div className="mb-6 flex justify-center gap-4">
-        {steps.map((_, index) => (
-          <div
-            key={index}
-            onClick={() => {
-              if (index < currentStep) {
-                setDirection(index < currentStep ? -1 : 1);
-                setCurrentStep(index);
-              }
-            }}
-            className={`size-2 cursor-pointer rounded-full transition-all duration-400 ${
-              index < currentStep
-                ? 'bg-primary-300 opacity-60 hover:opacity-100'
-                : index === currentStep
-                  ? 'bg-primary-base w-6'
-                  : 'bg-border dark:bg-neutral-700'
-            }`}
-          />
-        ))}
+      {/* Replace circle breadcrumbs with Stepper */}
+      <div className="mb-6 flex justify-center">
+        <SingleRowStepper
+          currentStep={currentStep}
+          totalSteps={steps.length}
+          stepLabels={steps.map(step => step.name)}
+          clickable={true}
+          onStepClick={handleStepClick}
+          className="max-w-md"
+        />
       </div>
+
       {/* Slide transition wrapper */}
       <div className="relative min-h-[400px] w-full overflow-hidden px-2">
         <AnimatePresence custom={direction} mode="wait" initial={false}>
