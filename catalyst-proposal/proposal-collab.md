@@ -48,7 +48,7 @@ Proposal progress is reported via milestone reports, which can be found at:
 - https://milestones.projectcatalyst.io/projects/1300032
 
 ## Budget
-Both projects SIDAN Lab and Lidonation will receive a total of 50,000.00 Ada each for their development work. This budget is allocated from the total 110,000.00 Ada of the proposal budget.  The fund distributions are managed via a multi-signature wallet with signers from Ambassadors, SIDAN Lab & Lidonation. Funds are distributed upon the completion of the catalyst proposal milestones.
+Both projects SIDAN Lab and Lidonation will receive a total of 50,000.00 Ada each for their development work. This budget is allocated from the total 110,000.00 Ada of the proposal budget.  The fund distributions are managed via a multi-signature wallet with signers from Ambassadors, SIDAN Lab & Lidonation. Funds are distributed upon the completion of the catalyst proposal milestones. Any leftover budgets are allocated to Ambassadors supporting the proposal journey.
 
 ## Else
 Since this proposal is a initial kick-off in building collaborations between the Ambassadors program and cardano developer projects to build tools which improve the ambassadors program, we surely aim to think this initiative longterm and we are definitley aiming to build up additional collaborations in the future.
