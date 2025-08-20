@@ -44,7 +44,7 @@ function ToastItem({ toast }: { toast: Toast }) {
                 onClick={() => toastManager.remove(toast.id)}
                 className="flex-shrink-0 p-1 rounded-full  transition-colors"
               >
-                <X className="h-4 w-4 text-primary-400" />
+                <X className="h-4 w-4 text-muted-foreground" />
               </button>
             </div>
           </div>
