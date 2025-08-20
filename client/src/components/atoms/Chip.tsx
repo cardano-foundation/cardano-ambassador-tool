@@ -37,10 +37,10 @@ export default function Chip({
         },
 
         {
-          'bg-rose-50 outline-rose-500 text-rose-500': variant === 'default',
+          'bg-primary-50 outline-primary-base text-primary-base': variant === 'default',
           'bg-emerald-50 outline-emerald-400 text-emerald-400': variant === 'success',
-          'bg-stone-50 outline-zinc-400 text-zinc-400': variant === 'inactive',
-          'bg-pink-100 outline-rose-500 text-rose-500': variant === 'error',
+          'bg-white-400 outline-zinc-400 text-zinc-400': variant === 'inactive',
+          'bg-pink-100 outline-primary-base text-primary-base': variant === 'error',
           'bg-orange-50 outline-amber-500 text-amber-500': variant === 'warning',
         },
 
