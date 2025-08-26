@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // import { verifySessionToken } from './lib/auth/verify';
 import {resolveRoles} from "@/lib/auth/roles"
 
-const PROTECTED_PATHS = ['/admin-dashboard', '/dashboard'];
+const PROTECTED_PATHS = ['/manage', '/dashboard'];
 
 export async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
@@ -12,6 +12,8 @@ export async function middleware(req: NextRequest) {
     if (!shouldProtect) return NextResponse.next();
 
     const token = req.cookies.get('session_token')?.value;
+
+     console.log({token});
     if (!token) return NextResponse.redirect(new URL('/login', req.url));
 
     // const payload = await verifySessionToken(token);

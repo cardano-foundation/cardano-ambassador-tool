@@ -90,20 +90,21 @@
 :root,
 .dark {
   transition:
-    /* Only transition the custom properties that change between themes */
-    --color-background-default 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-background-light 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-surface-muted 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-text-primary 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-text-secondary 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-primary-base 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-accent-base 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-ring-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-neutral-base 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-border-default 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-card-default 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-card-foreground 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-input-default 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Transition all CSS variables that change between themes */
+    --background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --muted 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --muted-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --border 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --card 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --card-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --input 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --primary 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --accent 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --ring 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --neutral 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --color-text-default 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    --color-text-light 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Apply specific property transitions to all elements by default for smoother UI */
@@ -111,12 +112,14 @@
 *::before,
 *::after {
   transition:
-    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    outline-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    outline-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /*
@@ -150,10 +153,10 @@ textarea,
   -ms-user-select: none;
   user-select: none;
   transition:
-    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--color-text-primary);
 }
@@ -230,9 +233,9 @@ svg,
 svg *,
 [class*="icon"] {
   transition:
-    fill 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    stroke 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /*

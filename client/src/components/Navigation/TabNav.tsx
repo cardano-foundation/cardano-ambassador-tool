@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "@/utils/utils";
-import { Tabs, TabsList, TabsTrigger } from "../Tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/Tabs";
 
 interface TabItem {
   id: string;

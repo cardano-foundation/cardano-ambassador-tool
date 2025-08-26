@@ -41,3 +41,14 @@ export interface NavigationSection {
     title?: string;
     items: NavigationItem[];
 }
+
+export interface Utxo {
+    id: number;
+    txHash: string;
+    outputIndex: number;
+    address: string;
+    amount: string;
+    dataHash: string | null;
+    plutusData: string | null;
+    context: string;
+}

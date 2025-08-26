@@ -3,33 +3,14 @@ self.importScripts("sql-wasm.js");
 
 self.onmessage = async function (e) {
 
-
   const { action, context, contexts, apiBaseUrl, existingDb } = e.data;
-  console.log({ storedD, existingDb, SQL });
+
   const SQL = await initSqlJs({ locateFile: () => "/sql-wasm.wasm" });
   let db;
 
 
+  db = new SQL.Database();
 
-  // Try loading from localStorage if no `existingDb` passed in
-  let storedDb = null;
-  if (!existingDb) {
-    const stored = localStorage.getItem("utxoDb");
-    if (stored) {
-      storedDb = new Uint8Array(JSON.parse(stored));
-    }
-  }
-
-  
-
-  if (existingDb) {
-    const uint8Array = new Uint8Array(existingDb);
-    db = new SQL.Database(uint8Array);
-  } else if (storedDb) {
-    db = new SQL.Database(storedDb);
-  } else {
-    db = new SQL.Database();
-  }
 
   // Create table if it doesn't exist
   db.run(`
@@ -71,24 +52,24 @@ self.onmessage = async function (e) {
   async function fetchAndStoreContext(contextName) {
     // try {
 
-    console.log({contextName});
-    
-      const res = await fetch(`${apiBaseUrl}/api/utxos`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ context: contextName }),
-      });
+    console.log({ contextName });
 
-      const utxos = await res.json();
+    const res = await fetch(`${apiBaseUrl}/api/utxos`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ context: contextName }),
+    });
 
-      console.log({ utxos });
-      
+    const utxos = await res.json();
 
-      if (Array.isArray(utxos)) {
-        utxos.forEach((utxo) => insertUtxo(utxo, contextName));
-      }
+    console.log({ utxos });
+
+
+    if (Array.isArray(utxos)) {
+      utxos.forEach((utxo) => insertUtxo(utxo, contextName));
+    }
     // } catch (err) {
     //   console.error(`Error fetching context "${contextName}":`, err);
     // }
@@ -111,14 +92,11 @@ self.onmessage = async function (e) {
     });
 
     console.log({ results });
-    
+
   }
 
   // Export DB
   const exported = db.export();
-
-  // Save to localStorage every time we update
-  localStorage.setItem("utxoDb", JSON.stringify(Array.from(exported)));
 
   // Send updated DB back to main thread
   self.postMessage({ db: Array.from(exported) });

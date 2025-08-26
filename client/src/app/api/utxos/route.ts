@@ -90,17 +90,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<{
         const validUtxos = await Promise.all(
             utxos
                 .filter((utxo) => utxo.output.plutusData)
-                .map(async (utxo) => {
-                    try {
-                        const parsed = action.parser(utxo.output?.plutusData ?? '');
-
-                        if (!parsed) return null;
-                        return utxo;
-                    } catch (error) {
-                        console.error(`Error parsing ${action.errorContext} UTxO:`, error);
-                        return null;
-                    }
-                })
         );
 
         const filtered = validUtxos.filter((utxo): utxo is UTxO => utxo !== null);
