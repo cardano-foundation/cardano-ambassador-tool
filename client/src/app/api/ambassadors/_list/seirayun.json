@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/seirayun/summary",
+  "username": "seirayun",
+  "name": "Seira Yun-[SOCIO] Socious.io",
+  "bio_excerpt": "Where work meets impact. Socious is a talent marketplace that makes impact work accessible and transparent. SOCIO StakePool <img src=\"https://emoji.discourse-cdn.com/apple/earth_asia.png?v=12\" title=\":earth_asia:\" class=\"emoji\" alt=\":earth_asia:\" loading=\"lazy\" width=\"20\" height=\"20\"> <a href=\"https://t.co/f1a1wzUMdh\" class=\"inline-onebox-loading\">https://t.co/f1a1wzUMdh</a>",
+  "country": "Japan",
+  "flag": "/img/flags/JP.svg",
+  "avatar": "/user_avatar/forum.cardano.org/seirayun/{size}/70055_2.png",
+  "created_at": "2023-09-02T23:34:52.823Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 55,
+      "posts_read_count": 189,
+      "days_visited": 63,
+      "likes_given": 7,
+      "likes_received": 13,
+      "topics_created": 10,
+      "replies_created": 6,
+      "time_read": 7497,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "Cardano Innovation Budget Proposal",
+        "url": "https://forum.cardano.org/t/cardano-innovation-budget-proposal/143046/49",
+        "like_count": 2,
+        "created_at": "2025-03-24T17:11:39.597Z"
+      },
+      {
+        "title": "Cardano Innovation Budget Proposal",
+        "url": "https://forum.cardano.org/t/cardano-innovation-budget-proposal/143046/54",
+        "like_count": 1,
+        "created_at": "2025-03-27T16:00:19.101Z"
+      },
+      {
+        "title": "Cardano Innovation Budget Proposal",
+        "url": "https://forum.cardano.org/t/cardano-innovation-budget-proposal/143046/50",
+        "like_count": 1,
+        "created_at": "2025-03-25T16:06:07.465Z"
+      },
+      {
+        "title": "Cardano Innovation Budget Proposal",
+        "url": "https://forum.cardano.org/t/cardano-innovation-budget-proposal/143046/64",
+        "like_count": 0,
+        "created_at": "2025-04-07T05:49:06.432Z"
+      },
+      {
+        "title": "Cardano Innovation Budget Proposal",
+        "url": "https://forum.cardano.org/t/cardano-innovation-budget-proposal/143046/61",
+        "like_count": 0,
+        "created_at": "2025-03-30T15:47:32.666Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Cardano Innovation Budget Proposal",
+        "url": "https://forum.cardano.org/t/cardano-innovation-budget-proposal/143046",
+        "reply_count": 64,
+        "like_count": 37,
+        "created_at": "2025-02-11T16:45:31.802Z"
+      },
+      {
+        "title": "Socious Fund, plateforme de financement sur Cardano, meetup",
+        "url": "https://forum.cardano.org/t/socious-fund-plateforme-de-financement-sur-cardano-meetup/146436",
+        "reply_count": 2,
+        "like_count": 3,
+        "created_at": "2025-05-31T16:25:01.942Z"
+      },
+      {
+        "title": "Socious Fund Meetup - a Quadratic Funding plaform on Cardano",
+        "url": "https://forum.cardano.org/t/socious-fund-meetup-a-quadratic-funding-plaform-on-cardano/146433",
+        "reply_count": 1,
+        "like_count": 3,
+        "created_at": "2025-05-31T16:18:00.556Z"
+      },
+      {
+        "title": "Cardano Japan IdeaFest F12 カタリストF12 海外提案のピッチイベント - 2024-05-14",
+        "url": "https://forum.cardano.org/t/cardano-japan-ideafest-f12-f12-2024-05-14/131653",
+        "reply_count": 2,
+        "like_count": 1,
+        "created_at": "2024-05-14T18:46:00.447Z"
+      },
+      {
+        "title": "Socious Fund, plataforma de financiación cuadrática en Cardano, meetup",
+        "url": "https://forum.cardano.org/t/socious-fund-plataforma-de-financiacion-cuadratica-en-cardano-meetup/146437",
+        "reply_count": 1,
+        "like_count": 1,
+        "created_at": "2025-05-31T16:25:58.889Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "topic",
+      "title": "Socious Fund, plataforma de financiación cuadrática en Cardano, meetup",
+      "url": "https://forum.cardano.org/t/socious-fund-plataforma-de-financiacion-cuadratica-en-cardano-meetup/146437",
+      "created_at": "2025-05-31T16:25:58.889Z"
+    },
+    {
+      "type": "topic",
+      "title": "Socious Fund, plateforme de financement sur Cardano, meetup",
+      "url": "https://forum.cardano.org/t/socious-fund-plateforme-de-financement-sur-cardano-meetup/146436",
+      "created_at": "2025-05-31T16:25:01.942Z"
+    },
+    {
+      "type": "topic",
+      "title": "Socious基金的说明会",
+      "url": "https://forum.cardano.org/t/socious/146434",
+      "created_at": "2025-05-31T16:19:16.108Z"
+    },
+    {
+      "type": "topic",
+      "title": "Socious Fund Meetup - a Quadratic Funding plaform on Cardano",
+      "url": "https://forum.cardano.org/t/socious-fund-meetup-a-quadratic-funding-plaform-on-cardano/146433",
+      "created_at": "2025-05-31T16:18:00.556Z"
+    },
+    {
+      "type": "topic",
+      "title": "Socious Fund - una sesión informativa en español",
+      "url": "https://forum.cardano.org/t/socious-fund-una-sesion-informativa-en-espanol/146247",
+      "created_at": "2025-05-23T08:25:38.359Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2024-03-06T02:38:09.405Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2024-09-03T07:05:53.328Z"
+    },
+    {
+      "name": "First Share",
+      "description": "Shared a post",
+      "icon": "share-nodes",
+      "granted_at": "2024-06-04T14:07:30.478Z"
+    }
+  ]
+}

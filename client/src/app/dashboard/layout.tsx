@@ -6,13 +6,13 @@ import TopNavBar from '@/components/Navigation/TopNavBar';
 import { NetworkErrorBanner } from '@/components/NetworkErrorBanner';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 import ToastContainer from '@/components/toast/toast';
-import { AppProvider, useAppLoading } from '@/context/AppContext';
+import { AppProvider, useAppLoadingStatus } from '@/context/AppContext';
 import { MeshProvider } from '@meshsdk/react';
 import React from 'react';
 import '../app.css';
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useAppLoading();
+  const { shouldShowLoading } = useAppLoadingStatus();
 
   return (
     <>

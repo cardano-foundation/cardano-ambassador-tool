@@ -1,0 +1,61 @@
+{
+  "href": "https://forum.cardano.org/u/taichiyokoyama/summary",
+  "username": "taichiyokoyama",
+  "name": "Taichi Yokoyama",
+  "bio_excerpt": null,
+  "country": "Japan",
+  "flag": "/img/flags/JP.svg",
+  "avatar": "/user_avatar/forum.cardano.org/taichiyokoyama/{size}/85913_2.png",
+  "created_at": "2023-11-29T13:00:54.648Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 79,
+      "posts_read_count": 112,
+      "days_visited": 74,
+      "likes_given": 12,
+      "likes_received": 2,
+      "topics_created": 1,
+      "replies_created": 0,
+      "time_read": 8731,
+      "recent_time_read": 613
+    },
+    "top_replies": [],
+    "top_topics": [
+      {
+        "title": "CDECよりDRepsの皆さまへ：分散型ガバナンスの次なる一歩に向けて",
+        "url": "https://forum.cardano.org/t/cdec-dreps/147466",
+        "reply_count": 1,
+        "like_count": 2,
+        "created_at": "2025-07-15T15:48:07.743Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "topic",
+      "title": "CDECよりDRepsの皆さまへ：分散型ガバナンスの次なる一歩に向けて",
+      "url": "https://forum.cardano.org/t/cdec-dreps/147466",
+      "created_at": "2025-07-15T15:48:07.743Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2025-04-13T10:54:09.110Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2025-07-15T20:55:42.381Z"
+    },
+    {
+      "name": "First Link",
+      "description": "Added a link to another topic",
+      "icon": "link",
+      "granted_at": "2025-07-15T15:48:07.921Z"
+    }
+  ]
+}

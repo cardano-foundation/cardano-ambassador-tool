@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/ChrisSTR8/summary",
+  "username": "ChrisSTR8",
+  "name": "Chris [STR8]",
+  "bio_excerpt": null,
+  "country": "Germany",
+  "flag": "/img/flags/DE.svg",
+  "avatar": "/user_avatar/forum.cardano.org/chrisstr8/{size}/21506_2.png",
+  "created_at": "2019-09-19T11:52:40.433Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 411,
+      "posts_read_count": 3100,
+      "days_visited": 345,
+      "likes_given": 76,
+      "likes_received": 92,
+      "topics_created": 7,
+      "replies_created": 73,
+      "time_read": 83056,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "SPO Poll - Q3 2023 Setup Preferences: Answer 6 (None of the above)",
+        "url": "https://forum.cardano.org/t/spo-poll-q3-2023-setup-preferences-answer-6-none-of-the-above/117853/5",
+        "like_count": 7,
+        "created_at": "2023-05-15T12:23:24.998Z"
+      },
+      {
+        "title": ":DE: Ich wurde betrogen, 20000ada weg",
+        "url": "https://forum.cardano.org/t/ich-wurde-betrogen-20000ada-weg/49854/10",
+        "like_count": 6,
+        "created_at": "2021-03-01T20:36:10.151Z"
+      },
+      {
+        "title": "PCP_K-Parameter_EarnCoinPool",
+        "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/29",
+        "like_count": 5,
+        "created_at": "2024-01-11T10:33:17.354Z"
+      },
+      {
+        "title": "PCP_K-Parameter_EarnCoinPool",
+        "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/54",
+        "like_count": 4,
+        "created_at": "2024-01-12T10:20:05.751Z"
+      },
+      {
+        "title": "Do you see ADA as a reliable store-of-value, global reserve currency safe haven yet?",
+        "url": "https://forum.cardano.org/t/do-you-see-ada-as-a-reliable-store-of-value-global-reserve-currency-safe-haven-yet/115713/4",
+        "like_count": 4,
+        "created_at": "2023-04-14T17:40:51.251Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "PCP_K-Parameter_EarnCoinPool",
+        "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701",
+        "reply_count": 112,
+        "like_count": 292,
+        "created_at": "2023-10-09T14:53:44.313Z"
+      },
+      {
+        "title": "r/Cardano Subreddit - Discussion about Rule 4 - No spamming, advertising or low value content",
+        "url": "https://forum.cardano.org/t/r-cardano-subreddit-discussion-about-rule-4-no-spamming-advertising-or-low-value-content/116271",
+        "reply_count": 38,
+        "like_count": 53,
+        "created_at": "2023-04-02T10:46:07.419Z"
+      },
+      {
+        "title": "SPO Poll - Q3 2023 Setup Preferences: Answer 6 (None of the above)",
+        "url": "https://forum.cardano.org/t/spo-poll-q3-2023-setup-preferences-answer-6-none-of-the-above/117853",
+        "reply_count": 8,
+        "like_count": 22,
+        "created_at": "2023-05-14T10:35:41.542Z"
+      },
+      {
+        "title": "Do you see ADA as a reliable store-of-value, global reserve currency safe haven yet?",
+        "url": "https://forum.cardano.org/t/do-you-see-ada-as-a-reliable-store-of-value-global-reserve-currency-safe-haven-yet/115713",
+        "reply_count": 7,
+        "like_count": 19,
+        "created_at": "2023-03-19T21:06:10.279Z"
+      },
+      {
+        "title": ":DE: Ich wurde betrogen, 20000ada weg",
+        "url": "https://forum.cardano.org/t/ich-wurde-betrogen-20000ada-weg/49854",
+        "reply_count": 11,
+        "like_count": 15,
+        "created_at": "2021-02-24T20:40:39.833Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "PCP_K-Parameter_EarnCoinPool",
+      "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/54",
+      "created_at": "2024-01-12T10:20:05.751Z"
+    },
+    {
+      "type": "reply",
+      "title": "PCP_K-Parameter_EarnCoinPool",
+      "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/29",
+      "created_at": "2024-01-11T10:33:17.354Z"
+    },
+    {
+      "type": "topic",
+      "title": "PCP_K-Parameter_EarnCoinPool",
+      "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701",
+      "created_at": "2023-10-09T14:53:44.313Z"
+    },
+    {
+      "type": "reply",
+      "title": "SPO Poll - Q3 2023 Setup Preferences: Answer 6 (None of the above)",
+      "url": "https://forum.cardano.org/t/spo-poll-q3-2023-setup-preferences-answer-6-none-of-the-above/117853/5",
+      "created_at": "2023-05-15T12:23:24.998Z"
+    },
+    {
+      "type": "topic",
+      "title": "SPO Poll - Q3 2023 Setup Preferences: Answer 6 (None of the above)",
+      "url": "https://forum.cardano.org/t/spo-poll-q3-2023-setup-preferences-answer-6-none-of-the-above/117853",
+      "created_at": "2023-05-14T10:35:41.542Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2020-09-29T13:58:02.316Z"
+    },
+    {
+      "name": "Licensed",
+      "description": "Completed our advanced user tutorial",
+      "icon": "stamp",
+      "granted_at": "2020-03-06T23:10:30.908Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2025-01-07T08:16:22.086Z"
+    }
+  ]
+}

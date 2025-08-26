@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/cardanochefpool/summary",
+  "username": "cardanochefpool",
+  "name": "Θeodore| CHEF🇬🇷🇨🇦",
+  "bio_excerpt": "Cardano Evangelist |<br>\nGreek Cardano community Developer |<br>\nStake pool operator: CHEF (1F)<br>\nPool ID: 682fd73eea4d7370b6f7a781c80b1252817b23f74688cea6257471f",
+  "country": "Canada",
+  "flag": "/img/flags/CA.svg",
+  "avatar": "/user_avatar/forum.cardano.org/cardanochefpool/{size}/53429_2.png",
+  "created_at": "2022-02-27T20:49:58.327Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 533,
+      "posts_read_count": 1671,
+      "days_visited": 209,
+      "likes_given": 108,
+      "likes_received": 84,
+      "topics_created": 95,
+      "replies_created": 29,
+      "time_read": 41405,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "Announcing the stake pools chosen for January 2023",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-january-2023/113013/6",
+        "like_count": 5,
+        "created_at": "2023-01-26T17:55:52.876Z"
+      },
+      {
+        "title": "What is CIP 1694?",
+        "url": "https://forum.cardano.org/t/what-is-cip-1694/111621/5",
+        "like_count": 4,
+        "created_at": "2023-01-04T16:19:59.110Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for July 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-july-2022/104412/12",
+        "like_count": 3,
+        "created_at": "2022-07-13T15:27:13.971Z"
+      },
+      {
+        "title": "CF Delegation Application Form is open for the next round (October 2022)",
+        "url": "https://forum.cardano.org/t/cf-delegation-application-form-is-open-for-the-next-round-october-2022/107222/3",
+        "like_count": 2,
+        "created_at": "2022-09-07T17:35:06.814Z"
+      },
+      {
+        "title": "Cardano Seattle Meetup - July 16th 2022",
+        "url": "https://forum.cardano.org/t/cardano-seattle-meetup-july-16th-2022/104059/2",
+        "like_count": 2,
+        "created_at": "2022-07-18T01:01:55.778Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Announcing the stake pools chosen for April 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-april-2022/99831",
+        "reply_count": 63,
+        "like_count": 154,
+        "created_at": "2022-04-21T10:54:43.678Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for January 2023",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-january-2023/113013",
+        "reply_count": 33,
+        "like_count": 129,
+        "created_at": "2023-01-25T23:00:00.000Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for July 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-july-2022/104412",
+        "reply_count": 37,
+        "like_count": 88,
+        "created_at": "2022-07-13T07:56:00.000Z"
+      },
+      {
+        "title": "CF Delegation Application Form is open for the next round (October 2022)",
+        "url": "https://forum.cardano.org/t/cf-delegation-application-form-is-open-for-the-next-round-october-2022/107222",
+        "reply_count": 18,
+        "like_count": 30,
+        "created_at": "2022-09-07T16:06:50.574Z"
+      },
+      {
+        "title": "What is CIP 1694?",
+        "url": "https://forum.cardano.org/t/what-is-cip-1694/111621",
+        "reply_count": 6,
+        "like_count": 26,
+        "created_at": "2022-12-16T08:22:24.136Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "Announcing the stake pools chosen for January 2023",
+      "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-january-2023/113013/6",
+      "created_at": "2023-01-26T17:55:52.876Z"
+    },
+    {
+      "type": "topic",
+      "title": "Announcing the stake pools chosen for January 2023",
+      "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-january-2023/113013",
+      "created_at": "2023-01-25T23:00:00.000Z"
+    },
+    {
+      "type": "reply",
+      "title": "What is CIP 1694?",
+      "url": "https://forum.cardano.org/t/what-is-cip-1694/111621/5",
+      "created_at": "2023-01-04T16:19:59.110Z"
+    },
+    {
+      "type": "topic",
+      "title": ":greece: CIP 1694 - Τι είναι και πώς λειτουργεί",
+      "url": "https://forum.cardano.org/t/cip-1694/112404",
+      "created_at": "2023-01-03T18:32:31.541Z"
+    },
+    {
+      "type": "topic",
+      "title": "Cardano Community Digest - 12 Δεκεμβρίου 2022",
+      "url": "https://forum.cardano.org/t/cardano-community-digest-12-2022/111886",
+      "created_at": "2022-12-22T16:06:56.615Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2022-04-28T09:38:21.354Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2023-02-28T03:50:22.959Z"
+    },
+    {
+      "name": "Thank You",
+      "description": "Has 20 liked posts and gave 10 likes",
+      "icon": "heart",
+      "granted_at": "2022-06-29T05:01:27.157Z"
+    }
+  ]
+}

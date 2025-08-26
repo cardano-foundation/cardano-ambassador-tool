@@ -6,7 +6,7 @@ import OnboardingSvg from '@/components/atoms/onboarding';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Footer from '@/components/Footer';
-import { AppProvider, useAppLoading } from '@/context/AppContext';
+import { AppProvider, useAppLoadingStatus } from '@/context/AppContext';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 import ToastContainer from '@/components/toast/toast';
 import { findAdmins } from '@/utils';
@@ -15,7 +15,7 @@ import { usePathname } from 'next/navigation';
 import '../app.css';
 
 function OnboardingContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useAppLoading();
+  const { shouldShowLoading } = useAppLoadingStatus();
   const pathname = usePathname();
   const signUp = pathname.includes('sign-up');
 

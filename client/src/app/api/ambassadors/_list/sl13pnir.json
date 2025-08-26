@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/sl13pnir/summary",
+  "username": "sl13pnir",
+  "name": "Kai ",
+  "bio_excerpt": "Cardano Ambassador (Reddit Moderator)",
+  "country": "United Kingdom",
+  "flag": "/img/flags/GB.svg",
+  "avatar": "/user_avatar/forum.cardano.org/sl13pnir/{size}/19000_2.png",
+  "created_at": "2020-06-06T16:36:23.546Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 355,
+      "posts_read_count": 1972,
+      "days_visited": 231,
+      "likes_given": 17,
+      "likes_received": 36,
+      "topics_created": 1,
+      "replies_created": 7,
+      "time_read": 47660,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "r/Cardano Subreddit - Discussion about Rule 4 - No spamming, advertising or low value content",
+        "url": "https://forum.cardano.org/t/r-cardano-subreddit-discussion-about-rule-4-no-spamming-advertising-or-low-value-content/116271/39",
+        "like_count": 3,
+        "created_at": "2023-12-09T14:13:57.103Z"
+      },
+      {
+        "title": "New Ambassador from the UK",
+        "url": "https://forum.cardano.org/t/new-ambassador-from-the-uk/34435/15",
+        "like_count": 3,
+        "created_at": "2020-07-26T17:41:38.498Z"
+      },
+      {
+        "title": ":nigeria: Greetings from CF’s first Africa-based team member",
+        "url": "https://forum.cardano.org/t/greetings-from-cf-s-first-africa-based-team-member/36072/6",
+        "like_count": 3,
+        "created_at": "2020-07-20T12:34:49.813Z"
+      },
+      {
+        "title": "Yoroi paper wallet - view reward",
+        "url": "https://forum.cardano.org/t/yoroi-paper-wallet-view-reward/35232/17",
+        "like_count": 2,
+        "created_at": "2020-08-21T15:14:35.643Z"
+      },
+      {
+        "title": "New Ambassador from the UK",
+        "url": "https://forum.cardano.org/t/new-ambassador-from-the-uk/34435/17",
+        "like_count": 2,
+        "created_at": "2020-07-26T19:11:49.440Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "The Shelley hard fork: all you need to know",
+        "url": "https://forum.cardano.org/t/the-shelley-hard-fork-all-you-need-to-know/36553",
+        "reply_count": 74,
+        "like_count": 139,
+        "created_at": "2020-07-28T15:17:20.295Z"
+      },
+      {
+        "title": ":nigeria: Greetings from CF’s first Africa-based team member",
+        "url": "https://forum.cardano.org/t/greetings-from-cf-s-first-africa-based-team-member/36072",
+        "reply_count": 55,
+        "like_count": 133,
+        "created_at": "2020-07-20T11:59:59.810Z"
+      },
+      {
+        "title": "r/Cardano Subreddit - Discussion about Rule 4 - No spamming, advertising or low value content",
+        "url": "https://forum.cardano.org/t/r-cardano-subreddit-discussion-about-rule-4-no-spamming-advertising-or-low-value-content/116271",
+        "reply_count": 38,
+        "like_count": 53,
+        "created_at": "2023-04-02T10:46:07.419Z"
+      },
+      {
+        "title": "New Ambassador from the UK",
+        "url": "https://forum.cardano.org/t/new-ambassador-from-the-uk/34435",
+        "reply_count": 19,
+        "like_count": 44,
+        "created_at": "2020-06-16T10:54:27.591Z"
+      },
+      {
+        "title": "Yoroi paper wallet - view reward",
+        "url": "https://forum.cardano.org/t/yoroi-paper-wallet-view-reward/35232",
+        "reply_count": 20,
+        "like_count": 11,
+        "created_at": "2020-07-02T07:30:44.247Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "r/Cardano Subreddit - Discussion about Rule 4 - No spamming, advertising or low value content",
+      "url": "https://forum.cardano.org/t/r-cardano-subreddit-discussion-about-rule-4-no-spamming-advertising-or-low-value-content/116271/39",
+      "created_at": "2023-12-09T14:13:57.103Z"
+    },
+    {
+      "type": "topic",
+      "title": "r/Cardano Subreddit - Discussion about Rule 4 - No spamming, advertising or low value content",
+      "url": "https://forum.cardano.org/t/r-cardano-subreddit-discussion-about-rule-4-no-spamming-advertising-or-low-value-content/116271",
+      "created_at": "2023-04-02T10:46:07.419Z"
+    },
+    {
+      "type": "reply",
+      "title": "Yoroi paper wallet - view reward",
+      "url": "https://forum.cardano.org/t/yoroi-paper-wallet-view-reward/35232/17",
+      "created_at": "2020-08-21T15:14:35.643Z"
+    },
+    {
+      "type": "reply",
+      "title": "The Shelley hard fork: all you need to know",
+      "url": "https://forum.cardano.org/t/the-shelley-hard-fork-all-you-need-to-know/36553/68",
+      "created_at": "2020-08-10T10:54:46.852Z"
+    },
+    {
+      "type": "topic",
+      "title": "The Shelley hard fork: all you need to know",
+      "url": "https://forum.cardano.org/t/the-shelley-hard-fork-all-you-need-to-know/36553",
+      "created_at": "2020-07-28T15:17:20.295Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2020-06-16T11:36:35.103Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2023-12-09T14:53:10.336Z"
+    },
+    {
+      "name": "Nice Topic",
+      "description": "Received 10 likes on a topic",
+      "icon": "file-signature",
+      "granted_at": "2020-06-16T21:13:23.513Z"
+    }
+  ]
+}

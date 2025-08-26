@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/glitch_04/summary",
+  "username": "glitch_04",
+  "name": "GliTch_",
+  "bio_excerpt": null,
+  "country": "United States",
+  "flag": "/img/flags/US.svg",
+  "avatar": "https://avatars.discourse-cdn.com/v4/letter/g/ad7895/{size}.png",
+  "created_at": "2020-05-28T02:46:18.894Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 336,
+      "posts_read_count": 2597,
+      "days_visited": 385,
+      "likes_given": 33,
+      "likes_received": 21,
+      "topics_created": 1,
+      "replies_created": 14,
+      "time_read": 71547,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "Should wallets penalize pools in the ranking and how could that look like?",
+        "url": "https://forum.cardano.org/t/should-wallets-penalize-pools-in-the-ranking-and-how-could-that-look-like/41652/8",
+        "like_count": 4,
+        "created_at": "2020-10-28T02:39:21.543Z"
+      },
+      {
+        "title": "Is adapools.org approaches endorsed by Cardano Foundation?",
+        "url": "https://forum.cardano.org/t/is-adapools-org-approaches-endorsed-by-cardano-foundation/39567/2",
+        "like_count": 4,
+        "created_at": "2020-08-31T21:33:18.411Z"
+      },
+      {
+        "title": "Minimum Pool Fees (with a brief mention of K changes)",
+        "url": "https://forum.cardano.org/t/minimum-pool-fees-with-a-brief-mention-of-k-changes/97002/77",
+        "like_count": 3,
+        "created_at": "2022-03-09T10:19:19.825Z"
+      },
+      {
+        "title": "Why should I NOT choose a 0% Margin Pool to stake with?",
+        "url": "https://forum.cardano.org/t/why-should-i-not-choose-a-0-margin-pool-to-stake-with/38964/21",
+        "like_count": 3,
+        "created_at": "2020-08-25T04:25:03.811Z"
+      },
+      {
+        "title": "Minimum Pool Fees (with a brief mention of K changes)",
+        "url": "https://forum.cardano.org/t/minimum-pool-fees-with-a-brief-mention-of-k-changes/97002/74",
+        "like_count": 2,
+        "created_at": "2022-03-09T08:49:07.151Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Minimum Pool Fees (with a brief mention of K changes)",
+        "url": "https://forum.cardano.org/t/minimum-pool-fees-with-a-brief-mention-of-k-changes/97002",
+        "reply_count": 142,
+        "like_count": 271,
+        "created_at": "2022-03-04T18:29:01.285Z"
+      },
+      {
+        "title": "Why should I NOT choose a 0% Margin Pool to stake with?",
+        "url": "https://forum.cardano.org/t/why-should-i-not-choose-a-0-margin-pool-to-stake-with/38964",
+        "reply_count": 30,
+        "like_count": 50,
+        "created_at": "2020-08-21T19:52:44.860Z"
+      },
+      {
+        "title": "Is adapools.org approaches endorsed by Cardano Foundation?",
+        "url": "https://forum.cardano.org/t/is-adapools-org-approaches-endorsed-by-cardano-foundation/39567",
+        "reply_count": 27,
+        "like_count": 37,
+        "created_at": "2020-08-31T18:29:36.767Z"
+      },
+      {
+        "title": "Should wallets penalize pools in the ranking and how could that look like?",
+        "url": "https://forum.cardano.org/t/should-wallets-penalize-pools-in-the-ranking-and-how-could-that-look-like/41652",
+        "reply_count": 17,
+        "like_count": 26,
+        "created_at": "2020-10-27T19:20:42.323Z"
+      },
+      {
+        "title": "Check sync status of node",
+        "url": "https://forum.cardano.org/t/check-sync-status-of-node/36500",
+        "reply_count": 30,
+        "like_count": 12,
+        "created_at": "2020-07-27T18:03:46.858Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "Minimum Pool Fees (with a brief mention of K changes)",
+      "url": "https://forum.cardano.org/t/minimum-pool-fees-with-a-brief-mention-of-k-changes/97002/77",
+      "created_at": "2022-03-09T10:19:19.825Z"
+    },
+    {
+      "type": "reply",
+      "title": "Minimum Pool Fees (with a brief mention of K changes)",
+      "url": "https://forum.cardano.org/t/minimum-pool-fees-with-a-brief-mention-of-k-changes/97002/74",
+      "created_at": "2022-03-09T08:49:07.151Z"
+    },
+    {
+      "type": "topic",
+      "title": "Minimum Pool Fees (with a brief mention of K changes)",
+      "url": "https://forum.cardano.org/t/minimum-pool-fees-with-a-brief-mention-of-k-changes/97002",
+      "created_at": "2022-03-04T18:29:01.285Z"
+    },
+    {
+      "type": "topic",
+      "title": "SPO Community Bootstrap Survey",
+      "url": "https://forum.cardano.org/t/spo-community-bootstrap-survey/62332",
+      "created_at": "2021-05-22T03:29:58.053Z"
+    },
+    {
+      "type": "reply",
+      "title": "Ouroboros Omega!",
+      "url": "https://forum.cardano.org/t/ouroboros-omega/46357/5",
+      "created_at": "2021-02-05T13:57:38.842Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2022-04-21T07:50:49.211Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2022-05-29T04:19:07.749Z"
+    },
+    {
+      "name": "First Share",
+      "description": "Shared a post",
+      "icon": "share-nodes",
+      "granted_at": "2020-08-02T12:13:44.570Z"
+    }
+  ]
+}

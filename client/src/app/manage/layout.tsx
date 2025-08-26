@@ -5,13 +5,13 @@ import SideNav from '@/components/Navigation/SideNav';
 import TopNavBar from '@/components/Navigation/TopNavBar';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 import ToastContainer from '@/components/toast/toast';
-import { AppProvider, useAppLoading } from '@/context/AppContext';
+import { AppProvider, useAppLoadingStatus } from '@/context/AppContext';
 import { MeshProvider } from '@meshsdk/react';
 import React from 'react';
 import '../app.css';
 
 function ManageContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useAppLoading();
+  const { shouldShowLoading } = useAppLoadingStatus();
 
   return (
     <>
