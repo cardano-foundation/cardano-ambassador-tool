@@ -5,8 +5,7 @@ import Footer from '@/components/Footer';
 import SideNav from '@/components/Navigation/SideNav';
 import TopNavBar from '@/components/Navigation/TopNavBar';
 import ToastContainer from '@/components/toast/toast';
-import { AppProvider, useAppLoadingStatus } from '@/context/AppContext';
-import { MeshProvider } from '@meshsdk/react';
+import { useAppLoadingStatus } from '@/context/AppContext';
 import React from 'react';
 
 function ManageContent({ children }: { children: React.ReactNode }) {
@@ -35,11 +34,5 @@ export default function ManageLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <MeshProvider>
-      <AppProvider>
-        <ManageContent>{children}</ManageContent>
-      </AppProvider>
-    </MeshProvider>
-  );
+  return <ManageContent>{children}</ManageContent>;
 }

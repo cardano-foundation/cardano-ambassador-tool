@@ -4,8 +4,7 @@ import Footer from '@/components/Footer';
 import SideNav from '@/components/Navigation/SideNav';
 import TopNavBar from '@/components/Navigation/TopNavBar';
 import ToastContainer from '@/components/toast/toast';
-import { AppProvider, useAppLoadingStatus } from '@/context/AppContext';
-import { MeshProvider } from '@meshsdk/react';
+import { useAppLoadingStatus } from '@/context/AppContext';
 import React from 'react';
 
 function HomeContent({ children }: { children: React.ReactNode }) {
@@ -36,11 +35,5 @@ export default function HomeLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <MeshProvider>
-      <AppProvider>
-        <HomeContent>{children}</HomeContent>
-      </AppProvider>
-    </MeshProvider>
-  );
+  return <HomeContent>{children}</HomeContent>;
 }

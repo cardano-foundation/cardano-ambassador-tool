@@ -1,13 +1,13 @@
 'use client';
 
+import { CardanoNetwork } from '@/config/cardano';
 import { useAppLoading } from '@/hooks/useAppLoading';
 import { useDatabase } from '@/hooks/useDatabase';
 import { useNetworkValidation } from '@/hooks/useNetworkValidation';
 import { Theme, useThemeManager } from '@/hooks/useThemeManager';
 import { User, useUserAuth } from '@/hooks/useUserAuth';
-import { CardanoNetwork } from '@/config/cardano';
 import { NetworkValidationResult } from '@/utils/wallet-network';
-import { Utxo } from '@types';
+import { Ambassador, Utxo } from '@types';
 import { createContext, useContext, useEffect } from 'react';
 
 // ---------- Types ----------
@@ -19,6 +19,7 @@ interface AppContextValue {
   // Database state
   dbLoading: boolean;
   intents: Utxo[];
+  ambassadors: Ambassador[];
   syncData: (context: string) => void;
   syncAllData: () => void;
   query: <T = Record<string, unknown>>(sql: string, params?: any[]) => T[];
@@ -50,6 +51,7 @@ const AppContext = createContext<AppContextValue>({
   // Database defaults
   dbLoading: true,
   intents: [],
+  ambassadors: [],
   syncData: () => {},
   syncAllData: () => {},
   query: () => [],
@@ -78,21 +80,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const database = useDatabase();
   const userAuth = useUserAuth();
   const themeManager = useThemeManager();
-  const networkValidation = useNetworkValidation(userAuth.userWallet || null, userAuth.userAddress || null);
+  const networkValidation = useNetworkValidation(
+    userAuth.userWallet || null,
+    userAuth.userAddress || null,
+  );
 
   // Coordinate app loading state based on dependencies
   useEffect(() => {
     const timer = appLoading.updateLoadingState(
       database.loading,
-      themeManager.isThemeInitialized
+      themeManager.isThemeInitialized,
     );
-    
+
     return () => {
       if (timer) {
         clearTimeout(timer);
       }
     };
-  }, [database.loading, themeManager.isThemeInitialized, appLoading.updateLoadingState]);
+  }, [
+    database.loading,
+    themeManager.isThemeInitialized,
+    appLoading.updateLoadingState,
+  ]);
 
   // Create the context value
   const contextValue: AppContextValue = {
@@ -103,6 +112,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // Database
     dbLoading: database.loading,
     intents: database.intents,
+    ambassadors: database.ambassadors,
     syncData: database.syncData,
     syncAllData: database.syncAllData,
     query: database.query,
@@ -126,9 +136,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AppContext.Provider value={contextValue}>
-      {children}
-    </AppContext.Provider>
+    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
   );
 }
 
@@ -146,6 +154,7 @@ export function useDb() {
   const {
     dbLoading,
     intents,
+    ambassadors,
     syncData,
     syncAllData,
     query,
@@ -155,6 +164,7 @@ export function useDb() {
   return {
     loading: dbLoading,
     intents,
+    ambassadors,
     syncData,
     syncAllData,
     query,

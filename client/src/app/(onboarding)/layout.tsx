@@ -8,7 +8,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Footer from '@/components/Footer';
 import ToastContainer from '@/components/toast/toast';
-import { AppProvider, useAppLoadingStatus } from '@/context/AppContext';
+import { useAppLoadingStatus } from '@/context/AppContext';
 import { findAdmins } from '@/utils';
 import { MeshProvider } from '@meshsdk/react';
 import { usePathname } from 'next/navigation';
@@ -93,11 +93,5 @@ export default function DefaultLayout({
 }>) {
   findAdmins();
 
-  return (
-    <MeshProvider>
-      <AppProvider>
-        <OnboardingContent>{children}</OnboardingContent>
-      </AppProvider>
-    </MeshProvider>
-  );
+  return <OnboardingContent>{children}</OnboardingContent>;
 }

@@ -6,8 +6,7 @@ import SideNav from '@/components/Navigation/SideNav';
 import TopNavBar from '@/components/Navigation/TopNavBar';
 import { NetworkErrorBanner } from '@/components/NetworkErrorBanner';
 import ToastContainer from '@/components/toast/toast';
-import { AppProvider, useAppLoadingStatus } from '@/context/AppContext';
-import { MeshProvider } from '@meshsdk/react';
+import { useAppLoadingStatus } from '@/context/AppContext';
 import React from 'react';
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
@@ -39,11 +38,5 @@ export default function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <MeshProvider>
-      <AppProvider>
-        <DashboardContent>{children}</DashboardContent>
-      </AppProvider>
-    </MeshProvider>
-  );
+  return <DashboardContent>{children}</DashboardContent>;
 }

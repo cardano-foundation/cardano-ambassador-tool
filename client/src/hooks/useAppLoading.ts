@@ -23,9 +23,9 @@ export function useAppLoading() {
       return;
     }
 
-    // For initial loads, check if all resources are ready
+    // check if all resources are ready
     if (!dbLoading && isThemeInitialized) {
-      // No artificial delay - let the app load naturally
+      
       setIsAppLoading(false);
       return null;
     }

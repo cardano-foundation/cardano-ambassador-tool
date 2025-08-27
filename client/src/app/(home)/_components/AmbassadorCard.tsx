@@ -3,7 +3,7 @@ import Card, { CardContent } from '@/components/atoms/Card';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import UserAvatar from '@/components/atoms/UserAvatar';
-import { Ambassador } from '@/data/mockAmbassadors';
+import { Ambassador } from '@types';
 
 export default function AmbassadorCard({
   ambassador,
@@ -82,11 +82,11 @@ export default function AmbassadorCard({
           </div>
           <div className="flex-shrink-0">
             <Button
-              variant={ambassador.isFollowing ? 'outline' : 'primary'}
+              variant={'primary'}
               size="sm"
               className="!h-[38px] text-sm font-medium whitespace-nowrap"
             >
-              {ambassador.isFollowing ? 'Following' : 'Follow'}
+              {'view'}
             </Button>
           </div>
         </CardContent>
@@ -114,12 +114,11 @@ export default function AmbassadorCard({
           </Paragraph>
         </div>
         <Button
-          variant={ambassador.isFollowing ? 'outline' : 'primary'}
+          variant={'primary'}
           size="sm"
-          fullWidth
-          className={`${ambassador.isFollowing ? 'text-primary-base!' : ''} text-xs sm:text-sm`}
+          className="!h-[38px] text-sm font-medium whitespace-nowrap"
         >
-          {ambassador.isFollowing ? 'Following' : 'Follow'}
+          {'view'}
         </Button>
       </CardContent>
     </Card>
