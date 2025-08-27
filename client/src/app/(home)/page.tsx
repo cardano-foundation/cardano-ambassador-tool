@@ -2,7 +2,7 @@
 import AmbassadorSearchBar from '@/components/AmbassadorSearchBar';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
-import { mockAmbassadors } from '@/data/mockAmbassadors';
+import { useApp } from '@/context';
 import React, { useMemo, useState } from 'react';
 import AmbassadorCard from './_components/AmbassadorCard';
 
@@ -11,13 +11,14 @@ export default function HomePage() {
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [currentView, setCurrentView] = useState<'grid' | 'list'>('grid');
   const [displayCount, setDisplayCount] = useState(20);
+  const { ambassadors } = useApp();
 
   const uniqueCountries = [
-    ...new Set(mockAmbassadors.map((a) => a.country)),
+    ...new Set(ambassadors.map((a) => a.country)),
   ].sort();
 
   const filteredAmbassadors = useMemo(() => {
-    return mockAmbassadors.filter((ambassador) => {
+    return ambassadors.filter((ambassador) => {
       const matchesSearch =
         ambassador.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ambassador.country.toLowerCase().includes(searchTerm.toLowerCase());
@@ -25,7 +26,9 @@ export default function HomePage() {
         selectedRegion === 'all' || ambassador.country === selectedRegion;
       return matchesSearch && matchesRegion;
     });
-  }, [searchTerm, selectedRegion]);
+  }, [searchTerm, selectedRegion, ambassadors]);
+
+  console.log({ ambassadors });
 
   const displayedAmbassadors = filteredAmbassadors.slice(0, displayCount);
   const hasMoreAmbassadors = displayCount < filteredAmbassadors.length;
@@ -81,7 +84,7 @@ export default function HomePage() {
       >
         {displayedAmbassadors.map((ambassador) => (
           <AmbassadorCard
-            key={ambassador.id}
+            key={ambassador.name}
             ambassador={ambassador}
             isListView={currentView === 'list'}
           />
