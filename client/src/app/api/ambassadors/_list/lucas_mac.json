@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/lucas_mac/summary",
+  "username": "lucas_mac",
+  "name": "Lucas Macchiavelli",
+  "bio_excerpt": null,
+  "country": "Argentina",
+  "flag": "/img/flags/AR.svg",
+  "avatar": "/user_avatar/forum.cardano.org/lucas_mac/{size}/40014_2.png",
+  "created_at": "2021-08-11T19:16:32.294Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 193,
+      "posts_read_count": 467,
+      "days_visited": 160,
+      "likes_given": 7,
+      "likes_received": 52,
+      "topics_created": 51,
+      "replies_created": 70,
+      "time_read": 21509,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+        "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498/3",
+        "like_count": 2,
+        "created_at": "2023-11-29T15:45:32.985Z"
+      },
+      {
+        "title": "Voltaire Report: Navigating the New Age of Cardano Governance",
+        "url": "https://forum.cardano.org/t/voltaire-report-navigating-the-new-age-of-cardano-governance/120660/2",
+        "like_count": 2,
+        "created_at": "2023-08-09T21:05:18.807Z"
+      },
+      {
+        "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+        "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498/50",
+        "like_count": 1,
+        "created_at": "2024-05-01T12:07:08.294Z"
+      },
+      {
+        "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+        "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498/49",
+        "like_count": 1,
+        "created_at": "2024-05-01T12:05:46.997Z"
+      },
+      {
+        "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+        "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498/46",
+        "like_count": 1,
+        "created_at": "2024-04-02T19:28:15.859Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+        "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498",
+        "reply_count": 56,
+        "like_count": 18,
+        "created_at": "2023-11-28T23:34:37.337Z"
+      },
+      {
+        "title": "Intersect´s ROADMAP!",
+        "url": "https://forum.cardano.org/t/intersect-s-roadmap/121505",
+        "reply_count": 4,
+        "like_count": 16,
+        "created_at": "2023-08-31T13:46:23.983Z"
+      },
+      {
+        "title": "Voltaire Report: Navigating the New Age of Cardano Governance",
+        "url": "https://forum.cardano.org/t/voltaire-report-navigating-the-new-age-of-cardano-governance/120660",
+        "reply_count": 4,
+        "like_count": 13,
+        "created_at": "2023-08-08T13:39:34.453Z"
+      },
+      {
+        "title": "Hey! From Argentina",
+        "url": "https://forum.cardano.org/t/hey-from-argentina/68591",
+        "reply_count": 7,
+        "like_count": 5,
+        "created_at": "2021-08-11T19:25:27.595Z"
+      },
+      {
+        "title": "LATAM Community going big on Cardano!",
+        "url": "https://forum.cardano.org/t/latam-community-going-big-on-cardano/118815",
+        "reply_count": 3,
+        "like_count": 4,
+        "created_at": "2023-06-12T13:31:00.884Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+      "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498/50",
+      "created_at": "2024-05-01T12:07:08.294Z"
+    },
+    {
+      "type": "reply",
+      "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+      "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498/49",
+      "created_at": "2024-05-01T12:05:46.997Z"
+    },
+    {
+      "type": "reply",
+      "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+      "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498/46",
+      "created_at": "2024-04-02T19:28:15.859Z"
+    },
+    {
+      "type": "reply",
+      "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+      "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498/32",
+      "created_at": "2024-01-30T18:16:53.695Z"
+    },
+    {
+      "type": "reply",
+      "title": "Lucas Macchiavell - Overview of my Activities on Cardano",
+      "url": "https://forum.cardano.org/t/lucas-macchiavell-overview-of-my-activities-on-cardano/124498/3",
+      "created_at": "2023-11-29T15:45:32.985Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2022-06-07T06:33:49.059Z"
+    },
+    {
+      "name": "Good Share",
+      "description": "Shared a post with 300 unique visitors",
+      "icon": "share-nodes",
+      "granted_at": "2022-11-29T19:50:18.090Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2024-08-13T09:15:57.369Z"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/latinstakepools/summary",
+  "username": "latinstakepools",
+  "name": "Martin Ungar",
+  "bio_excerpt": "Entrepreneur and investor, aiming to bring Cardano to Latin America.",
+  "country": "Argentina",
+  "flag": "/img/flags/AR.svg",
+  "avatar": "/user_avatar/forum.cardano.org/latinstakepools/{size}/55482_2.png",
+  "created_at": "2020-08-23T18:37:40.845Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 859,
+      "posts_read_count": 3092,
+      "days_visited": 639,
+      "likes_given": 126,
+      "likes_received": 175,
+      "topics_created": 479,
+      "replies_created": 61,
+      "time_read": 95867,
+      "recent_time_read": 391
+    },
+    "top_replies": [
+      {
+        "title": "The Libertarian Cardano Budget Proposal",
+        "url": "https://forum.cardano.org/t/the-libertarian-cardano-budget-proposal/143159/3",
+        "like_count": 10,
+        "created_at": "2025-02-13T23:25:42.103Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for April 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-april-2022/99831/13",
+        "like_count": 8,
+        "created_at": "2022-04-21T19:46:09.697Z"
+      },
+      {
+        "title": "The Libertarian Cardano Budget Proposal",
+        "url": "https://forum.cardano.org/t/the-libertarian-cardano-budget-proposal/143159/8",
+        "like_count": 5,
+        "created_at": "2025-02-14T17:35:07.926Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for October 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-october-2022/109142/26",
+        "like_count": 4,
+        "created_at": "2022-10-20T12:23:56.772Z"
+      },
+      {
+        "title": "The Libertarian Cardano Budget Proposal",
+        "url": "https://forum.cardano.org/t/the-libertarian-cardano-budget-proposal/143159/11",
+        "like_count": 3,
+        "created_at": "2025-02-14T17:49:59.653Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Announcing the stake pools chosen for April 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-april-2022/99831",
+        "reply_count": 63,
+        "like_count": 154,
+        "created_at": "2022-04-21T10:54:43.678Z"
+      },
+      {
+        "title": "CHEFF pool run a scam to get votes for SundaeSwap ISO (has IOG delegation)",
+        "url": "https://forum.cardano.org/t/cheff-pool-run-a-scam-to-get-votes-for-sundaeswap-iso-has-iog-delegation/84769",
+        "reply_count": 40,
+        "like_count": 107,
+        "created_at": "2021-11-14T14:09:11.705Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for October 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-october-2022/109142",
+        "reply_count": 42,
+        "like_count": 85,
+        "created_at": "2022-10-18T22:00:00.000Z"
+      },
+      {
+        "title": "The Libertarian Cardano Budget Proposal",
+        "url": "https://forum.cardano.org/t/the-libertarian-cardano-budget-proposal/143159",
+        "reply_count": 15,
+        "like_count": 62,
+        "created_at": "2025-02-13T22:48:43.929Z"
+      },
+      {
+        "title": "Solicitudes Adafolio: Portafolio Pools Hispanos",
+        "url": "https://forum.cardano.org/t/solicitudes-adafolio-portafolio-pools-hispanos/45828",
+        "reply_count": 41,
+        "like_count": 21,
+        "created_at": "2021-01-30T10:42:11.882Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "topic",
+      "title": "Cripto Noticias | Cardano Card: Tarjeta Para Gastar ADA BTC SOL USDC USDT de Emurgo",
+      "url": "https://forum.cardano.org/t/cripto-noticias-cardano-card-tarjeta-para-gastar-ada-btc-sol-usdc-usdt-de-emurgo/147469",
+      "created_at": "2025-07-15T21:04:04.130Z"
+    },
+    {
+      "type": "reply",
+      "title": "The Libertarian Cardano Budget Proposal",
+      "url": "https://forum.cardano.org/t/the-libertarian-cardano-budget-proposal/143159/11",
+      "created_at": "2025-02-14T17:49:59.653Z"
+    },
+    {
+      "type": "reply",
+      "title": "The Libertarian Cardano Budget Proposal",
+      "url": "https://forum.cardano.org/t/the-libertarian-cardano-budget-proposal/143159/8",
+      "created_at": "2025-02-14T17:35:07.926Z"
+    },
+    {
+      "type": "reply",
+      "title": "The Libertarian Cardano Budget Proposal",
+      "url": "https://forum.cardano.org/t/the-libertarian-cardano-budget-proposal/143159/5",
+      "created_at": "2025-02-14T14:13:13.176Z"
+    },
+    {
+      "type": "reply",
+      "title": "The Libertarian Cardano Budget Proposal",
+      "url": "https://forum.cardano.org/t/the-libertarian-cardano-budget-proposal/143159/3",
+      "created_at": "2025-02-13T23:25:42.103Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2022-07-07T13:47:06.142Z"
+    },
+    {
+      "name": "Gives Back",
+      "description": "Has 100 liked posts and gave 100 likes",
+      "icon": "heart",
+      "granted_at": "2025-03-27T17:14:00.603Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2024-08-25T09:05:34.764Z"
+    }
+  ]
+}

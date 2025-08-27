@@ -19,7 +19,7 @@ const allScripts = scripts({
     },
 });
 
-export const SCRIPT_ADDRESSES = {
+const SCRIPT_ADDRESSES = {
     MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
     MEMBER_NFT: allScripts.member.spend.address,
     PROPOSE_INTENT: allScripts.proposeIntent.spend.address,
@@ -27,7 +27,7 @@ export const SCRIPT_ADDRESSES = {
     SIGN_OFF_APPROVAL: allScripts.signOffApproval.spend.address,
 } as const;
 
-export const POLICY_IDS = {
+const POLICY_IDS = {
     MEMBER_NFT: allScripts.member.mint.hash,
 } as const;
 
@@ -90,17 +90,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<{
         const validUtxos = await Promise.all(
             utxos
                 .filter((utxo) => utxo.output.plutusData)
-                .map(async (utxo) => {
-                    try {
-                        const parsed = action.parser(utxo.output?.plutusData ?? '');
-
-                        if (!parsed) return null;
-                        return utxo;
-                    } catch (error) {
-                        console.error(`Error parsing ${action.errorContext} UTxO:`, error);
-                        return null;
-                    }
-                })
         );
 
         const filtered = validUtxos.filter((utxo): utxo is UTxO => utxo !== null);

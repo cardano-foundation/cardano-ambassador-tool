@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/varavas/summary",
+  "username": "varavas",
+  "name": "Giannis M",
+  "bio_excerpt": "Greek Cardano Explorer",
+  "country": "Greece",
+  "flag": "/img/flags/GR.svg",
+  "avatar": "/user_avatar/forum.cardano.org/varavas/{size}/61799_2.png",
+  "created_at": "2023-02-01T10:32:12.758Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 238,
+      "posts_read_count": 365,
+      "days_visited": 780,
+      "likes_given": 30,
+      "likes_received": 111,
+      "topics_created": 146,
+      "replies_created": 10,
+      "time_read": 24797,
+      "recent_time_read": 907
+    },
+    "top_replies": [
+      {
+        "title": "The First Cardano Embassy (Athens - Greece)",
+        "url": "https://forum.cardano.org/t/the-first-cardano-embassy-athens-greece/143428/9",
+        "like_count": 3,
+        "created_at": "2025-02-24T10:43:19.825Z"
+      },
+      {
+        "title": "The First Cardano Embassy (Athens - Greece)",
+        "url": "https://forum.cardano.org/t/the-first-cardano-embassy-athens-greece/143428/4",
+        "like_count": 3,
+        "created_at": "2025-02-22T11:09:51.581Z"
+      },
+      {
+        "title": "The First Cardano Embassy (Athens - Greece)",
+        "url": "https://forum.cardano.org/t/the-first-cardano-embassy-athens-greece/143428/12",
+        "like_count": 2,
+        "created_at": "2025-07-18T10:15:18.814Z"
+      },
+      {
+        "title": "Cardano Live #3 - Tempo vote app",
+        "url": "https://forum.cardano.org/t/cardano-live-3-tempo-vote-app/136158/3",
+        "like_count": 2,
+        "created_at": "2024-09-22T10:31:28.902Z"
+      },
+      {
+        "title": "The First Cardano Embassy (Athens - Greece)",
+        "url": "https://forum.cardano.org/t/the-first-cardano-embassy-athens-greece/143428/10",
+        "like_count": 1,
+        "created_at": "2025-02-24T10:46:34.497Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "The First Cardano Embassy (Athens - Greece)",
+        "url": "https://forum.cardano.org/t/the-first-cardano-embassy-athens-greece/143428",
+        "reply_count": 12,
+        "like_count": 29,
+        "created_at": "2025-02-21T14:48:41.601Z"
+      },
+      {
+        "title": "Έξυπνα Συμβόλαια στο Bitcoin",
+        "url": "https://forum.cardano.org/t/bitcoin/138002",
+        "reply_count": 3,
+        "like_count": 7,
+        "created_at": "2024-10-31T07:45:53.004Z"
+      },
+      {
+        "title": "Cardano Live #3 - Tempo vote app",
+        "url": "https://forum.cardano.org/t/cardano-live-3-tempo-vote-app/136158",
+        "reply_count": 3,
+        "like_count": 7,
+        "created_at": "2024-09-20T12:32:01.456Z"
+      },
+      {
+        "title": "Greek Workshop for blockchain enthusiasts!",
+        "url": "https://forum.cardano.org/t/greek-workshop-for-blockchain-enthusiasts/140815",
+        "reply_count": 2,
+        "like_count": 6,
+        "created_at": "2024-12-15T10:01:43.768Z"
+      },
+      {
+        "title": "Palmyra: Το παρόν και το μέλλον της πλατφόρμας",
+        "url": "https://forum.cardano.org/t/palmyra/141852",
+        "reply_count": 2,
+        "like_count": 5,
+        "created_at": "2025-01-11T16:44:51.759Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "The First Cardano Embassy (Athens - Greece)",
+      "url": "https://forum.cardano.org/t/the-first-cardano-embassy-athens-greece/143428/12",
+      "created_at": "2025-07-18T10:15:18.814Z"
+    },
+    {
+      "type": "topic",
+      "title": "Cardano Workshop στην Αθήνα",
+      "url": "https://forum.cardano.org/t/cardano-workshop/146683",
+      "created_at": "2025-06-11T09:21:43.676Z"
+    },
+    {
+      "type": "reply",
+      "title": "The First Cardano Embassy (Athens - Greece)",
+      "url": "https://forum.cardano.org/t/the-first-cardano-embassy-athens-greece/143428/10",
+      "created_at": "2025-02-24T10:46:34.497Z"
+    },
+    {
+      "type": "reply",
+      "title": "The First Cardano Embassy (Athens - Greece)",
+      "url": "https://forum.cardano.org/t/the-first-cardano-embassy-athens-greece/143428/9",
+      "created_at": "2025-02-24T10:43:19.825Z"
+    },
+    {
+      "type": "reply",
+      "title": "The First Cardano Embassy (Athens - Greece)",
+      "url": "https://forum.cardano.org/t/the-first-cardano-embassy-athens-greece/143428/4",
+      "created_at": "2025-02-22T11:09:51.581Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2023-02-06T16:38:16.306Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2025-02-02T12:33:04.756Z"
+    },
+    {
+      "name": "Thank You",
+      "description": "Has 20 liked posts and gave 10 likes",
+      "icon": "heart",
+      "granted_at": "2024-11-06T16:27:20.835Z"
+    }
+  ]
+}

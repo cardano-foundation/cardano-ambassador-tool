@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/napoles/summary",
+  "username": "napoles",
+  "name": "Cardanians Hispanos",
+  "bio_excerpt": "Boosting<br>\nImpulsando<br>\n\n\n[Twitter] <a href=\"https://twitter.com/cardano_ada_es\">Cardanians Hispanos<br>\n[Hispanic Cardanians]</a><br>\n\n\n[Telegram] <a href=\"https://t.me/CardanoHispanoAnuncios\">Anuncios de Cardano en Español<br>\n[Cardano’s Spanish Announcements]</a>.<br>\n\n\n[Facebook] <a href=\"https://www.facebook.com/groups/cardanoada.comunidadhispana\">Comunidad de Cardano en español<br>\n[Cardano Community in Spanish]</a><br>\n\n\nContributing<br>\nContribuyendo<br>\n\n\n<a href=\"https://flint-wallet.com/\">Flint wallet<br>\n[Flint wallet website (Spanish Translation)]</a><br>\n\n\n<a href=\"https://cardano.org\">Cardano.org<br>\n[Cardano website (&hellip;</a>",
+  "country": "United States",
+  "flag": "/img/flags/US.svg",
+  "avatar": "/user_avatar/forum.cardano.org/napoles/{size}/37863_2.png",
+  "created_at": "2021-01-06T22:24:17.136Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 21677,
+      "posts_read_count": 100026,
+      "days_visited": 1673,
+      "likes_given": 905,
+      "likes_received": 678,
+      "topics_created": 613,
+      "replies_created": 730,
+      "time_read": 4609980,
+      "recent_time_read": 89897
+    },
+    "top_replies": [
+      {
+        "title": "2021 Cardano Forum Stats - The Year in Review",
+        "url": "https://forum.cardano.org/t/2021-cardano-forum-stats-the-year-in-review/90566/14",
+        "like_count": 8,
+        "created_at": "2022-01-04T16:33:30.947Z"
+      },
+      {
+        "title": "PoolTool is happy to announce that the platform has had a major refresh",
+        "url": "https://forum.cardano.org/t/pooltool-is-happy-to-announce-that-the-platform-has-had-a-major-refresh/106418/2",
+        "like_count": 4,
+        "created_at": "2022-08-23T01:09:45.476Z"
+      },
+      {
+        "title": ":es: Boletín del 23 de julio de 2024: Proyecto Catalyst Fund 12: Resultados de la votación, lanzamiento de la versión 9 del componente Nodo Cardano, resurrección de USDA, DReps y el futuro de la gobernanza blockchain",
+        "url": "https://forum.cardano.org/t/boletin-del-23-de-julio-de-2024-proyecto-catalyst-fund-12-resultados-de-la-votacion-lanzamiento-de-la-version-9-del-componente-nodo-cardano-resurreccion-de-usda-dreps-y-el-futuro-de-la-gobernanza-blockchain/134340/3",
+        "like_count": 3,
+        "created_at": "2024-07-23T22:53:55.935Z"
+      },
+      {
+        "title": "The Cardano Foundation has joined the Linux Foundation as a Gold member",
+        "url": "https://forum.cardano.org/t/the-cardano-foundation-has-joined-the-linux-foundation-as-a-gold-member/103576/2",
+        "like_count": 3,
+        "created_at": "2022-06-23T02:52:08.643Z"
+      },
+      {
+        "title": "Essential Cardano site is now available for the Cardano Community to try in 𝐨𝐩𝐞𝐧 𝐛𝐞𝐭𝐚!",
+        "url": "https://forum.cardano.org/t/essential-cardano-site-is-now-available-for-the-cardano-community-to-try-in/100686/2",
+        "like_count": 3,
+        "created_at": "2022-05-05T16:47:14.290Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Yoroi wallet: “Due to protocol update, the rewards are being recalculated”",
+        "url": "https://forum.cardano.org/t/yoroi-wallet-due-to-protocol-update-the-rewards-are-being-recalculated/75010",
+        "reply_count": 127,
+        "like_count": 91,
+        "created_at": "2021-09-18T10:51:02.186Z"
+      },
+      {
+        "title": "2021 Cardano Forum Stats - The Year in Review",
+        "url": "https://forum.cardano.org/t/2021-cardano-forum-stats-the-year-in-review/90566",
+        "reply_count": 15,
+        "like_count": 45,
+        "created_at": "2022-01-01T17:10:36.066Z"
+      },
+      {
+        "title": "Yoroi wallet: &ldquo;Debido a la actualización del protocolo, las recompensas están siendo recalculadas&rdquo;",
+        "url": "https://forum.cardano.org/t/yoroi-wallet-debido-a-la-actualizacion-del-protocolo-las-recompensas-estan-siendo-recalculadas/76079",
+        "reply_count": 62,
+        "like_count": 39,
+        "created_at": "2021-09-24T03:12:49.410Z"
+      },
+      {
+        "title": "Cardano YouTube Giveaway scam",
+        "url": "https://forum.cardano.org/t/cardano-youtube-giveaway-scam/71568",
+        "reply_count": 20,
+        "like_count": 18,
+        "created_at": "2021-09-04T17:11:25.562Z"
+      },
+      {
+        "title": ":es: Cardano, su cambio seguro a la descentralización",
+        "url": "https://forum.cardano.org/t/cardano-su-cambio-seguro-a-la-descentralizacion/55513",
+        "reply_count": 8,
+        "like_count": 13,
+        "created_at": "2021-03-29T23:49:37.778Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": ":es: Boletín del 23 de julio de 2024: Proyecto Catalyst Fund 12: Resultados de la votación, lanzamiento de la versión 9 del componente Nodo Cardano, resurrección de USDA, DReps y el futuro de la gobernanza blockchain",
+      "url": "https://forum.cardano.org/t/boletin-del-23-de-julio-de-2024-proyecto-catalyst-fund-12-resultados-de-la-votacion-lanzamiento-de-la-version-9-del-componente-nodo-cardano-resurreccion-de-usda-dreps-y-el-futuro-de-la-gobernanza-blockchain/134340/3",
+      "created_at": "2024-07-23T22:53:55.935Z"
+    },
+    {
+      "type": "topic",
+      "title": ":es: Boletín del 23 de julio de 2024: Proyecto Catalyst Fund 12: Resultados de la votación, lanzamiento de la versión 9 del componente Nodo Cardano, resurrección de USDA, DReps y el futuro de la gobernanza blockchain",
+      "url": "https://forum.cardano.org/t/boletin-del-23-de-julio-de-2024-proyecto-catalyst-fund-12-resultados-de-la-votacion-lanzamiento-de-la-version-9-del-componente-nodo-cardano-resurreccion-de-usda-dreps-y-el-futuro-de-la-gobernanza-blockchain/134340",
+      "created_at": "2024-07-23T22:50:27.029Z"
+    },
+    {
+      "type": "topic",
+      "title": "Cardano NFTs #045: Token MITHR",
+      "url": "https://forum.cardano.org/t/cardano-nfts-045-token-mithr/119818",
+      "created_at": "2023-07-15T03:06:28.793Z"
+    },
+    {
+      "type": "reply",
+      "title": "PoolTool is happy to announce that the platform has had a major refresh",
+      "url": "https://forum.cardano.org/t/pooltool-is-happy-to-announce-that-the-platform-has-had-a-major-refresh/106418/2",
+      "created_at": "2022-08-23T01:09:45.476Z"
+    },
+    {
+      "type": "topic",
+      "title": "PoolTool is happy to announce that the platform has had a major refresh",
+      "url": "https://forum.cardano.org/t/pooltool-is-happy-to-announce-that-the-platform-has-had-a-major-refresh/106418",
+      "created_at": "2022-08-23T01:09:04.669Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2021-03-17T04:00:39.231Z"
+    },
+    {
+      "name": "Respected",
+      "description": "Received 2 likes on 100 posts",
+      "icon": "heart",
+      "granted_at": "2021-09-08T10:42:46.762Z"
+    },
+    {
+      "name": "Nice Share",
+      "description": "Shared a post with 25 unique visitors",
+      "icon": "share-nodes",
+      "granted_at": "2025-05-12T21:48:02.476Z"
+    }
+  ]
+}

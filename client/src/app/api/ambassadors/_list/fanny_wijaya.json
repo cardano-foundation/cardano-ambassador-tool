@@ -1,0 +1,113 @@
+{
+  "href": "https://forum.cardano.org/u/fanny_wijaya/summary",
+  "username": "fanny_wijaya",
+  "name": "Fanny wijaya",
+  "bio_excerpt": "Hi, I’m Fanny from Indonesia <img src=\"https://emoji.discourse-cdn.com/apple/indonesia.png?v=14\" title=\":indonesia:\" class=\"emoji\" alt=\":indonesia:\" loading=\"lazy\" width=\"20\" height=\"20\"> — Cardano Ambassador &amp; MCC Member (Intersect)<br>\nFounder of Cardano Hub Indonesia, Cardano Woman Indonesia, and Indonesian Town Hall.<br>\nTravel Alternate for Cardano Convention 2024 Nairobi.<br>\nActive in grassroots community building, Catalyst reviews, and Web3 empowerment.<br>\nLet’s grow Cardano together! <img src=\"https://emoji.discourse-cdn.com/apple/rocket.png?v=14\" title=\":rocket:\" class=\"emoji\" alt=\":rocket:\" loading=\"lazy\" width=\"20\" height=\"20\">",
+  "country": "Indonesia",
+  "flag": "/img/flags/ID.svg",
+  "avatar": "/user_avatar/forum.cardano.org/fanny_wijaya/{size}/81059_2.png",
+  "created_at": "2022-07-22T13:30:40.744Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 104,
+      "posts_read_count": 126,
+      "days_visited": 119,
+      "likes_given": 6,
+      "likes_received": 68,
+      "topics_created": 50,
+      "replies_created": 0,
+      "time_read": 21531,
+      "recent_time_read": 552
+    },
+    "top_replies": [],
+    "top_topics": [
+      {
+        "title": "Cardano Workshop Jakarta: Mini Ambassador Program",
+        "url": "https://forum.cardano.org/t/cardano-workshop-jakarta-mini-ambassador-program/127630",
+        "reply_count": 2,
+        "like_count": 5,
+        "created_at": "2024-02-12T10:18:43.912Z"
+      },
+      {
+        "title": "Cardano Hybrid Meetup: Project Catalyst - Road to Voting Fund 12",
+        "url": "https://forum.cardano.org/t/cardano-hybrid-meetup-project-catalyst-road-to-voting-fund-12/133798",
+        "reply_count": 2,
+        "like_count": 4,
+        "created_at": "2024-07-05T16:08:43.182Z"
+      },
+      {
+        "title": " [Cardano Hub Surabaya] Meetup #5: Coffee and Crypto Talk",
+        "url": "https://forum.cardano.org/t/cardano-hub-surabaya-meetup-5-coffee-and-crypto-talk/109584",
+        "reply_count": 2,
+        "like_count": 4,
+        "created_at": "2022-10-26T13:30:43.374Z"
+      },
+      {
+        "title": "Cardano Hub Indonesia Attendance to KAL High School ( Hang Tuah University Foundation )",
+        "url": "https://forum.cardano.org/t/cardano-hub-indonesia-attendance-to-kal-high-school-hang-tuah-university-foundation/146371",
+        "reply_count": 1,
+        "like_count": 4,
+        "created_at": "2025-05-28T18:26:14.859Z"
+      },
+      {
+        "title": " Big Meetup HYBRID Jakarta &amp; Surabaya dan Cardano Workshop Jakarta",
+        "url": "https://forum.cardano.org/t/big-meetup-hybrid-jakarta-surabaya-dan-cardano-workshop-jakarta/129844",
+        "reply_count": 1,
+        "like_count": 4,
+        "created_at": "2024-03-31T16:01:06.472Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "topic",
+      "title": "Cardano Hub Indonesia Attendance to Cardano Indonesian Town Hall Meetup",
+      "url": "https://forum.cardano.org/t/cardano-hub-indonesia-attendance-to-cardano-indonesian-town-hall-meetup/146372",
+      "created_at": "2025-05-28T18:26:18.533Z"
+    },
+    {
+      "type": "topic",
+      "title": "Cardano Hub Indonesia Attendance to KAL High School ( Hang Tuah University Foundation )",
+      "url": "https://forum.cardano.org/t/cardano-hub-indonesia-attendance-to-kal-high-school-hang-tuah-university-foundation/146371",
+      "created_at": "2025-05-28T18:26:14.859Z"
+    },
+    {
+      "type": "topic",
+      "title": "Cardano Workshop Jakarta",
+      "url": "https://forum.cardano.org/t/cardano-workshop-jakarta/145763",
+      "created_at": "2025-05-05T16:26:03.761Z"
+    },
+    {
+      "type": "topic",
+      "title": ":rocket: Cardano Indonesian Town Hall – March 2025 Recap",
+      "url": "https://forum.cardano.org/t/cardano-indonesian-town-hall-march-2025-recap/144962",
+      "created_at": "2025-04-05T16:05:44.047Z"
+    },
+    {
+      "type": "topic",
+      "title": "The Quest of Cardano Hub Indonesia X University",
+      "url": "https://forum.cardano.org/t/the-quest-of-cardano-hub-indonesia-x-university/143613",
+      "created_at": "2025-02-28T17:42:11.889Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2024-03-06T06:59:17.205Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2025-07-23T22:47:08.244Z"
+    },
+    {
+      "name": "Appreciated",
+      "description": "Received 1 like on 20 posts",
+      "icon": "heart",
+      "granted_at": "2024-10-18T11:30:20.280Z"
+    }
+  ]
+}

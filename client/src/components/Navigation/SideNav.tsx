@@ -1,17 +1,17 @@
 'use client';
 
+import SettingsIcon from '@/components/atoms/SettingsIcon';
 import Title from '@/components/atoms/Title';
-import { useUser } from '@/context/UserContext';
+import UsersIcon from '@/components/atoms/UsersIcon';
+import ConnectWallet from '@/components/wallet/ConnectWallet';
+import { useUser } from '@/context/AppContext';
+import { NavigationSection } from '@types';
+import { GridIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
-import AppLogo from '../atoms/Logo';
-import SettingsIcon from '../atoms/SettingsIcon';
-import UsersIcon from '../atoms/UsersIcon';
-import { GridIcon } from 'lucide-react';
-import { NavigationItem, NavigationSection } from '@types';
-
-
+import { useEffect, useState } from 'react';
+import Card, { CardContent } from '@/components/atoms/Card';
+import AppLogo from '@/components/atoms/Logo';
 
 const defaultNavigationSections: NavigationSection[] = [
   {
@@ -97,7 +97,7 @@ const SideNav = () => {
     if (isAdmin) {
       updated.push(adminToolsSection);
     }
-    
+
     if (user) {
       updated.push(memberToolsSection);
     }
@@ -106,7 +106,7 @@ const SideNav = () => {
   }, [user?.roles]);
 
   return (
-    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 border-r lg:block">
+    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col border-r lg:flex">
       <div className="flex items-center justify-start p-6">
         <AppLogo />
       </div>
@@ -124,7 +124,6 @@ const SideNav = () => {
                 </Title>
               </div>
             )}
-
             <nav className="space-y-1">
               {section.items.map((item) => {
                 const IconComponent = item.icon || GridIcon;
@@ -133,7 +132,7 @@ const SideNav = () => {
                   <Link
                     key={item.id}
                     href={item.href}
-                    className={`hover:bg-muted group flex w-full items-center space-x-3 rounded-r-lg px-6 py-3 transition-colors ${
+                    className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
                       isActive ? 'bg-muted' : ''
                     }`}
                   >
@@ -157,11 +156,16 @@ const SideNav = () => {
                 );
               })}
             </nav>
-
             {i === 0 && <div className="border-border mx-6 mt-6 border-b" />}
           </div>
         ))}
       </div>
+      
+      <Card padding="sm" className="mx-4 mt-auto mb-4">
+        <CardContent className=" ">
+          <ConnectWallet />
+        </CardContent>
+      </Card>
     </div>
   );
 };

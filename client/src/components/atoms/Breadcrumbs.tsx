@@ -22,7 +22,7 @@ export default function Breadcrumbs() {
     .filter((crumb) => crumb.label);
 
   return (
-    <nav className="text-sm w-full my-4 lg:px-6 px-2  ">
+    <nav className="text-sm w-full my-4 ">
       <ol className="flex space-x-1">
         <li className="flex items-center">
           <Link

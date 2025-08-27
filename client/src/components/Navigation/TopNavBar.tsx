@@ -3,7 +3,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import Breadcrumb from '@/components/atoms/Breadcrumbs';
 import Button from '@/components/atoms/Button';
 import NotificationIcon from '@/components/atoms/NotificationIcon';
-import { useUser } from '../../context/UserContext';
+import { useUser } from '@/context/AppContext';
 import InboxIcon from '../atoms/InboxIcon';
 import LinkButton from '../atoms/LinkButton';
 import UserAvatar from '../atoms/UserAvatar';

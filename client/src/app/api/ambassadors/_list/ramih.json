@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/ramih/summary",
+  "username": "ramih",
+  "name": "Rami Hanania",
+  "bio_excerpt": null,
+  "country": "Lebanon",
+  "flag": "/img/flags/LB.svg",
+  "avatar": "/user_avatar/forum.cardano.org/ramih/{size}/60790_2.png",
+  "created_at": "2022-06-21T09:25:03.820Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 281,
+      "posts_read_count": 442,
+      "days_visited": 212,
+      "likes_given": 41,
+      "likes_received": 133,
+      "topics_created": 198,
+      "replies_created": 42,
+      "time_read": 82248,
+      "recent_time_read": 123
+    },
+    "top_replies": [
+      {
+        "title": "الكلمة الرئيسية التي ألقاها تشارلز في ScotFest - الجزء الأول ( من البداية حتى الدقيقة 10:21)",
+        "url": "https://forum.cardano.org/t/scotfest-10-21/112173/2",
+        "like_count": 3,
+        "created_at": "2022-12-29T15:04:11.436Z"
+      },
+      {
+        "title": ":rocket: Launching Catalyst Fund14: Gathering Ideas, Honouring Governance, and Powering Forward",
+        "url": "https://forum.cardano.org/t/launching-catalyst-fund14-gathering-ideas-honouring-governance-and-powering-forward/147564/12",
+        "like_count": 2,
+        "created_at": "2025-08-01T18:56:24.885Z"
+      },
+      {
+        "title": "الكلمة الرئيسية التي ألقاها تشارلز في ScotFest - الجزء الثالث ( من 18:43 حتى الدقيقة 27:38)",
+        "url": "https://forum.cardano.org/t/scotfest-18-43-27-38/112330/2",
+        "like_count": 2,
+        "created_at": "2023-01-02T16:33:55.698Z"
+      },
+      {
+        "title": "الكلمة الرئيسية التي ألقاها تشارلز في ScotFest - الجزء الأول ( من البداية حتى الدقيقة 10:21)",
+        "url": "https://forum.cardano.org/t/scotfest-10-21/112173/4",
+        "like_count": 2,
+        "created_at": "2022-12-30T20:38:11.817Z"
+      },
+      {
+        "title": "Intersect August Update - Mena Townhall",
+        "url": "https://forum.cardano.org/t/intersect-august-update-mena-townhall/135321/3",
+        "like_count": 1,
+        "created_at": "2024-08-26T15:14:30.088Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": ":rocket: Launching Catalyst Fund14: Gathering Ideas, Honouring Governance, and Powering Forward",
+        "url": "https://forum.cardano.org/t/launching-catalyst-fund14-gathering-ideas-honouring-governance-and-powering-forward/147564",
+        "reply_count": 14,
+        "like_count": 46,
+        "created_at": "2025-07-21T11:34:59.616Z"
+      },
+      {
+        "title": "الكلمة الرئيسية التي ألقاها تشارلز في ScotFest - الجزء الأول ( من البداية حتى الدقيقة 10:21)",
+        "url": "https://forum.cardano.org/t/scotfest-10-21/112173",
+        "reply_count": 6,
+        "like_count": 10,
+        "created_at": "2022-12-29T14:52:36.162Z"
+      },
+      {
+        "title": "Intersect December Update - Mena Townhall",
+        "url": "https://forum.cardano.org/t/intersect-december-update-mena-townhall/141362",
+        "reply_count": 2,
+        "like_count": 5,
+        "created_at": "2024-12-28T16:45:20.032Z"
+      },
+      {
+        "title": "Cardano MENA Community zoom Meeting # 1",
+        "url": "https://forum.cardano.org/t/cardano-mena-community-zoom-meeting-1/115435",
+        "reply_count": 2,
+        "like_count": 5,
+        "created_at": "2023-03-10T20:28:08.190Z"
+      },
+      {
+        "title": "Intersect August Update - Mena Townhall",
+        "url": "https://forum.cardano.org/t/intersect-august-update-mena-townhall/135321",
+        "reply_count": 10,
+        "like_count": 3,
+        "created_at": "2024-08-25T14:33:28.141Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": ":rocket: Launching Catalyst Fund14: Gathering Ideas, Honouring Governance, and Powering Forward",
+      "url": "https://forum.cardano.org/t/launching-catalyst-fund14-gathering-ideas-honouring-governance-and-powering-forward/147564/12",
+      "created_at": "2025-08-01T18:56:24.885Z"
+    },
+    {
+      "type": "topic",
+      "title": ":rocket: Launching Catalyst Fund14: Gathering Ideas, Honouring Governance, and Powering Forward",
+      "url": "https://forum.cardano.org/t/launching-catalyst-fund14-gathering-ideas-honouring-governance-and-powering-forward/147564",
+      "created_at": "2025-07-21T11:34:59.616Z"
+    },
+    {
+      "type": "topic",
+      "title": "Intersect December Update - Mena Townhall",
+      "url": "https://forum.cardano.org/t/intersect-december-update-mena-townhall/141362",
+      "created_at": "2024-12-28T16:45:20.032Z"
+    },
+    {
+      "type": "reply",
+      "title": "Intersect August Update - Mena Townhall",
+      "url": "https://forum.cardano.org/t/intersect-august-update-mena-townhall/135321/3",
+      "created_at": "2024-08-26T15:14:30.088Z"
+    },
+    {
+      "type": "topic",
+      "title": "Intersect August Update - Mena Townhall",
+      "url": "https://forum.cardano.org/t/intersect-august-update-mena-townhall/135321",
+      "created_at": "2024-08-25T14:33:28.141Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2023-02-02T06:48:22.148Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2025-06-22T00:35:34.348Z"
+    },
+    {
+      "name": "Thank You",
+      "description": "Has 20 liked posts and gave 10 likes",
+      "icon": "heart",
+      "granted_at": "2023-01-26T22:26:08.294Z"
+    }
+  ]
+}

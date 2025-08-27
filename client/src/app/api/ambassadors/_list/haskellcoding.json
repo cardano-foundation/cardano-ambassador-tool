@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/haskellcoding/summary",
+  "username": "haskellcoding",
+  "name": "Paul KO",
+  "bio_excerpt": "Hi everyone, my name is Paul Ko from South Korea. it is too thankful to meet lovely Cardano platform. I hope Cardano would have a great success.",
+  "country": "Japan",
+  "flag": "/img/flags/JP.svg",
+  "avatar": "/user_avatar/forum.cardano.org/haskellcoding/{size}/50340_2.png",
+  "created_at": "2017-11-26T06:00:40.850Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 528,
+      "posts_read_count": 1321,
+      "days_visited": 378,
+      "likes_given": 3,
+      "likes_received": 58,
+      "topics_created": 174,
+      "replies_created": 11,
+      "time_read": 62647,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "New Cardano Community Managers!",
+        "url": "https://forum.cardano.org/t/new-cardano-community-managers/23127/10",
+        "like_count": 4,
+        "created_at": "2019-05-08T12:14:37.453Z"
+      },
+      {
+        "title": "About the 自己紹介 category",
+        "url": "https://forum.cardano.org/t/about-the-category/55/8",
+        "like_count": 2,
+        "created_at": "2017-11-26T07:10:06.807Z"
+      },
+      {
+        "title": "(キャンペーン終了）Tangemカード クリスマスギフト キャンペーン",
+        "url": "https://forum.cardano.org/t/tangem/28864/37",
+        "like_count": 1,
+        "created_at": "2019-12-10T00:08:41.146Z"
+      },
+      {
+        "title": "IOHK 블로그: Cardano Shelley 테스트넷 출시에 여러분을 초대합니다",
+        "url": "https://forum.cardano.org/t/iohk-cardano-shelley/24590/2",
+        "like_count": 1,
+        "created_at": "2019-06-21T03:08:39.136Z"
+      },
+      {
+        "title": "Greetings and great vision with Cardano Project",
+        "url": "https://forum.cardano.org/t/greetings-and-great-vision-with-cardano-project/565/7",
+        "like_count": 1,
+        "created_at": "2019-05-27T14:22:03.815Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "New Cardano Community Managers!",
+        "url": "https://forum.cardano.org/t/new-cardano-community-managers/23127",
+        "reply_count": 29,
+        "like_count": 170,
+        "created_at": "2019-05-08T09:29:10.126Z"
+      },
+      {
+        "title": "(キャンペーン終了）Tangemカード クリスマスギフト キャンペーン",
+        "url": "https://forum.cardano.org/t/tangem/28864",
+        "reply_count": 51,
+        "like_count": 59,
+        "created_at": "2019-12-09T04:05:37.829Z"
+      },
+      {
+        "title": "About the 自己紹介 category",
+        "url": "https://forum.cardano.org/t/about-the-category/55",
+        "reply_count": 49,
+        "like_count": 37,
+        "created_at": "2017-11-22T13:41:24.826Z"
+      },
+      {
+        "title": "Greetings and great vision with Cardano Project",
+        "url": "https://forum.cardano.org/t/greetings-and-great-vision-with-cardano-project/565",
+        "reply_count": 10,
+        "like_count": 13,
+        "created_at": "2017-11-26T07:02:53.504Z"
+      },
+      {
+        "title": "카르다노 (ADA), Visa 수준의 TPS로 향하는 우로보로스 · 하이드라와 카르다노의 확장성",
+        "url": "https://forum.cardano.org/t/ada-visa-tps/19691",
+        "reply_count": 1,
+        "like_count": 5,
+        "created_at": "2019-01-18T01:05:34.877Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "topic",
+      "title": "카르다노 최대 규모의 에어드롭 ‘Midnight &lsquo;Glacier Drop’&rsquo;의 현재까지의 정보 요약",
+      "url": "https://forum.cardano.org/t/midnight-glacier-drop/146965",
+      "created_at": "2025-06-23T16:43:38.584Z"
+    },
+    {
+      "type": "topic",
+      "title": "8/21 チャールスホスキンソンのツイートの内容（日本語訳）",
+      "url": "https://forum.cardano.org/t/8-21/106303",
+      "created_at": "2022-08-21T05:33:18.983Z"
+    },
+    {
+      "type": "topic",
+      "title": "카르다노 지갑 만들기와 보상받는 방법 매뉴얼",
+      "url": "https://forum.cardano.org/t/topic/85529",
+      "created_at": "2021-11-19T15:16:14.145Z"
+    },
+    {
+      "type": "topic",
+      "title": "안녕하세요. 카르다노 스테이킹풀 [HAN]입니다",
+      "url": "https://forum.cardano.org/t/han/84500",
+      "created_at": "2021-11-12T09:23:25.876Z"
+    },
+    {
+      "type": "topic",
+      "title": "2021 카르다노 서밋 어젠다 내용",
+      "url": "https://forum.cardano.org/t/topic/76078",
+      "created_at": "2021-09-24T03:08:46.518Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Leader",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> global edit, pin, close, archive, split and merge, more likes",
+      "icon": "user",
+      "granted_at": "2019-02-22T17:48:18.357Z"
+    },
+    {
+      "name": "Great Share",
+      "description": "Shared a post with 1000 unique visitors",
+      "icon": "share-nodes",
+      "granted_at": "2021-09-26T11:35:09.566Z"
+    },
+    {
+      "name": "Good Share",
+      "description": "Shared a post with 300 unique visitors",
+      "icon": "share-nodes",
+      "granted_at": "2021-09-25T10:34:20.369Z"
+    }
+  ]
+}
