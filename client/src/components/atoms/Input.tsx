@@ -17,7 +17,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       className,
       ...props
     },
-    ref,
+    ref
   ) => {
     return (
       <div className="h-16 relative w-full">
@@ -26,22 +26,21 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           disabled={disabled}
           className={cn(
             "w-full h-10 px-3 py-3 absolute top-[22px] left-0 rounded-md border transition-colors",
-            "text-sm font-normal font-['Chivo'] leading-none",
+            "text-sm font-normal leading-none",
             "bg-background dark:bg-card border-border placeholder:text-muted-foreground",
-            "focus:outline-none focus:!border-sunset-300 focus:ring-2 focus:ring-sunset-300/20",
-            "hover:!border-sunset-300",
-
+            "focus:outline-none focus:!border-primary-300 focus:ring-2 focus:ring-primary-300/20",
+            "hover:!border-primary-300",
             disabled && [
               "opacity-30 cursor-not-allowed",
               "hover:!border-border focus:!border-border",
             ],
 
             error && [
-              "!border-sunset-500",
-              "focus:!border-sunset-500 focus:ring-sunset-500/20",
+              "!border-primary-500",
+              "focus:!border-primary-500 focus:ring-primary-500/20",
             ],
 
-            className,
+            className
           )}
           {...props}
         />
@@ -49,10 +48,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             className={cn(
-              "absolute left-0 top-[-1px] text-sm font-normal font-['Chivo'] leading-none",
+              "absolute left-0 top-[-1px] text-sm font-normal leading-none",
               "text-muted-foreground",
               disabled && "opacity-50",
-              error && "text-sunset-500",
+              error && "text-primary-base"
             )}
           >
             {label}
@@ -60,13 +59,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {error && errorMessage && (
-          <div className="absolute top-[60px] left-0 text-xs text-sunset-500 font-normal font-['Chivo']">
+          <div className="absolute top-[60px] left-0 text-xs text-primary-base font-normal">
             {errorMessage}
           </div>
         )}
       </div>
     );
-  },
+  }
 );
 
 Input.displayName = "Input";

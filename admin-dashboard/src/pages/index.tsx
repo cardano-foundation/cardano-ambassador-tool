@@ -300,6 +300,9 @@ export default function Home() {
             blockfrost.fetchUTxOs(ORACLE_TX_HASH, ORACLE_OUTPUT_INDEX),
             blockfrost.fetchUTxOs(tokenUtxoHash, parseInt(tokenUtxoIndex)),
           ]);
+
+          
+          
           const oracleUtxo = oracleUtxos[0];
           const tokenUtxo = tokenUtxos[0];
           if (!oracleUtxo || !tokenUtxo) {

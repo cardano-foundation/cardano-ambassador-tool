@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/stephanie_king/summary",
+  "username": "stephanie_king",
+  "name": "Stephanie King",
+  "bio_excerpt": "Stephanie is a consultant and educator, bridging the gap between the tech nerds and the rest of us.",
+  "country": "United States",
+  "flag": "/img/flags/US.svg",
+  "avatar": "/user_avatar/forum.cardano.org/stephanie_king/{size}/57707_2.png",
+  "created_at": "2022-09-08T16:42:43.551Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 99,
+      "posts_read_count": 156,
+      "days_visited": 43,
+      "likes_given": 4,
+      "likes_received": 58,
+      "topics_created": 55,
+      "replies_created": 11,
+      "time_read": 7882,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "Big Announcement for Cardano at Binance.us: What do You Need to Know?",
+        "url": "https://forum.cardano.org/t/big-announcement-for-cardano-at-binance-us-what-do-you-need-to-know/107899/9",
+        "like_count": 2,
+        "created_at": "2022-09-21T13:42:06.393Z"
+      },
+      {
+        "title": "Big Announcement for Cardano at Binance.us: What do You Need to Know?",
+        "url": "https://forum.cardano.org/t/big-announcement-for-cardano-at-binance-us-what-do-you-need-to-know/107899/7",
+        "like_count": 2,
+        "created_at": "2022-09-21T12:20:19.197Z"
+      },
+      {
+        "title": "Big Announcement for Cardano at Binance.us: What do You Need to Know?",
+        "url": "https://forum.cardano.org/t/big-announcement-for-cardano-at-binance-us-what-do-you-need-to-know/107899/4",
+        "like_count": 2,
+        "created_at": "2022-09-21T06:56:05.000Z"
+      },
+      {
+        "title": "A documentation on how to convert ADA to Kenyan Shillings",
+        "url": "https://forum.cardano.org/t/a-documentation-on-how-to-convert-ada-to-kenyan-shillings/115782/2",
+        "like_count": 1,
+        "created_at": "2023-03-23T17:13:21.790Z"
+      },
+      {
+        "title": "What’s the Deal with Decentralization?",
+        "url": "https://forum.cardano.org/t/what-s-the-deal-with-decentralization/107900/5",
+        "like_count": 1,
+        "created_at": "2023-02-12T18:09:28.226Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Big Announcement for Cardano at Binance.us: What do You Need to Know?",
+        "url": "https://forum.cardano.org/t/big-announcement-for-cardano-at-binance-us-what-do-you-need-to-know/107899",
+        "reply_count": 14,
+        "like_count": 21,
+        "created_at": "2022-09-20T21:40:33.049Z"
+      },
+      {
+        "title": "What’s the Deal with Decentralization?",
+        "url": "https://forum.cardano.org/t/what-s-the-deal-with-decentralization/107900",
+        "reply_count": 8,
+        "like_count": 7,
+        "created_at": "2022-09-20T21:49:19.513Z"
+      },
+      {
+        "title": "Governance for a Decentralized Future: How close is it - and how far?",
+        "url": "https://forum.cardano.org/t/governance-for-a-decentralized-future-how-close-is-it-and-how-far/112633",
+        "reply_count": 5,
+        "like_count": 5,
+        "created_at": "2023-01-09T17:00:18.430Z"
+      },
+      {
+        "title": "Proposal Assessor Training for Cardano Project Catalyst",
+        "url": "https://forum.cardano.org/t/proposal-assessor-training-for-cardano-project-catalyst/109840",
+        "reply_count": 3,
+        "like_count": 4,
+        "created_at": "2022-11-01T16:50:18.938Z"
+      },
+      {
+        "title": "Cardano + Bitcoin = &lt;3 &lt;&lt;&lt;The big announcement from the Cardano Summit 2024!",
+        "url": "https://forum.cardano.org/t/cardano-bitcoin-3-the-big-announcement-from-the-cardano-summit-2024/137891",
+        "reply_count": 1,
+        "like_count": 3,
+        "created_at": "2024-10-28T11:50:04.808Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "topic",
+      "title": "Cardano + Bitcoin = &lt;3 &lt;&lt;&lt;The big announcement from the Cardano Summit 2024!",
+      "url": "https://forum.cardano.org/t/cardano-bitcoin-3-the-big-announcement-from-the-cardano-summit-2024/137891",
+      "created_at": "2024-10-28T11:50:04.808Z"
+    },
+    {
+      "type": "topic",
+      "title": "DPIN : Decentralized Physical Infrastructure Networks",
+      "url": "https://forum.cardano.org/t/dpin-decentralized-physical-infrastructure-networks/134431",
+      "created_at": "2024-07-26T15:21:36.147Z"
+    },
+    {
+      "type": "topic",
+      "title": "What to do with SCAM tokens in your Cardano Wallet!",
+      "url": "https://forum.cardano.org/t/what-to-do-with-scam-tokens-in-your-cardano-wallet/129649",
+      "created_at": "2024-03-27T18:22:43.172Z"
+    },
+    {
+      "type": "reply",
+      "title": "A documentation on how to convert ADA to Kenyan Shillings",
+      "url": "https://forum.cardano.org/t/a-documentation-on-how-to-convert-ada-to-kenyan-shillings/115782/2",
+      "created_at": "2023-03-23T17:13:21.790Z"
+    },
+    {
+      "type": "topic",
+      "title": "A documentation on how to convert ADA to Kenyan Shillings",
+      "url": "https://forum.cardano.org/t/a-documentation-on-how-to-convert-ada-to-kenyan-shillings/115782",
+      "created_at": "2023-03-21T12:56:56.601Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2022-09-15T13:08:05.640Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2024-09-10T05:26:01.910Z"
+    },
+    {
+      "name": "New User of the Month",
+      "description": "Outstanding contributions in their first month",
+      "icon": "medal",
+      "granted_at": "2022-09-30T23:59:59.999Z"
+    }
+  ]
+}

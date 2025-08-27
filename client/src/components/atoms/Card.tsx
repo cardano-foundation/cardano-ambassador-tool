@@ -28,7 +28,7 @@ export default function Card({
     <div
       className={cn(
         "bg-card rounded-xl shadow-[0px_3px_4px_rgba(0,0,0,0.03)]",
-        "outline outline-1 outline-offset-[-1px] outline-border",
+        "outline-1 outline-offset-[-1px] outline-border",
         "transition-all duration-200 ease-in-out",
 
         {
@@ -75,7 +75,7 @@ export function CardHeader({
           </Title>
         )}
         {subtitle && (
-          <Paragraph size="body-3" className="text-muted-foreground">
+          <Paragraph size="base" className="text-muted-foreground">
             {subtitle}
           </Paragraph>
         )}

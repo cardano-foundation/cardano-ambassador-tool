@@ -25,14 +25,22 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "@types": [
+        "./types.ts"
+      ],
+      "@css": [
+        "./src/app.css"
+      ],
     }
   },
   "include": [
     "next-env.d.ts",
+    "jest-dom.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "utxoSync.worker.ts"
   ],
   "exclude": [
     "node_modules"
