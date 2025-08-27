@@ -28,6 +28,7 @@ export function AppLoadingScreen({ isVisible, loadingMessage = 'Loading applicat
 
   return (
     <div
+      data-testid="app-loading-screen"
       className={`fixed inset-0 z-[100] flex items-center justify-center bg-background transition-opacity duration-500 ${
         fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}

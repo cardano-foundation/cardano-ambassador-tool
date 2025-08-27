@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { toBytes } from '@meshsdk/common';
 
-export async function GET(req: Request, context: { params: { slug: string[] } }) {
+export async function GET(req: Request, context: { params: Promise<{ slug: string[] }> }) {
 
   try {
-    const { slug } = await context.params; 
+    const { slug } = await context.params;
 
     const network = slug[0];
     let key = process.env.BLOCKFROST_API_KEY_PREPROD;
@@ -41,7 +41,7 @@ export async function GET(req: Request, context: { params: { slug: string[] } })
   }
 }
 
-export async function POST(req: Request, context: { params: { slug: string[] } }) {
+export async function POST(req: Request, context: { params: Promise<{ slug: string[] }> }) {
   try {
     const { slug } = await context.params;
 
@@ -69,7 +69,9 @@ export async function POST(req: Request, context: { params: { slug: string[] } }
     const body = await req.arrayBuffer(); 
     const headers = { 'Content-Type': 'application/cbor' };
 
-    const { data, status } = await axiosInstance.post(endpoint, toBytes(body), { headers });
+    // Convert ArrayBuffer to Uint8Array for axios
+    const bodyBytes = new Uint8Array(body);
+    const { data, status } = await axiosInstance.post(endpoint, bodyBytes, { headers });
     return NextResponse.json(data, { status });
   } catch (error: any) {
     return NextResponse.json(

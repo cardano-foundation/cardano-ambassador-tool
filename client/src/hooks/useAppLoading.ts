@@ -25,12 +25,9 @@ export function useAppLoading() {
 
     // For initial loads, check if all resources are ready
     if (!dbLoading && isThemeInitialized) {
-      // Add a small delay for smooth UX, but don't block indefinitely
-      const timer = setTimeout(() => {
-        setIsAppLoading(false);
-      }, 800); // Shorter delay to prevent blocking
-      
-      return timer;
+      // No artificial delay - let the app load naturally
+      setIsAppLoading(false);
+      return null;
     }
     
     return null;

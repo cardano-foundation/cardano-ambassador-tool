@@ -24,7 +24,7 @@ const WalletList = () => {
     error,
   } = useWallet();
 
-  const handleConnect = async (e: MouseEvent<HTMLButtonElement, MouseEvent>, walletId: string) => {
+  const handleConnect = async (e: MouseEvent<HTMLButtonElement>, walletId: string) => {
     e.stopPropagation();
     setPersist(true);
     disconnect();
@@ -42,7 +42,8 @@ const WalletList = () => {
 
     if (error) {
       console.log(error);
-      toast.error('Error!', error.info);
+      const errorMessage = typeof error === 'string' ? error : (error as any)?.message || 'Wallet connection error';
+      toast.error('Error!', errorMessage);
       return;
     }
   }, [connected, address, error, isNetworkValid]);

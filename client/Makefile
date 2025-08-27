@@ -1,6 +1,6 @@
 # Cardano Ambassador Client - Automation the Workflow
 
-.PHONY: help init setup-hooks dev build lint format type-check clean drizzle-generate drizzle-push drizzle-reset
+.PHONY: help init setup-hooks dev build lint format type-check clean
 
 # Show available commands
 help:
@@ -15,9 +15,6 @@ help:
 	@echo "  make format       - Format code with Prettier"
 	@echo "  make type-check   - Check TypeScript types"
 	@echo "  make clean        - Clean build files"
-	@echo "  make drizzle-generate - Generate Drizzle schema/migrations"
-	@echo "  make drizzle-push     - Push Drizzle migrations"
-	@echo "  make drizzle-reset    - Force push (reset) Drizzle schema"
 
 # Complete project initialization (first time)
 init:
@@ -66,12 +63,3 @@ clean:
 	rm -rf .next
 	rm -f *.tsbuildinfo
 
-# Drizzle ORM + SQLite commands
-drizzle-generate:
-	npx drizzle-kit generate
-
-drizzle-push:
-	npx drizzle-kit push
-
-drizzle-reset:
-	npx drizzle-kit push --force

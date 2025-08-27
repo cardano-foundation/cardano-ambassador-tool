@@ -61,7 +61,7 @@ export default function AmbassadorCard({
 
   if (isListView) {
     return (
-      <Card clickable className="w-full">
+      <Card clickable className="w-full" data-testid="ambassador-card">
         <CardContent className="flex items-center space-x-3 py-3 sm:space-x-4 sm:py-4">
           <UserAvatar size="size-12" name={ambassador.name} />
           <div className="min-w-0 flex-1">
@@ -95,7 +95,7 @@ export default function AmbassadorCard({
   }
 
   return (
-    <Card clickable className="h-full">
+    <Card clickable className="h-full" data-testid="ambassador-card">
       <CardContent className="flex h-full flex-col items-center justify-between space-y-3 py-4 text-center sm:space-y-4 sm:py-6">
         <UserAvatar size="size-16" name={ambassador.name} />
 
