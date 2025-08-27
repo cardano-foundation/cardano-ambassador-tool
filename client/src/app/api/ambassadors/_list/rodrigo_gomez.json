@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/rodrigo_gomez/summary",
+  "username": "rodrigo_gomez",
+  "name": "Rodrigo Gomez",
+  "bio_excerpt": null,
+  "country": "United States",
+  "flag": "/img/flags/US.svg",
+  "avatar": "/user_avatar/forum.cardano.org/rodrigo_gomez/{size}/62510_2.png",
+  "created_at": "2023-02-22T14:41:11.277Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 60,
+      "posts_read_count": 160,
+      "days_visited": 48,
+      "likes_given": 3,
+      "likes_received": 37,
+      "topics_created": 35,
+      "replies_created": 58,
+      "time_read": 12225,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "Cardano Ministry",
+        "url": "https://forum.cardano.org/t/cardano-ministry/121323/28",
+        "like_count": 2,
+        "created_at": "2024-02-02T14:56:53.308Z"
+      },
+      {
+        "title": "Cardano Ministry",
+        "url": "https://forum.cardano.org/t/cardano-ministry/121323/27",
+        "like_count": 2,
+        "created_at": "2024-02-02T14:35:49.146Z"
+      },
+      {
+        "title": "Cardano Ministry",
+        "url": "https://forum.cardano.org/t/cardano-ministry/121323/12",
+        "like_count": 2,
+        "created_at": "2023-10-04T07:47:35.529Z"
+      },
+      {
+        "title": "Cardano Ministry",
+        "url": "https://forum.cardano.org/t/cardano-ministry/121323/11",
+        "like_count": 2,
+        "created_at": "2023-10-04T07:28:07.478Z"
+      },
+      {
+        "title": "Web3 In Education - DRMZ X TWD",
+        "url": "https://forum.cardano.org/t/web3-in-education-drmz-x-twd/127324/3",
+        "like_count": 1,
+        "created_at": "2024-02-02T15:21:52.735Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Cardano Ministry",
+        "url": "https://forum.cardano.org/t/cardano-ministry/121323",
+        "reply_count": 55,
+        "like_count": 16,
+        "created_at": "2023-08-27T20:25:41.350Z"
+      },
+      {
+        "title": "Web3 Comedy Roast - Cardano Meetup Feb 15th 2024",
+        "url": "https://forum.cardano.org/t/web3-comedy-roast-cardano-meetup-feb-15th-2024/128202",
+        "reply_count": 2,
+        "like_count": 5,
+        "created_at": "2024-02-27T04:21:48.257Z"
+      },
+      {
+        "title": "New Course &ldquo;AI Demystified&rdquo; on Work.Courses",
+        "url": "https://forum.cardano.org/t/new-course-ai-demystified-on-work-courses/128415",
+        "reply_count": 3,
+        "like_count": 4,
+        "created_at": "2024-03-01T06:10:24.922Z"
+      },
+      {
+        "title": "Web3 &amp; Hops #DRMZteam Cardano Meetup - San Diego (Jan 18 recap)",
+        "url": "https://forum.cardano.org/t/web3-hops-drmzteam-cardano-meetup-san-diego-jan-18-recap/117601",
+        "reply_count": 3,
+        "like_count": 3,
+        "created_at": "2023-05-05T06:07:47.957Z"
+      },
+      {
+        "title": "Web3 In Education - DRMZ X TWD",
+        "url": "https://forum.cardano.org/t/web3-in-education-drmz-x-twd/127324",
+        "reply_count": 3,
+        "like_count": 2,
+        "created_at": "2024-02-02T15:07:46.007Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "topic",
+      "title": "Cardano Ministry #156 - &ldquo;Cardano Triumphant&rdquo;",
+      "url": "https://forum.cardano.org/t/cardano-ministry-156-cardano-triumphant/145031",
+      "created_at": "2025-04-08T00:12:00.399Z"
+    },
+    {
+      "type": "topic",
+      "title": "&ldquo;Discover Cardano &amp; Celebrate DRMZ Turning 3!&rdquo;",
+      "url": "https://forum.cardano.org/t/discover-cardano-celebrate-drmz-turning-3/142232",
+      "created_at": "2025-01-20T18:57:53.170Z"
+    },
+    {
+      "type": "topic",
+      "title": "DRMZ Academy - Arbiter NFT (Ep. 3)",
+      "url": "https://forum.cardano.org/t/drmz-academy-arbiter-nft-ep-3/132140",
+      "created_at": "2024-05-26T16:04:54.444Z"
+    },
+    {
+      "type": "topic",
+      "title": "New Course &ldquo;AI Demystified&rdquo; on Work.Courses",
+      "url": "https://forum.cardano.org/t/new-course-ai-demystified-on-work-courses/128415",
+      "created_at": "2024-03-01T06:10:24.922Z"
+    },
+    {
+      "type": "topic",
+      "title": "Web3 Comedy Roast - Cardano Meetup Feb 15th 2024",
+      "url": "https://forum.cardano.org/t/web3-comedy-roast-cardano-meetup-feb-15th-2024/128202",
+      "created_at": "2024-02-27T04:21:48.257Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2023-03-24T15:46:02.030Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2025-02-23T14:55:10.995Z"
+    },
+    {
+      "name": "Appreciated",
+      "description": "Received 1 like on 20 posts",
+      "icon": "heart",
+      "granted_at": "2024-02-05T11:19:14.533Z"
+    }
+  ]
+}

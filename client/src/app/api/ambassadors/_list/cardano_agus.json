@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/cardano_agus/summary",
+  "username": "cardano_agus",
+  "name": "Agustin",
+  "bio_excerpt": "I´m a Cardano Ambassador. Rats DAO Co-Founder.",
+  "country": "Argentina",
+  "flag": "/img/flags/AR.svg",
+  "avatar": "/user_avatar/forum.cardano.org/cardano_agus/{size}/58682_2.png",
+  "created_at": "2022-10-13T14:10:13.558Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 76,
+      "posts_read_count": 328,
+      "days_visited": 157,
+      "likes_given": 3,
+      "likes_received": 60,
+      "topics_created": 15,
+      "replies_created": 162,
+      "time_read": 11277,
+      "recent_time_read": 753
+    },
+    "top_replies": [
+      {
+        "title": "Withdraw ₳700,000 for ZK Bridge - Yay or Nay?",
+        "url": "https://forum.cardano.org/t/withdraw-700-000-for-zk-bridge-yay-or-nay/147726/7",
+        "like_count": 2,
+        "created_at": "2025-07-29T15:33:26.011Z"
+      },
+      {
+        "title": "Canal de Youtube en Español sobre Cardano",
+        "url": "https://forum.cardano.org/t/canal-de-youtube-en-espanol-sobre-cardano/113085/92",
+        "like_count": 2,
+        "created_at": "2023-07-21T16:59:10.099Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for July 2023",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-july-2023/119906/17",
+        "like_count": 2,
+        "created_at": "2023-07-19T16:00:53.328Z"
+      },
+      {
+        "title": "Withdraw ₳700,000 for ZK Bridge - Yay or Nay?",
+        "url": "https://forum.cardano.org/t/withdraw-700-000-for-zk-bridge-yay-or-nay/147726/6",
+        "like_count": 1,
+        "created_at": "2025-07-29T15:16:47.229Z"
+      },
+      {
+        "title": "Workshop sobre DeFi en Cardano",
+        "url": "https://forum.cardano.org/t/workshop-sobre-defi-en-cardano/117048/23",
+        "like_count": 1,
+        "created_at": "2024-11-05T15:31:22.033Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Announcing the stake pools chosen for July 2023",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-july-2023/119906",
+        "reply_count": 26,
+        "like_count": 70,
+        "created_at": "2023-07-18T10:02:46.852Z"
+      },
+      {
+        "title": "Withdraw ₳700,000 for ZK Bridge - Yay or Nay?",
+        "url": "https://forum.cardano.org/t/withdraw-700-000-for-zk-bridge-yay-or-nay/147726",
+        "reply_count": 9,
+        "like_count": 25,
+        "created_at": "2025-07-25T22:00:43.981Z"
+      },
+      {
+        "title": "Workshop sobre DeFi en Cardano",
+        "url": "https://forum.cardano.org/t/workshop-sobre-defi-en-cardano/117048",
+        "reply_count": 26,
+        "like_count": 6,
+        "created_at": "2023-04-20T17:13:01.235Z"
+      },
+      {
+        "title": "Canal de Youtube en Español sobre Cardano",
+        "url": "https://forum.cardano.org/t/canal-de-youtube-en-espanol-sobre-cardano/113085",
+        "reply_count": 106,
+        "like_count": 5,
+        "created_at": "2023-01-17T16:50:50.051Z"
+      },
+      {
+        "title": "Cardano Meetups",
+        "url": "https://forum.cardano.org/t/cardano-meetups/109644",
+        "reply_count": 9,
+        "like_count": 2,
+        "created_at": "2022-10-27T18:41:13.108Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "Withdraw ₳700,000 for ZK Bridge - Yay or Nay?",
+      "url": "https://forum.cardano.org/t/withdraw-700-000-for-zk-bridge-yay-or-nay/147726/7",
+      "created_at": "2025-07-29T15:33:26.011Z"
+    },
+    {
+      "type": "reply",
+      "title": "Withdraw ₳700,000 for ZK Bridge - Yay or Nay?",
+      "url": "https://forum.cardano.org/t/withdraw-700-000-for-zk-bridge-yay-or-nay/147726/6",
+      "created_at": "2025-07-29T15:16:47.229Z"
+    },
+    {
+      "type": "topic",
+      "title": "Withdraw ₳700,000 for ZK Bridge - Yay or Nay?",
+      "url": "https://forum.cardano.org/t/withdraw-700-000-for-zk-bridge-yay-or-nay/147726",
+      "created_at": "2025-07-25T22:00:43.981Z"
+    },
+    {
+      "type": "reply",
+      "title": "Workshop sobre DeFi en Cardano",
+      "url": "https://forum.cardano.org/t/workshop-sobre-defi-en-cardano/117048/23",
+      "created_at": "2024-11-05T15:31:22.033Z"
+    },
+    {
+      "type": "reply",
+      "title": "Workshop sobre DeFi en Cardano",
+      "url": "https://forum.cardano.org/t/workshop-sobre-defi-en-cardano/117048/12",
+      "created_at": "2023-09-15T17:01:35.466Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2022-11-02T07:41:04.444Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2024-10-14T14:39:20.318Z"
+    },
+    {
+      "name": "New User of the Month",
+      "description": "Outstanding contributions in their first month",
+      "icon": "medal",
+      "granted_at": "2022-10-31T23:59:59.999Z"
+    }
+  ]
+}

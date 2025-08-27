@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/lidonation/summary",
+  "username": "lidonation",
+  "name": "Darlington Wleh",
+  "bio_excerpt": "A cardano blockchain community.",
+  "country": "United States",
+  "flag": "/img/flags/US.svg",
+  "avatar": "/user_avatar/forum.cardano.org/lidonation/{size}/58433_2.png",
+  "created_at": "2021-04-25T23:39:15.977Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 411,
+      "posts_read_count": 1527,
+      "days_visited": 428,
+      "likes_given": 18,
+      "likes_received": 96,
+      "topics_created": 101,
+      "replies_created": 9,
+      "time_read": 48878,
+      "recent_time_read": 1353
+    },
+    "top_replies": [
+      {
+        "title": "Catalyst Circle Candidate Events",
+        "url": "https://forum.cardano.org/t/catalyst-circle-candidate-events/109899/9",
+        "like_count": 5,
+        "created_at": "2022-11-06T16:46:25.481Z"
+      },
+      {
+        "title": "Why is IOG Catalyst platforming someone who continuously bullies, misrepresents and trolls their peers?",
+        "url": "https://forum.cardano.org/t/why-is-iog-catalyst-platforming-someone-who-continuously-bullies-misrepresents-and-trolls-their-peers/108508/3",
+        "like_count": 3,
+        "created_at": "2022-10-05T20:02:15.802Z"
+      },
+      {
+        "title": "Cardano Over Coffee :coffee: w/ @PangolinCardano - Friday, August 16th",
+        "url": "https://forum.cardano.org/t/cardano-over-coffee-w-pangolincardano-friday-august-16th/135435/3",
+        "like_count": 0,
+        "created_at": "2024-08-29T12:55:22.786Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for October 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-october-2022/109142/25",
+        "like_count": 0,
+        "created_at": "2022-10-20T11:55:44.942Z"
+      },
+      {
+        "title": "Sending coins to delegators",
+        "url": "https://forum.cardano.org/t/sending-coins-to-delegators/89744/7",
+        "like_count": 0,
+        "created_at": "2022-01-02T18:15:35.155Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Announcing the stake pools chosen for October 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-october-2022/109142",
+        "reply_count": 42,
+        "like_count": 85,
+        "created_at": "2022-10-18T22:00:00.000Z"
+      },
+      {
+        "title": "Catalyst Circle Candidate Events",
+        "url": "https://forum.cardano.org/t/catalyst-circle-candidate-events/109899",
+        "reply_count": 16,
+        "like_count": 42,
+        "created_at": "2022-11-02T19:43:33.594Z"
+      },
+      {
+        "title": "Why is IOG Catalyst platforming someone who continuously bullies, misrepresents and trolls their peers?",
+        "url": "https://forum.cardano.org/t/why-is-iog-catalyst-platforming-someone-who-continuously-bullies-misrepresents-and-trolls-their-peers/108508",
+        "reply_count": 6,
+        "like_count": 10,
+        "created_at": "2022-10-03T11:38:39.888Z"
+      },
+      {
+        "title": "Cardano Intersect 2025 Budget : Process &amp; Lido DRep Participation",
+        "url": "https://forum.cardano.org/t/cardano-intersect-2025-budget-process-lido-drep-participation/146340",
+        "reply_count": 2,
+        "like_count": 7,
+        "created_at": "2025-05-27T07:35:37.505Z"
+      },
+      {
+        "title": "Cardano Over Coffee :hot_beverage: w/ @palmeconomy - May 7",
+        "url": "https://forum.cardano.org/t/cardano-over-coffee-w-palmeconomy-may-7/145969",
+        "reply_count": 1,
+        "like_count": 5,
+        "created_at": "2025-05-14T10:26:17.276Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "topic",
+      "title": "Cardano Over Coffee :hot_beverage: w/ @maureenyam",
+      "url": "https://forum.cardano.org/t/cardano-over-coffee-w-maureenyam/146392",
+      "created_at": "2025-05-29T08:30:51.616Z"
+    },
+    {
+      "type": "topic",
+      "title": "Cardano Intersect 2025 Budget : Process &amp; Lido DRep Participation",
+      "url": "https://forum.cardano.org/t/cardano-intersect-2025-budget-process-lido-drep-participation/146340",
+      "created_at": "2025-05-27T07:35:37.505Z"
+    },
+    {
+      "type": "topic",
+      "title": "Cardano Over Coffee :hot_beverage: w/ @palmeconomy - May 7",
+      "url": "https://forum.cardano.org/t/cardano-over-coffee-w-palmeconomy-may-7/145969",
+      "created_at": "2025-05-14T10:26:17.276Z"
+    },
+    {
+      "type": "topic",
+      "title": "1694.io - Cardano Governance Framework and the Role of DReps",
+      "url": "https://forum.cardano.org/t/1694-io-cardano-governance-framework-and-the-role-of-dreps/135840",
+      "created_at": "2024-09-09T12:00:05.513Z"
+    },
+    {
+      "type": "reply",
+      "title": "Cardano Over Coffee :coffee: w/ @PangolinCardano - Friday, August 16th",
+      "url": "https://forum.cardano.org/t/cardano-over-coffee-w-pangolincardano-friday-august-16th/135435/3",
+      "created_at": "2024-08-29T12:55:22.786Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2022-06-07T06:57:45.413Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2025-04-27T21:11:43.196Z"
+    },
+    {
+      "name": "Thank You",
+      "description": "Has 20 liked posts and gave 10 likes",
+      "icon": "heart",
+      "granted_at": "2024-08-21T07:49:49.923Z"
+    }
+  ]
+}

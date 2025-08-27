@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/atada/summary",
+  "username": "atada",
+  "name": "Martin Lang",
+  "bio_excerpt": "Hi,<br>\nmy name is Martin (ATADA / ATAD2), the Pools are running in the D/A/CH-Region (Austria/Germany/Switzerland).<br>\nI am a StakePool Operator Supporter and providing scripts, guides and help for other Operators to setup and maintain there StakePools.<br>\nYou can find the collection here: <a href=\"https://github.com/gitmachtl/scripts\">https://github.com/gitmachtl/scripts</a>",
+  "country": "Austria",
+  "flag": "/img/flags/AT.svg",
+  "avatar": "/user_avatar/forum.cardano.org/atada/{size}/16409_2.png",
+  "created_at": "2020-02-06T10:23:53.122Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 453,
+      "posts_read_count": 2912,
+      "days_visited": 400,
+      "likes_given": 16,
+      "likes_received": 246,
+      "topics_created": 24,
+      "replies_created": 184,
+      "time_read": 84366,
+      "recent_time_read": 4357
+    },
+    "top_replies": [
+      {
+        "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+        "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812/2",
+        "like_count": 10,
+        "created_at": "2025-03-03T16:17:13.794Z"
+      },
+      {
+        "title": "Minimum Pool Fees (with a brief mention of K changes)",
+        "url": "https://forum.cardano.org/t/minimum-pool-fees-with-a-brief-mention-of-k-changes/97002/75",
+        "like_count": 6,
+        "created_at": "2022-03-09T09:05:17.463Z"
+      },
+      {
+        "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+        "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812/26",
+        "like_count": 5,
+        "created_at": "2025-08-12T05:09:42.762Z"
+      },
+      {
+        "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+        "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812/9",
+        "like_count": 5,
+        "created_at": "2025-03-04T12:23:31.725Z"
+      },
+      {
+        "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+        "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812/4",
+        "like_count": 4,
+        "created_at": "2025-03-03T20:41:34.827Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Minimum Pool Fees (with a brief mention of K changes)",
+        "url": "https://forum.cardano.org/t/minimum-pool-fees-with-a-brief-mention-of-k-changes/97002",
+        "reply_count": 142,
+        "like_count": 271,
+        "created_at": "2022-03-04T18:29:01.285Z"
+      },
+      {
+        "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+        "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812",
+        "reply_count": 26,
+        "like_count": 57,
+        "created_at": "2025-03-03T16:12:15.389Z"
+      },
+      {
+        "title": "Restoring NAMI wallet - restored wallet with different address and 0 funds",
+        "url": "https://forum.cardano.org/t/restoring-nami-wallet-restored-wallet-with-different-address-and-0-funds/86632",
+        "reply_count": 129,
+        "like_count": 27,
+        "created_at": "2021-11-26T21:01:48.131Z"
+      },
+      {
+        "title": "Registering several wallets/accounts to the same Catalyst voting key",
+        "url": "https://forum.cardano.org/t/registering-several-wallets-accounts-to-the-same-catalyst-voting-key/120829",
+        "reply_count": 17,
+        "like_count": 22,
+        "created_at": "2023-08-13T18:49:04.747Z"
+      },
+      {
+        "title": "Austria StakePool ATADA Introduction",
+        "url": "https://forum.cardano.org/t/austria-stakepool-atada-introduction/30587",
+        "reply_count": 15,
+        "like_count": 14,
+        "created_at": "2020-02-06T23:10:27.449Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+      "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812/26",
+      "created_at": "2025-08-12T05:09:42.762Z"
+    },
+    {
+      "type": "reply",
+      "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+      "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812/9",
+      "created_at": "2025-03-04T12:23:31.725Z"
+    },
+    {
+      "type": "reply",
+      "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+      "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812/4",
+      "created_at": "2025-03-03T20:41:34.827Z"
+    },
+    {
+      "type": "reply",
+      "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+      "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812/2",
+      "created_at": "2025-03-03T16:17:13.794Z"
+    },
+    {
+      "type": "topic",
+      "title": "New Calidus Pool-Key for SPOs and Services interacting with Pools",
+      "url": "https://forum.cardano.org/t/new-calidus-pool-key-for-spos-and-services-interacting-with-pools/143812",
+      "created_at": "2025-03-03T16:12:15.389Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2021-02-15T16:12:35.426Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2025-02-09T13:50:39.316Z"
+    },
+    {
+      "name": "Nice Reply",
+      "description": "Received 10 likes on a reply",
+      "icon": "reply",
+      "granted_at": "2025-08-20T10:40:15.033Z"
+    }
+  ]
+}

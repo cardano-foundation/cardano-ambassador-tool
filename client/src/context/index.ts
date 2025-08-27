@@ -5,5 +5,5 @@ export {
   useUser,
   useTheme,
   useNetwork,
-  useAppLoading,
+  useAppLoadingStatus,
 } from './AppContext';

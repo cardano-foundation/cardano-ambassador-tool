@@ -48,6 +48,7 @@ export type FormState =
             userName?: string[];
         };
         message?: string;
+        success?: boolean;
     }
     | undefined;
 

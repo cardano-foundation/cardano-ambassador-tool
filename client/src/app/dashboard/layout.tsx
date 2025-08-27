@@ -1,18 +1,17 @@
 'use client';
 
+import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 import Footer from '@/components/Footer';
 import SideNav from '@/components/Navigation/SideNav';
 import TopNavBar from '@/components/Navigation/TopNavBar';
 import { NetworkErrorBanner } from '@/components/NetworkErrorBanner';
-import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 import ToastContainer from '@/components/toast/toast';
-import { AppProvider, useAppLoading } from '@/context/AppContext';
+import { AppProvider, useAppLoadingStatus } from '@/context/AppContext';
 import { MeshProvider } from '@meshsdk/react';
 import React from 'react';
-import '../app.css';
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useAppLoading();
+  const { shouldShowLoading } = useAppLoadingStatus();
 
   return (
     <>
@@ -35,51 +34,16 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function HomeLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Prevent flash of incorrect theme
-              (function() {
-                try {
-                  const root = document.documentElement;
-                  const theme = localStorage.getItem('theme');
-                  
-                  // Clear any existing theme classes first
-                  root.classList.remove('light', 'dark');
-                  
-                  if (theme === 'dark') {
-                    root.classList.add('dark');
-                  } else if (theme === 'light') {
-                    root.classList.add('light');
-                  } else {
-                    // System preference
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    root.classList.add(prefersDark ? 'dark' : 'light');
-                  }
-                } catch (e) {
-                  // Fallback to light theme
-                  document.documentElement.classList.add('light');
-                }
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body>
-        <MeshProvider>
-          <AppProvider>
-            <DashboardContent>{children}</DashboardContent>
-          </AppProvider>
-        </MeshProvider>
-      </body>
-    </html>
+    <MeshProvider>
+      <AppProvider>
+        <DashboardContent>{children}</DashboardContent>
+      </AppProvider>
+    </MeshProvider>
   );
 }

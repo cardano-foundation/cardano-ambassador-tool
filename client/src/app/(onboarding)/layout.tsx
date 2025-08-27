@@ -1,4 +1,5 @@
 'use client';
+import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 import InboxIcon from '@/components/atoms/InboxIcon';
 import LinkButton from '@/components/atoms/LinkButton';
 import AppLogo from '@/components/atoms/Logo';
@@ -6,16 +7,14 @@ import OnboardingSvg from '@/components/atoms/onboarding';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Footer from '@/components/Footer';
-import { AppProvider, useAppLoading } from '@/context/AppContext';
-import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 import ToastContainer from '@/components/toast/toast';
+import { AppProvider, useAppLoadingStatus } from '@/context/AppContext';
 import { findAdmins } from '@/utils';
 import { MeshProvider } from '@meshsdk/react';
 import { usePathname } from 'next/navigation';
-import '../app.css';
 
 function OnboardingContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useAppLoading();
+  const { shouldShowLoading } = useAppLoadingStatus();
   const pathname = usePathname();
   const signUp = pathname.includes('sign-up');
 
@@ -36,9 +35,7 @@ function OnboardingContent({ children }: { children: React.ReactNode }) {
                     rounded="full"
                     className="flex w-full gap-2 lg:gap-4"
                   >
-                    <span className="text-primary-base font-bold">
-                      Sign In
-                    </span>
+                    <span className="text-primary-base font-bold">Sign In</span>
                     <InboxIcon />
                   </LinkButton>
                 ) : (
@@ -74,9 +71,8 @@ function OnboardingContent({ children }: { children: React.ReactNode }) {
                       Cardano Ambassador Tools
                     </Title>
                     <Paragraph size="base">
-                      Onboard, collaborate, and contribute to the
-                      ecosystem through a streamlined, token-based
-                      platform.
+                      Onboard, collaborate, and contribute to the ecosystem
+                      through a streamlined, token-based platform.
                     </Paragraph>
                   </div>
                 </div>
@@ -98,45 +94,10 @@ export default function DefaultLayout({
   findAdmins();
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Prevent flash of incorrect theme
-              (function() {
-                try {
-                  const root = document.documentElement;
-                  const theme = localStorage.getItem('theme');
-                  
-                  // Clear any existing theme classes first
-                  root.classList.remove('light', 'dark');
-                  
-                  if (theme === 'dark') {
-                    root.classList.add('dark');
-                  } else if (theme === 'light') {
-                    root.classList.add('light');
-                  } else {
-                    // System preference
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    root.classList.add(prefersDark ? 'dark' : 'light');
-                  }
-                } catch (e) {
-                  // Fallback to light theme
-                  document.documentElement.classList.add('light');
-                }
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body>
-        <MeshProvider>
-          <AppProvider>
-            <OnboardingContent>{children}</OnboardingContent>
-          </AppProvider>
-        </MeshProvider>
-      </body>
-    </html>
+    <MeshProvider>
+      <AppProvider>
+        <OnboardingContent>{children}</OnboardingContent>
+      </AppProvider>
+    </MeshProvider>
   );
 }

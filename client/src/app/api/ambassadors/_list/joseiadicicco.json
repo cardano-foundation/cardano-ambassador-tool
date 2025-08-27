@@ -1,0 +1,137 @@
+{
+  "href": "https://forum.cardano.org/u/joseiadicicco/summary",
+  "username": "joseiadicicco",
+  "name": "Jose Iadicicco",
+  "bio_excerpt": null,
+  "country": "Argentina",
+  "flag": "/img/flags/AR.svg",
+  "avatar": "/user_avatar/forum.cardano.org/joseiadicicco/{size}/2951_2.png",
+  "created_at": "2018-02-16T13:31:20.789Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 90,
+      "posts_read_count": 492,
+      "days_visited": 66,
+      "likes_given": 8,
+      "likes_received": 2,
+      "topics_created": 0,
+      "replies_created": 6,
+      "time_read": 21428,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "Cardano&rsquo;s Chang #1 Upgrade: Where Do We Go from Here?",
+        "url": "https://forum.cardano.org/t/cardanos-chang-1-upgrade-where-do-we-go-from-here/135573/2",
+        "like_count": 1,
+        "created_at": "2024-09-02T17:53:32.327Z"
+      },
+      {
+        "title": "Multiple incoming connections from same IP address",
+        "url": "https://forum.cardano.org/t/multiple-incoming-connections-from-same-ip-address/57821/4",
+        "like_count": 1,
+        "created_at": "2021-04-29T12:41:30.488Z"
+      },
+      {
+        "title": "Feedback needed: DRep Code of Conduct",
+        "url": "https://forum.cardano.org/t/feedback-needed-drep-code-of-conduct/124755/3",
+        "like_count": 0,
+        "created_at": "2024-11-20T21:34:59.073Z"
+      },
+      {
+        "title": "Multiple incoming connections from same IP address",
+        "url": "https://forum.cardano.org/t/multiple-incoming-connections-from-same-ip-address/57821/6",
+        "like_count": 0,
+        "created_at": "2021-04-30T04:50:37.158Z"
+      },
+      {
+        "title": "Cubic:cubic in the remote peer section",
+        "url": "https://forum.cardano.org/t/cubic-cubic-in-the-remote-peer-section/50381/10",
+        "like_count": 0,
+        "created_at": "2021-04-06T12:40:38.294Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "Cardano&rsquo;s Chang #1 Upgrade: Where Do We Go from Here?",
+        "url": "https://forum.cardano.org/t/cardanos-chang-1-upgrade-where-do-we-go-from-here/135573",
+        "reply_count": 7,
+        "like_count": 8,
+        "created_at": "2024-09-02T11:45:40.466Z"
+      },
+      {
+        "title": "Feedback needed: DRep Code of Conduct",
+        "url": "https://forum.cardano.org/t/feedback-needed-drep-code-of-conduct/124755",
+        "reply_count": 4,
+        "like_count": 7,
+        "created_at": "2023-12-05T10:42:40.809Z"
+      },
+      {
+        "title": "Multiple incoming connections from same IP address",
+        "url": "https://forum.cardano.org/t/multiple-incoming-connections-from-same-ip-address/57821",
+        "reply_count": 6,
+        "like_count": 3,
+        "created_at": "2021-04-17T00:09:15.089Z"
+      },
+      {
+        "title": "Cubic:cubic in the remote peer section",
+        "url": "https://forum.cardano.org/t/cubic-cubic-in-the-remote-peer-section/50381",
+        "reply_count": 10,
+        "like_count": 1,
+        "created_at": "2021-02-27T11:41:25.709Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "Feedback needed: DRep Code of Conduct",
+      "url": "https://forum.cardano.org/t/feedback-needed-drep-code-of-conduct/124755/3",
+      "created_at": "2024-11-20T21:34:59.073Z"
+    },
+    {
+      "type": "reply",
+      "title": "Cardano&rsquo;s Chang #1 Upgrade: Where Do We Go from Here?",
+      "url": "https://forum.cardano.org/t/cardanos-chang-1-upgrade-where-do-we-go-from-here/135573/2",
+      "created_at": "2024-09-02T17:53:32.327Z"
+    },
+    {
+      "type": "topic",
+      "title": "Cardano&rsquo;s Chang #1 Upgrade: Where Do We Go from Here?",
+      "url": "https://forum.cardano.org/t/cardanos-chang-1-upgrade-where-do-we-go-from-here/135573",
+      "created_at": "2024-09-02T11:45:40.466Z"
+    },
+    {
+      "type": "topic",
+      "title": "Feedback needed: DRep Code of Conduct",
+      "url": "https://forum.cardano.org/t/feedback-needed-drep-code-of-conduct/124755",
+      "created_at": "2023-12-05T10:42:40.809Z"
+    },
+    {
+      "type": "reply",
+      "title": "Multiple incoming connections from same IP address",
+      "url": "https://forum.cardano.org/t/multiple-incoming-connections-from-same-ip-address/57821/6",
+      "created_at": "2021-04-30T04:50:37.158Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2024-09-03T08:03:08.244Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2024-09-03T07:05:53.328Z"
+    },
+    {
+      "name": "Certified",
+      "description": "Completed our new user tutorial",
+      "icon": "stamp",
+      "granted_at": "2018-02-16T13:44:45.452Z"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/alexd1985/summary",
+  "username": "alexd1985",
+  "name": "Charity Pool [CHRTY]",
+  "bio_excerpt": "My name is Alexandru and I run Charity Pool [CHRTY]<br>\nCHRTY supports children’s education by donating from pool’s profit to United Way Romania<br>\n@delegators: support decentralization by delegate to small pool!<br>\ncheck CHRTY performance :<br>\n<a href=\"https://adapools.org/pool/00333b89543da962cc92e7ffa45848f42a98f7276780670728ce5256\" class=\"onebox\" target=\"_blank\" rel=\"noopener\">https://adapools.org/pool/00333b89543da962cc92e7ffa45848f42a98f7276780670728ce5256</a>",
+  "country": "Romania",
+  "flag": "/img/flags/RO.svg",
+  "avatar": "/user_avatar/forum.cardano.org/alexd1985/{size}/23759_2.png",
+  "created_at": "2020-10-02T19:55:14.276Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 9785,
+      "posts_read_count": 64683,
+      "days_visited": 1272,
+      "likes_given": 2606,
+      "likes_received": 4198,
+      "topics_created": 35,
+      "replies_created": 13542,
+      "time_read": 4075552,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "Delegation lotteries are bad for the community and need to stop",
+        "url": "https://forum.cardano.org/t/delegation-lotteries-are-bad-for-the-community-and-need-to-stop/62251/2",
+        "like_count": 17,
+        "created_at": "2021-05-21T18:11:37.510Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for April 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-april-2022/99831/2",
+        "like_count": 14,
+        "created_at": "2022-04-21T13:53:15.813Z"
+      },
+      {
+        "title": "Small pools are dying&hellip;what do you think?",
+        "url": "https://forum.cardano.org/t/small-pools-are-dying-what-do-you-think/39462/123",
+        "like_count": 10,
+        "created_at": "2021-04-13T14:53:13.703Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for July 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-july-2022/104412/3",
+        "like_count": 8,
+        "created_at": "2022-07-13T08:17:06.263Z"
+      },
+      {
+        "title": "Is my ADA secured after I stake it in a pool?",
+        "url": "https://forum.cardano.org/t/is-my-ada-secured-after-i-stake-it-in-a-pool/45895/2",
+        "like_count": 8,
+        "created_at": "2021-01-31T11:25:59.183Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "How to set up a POOL in a few minutes - and register using CNTOOLS",
+        "url": "https://forum.cardano.org/t/how-to-set-up-a-pool-in-a-few-minutes-and-register-using-cntools/48767",
+        "reply_count": 2223,
+        "like_count": 467,
+        "created_at": "2021-02-19T06:48:12.605Z"
+      },
+      {
+        "title": "Small pools are dying&hellip;what do you think?",
+        "url": "https://forum.cardano.org/t/small-pools-are-dying-what-do-you-think/39462",
+        "reply_count": 138,
+        "like_count": 258,
+        "created_at": "2020-08-30T08:18:52.216Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for April 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-april-2022/99831",
+        "reply_count": 63,
+        "like_count": 154,
+        "created_at": "2022-04-21T10:54:43.678Z"
+      },
+      {
+        "title": "Announcing the stake pools chosen for July 2022",
+        "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-july-2022/104412",
+        "reply_count": 37,
+        "like_count": 88,
+        "created_at": "2022-07-13T07:56:00.000Z"
+      },
+      {
+        "title": "UPDATE CARDANO NODE to 1.29.0 - FOR CNTOOLS users",
+        "url": "https://forum.cardano.org/t/update-cardano-node-to-1-29-0-for-cntools-users/70526",
+        "reply_count": 210,
+        "like_count": 79,
+        "created_at": "2021-08-27T21:01:45.245Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "Announcing the stake pools chosen for July 2022",
+      "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-july-2022/104412/3",
+      "created_at": "2022-07-13T08:17:06.263Z"
+    },
+    {
+      "type": "topic",
+      "title": "Announcing the stake pools chosen for July 2022",
+      "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-july-2022/104412",
+      "created_at": "2022-07-13T07:56:00.000Z"
+    },
+    {
+      "type": "reply",
+      "title": "Announcing the stake pools chosen for April 2022",
+      "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-april-2022/99831/2",
+      "created_at": "2022-04-21T13:53:15.813Z"
+    },
+    {
+      "type": "topic",
+      "title": "Announcing the stake pools chosen for April 2022",
+      "url": "https://forum.cardano.org/t/announcing-the-stake-pools-chosen-for-april-2022/99831",
+      "created_at": "2022-04-21T10:54:43.678Z"
+    },
+    {
+      "type": "topic",
+      "title": "Looking for a list of Sundae Swap pools",
+      "url": "https://forum.cardano.org/t/looking-for-a-list-of-sundae-swap-pools/87808",
+      "created_at": "2021-12-05T09:01:48.003Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2021-01-07T04:01:25.943Z"
+    },
+    {
+      "name": "Great Topic",
+      "description": "Received 50 likes on a topic",
+      "icon": "file-signature",
+      "granted_at": "2021-05-17T11:44:27.560Z"
+    },
+    {
+      "name": "Devotee",
+      "description": "Visited 365 consecutive days",
+      "icon": "far-eye",
+      "granted_at": "2021-11-22T00:00:00.000Z"
+    }
+  ]
+}

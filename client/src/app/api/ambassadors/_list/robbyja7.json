@@ -1,0 +1,144 @@
+{
+  "href": "https://forum.cardano.org/u/robbyja7/summary",
+  "username": "robbyja7",
+  "name": "Stephen C",
+  "bio_excerpt": "Belgian Cardano stake pool | Beekeeper | donating 20% to charity!<br>\ninfo @beadapool.com or DMs<br>\nPool ID: a803d6a5b213b52b38c4d7b97c934b904810c36e40a9d7260670d618",
+  "country": "Belgium",
+  "flag": "/img/flags/BE.svg",
+  "avatar": "/user_avatar/forum.cardano.org/robbyja7/{size}/55004_2.png",
+  "created_at": "2021-08-08T15:05:08.763Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 446,
+      "posts_read_count": 3554,
+      "days_visited": 203,
+      "likes_given": 13,
+      "likes_received": 20,
+      "topics_created": 11,
+      "replies_created": 10,
+      "time_read": 81646,
+      "recent_time_read": 0
+    },
+    "top_replies": [
+      {
+        "title": "PCP_K-Parameter_EarnCoinPool",
+        "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/28",
+        "like_count": 5,
+        "created_at": "2024-01-11T10:13:49.152Z"
+      },
+      {
+        "title": "Massive scam pool group uncovered",
+        "url": "https://forum.cardano.org/t/massive-scam-pool-group-uncovered/85194/4",
+        "like_count": 4,
+        "created_at": "2021-11-17T13:45:36.863Z"
+      },
+      {
+        "title": "PCP_K-Parameter_EarnCoinPool",
+        "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/45",
+        "like_count": 3,
+        "created_at": "2024-01-11T14:48:11.206Z"
+      },
+      {
+        "title": "PCP_K-Parameter_EarnCoinPool",
+        "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/44",
+        "like_count": 1,
+        "created_at": "2024-01-11T14:43:00.472Z"
+      },
+      {
+        "title": "Cardano node 1.30.1 ARM64 (aarch64) compiled binaries",
+        "url": "https://forum.cardano.org/t/cardano-node-1-30-1-arm64-aarch64-compiled-binaries/78112/15",
+        "like_count": 1,
+        "created_at": "2021-11-04T07:22:45.119Z"
+      }
+    ],
+    "top_topics": [
+      {
+        "title": "PCP_K-Parameter_EarnCoinPool",
+        "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701",
+        "reply_count": 112,
+        "like_count": 292,
+        "created_at": "2023-10-09T14:53:44.313Z"
+      },
+      {
+        "title": "Massive scam pool group uncovered",
+        "url": "https://forum.cardano.org/t/massive-scam-pool-group-uncovered/85194",
+        "reply_count": 95,
+        "like_count": 133,
+        "created_at": "2021-11-17T11:25:32.274Z"
+      },
+      {
+        "title": "Cardano node 1.30.1 ARM64 (aarch64) compiled binaries",
+        "url": "https://forum.cardano.org/t/cardano-node-1-30-1-arm64-aarch64-compiled-binaries/78112",
+        "reply_count": 19,
+        "like_count": 10,
+        "created_at": "2021-10-05T03:30:31.990Z"
+      },
+      {
+        "title": ":netherlands: Cardano Community nieuwsbrief – 30 mei 2022",
+        "url": "https://forum.cardano.org/t/cardano-community-nieuwsbrief-30-mei-2022/102997",
+        "reply_count": 2,
+        "like_count": 2,
+        "created_at": "2022-06-12T15:56:38.444Z"
+      },
+      {
+        "title": ":netherlands: CIP-1694: Een On-Chain gedecentraliseerd bestuursmechanisme voor Voltaire",
+        "url": "https://forum.cardano.org/t/cip-1694-een-on-chain-gedecentraliseerd-bestuursmechanisme-voor-voltaire/113402",
+        "reply_count": 1,
+        "like_count": 2,
+        "created_at": "2023-01-23T12:25:56.018Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "reply",
+      "title": "PCP_K-Parameter_EarnCoinPool",
+      "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/45",
+      "created_at": "2024-01-11T14:48:11.206Z"
+    },
+    {
+      "type": "reply",
+      "title": "PCP_K-Parameter_EarnCoinPool",
+      "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/44",
+      "created_at": "2024-01-11T14:43:00.472Z"
+    },
+    {
+      "type": "reply",
+      "title": "PCP_K-Parameter_EarnCoinPool",
+      "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701/28",
+      "created_at": "2024-01-11T10:13:49.152Z"
+    },
+    {
+      "type": "topic",
+      "title": "PCP_K-Parameter_EarnCoinPool",
+      "url": "https://forum.cardano.org/t/pcp-k-parameter-earncoinpool/122701",
+      "created_at": "2023-10-09T14:53:44.313Z"
+    },
+    {
+      "type": "topic",
+      "title": ":netherlands: Aiken: de toekomst van smart contracts",
+      "url": "https://forum.cardano.org/t/aiken-de-toekomst-van-smart-contracts/119109",
+      "created_at": "2023-06-22T09:36:13.992Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2022-07-29T06:25:38.187Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2024-08-10T09:13:22.658Z"
+    },
+    {
+      "name": "First Link",
+      "description": "Added a link to another topic",
+      "icon": "link",
+      "granted_at": "2022-06-12T15:56:38.723Z"
+    }
+  ]
+}

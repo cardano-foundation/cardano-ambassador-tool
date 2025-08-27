@@ -1,0 +1,113 @@
+{
+  "href": "https://forum.cardano.org/u/uptodate_developers/summary",
+  "username": "uptodate_developers",
+  "name": "Uptodate Developers",
+  "bio_excerpt": "<a href=\"https://uptodatedevelopers.com\">Uptodate Developers</a> is a technology company that provides custom solutions to solve societal problems and promotes the use of technology to youth. We specialize in creating mobile, web, and desktop applications, as well as writing smart contracts and connecting wallets with the Cardano blockchain. We also offer training and competitions to educate &hellip;",
+  "country": "Congo, Democratic Republic of the",
+  "flag": "/img/flags/CD.svg",
+  "avatar": "/user_avatar/forum.cardano.org/uptodate_developers/{size}/60795_2.png",
+  "created_at": "2022-12-29T19:12:55.646Z",
+  "summary": {
+    "stats": {
+      "topics_entered": 243,
+      "posts_read_count": 465,
+      "days_visited": 263,
+      "likes_given": 6,
+      "likes_received": 56,
+      "topics_created": 156,
+      "replies_created": 0,
+      "time_read": 22038,
+      "recent_time_read": 216
+    },
+    "top_replies": [],
+    "top_topics": [
+      {
+        "title": "Recap Meetup 23 Mars : Partage des connaissances sur Cardano sur la plateforme UpdevCommunity",
+        "url": "https://forum.cardano.org/t/recap-meetup-23-mars-partage-des-connaissances-sur-cardano-sur-la-plateforme-updevcommunity/129579",
+        "reply_count": 2,
+        "like_count": 5,
+        "created_at": "2024-03-26T17:46:30.757Z"
+      },
+      {
+        "title": "Community Report: Exploring Opportunities on Cardano",
+        "url": "https://forum.cardano.org/t/community-report-exploring-opportunities-on-cardano/144802",
+        "reply_count": 1,
+        "like_count": 4,
+        "created_at": "2025-04-01T12:24:12.534Z"
+      },
+      {
+        "title": "Le Chang Hard Fork de Cardano : Un Pas Décisif vers l&rsquo;Ère Voltaire",
+        "url": "https://forum.cardano.org/t/le-chang-hard-fork-de-cardano-un-pas-decisif-vers-lere-voltaire/135387",
+        "reply_count": 1,
+        "like_count": 4,
+        "created_at": "2024-08-27T20:06:53.143Z"
+      },
+      {
+        "title": "Les transactions sur Cardano",
+        "url": "https://forum.cardano.org/t/les-transactions-sur-cardano/116879",
+        "reply_count": 1,
+        "like_count": 3,
+        "created_at": "2023-04-16T11:13:08.555Z"
+      },
+      {
+        "title": "The Importance of Bridging the Gap Between Cryptocurrencies and Local Currencies in Africa with Adaex",
+        "url": "https://forum.cardano.org/t/the-importance-of-bridging-the-gap-between-cryptocurrencies-and-local-currencies-in-africa-with-adaex/142161",
+        "reply_count": 1,
+        "like_count": 2,
+        "created_at": "2025-01-18T23:30:44.598Z"
+      }
+    ]
+  },
+  "activities": [
+    {
+      "type": "topic",
+      "title": "Community Report: Exploring Opportunities on Cardano",
+      "url": "https://forum.cardano.org/t/community-report-exploring-opportunities-on-cardano/144802",
+      "created_at": "2025-04-01T12:24:12.534Z"
+    },
+    {
+      "type": "topic",
+      "title": "The Importance of Bridging the Gap Between Cryptocurrencies and Local Currencies in Africa with Adaex",
+      "url": "https://forum.cardano.org/t/the-importance-of-bridging-the-gap-between-cryptocurrencies-and-local-currencies-in-africa-with-adaex/142161",
+      "created_at": "2025-01-18T23:30:44.598Z"
+    },
+    {
+      "type": "topic",
+      "title": "Le Chang Hard Fork de Cardano : Un Pas Décisif vers l&rsquo;Ère Voltaire",
+      "url": "https://forum.cardano.org/t/le-chang-hard-fork-de-cardano-un-pas-decisif-vers-lere-voltaire/135387",
+      "created_at": "2024-08-27T20:06:53.143Z"
+    },
+    {
+      "type": "topic",
+      "title": "Guide comparatif des Stablecoins USDT, USDC et USDM",
+      "url": "https://forum.cardano.org/t/guide-comparatif-des-stablecoins-usdt-usdc-et-usdm/134112",
+      "created_at": "2024-07-14T14:54:02.038Z"
+    },
+    {
+      "type": "topic",
+      "title": "Marlowe : La solution de Cardano pour créer des smart contracts sans coder",
+      "url": "https://forum.cardano.org/t/marlowe-la-solution-de-cardano-pour-creer-des-smart-contracts-sans-coder/133230",
+      "created_at": "2024-06-19T16:32:54.530Z"
+    }
+  ],
+  "badges": [
+    {
+      "name": "Regular",
+      "description": "<a href=\"https://blog.discourse.org/2018/06/understanding-discourse-trust-levels/\">Granted</a> recategorize, rename, followed links, wiki, more likes",
+      "icon": "user",
+      "granted_at": "2023-02-02T08:38:39.315Z"
+    },
+    {
+      "name": "Anniversary",
+      "description": "Active member for a year, posted at least once",
+      "icon": "cake-candles",
+      "granted_at": "2024-12-31T07:54:22.350Z"
+    },
+    {
+      "name": "Appreciated",
+      "description": "Received 1 like on 20 posts",
+      "icon": "heart",
+      "granted_at": "2023-12-01T20:34:02.106Z"
+    }
+  ]
+}
