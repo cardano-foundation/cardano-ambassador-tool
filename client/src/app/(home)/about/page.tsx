@@ -46,13 +46,13 @@ export default function ComponentShowcase() {
   return (
     <div className="max-w-4xl mx-auto bg-background">
       <section className="p-6 mb-6">
-      <Title className="text-xl font-semibold mb-4 text-gray-800">Steps Components</Title>
+      <Title className="mb-4 text-neutral">Steps Components</Title>
 
       <div className="space-y-6">
         <div>
-          <Title level="4" className="text-lg font-medium mb-3 text-gray-700">Cardano Ambassador Steps</Title>
+          <Title level="4" className="text-neutral">Cardano Ambassador Steps</Title>
           <div className="space-y-4">
-            <div className="p-6 border border-gray-200 rounded-lg dark:border-gray-700 flex justify-center">
+            <div className="p-6 border border-border rounded-lg  flex justify-center">
               <Progress steps={applicationProgress} />
             </div>
           </div>

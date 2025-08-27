@@ -116,12 +116,7 @@ export const Progress: React.FC<ProgressProps> = ({
   clickable = false,
 }) => {
   const currentStepIndex = steps.findIndex(step => step.status === 'current');
-  
-  const correctedSteps = steps.map((step, index) => {
-    if (currentStepIndex === -1) {
-      return { ...step, status: 'pending' as ProgressStatus };
-    }
-    
+  const correctedSteps = currentStepIndex !== -1 ? steps.map((step, index) => {
     if (index < currentStepIndex) {
       return { ...step, status: 'completed' as ProgressStatus };
     } else if (index === currentStepIndex) {
@@ -129,7 +124,7 @@ export const Progress: React.FC<ProgressProps> = ({
     } else {
       return { ...step, status: 'pending' as ProgressStatus };
     }
-  });
+  }) : steps;
 
   return (
     <div className={`flex flex-col ${className}`}>
