@@ -56,6 +56,13 @@ export default function LinkButton({
             variant === 'outline',
           'text-black-500 border-white-400 border': variant === 'ghost',
           'hover:bg-muted text-foreground bg-white-400': variant === 'nav',
+
+          'bg-primary-200 hover:bg-primary-400 text-white':
+              variant === 'primary-light',
+          'bg-amber-500 hover:bg-amber-600 text-white':
+             variant === 'warning',
+          'bg-emerald-400 hover:bg-emerald-500 text-white':
+             variant === 'success',
         },
         fullWidth && 'w-full',
         className,
