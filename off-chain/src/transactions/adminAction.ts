@@ -90,13 +90,7 @@ export class AdminActionTx extends Layer1Tx {
       assetName: tokenAssetName,
       metadata: memberData,
     } = getMembershipIntentDatum(membershipIntentUtxo);
-    const metadata: MembershipMetadata = membershipMetadata(
-      memberData.walletAddress,
-      stringToHex(memberData.fullName),
-      stringToHex(memberData.displayName),
-      stringToHex(memberData.emailAddress),
-      stringToHex(memberData.bio)
-    );
+    const metadata: MembershipMetadata = membershipMetadata(memberData);
     const newMemberDatum: MemberDatum = memberDatum(
       tokenPolicyId,
       tokenAssetName,
