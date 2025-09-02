@@ -5,11 +5,11 @@ import Footer from '@/components/Footer';
 import SideNav from '@/components/Navigation/SideNav';
 import TopNavBar from '@/components/Navigation/TopNavBar';
 import ToastContainer from '@/components/toast/toast';
-import { useAppLoadingStatus } from '@/context/AppContext';
+import { useApp } from '@/context/AppContext';
 import React from 'react';
 
 function ManageContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useAppLoadingStatus();
+  const { shouldShowLoading } = useApp();
 
   return (
     <>

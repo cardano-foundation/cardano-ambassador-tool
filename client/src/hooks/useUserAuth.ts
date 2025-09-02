@@ -16,16 +16,6 @@ export function useUserAuth() {
   const [user, setUserState] = useState<User | null>(null);
   const { setPersist, address, wallet } = useWallet();
 
-  // User management functions
-  const setUser = (data: User | null) => {
-    if (data) {
-      localStorage.setItem('user', JSON.stringify(data));
-    } else {
-      localStorage.removeItem('user');
-    }
-    setUserState(data);
-  };
-
   // Load stored user on mount
   useEffect(() => {
     const stored = localStorage.getItem('user');
@@ -51,11 +41,11 @@ export function useUserAuth() {
         try {
           const roles = await resolveRoles(address);
           console.log({ roles });
-          setUser({ wallet, roles, address });
+          setUserState({ wallet, roles, address });
         } catch (error) {
           console.error('Failed to resolve user roles:', error);
           // Still set user without roles
-          setUser({ wallet, roles: [], address });
+          setUserState({ wallet, roles: [], address });
         }
       }
     }
@@ -64,7 +54,6 @@ export function useUserAuth() {
 
   return {
     user,
-    setUser,
     // Helper computed values
     isAuthenticated: !!user,
     userAddress: user?.address,

@@ -343,8 +343,8 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
   try {
     const utxos = await blockfrostService.fetchAddressUTxOs(
       SCRIPT_ADDRESSES.MEMBER_NFT
-    );
-    const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
+    )??[];
+    const utxosWithData = utxos?.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) => {
       try {
         if (!utxo.output.plutusData) return false;
@@ -500,9 +500,9 @@ export async function findAdmins(): Promise<string[] | null> {
 
 
 
-export function shortenString(address: string) {
-  if (!address) return '';
-  return `${address.substring(0, 15)}...${address.substring(address.length - 8)}`;
+export function shortenString(text: string,length = 8) {
+  if (!text) return '';
+  return `${text.substring(0, length)}...${text.substring(text.length - length)}`;
 };
 
 

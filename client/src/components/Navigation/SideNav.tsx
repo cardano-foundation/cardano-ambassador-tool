@@ -1,17 +1,18 @@
 'use client';
 
+import Card, { CardContent } from '@/components/atoms/Card';
+import AppLogo from '@/components/atoms/Logo';
 import SettingsIcon from '@/components/atoms/SettingsIcon';
 import Title from '@/components/atoms/Title';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
-import { useUser } from '@/context/AppContext';
+import { useApp } from '@/context/AppContext';
+import { useWallet } from '@meshsdk/react';
 import { NavigationSection } from '@types';
 import { GridIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Card, { CardContent } from '@/components/atoms/Card';
-import AppLogo from '@/components/atoms/Logo';
 
 const defaultNavigationSections: NavigationSection[] = [
   {
@@ -72,10 +73,12 @@ const adminToolsSection: NavigationSection = {
 };
 
 const SideNav = () => {
-  const { user } = useUser();
+  const { user } = useApp();
   const pathname = usePathname();
 
   const [sections, setSections] = useState(defaultNavigationSections);
+
+  const { connected } = useWallet();
 
   // Active link handling
   const [currentActiveId, setCurrentActiveId] = useState('');
@@ -160,9 +163,19 @@ const SideNav = () => {
           </div>
         ))}
       </div>
-      
+
       <Card padding="sm" className="mx-4 mt-auto mb-4">
-        <CardContent className=" ">
+        <CardContent className="flex flex-col">
+          {connected ? (
+            <span className="text-muted-foreground text-sm">
+              Connected Wallet{' '}
+            </span>
+          ) : (
+            <span className="text-muted-foreground text-sm">
+              Connect Wallet{' '}
+            </span>
+          )}
+
           <ConnectWallet />
         </CardContent>
       </Card>

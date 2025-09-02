@@ -28,8 +28,6 @@ export default function HomePage() {
     });
   }, [searchTerm, selectedRegion, ambassadors]);
 
-  console.log({ ambassadors });
-
   const displayedAmbassadors = filteredAmbassadors.slice(0, displayCount);
   const hasMoreAmbassadors = displayCount < filteredAmbassadors.length;
 

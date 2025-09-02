@@ -3,13 +3,13 @@ import ThemeToggle from '@/components/ThemeToggle';
 import Breadcrumb from '@/components/atoms/Breadcrumbs';
 import Button from '@/components/atoms/Button';
 import NotificationIcon from '@/components/atoms/NotificationIcon';
-import { useUser } from '@/context/AppContext';
 import InboxIcon from '../atoms/InboxIcon';
 import LinkButton from '../atoms/LinkButton';
 import UserAvatar from '../atoms/UserAvatar';
+import { useApp } from '@/context';
 
 export default function TopNavBar() {
-  const { user } = useUser();
+  const { user } = useApp();
 
   return (
     <div className="bg-background flex items-center justify-between px-3 py-4 sm:px-6 sm:py-6">

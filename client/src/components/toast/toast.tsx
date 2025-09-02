@@ -25,7 +25,7 @@ function ToastItem({ toast }: { toast: Toast }) {
         isVisible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
       }`}
     >
-      <div className="bg-background rounded-lg shadow-lg  p-4 min-w-80 max-w-96">
+      <div className="bg-background rounded-lg shadow-lg  p-4 min-w-80 max-w-96 z-60">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 mt-0.5">
             {icons[toast.type || "default"]}
@@ -64,7 +64,7 @@ export default function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 max-h-screen overflow-hidden">
+    <div className="fixed top-4 right-4 max-h-screen overflow-hidden">
       <div className="flex flex-col-reverse max-h-screen overflow-y-auto">
         {toasts.length > 1 && (
           <div className="mb-3">
