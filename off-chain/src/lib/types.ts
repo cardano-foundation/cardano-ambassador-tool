@@ -13,12 +13,13 @@ import {
   ByteString,
   Integer,
   stringToHex,
+  stringToBSArray,
   pairs,
   Pairs,
   conStr1,
   conStr2,
   ConStr0,
-  PubKeyAddress,
+  List,
 } from "@meshsdk/core";
 import {
   AddMember,
@@ -124,29 +125,184 @@ export const stopCounter: StopCounter = conStr1([]);
 
 // 2 - MembershipIntent
 
-export type MembershipMetadata = ConStr0<
+export type StatsPlutusData = ConStr0<
   [
-    PubKeyAddress, // wallet address
-    ByteString, // full name
-    ByteString, // display name
-    ByteString, // email address
-    ByteString // bio
+    Integer, // topics_entered
+    Integer, // posts_read_count
+    Integer, // days_visited
+    Integer, // likes_given
+    Integer, // likes_received
+    Integer, // topics_created
+    Integer, // replies_created
+    Integer, // time_read
+    Integer // recent_time_read
   ]
 >;
 
+export type TopReplyPlutusData = ConStr0<
+  [
+    ByteString | List<ByteString>, // title
+    ByteString | List<ByteString>, // url
+    Integer, // like_count
+    ByteString | List<ByteString> // created_at
+  ]
+>;
+
+export type TopTopicPlutusData = ConStr0<
+  [
+    ByteString | List<ByteString>, // title
+    ByteString | List<ByteString>, // url
+    Integer, // reply_count
+    Integer, // like_count
+    ByteString | List<ByteString> // created_at
+  ]
+>;
+
+export type ActivityPlutusData = ConStr0<
+  [
+    ByteString | List<ByteString>, // type
+    ByteString | List<ByteString>, // title
+    ByteString | List<ByteString>, // url
+    ByteString | List<ByteString> // created_at
+  ]
+>;
+
+export type BadgePlutusData = ConStr0<
+  [
+    ByteString | List<ByteString>, // name
+    ByteString | List<ByteString>, // description
+    ByteString | List<ByteString>, // icon
+    ByteString | List<ByteString> // granted_at
+  ]
+>;
+
+export type SummaryPlutusData = ConStr0<
+  [StatsPlutusData, List<TopReplyPlutusData>, List<TopTopicPlutusData>]
+>;
+
+export type MembershipMetadata = ConStr0<
+  [
+    ByteString | List<ByteString>, // href
+    ByteString | List<ByteString>, // username
+    ByteString | List<ByteString>, // name
+    ByteString | List<ByteString>, // bio_excerpt
+    ByteString | List<ByteString>, // country
+    ByteString | List<ByteString>, // flag
+    ByteString | List<ByteString>, // avatar
+    ByteString | List<ByteString>, // created_at
+    SummaryPlutusData, // summary stats
+    List<ActivityPlutusData>, // activities
+    List<BadgePlutusData> // badges
+  ]
+>;
+
+// Helper function to handle strings that might exceed 64 characters
+const handleString = (str: string): ByteString | List<ByteString> => {
+  const hexStr = stringToHex(str);
+  if (str.length > 64) {
+    return stringToBSArray(hexStr);
+  }
+  return byteString(hexStr);
+};
+
+// Helper function to convert StatsData to StatsPlutusData
+const convertStatsToPlutus = (stats: StatsData): StatsPlutusData => {
+  return conStr0([
+    integer(stats.topics_entered),
+    integer(stats.posts_read_count),
+    integer(stats.days_visited),
+    integer(stats.likes_given),
+    integer(stats.likes_received),
+    integer(stats.topics_created),
+    integer(stats.replies_created),
+    integer(stats.time_read),
+    integer(stats.recent_time_read),
+  ]);
+};
+
+// Helper function to convert TopReplyData to TopReplyPlutusData
+const convertTopReplyToPlutus = (reply: TopReplyData): TopReplyPlutusData => {
+  return conStr0([
+    handleString(reply.title),
+    handleString(reply.url),
+    integer(reply.like_count),
+    handleString(reply.created_at),
+  ]);
+};
+
+// Helper function to convert TopTopicData to TopTopicPlutusData
+const convertTopTopicToPlutus = (topic: TopTopicData): TopTopicPlutusData => {
+  return conStr0([
+    handleString(topic.title),
+    handleString(topic.url),
+    integer(topic.reply_count),
+    integer(topic.like_count),
+    handleString(topic.created_at),
+  ]);
+};
+
+// Helper function to convert ActivityData to ActivityPlutusData
+const convertActivityToPlutus = (
+  activity: ActivityData
+): ActivityPlutusData => {
+  return conStr0([
+    handleString(activity.type),
+    handleString(activity.title),
+    handleString(activity.url),
+    handleString(activity.created_at),
+  ]);
+};
+
+// Helper function to convert BadgeData to BadgePlutusData
+const convertBadgeToPlutus = (badge: BadgeData): BadgePlutusData => {
+  return conStr0([
+    handleString(badge.name),
+    handleString(badge.description),
+    handleString(badge.icon),
+    handleString(badge.granted_at),
+  ]);
+};
+
+// Helper function to convert SummaryData to SummaryPlutusData
+const convertSummaryToPlutus = (summary: SummaryData): SummaryPlutusData => {
+  return conStr0([
+    convertStatsToPlutus(summary.stats),
+    list(summary.top_replies.map(convertTopReplyToPlutus)),
+    list(summary.top_topics.map(convertTopTopicToPlutus)),
+  ]);
+};
+
 export const membershipMetadata = (
-  walletAddress: string,
-  fullName: string,
-  displayName: string,
-  emailAddress: string,
-  bio: string
+  jsonData: MemberData
 ): MembershipMetadata => {
   return conStr0([
-    addrBech32ToPlutusDataObj(walletAddress),
-    byteString(fullName),
-    byteString(displayName),
-    byteString(emailAddress),
-    byteString(bio),
+    handleString(jsonData.href || ""),
+    handleString(jsonData.username || ""),
+    handleString(jsonData.name || ""),
+    handleString(jsonData.bio_excerpt || ""),
+    handleString(jsonData.country || ""),
+    handleString(jsonData.flag || ""),
+    handleString(jsonData.avatar || ""),
+    handleString(jsonData.created_at || ""),
+    convertSummaryToPlutus(
+      jsonData.summary || {
+        stats: {
+          topics_entered: 0,
+          posts_read_count: 0,
+          days_visited: 0,
+          likes_given: 0,
+          likes_received: 0,
+          topics_created: 0,
+          replies_created: 0,
+          time_read: 0,
+          recent_time_read: 0,
+        },
+        top_replies: [],
+        top_topics: [],
+      }
+    ),
+    list((jsonData.activities || []).map(convertActivityToPlutus)),
+    list((jsonData.badges || []).map(convertBadgeToPlutus)),
   ]);
 };
 
@@ -272,12 +428,66 @@ export const mintSignOffApproval: MintSignOffApproval = conStr0([]);
 export const processSignOff: ProcessSignOff = conStr1([]);
 
 // Non blueprint types
+
+export type StatsData = {
+  topics_entered: number;
+  posts_read_count: number;
+  days_visited: number;
+  likes_given: number;
+  likes_received: number;
+  topics_created: number;
+  replies_created: number;
+  time_read: number;
+  recent_time_read: number;
+};
+
+export type TopReplyData = {
+  title: string;
+  url: string;
+  like_count: number;
+  created_at: string;
+};
+
+export type TopTopicData = {
+  title: string;
+  url: string;
+  reply_count: number;
+  like_count: number;
+  created_at: string;
+};
+
+export type ActivityData = {
+  type: string;
+  title: string;
+  url: string;
+  created_at: string;
+};
+
+export type BadgeData = {
+  name: string;
+  description: string;
+  icon: string;
+  granted_at: string;
+};
+
+export type SummaryData = {
+  stats: StatsData;
+  top_replies: TopReplyData[];
+  top_topics: TopTopicData[];
+};
+
 export type MemberData = {
-  walletAddress: string;
-  fullName: string;
-  displayName: string;
-  emailAddress: string;
-  bio: string;
+  href?: string;
+  username?: string;
+  name?: string;
+  bio_excerpt?: string;
+  country?: string;
+  flag?: string;
+  avatar?: string;
+  created_at?: string;
+  summary?: SummaryData;
+  activities?: ActivityData[];
+  badges?: BadgeData[];
 };
 
 export type Member = {

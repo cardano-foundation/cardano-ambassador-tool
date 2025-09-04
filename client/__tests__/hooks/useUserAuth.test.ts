@@ -1,5 +1,5 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
 import { useUserAuth } from '@/hooks/useUserAuth';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { mockAuthStates, mockWalletData } from '../fixtures/mockUtxos';
 
 // Mock the MeshSDK useWallet hook
@@ -32,7 +32,7 @@ describe('useUserAuth', () => {
     (window.localStorage.getItem as jest.Mock).mockReturnValue(null);
     (window.localStorage.setItem as jest.Mock).mockClear();
     (window.localStorage.removeItem as jest.Mock).mockClear();
-    
+
     // Reset wallet state
     Object.assign(mockWalletState, {
       wallet: null,
@@ -46,7 +46,7 @@ describe('useUserAuth', () => {
 
   it('should initialize with no user when localStorage is empty', () => {
     const { result } = renderHook(() => useUserAuth());
-    
+
     expect(result.current.user).toBeNull();
     expect(result.current.isAuthenticated).toBe(false);
     expect(result.current.userAddress).toBeNull();
@@ -56,10 +56,12 @@ describe('useUserAuth', () => {
 
   it('should load user from localStorage on mount', () => {
     const storedUser = mockAuthStates.connected.user;
-    (window.localStorage.getItem as jest.Mock).mockReturnValue(JSON.stringify(storedUser));
+    (window.localStorage.getItem as jest.Mock).mockReturnValue(
+      JSON.stringify(storedUser),
+    );
 
     const { result } = renderHook(() => useUserAuth());
-    
+
     expect(result.current.user).toEqual(storedUser);
     expect(result.current.isAuthenticated).toBe(true);
     expect(result.current.userAddress).toBe(storedUser.address);
@@ -71,28 +73,31 @@ describe('useUserAuth', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
     const { result } = renderHook(() => useUserAuth());
-    
+
     expect(result.current.user).toBeNull();
-    expect(consoleSpy).toHaveBeenCalledWith('Failed to parse stored user data:', expect.any(SyntaxError));
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Failed to parse stored user data:',
+      expect.any(SyntaxError),
+    );
     expect(window.localStorage.removeItem).toHaveBeenCalledWith('user');
-    
+
     consoleSpy.mockRestore();
   });
 
   it('should set wallet persistence on mount', () => {
     renderHook(() => useUserAuth());
-    
+
     expect(mockWalletState.setPersist).toHaveBeenCalledWith(true);
   });
 
   it('should fetch roles when wallet connects', async () => {
     const mockWallet = { name: 'TestWallet' };
     const mockRoles = ['member', 'contributor'];
-    
+
     mockResolveRoles.mockResolvedValue(mockRoles);
-    
+
     const { result, rerender } = renderHook(() => useUserAuth());
-    
+
     // Simulate wallet connection
     act(() => {
       Object.assign(mockWalletState, {
@@ -100,9 +105,9 @@ describe('useUserAuth', () => {
         address: mockWalletData.address,
       });
     });
-    
+
     rerender();
-    
+
     await waitFor(() => {
       expect(mockResolveRoles).toHaveBeenCalledWith(mockWalletData.address);
       expect(result.current.user?.address).toBe(mockWalletData.address);
@@ -114,43 +119,46 @@ describe('useUserAuth', () => {
   it('should handle role resolution failure gracefully', async () => {
     const mockWallet = { name: 'TestWallet' };
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-    
+
     mockResolveRoles.mockRejectedValue(new Error('Role resolution failed'));
-    
+
     const { result, rerender } = renderHook(() => useUserAuth());
-    
+
     act(() => {
       Object.assign(mockWalletState, {
         wallet: mockWallet,
         address: mockWalletData.address,
       });
     });
-    
+
     rerender();
-    
+
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to resolve user roles:', expect.any(Error));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Failed to resolve user roles:',
+        expect.any(Error),
+      );
       expect(result.current.user?.roles).toEqual([]);
       expect(result.current.isAuthenticated).toBe(true);
     });
-    
+
     consoleSpy.mockRestore();
   });
 
   it('should not fetch roles when address is empty', async () => {
     const mockWallet = { name: 'TestWallet' };
-    
+
     const { rerender } = renderHook(() => useUserAuth());
-    
+
     act(() => {
       Object.assign(mockWalletState, {
         wallet: mockWallet,
         address: '', // Empty address
       });
     });
-    
+
     rerender();
-    
+
     await waitFor(() => {
       expect(mockResolveRoles).not.toHaveBeenCalled();
     });
@@ -161,10 +169,12 @@ describe('useUserAuth', () => {
 
   it('should provide correct computed values for admin user', () => {
     const adminUser = mockAuthStates.admin.user;
-    (window.localStorage.getItem as jest.Mock).mockReturnValue(JSON.stringify(adminUser));
+    (window.localStorage.getItem as jest.Mock).mockReturnValue(
+      JSON.stringify(adminUser),
+    );
 
     const { result } = renderHook(() => useUserAuth());
-    
+
     expect(result.current.isAuthenticated).toBe(true);
     expect(result.current.userRoles).toEqual(['admin', 'member']);
     expect(result.current.userAddress).toBe(adminUser.address);
@@ -177,15 +187,15 @@ describe('useUserAuth', () => {
       wallet: { name: 'TestWallet' },
       address: mockWalletData.address,
     });
-    
+
     mockResolveRoles.mockResolvedValue(['member']);
 
     const { result, rerender } = renderHook(() => useUserAuth());
-    
+
     await waitFor(() => {
       expect(result.current.isAuthenticated).toBe(true);
     });
-    
+
     // Simulate wallet disconnection
     act(() => {
       Object.assign(mockWalletState, {
@@ -193,9 +203,9 @@ describe('useUserAuth', () => {
         address: '',
       });
     });
-    
+
     rerender();
-    
+
     // Note: The hook doesn't automatically clear user on wallet disconnect
     // This might be intended behavior to maintain user session
     expect(result.current.user).not.toBeNull();
@@ -203,15 +213,15 @@ describe('useUserAuth', () => {
 
   it('should handle multiple rapid address changes', async () => {
     const { result, rerender } = renderHook(() => useUserAuth());
-    
+
     const addresses = [
       'addr_test1_address1',
       'addr_test1_address2',
       'addr_test1_address3',
     ];
-    
+
     mockResolveRoles.mockResolvedValue(['member']);
-    
+
     // Rapidly change addresses
     for (const address of addresses) {
       act(() => {
@@ -222,9 +232,11 @@ describe('useUserAuth', () => {
       });
       rerender();
     }
-    
+
     await waitFor(() => {
-      expect(result.current.user?.address).toBe(addresses[addresses.length - 1]);
+      expect(result.current.user?.address).toBe(
+        addresses[addresses.length - 1],
+      );
     });
   });
 });

@@ -1,5 +1,4 @@
-import { IWallet } from '@meshsdk/core';
-import { Quantity, Unit } from '@meshsdk/core';
+import { IWallet, Quantity, Unit } from '@meshsdk/core';
 
 export interface MembershipIntentPayoad {
   tokenUtxoHash: string;
