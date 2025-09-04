@@ -8,13 +8,11 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Footer from '@/components/Footer';
 import ToastContainer from '@/components/toast/toast';
-import { useAppLoadingStatus } from '@/context/AppContext';
-import { findAdmins } from '@/utils';
-import { MeshProvider } from '@meshsdk/react';
+import { useApp } from '@/context/AppContext';
 import { usePathname } from 'next/navigation';
 
 function OnboardingContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useAppLoadingStatus();
+  const { shouldShowLoading } = useApp();
   const pathname = usePathname();
   const signUp = pathname.includes('sign-up');
 
@@ -54,7 +52,7 @@ function OnboardingContent({ children }: { children: React.ReactNode }) {
                 )}
               </div>
             </div>
-            <MeshProvider>{children}</MeshProvider>
+            {children}
             <ToastContainer />
             <div className="bottom-0 w-full">
               <Footer />
@@ -91,7 +89,5 @@ export default function DefaultLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  findAdmins();
-
   return <OnboardingContent>{children}</OnboardingContent>;
 }

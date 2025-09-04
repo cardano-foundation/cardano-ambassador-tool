@@ -101,3 +101,30 @@ export type Ambassador = {
         granted_at: string;
     }>;
 };
+
+
+/**
+ * Cardano Network Configuration
+ * 
+ * This module handles environment-driven network configuration for Cardano.
+ * It supports preprod (testnet) and mainnet environments with proper validation.
+ */
+
+export type CardanoNetwork = 'mainnet' | 'preprod';
+
+export interface NetworkConfig {
+    network: CardanoNetwork;
+    networkId: number;
+    isTestnet: boolean;
+    blockfrostUrl: string;
+    explorerUrl: string;
+    name: string
+}
+
+export interface NetworkValidationResult {
+    isValid: boolean;
+    walletNetwork?: string;
+    expectedNetwork: string;
+    error?: string;
+    message?: string;
+}

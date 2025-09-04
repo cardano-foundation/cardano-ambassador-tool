@@ -4,23 +4,28 @@ import Footer from '@/components/Footer';
 import SideNav from '@/components/Navigation/SideNav';
 import TopNavBar from '@/components/Navigation/TopNavBar';
 import ToastContainer from '@/components/toast/toast';
-import { useAppLoadingStatus } from '@/context/AppContext';
+import { useApp } from '@/context/AppContext';
 import React from 'react';
 
 function HomeContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useAppLoadingStatus();
+  const { shouldShowLoading } = useApp();
 
   return (
     <>
       <AppLoadingScreen isVisible={shouldShowLoading} />
       <div className="flex min-h-screen">
-        <SideNav />
+        <div className="sticky top-0 z-20">
+          <SideNav />
+        </div>
+
         <div className="min-h-screen flex-1">
           <div className="sticky top-0 z-20">
             <TopNavBar />
           </div>
           {children}
-          <ToastContainer />
+          <div className="sticky top-0 z-60">
+            <ToastContainer />
+          </div>
           <div className="bottom-0">
             <Footer />
           </div>

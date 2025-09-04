@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useTheme } from '@/context/AppContext';
+import { useApp } from '@/context/AppContext';
 
 const MoonIcon = () => (
   <svg
@@ -67,15 +67,15 @@ const SunIcon = () => (
 );
 
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useApp();
 
   return (
     <button
       onClick={toggleTheme}
-      className="flex items-center justify-center w-10 h-10 rounded-full bg-background  transition-colors"
-      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      className="bg-background flex h-10 w-10 items-center justify-center rounded-full transition-colors"
+      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
-      {theme === "dark" ? <MoonIcon /> : <SunIcon />}
+      {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
     </button>
   );
 }

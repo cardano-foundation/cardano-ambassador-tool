@@ -429,7 +429,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({ ambassado
                             setShowAllActivities(!showAllActivities);
                           }}
                         >
-                          {showAllActivities ? 'Show Less' : `View All (${profile.activities.length})`}
+                          {showAllActivities ? 'Show Less' : `View All `}
                         </TextLink>
                       </div>
                     )}
@@ -449,7 +449,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({ ambassado
                             setShowAllTopics(!showAllTopics);
                           }}
                         >
-                          {showAllTopics ? 'Show Less' : `View All (${profile.summary.top_topics.length})`}
+                          {showAllTopics ? 'Show Less' : `View All `}
                         </TextLink>
                       )}
                     </div>
@@ -474,7 +474,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({ ambassado
                             setShowAllReplies(!showAllReplies);
                           }}
                         >
-                          {showAllReplies ? 'Show Less' : `View All (${profile.summary.top_replies.length})`}
+                          {showAllReplies ? 'Show Less' : `View All `}
                         </TextLink>
                       )}
                     </div>

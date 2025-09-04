@@ -1,8 +1,7 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from "react";
-import { useDb } from "@/context/AppContext";
-import { parseMembershipIntentDatum } from "@/utils";
+import { useApp } from '@/context/AppContext';
+import { parseMembershipIntentDatum } from '@/utils';
 
 interface MembershipIntent {
   id: number;
@@ -13,9 +12,9 @@ interface MembershipIntent {
 }
 
 export default function MembershipIntentPage() {
-  const {intents, loading} = useDb();
+  const { intents, dbLoading } = useApp();
 
-  if (loading) {
+  if (dbLoading) {
     return <div className="p-4">Loading membership intents...</div>;
   }
 
@@ -25,7 +24,7 @@ export default function MembershipIntentPage() {
 
   return (
     <div className="overflow-x-auto p-4">
-      <table className="min-w-full rounded-lg border border-gray-700 ">
+      <table className="min-w-full rounded-lg border border-gray-700">
         <thead>
           <tr>
             <th className="border border-gray-700 px-4 py-2 text-gray-200">
@@ -60,10 +59,7 @@ export default function MembershipIntentPage() {
         <tbody>
           {intents.length === 0 ? (
             <tr>
-              <td
-                colSpan={9}
-                className=" py-4 text-center text-gray-400"
-              >
+              <td colSpan={9} className="py-4 text-center text-gray-400">
                 No UTXOs found
               </td>
             </tr>
@@ -75,9 +71,7 @@ export default function MembershipIntentPage() {
                 wallet = '-',
                 bio = '-';
               if (utxo.plutusData) {
-                const parsed = parseMembershipIntentDatum(
-                  utxo.plutusData,
-                );
+                const parsed = parseMembershipIntentDatum(utxo.plutusData);
                 if (parsed && parsed.metadata) {
                   fullName = parsed.metadata.fullName;
                   displayName = parsed.metadata.displayName;

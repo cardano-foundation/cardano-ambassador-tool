@@ -44,27 +44,22 @@ export function useDatabase() {
 
       // Listen for DB updates from worker
       const unsubscribe = onUtxoWorkerMessage(async (data) => {
-        console.log('[DB] Received worker message:', Object.keys(data));
 
         if (data.db) {
           try {
             clearTimeout(timeoutId); // Cancel timeout
-            console.log('[DB] Initializing database from worker data...');
 
             // Use the DatabaseManager to initialize
             await dbManager.initializeDatabase(data.db);
 
             // Query the initialized database
             const intents = dbManager.getUtxosByContext('membership_intent');
-            console.log(`[DB] Found ${intents.length} membership intents`);
             const ambassadors = dbManager.getAmbasaddors();
-            console.log(`[DB] Found ${ambassadors.length} ambassadors`);
             
             setIntents(intents);
             setAmbassadors(ambassadors);
             setDbLoading(false);
             setDbError(null);
-            console.log('[DB] Database ready, worker resources loaded');
           } catch (err) {
             clearTimeout(timeoutId);
             console.error('[DB] Error initializing database from worker:', err);
@@ -75,7 +70,6 @@ export function useDatabase() {
       });
 
       // Request worker to seed all data
-      console.log('[DB] Requesting worker to seed data...');
       syncAllData();
 
       return () => {
@@ -86,7 +80,6 @@ export function useDatabase() {
       clearTimeout(timeoutId);
       console.error('[DB] Error setting up database worker:', error);
       setDbLoading(false);
-      setDbError('Failed to setup database worker');
     }
   }, []);
 
@@ -116,7 +109,7 @@ export function useDatabase() {
 
   return {
     // State
-    loading: dbLoading,
+    dbLoading: dbLoading,
     intents,
     ambassadors,
 
