@@ -5,7 +5,7 @@ export type ProgressStatus = 'pending' | 'current' | 'completed';
 
 export interface ProgressStep {
   id: string;
-  title: string;
+  title: string | React.ReactNode;
   description?: string;
   status: ProgressStatus;
 }
