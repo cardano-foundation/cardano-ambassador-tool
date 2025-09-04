@@ -4,6 +4,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import UserAvatar from '@/components/atoms/UserAvatar';
 import { Ambassador } from '@types';
+import Link from 'next/link';
 
 export default function AmbassadorCard({
   ambassador,
@@ -13,6 +14,7 @@ export default function AmbassadorCard({
   isListView?: boolean;
 }) {
 
+  const ambassadorId = ambassador.username || ambassador.name.toLowerCase().replace(/\s+/g, '');
   const getCountryFlag = (country: string) => {
     const flags: { [key: string]: string } = {
       Argentina: '🇦🇷',
@@ -81,13 +83,15 @@ export default function AmbassadorCard({
             </div>
           </div>
           <div className="flex-shrink-0">
-            <Button
-              variant={'primary'}
-              size="sm"
-              className="!h-[38px] text-sm font-medium whitespace-nowrap"
-            >
-              {'view'}
-            </Button>
+            <Link href={`/ambassador/${ambassadorId}`}>
+              <Button
+                variant={'primary'}
+                size="sm"
+                className="!h-[38px] text-sm font-medium whitespace-nowrap"
+              >
+                {'view'}
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </Card>
@@ -113,13 +117,15 @@ export default function AmbassadorCard({
             {ambassador.country}
           </Paragraph>
         </div>
-        <Button
-          variant={'primary'}
-          size="sm"
-          className="!h-[38px] text-sm font-medium whitespace-nowrap"
-        >
-          {'view'}
-        </Button>
+        <Link href={`/ambassador/${ambassadorId}`}>
+          <Button
+            variant={'primary'}
+            size="sm"
+            className="!h-[38px] text-sm font-medium whitespace-nowrap"
+          >
+            {'view'}
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   );
