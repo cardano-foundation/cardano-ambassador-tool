@@ -34,7 +34,7 @@ export default function Switch({
         "inline-flex h-6 w-11 items-center rounded-full border-2 border-transparent transition-all duration-200 ease-in-out",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
 
-        isChecked ? "bg-primary-500" : "bg-gray-300 dark:bg-black-500",
+        isChecked ? "bg-primary-base" : "bg-gray-300 dark:bg-black-500",
 
         disabled &&
           "opacity-70 cursor-not-allowed bg-gray-300 dark:bg-black-200",
