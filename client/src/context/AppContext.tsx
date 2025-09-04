@@ -6,6 +6,7 @@ import { useAppLoading } from '@/hooks/useAppLoading';
 import { useDatabase } from '@/hooks/useDatabase';
 import { Theme, useThemeManager } from '@/hooks/useThemeManager';
 import { User, useUserAuth } from '@/hooks/useUserAuth';
+import { findAdmins } from '@/utils';
 import { IWallet } from '@meshsdk/core';
 import {
   Ambassador,
@@ -13,7 +14,8 @@ import {
   NetworkValidationResult,
   Utxo,
 } from '@types';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
+import { toast } from '@/components/toast/toast-manager';
 
 // ---------- Types ----------
 interface AppContextValue {
@@ -23,6 +25,7 @@ interface AppContextValue {
   updateLoadingState: (
     dbLoading: boolean,
     isThemeInitialized: boolean,
+    authLoading: boolean,
   ) => null | undefined;
   shouldShowLoading: boolean;
 
@@ -87,6 +90,7 @@ const AppContext = createContext<AppContextValue>({
   updateLoadingState: function (
     dbLoading: boolean,
     isThemeInitialized: boolean,
+    authLoading: boolean,
   ): null | undefined {
     throw new Error('Function not implemented.');
   },
@@ -136,10 +140,40 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     getUtxosByContext,
   } = useDatabase();
 
-  const {
-    user,
+  const { user, isLoading: authLoading, isAuthenticated, userAddress, userRoles, userWallet } = useUserAuth();
 
-  } = useUserAuth();
+  // Track previous user state to show appropriate toast notifications
+  const prevUserRef = useRef(user);
+  const prevAuthLoadingRef = useRef(authLoading);
+  
+  // Show toast notifications when user authentication state changes
+  useEffect(() => {
+    const prevUser = prevUserRef.current;
+    const prevAuthLoading = prevAuthLoadingRef.current;
+    
+    // Only show notifications after initial load is complete
+    if (prevAuthLoading && !authLoading) {
+      // Authentication just finished loading
+      if (!prevUser && user) {
+        // User just logged in
+        if (user.roles.includes('admin')) {
+          toast.success('Welcome Admin!', `Logged in as admin: ${user.address.slice(0, 10)}...`);
+        } else {
+          toast.success('Welcome!', `Logged in: ${user.address.slice(0, 10)}...`);
+        }
+      }
+    } else if (!authLoading) {
+      // Not currently loading
+      if (prevUser && !user) {
+        // User just logged out (only show if it wasn't due to an error)
+        toast.success('Logged Out', 'You have been successfully logged out');
+      }
+    }
+    
+    // Update refs
+    prevUserRef.current = user;
+    prevAuthLoadingRef.current = authLoading;
+  }, [user, authLoading]);
 
   const {
     theme,
@@ -166,14 +200,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Coordinate app loading state based on dependencies
   useEffect(() => {
-    const timer = updateLoadingState(dbLoading, isThemeInitialized);
+    const timer = updateLoadingState(dbLoading, isThemeInitialized, authLoading);
 
     return () => {
       if (timer) {
         clearTimeout(timer);
       }
     };
-  }, [dbLoading, isThemeInitialized, updateLoadingState]);
+  }, [dbLoading, isThemeInitialized, authLoading, updateLoadingState]);
 
   // Temporary debug: confirm provider mount
   useEffect(() => {
@@ -198,7 +232,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     // User
     user,
-    // setUser: userAuth.setUser,
+    isAuthenticated,
+    userAddress,
+    userRoles,
+    userWallet,
     // Theme
     theme,
     setTheme,
@@ -217,18 +254,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     hasNetworkError,
     networkErrorMessage,
     walletNetwork,
-    updateLoadingState: function (
-      dbLoading: boolean,
-      isThemeInitialized: boolean,
-    ): null | undefined {
-      throw new Error('Function not implemented.');
-    },
-    shouldShowLoading: false,
-    isAuthenticated: false,
-    userAddress: undefined,
-    userRoles: [],
-    userWallet: undefined,
-    isThemeInitialized: false,
+    updateLoadingState,
+    shouldShowLoading,
+    isThemeInitialized,
   };
 
   return (
@@ -245,4 +273,3 @@ export function useApp() {
   }
   return context;
 }
-

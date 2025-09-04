@@ -141,7 +141,7 @@ export function SingleRowStepper({
   onStepClick?: (stepIndex: number) => void;
   clickable?: boolean;
   className?: string;
-} & Partial<StepperProps>) {
+} & Omit<Partial<StepperProps>, 'onStepClick'>) {
 
   const stepItems: StepItem[] = Array.from({ length: totalSteps }, (_, index) => ({
     id: index,

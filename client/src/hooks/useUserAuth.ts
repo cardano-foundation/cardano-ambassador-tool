@@ -1,63 +1,91 @@
 'use client';
 
 import { resolveRoles } from '@/lib/auth/roles';
+import { createClientSession, getClientSession, destroyClientSession } from '@/lib/auth/session';
 import { IWallet } from '@meshsdk/core';
 import { useWallet } from '@meshsdk/react';
 import { useEffect, useState } from 'react';
 
 export type User = {
   wallet: IWallet;
-  roles?: string[];
+  roles: string[];
   address: string;
 } | null;
 
 export function useUserAuth() {
   // User state
   const [user, setUserState] = useState<User | null>(null);
-  const { setPersist, address, wallet } = useWallet();
+  const [isLoading, setIsLoading] = useState(false);
+  const { setPersist, address, wallet, disconnect } = useWallet();
 
-  // Load stored user on mount
+  // Load existing session on mount
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      try {
-        setUserState(JSON.parse(stored));
-      } catch (error) {
-        console.error('Failed to parse stored user data:', error);
-        localStorage.removeItem('user'); 
-      }
+    const existingSession = getClientSession();
+    if (existingSession && wallet) {
+      setUserState({
+        wallet,
+        roles: existingSession.roles.map((r: { role: string }) => r.role),
+        address: existingSession.address
+      });
     }
-  }, []);
+  }, [wallet]);
 
   // Persist wallet connection
   useEffect(() => {
     setPersist(true);
   }, [setPersist]);
 
-  // Fetch roles when address changes
+  // Handle wallet connection and session creation
   useEffect(() => {
-    async function fetchRoles() {
+    async function handleWalletConnection() {
       if (address && address.length && wallet) {
+        setIsLoading(true);
         try {
           const roles = await resolveRoles(address);
-          console.log({ roles });
-          setUserState({ wallet, roles, address });
+          
+          // Store session in frontend
+          createClientSession(address, roles);
+          
+          // Set user state
+          const userRoles = roles.map(r => r.role);
+          setUserState({ wallet, roles: userRoles, address });
+
         } catch (error) {
           console.error('Failed to resolve user roles:', error);
-          // Still set user without roles
-          setUserState({ wallet, roles: [], address });
+          setUserState(null);
+          destroyClientSession();
+        } finally {
+          setIsLoading(false);
         }
+      } else if (!address && user) {
+        // Wallet disconnected, clear user state and session
+        setUserState(null);
+        destroyClientSession();
       }
     }
-    fetchRoles();
+
+    handleWalletConnection();
   }, [address, wallet]);
+
+  const logout = async () => {
+    try {
+      destroyClientSession();
+      disconnect();
+      setUserState(null);
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
+  };
 
   return {
     user,
+    isLoading,
+    logout,
     // Helper computed values
-    isAuthenticated: !!user,
+    isAuthenticated: !!user && !!user.address,
     userAddress: user?.address,
     userRoles: user?.roles || [],
     userWallet: user?.wallet,
+    isAdmin: user?.roles.includes('admin') || false,
   };
 }

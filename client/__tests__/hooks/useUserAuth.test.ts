@@ -156,29 +156,8 @@ describe('useUserAuth', () => {
     });
   });
 
-  it('should provide setUser function that persists to localStorage', () => {
-    const { result } = renderHook(() => useUserAuth());
-    
-    const testUser = mockAuthStates.connected.user;
-    
-    act(() => {
-      result.current.setUser(testUser);
-    });
-    
-    expect(result.current.user).toEqual(testUser);
-    expect(window.localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify(testUser));
-  });
-
-  it('should clear localStorage when setUser is called with null', () => {
-    const { result } = renderHook(() => useUserAuth());
-    
-    act(() => {
-      result.current.setUser(null);
-    });
-    
-    expect(result.current.user).toBeNull();
-    expect(window.localStorage.removeItem).toHaveBeenCalledWith('user');
-  });
+  // Note: setUser function was removed from useUserAuth hook as user state is now managed internally
+  // through wallet connection and session management
 
   it('should provide correct computed values for admin user', () => {
     const adminUser = mockAuthStates.admin.user;

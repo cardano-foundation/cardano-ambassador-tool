@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 
 interface LinkButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'nav';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'nav' | 'primary-light' | 'warning' | 'success';
   size?: 'sm' | 'md' | 'lg';
   rounded?: 'lg' | 'full';
   children?: React.ReactNode;

@@ -34,8 +34,6 @@ const WalletList = () => {
     await connect(walletId, true);
   };
 
-  console.log({ hasNetworkError });
-
   useEffect(() => {
     if (connected && address.length && isNetworkValid) {
       toast.success('Wallet connected', address);
@@ -60,7 +58,7 @@ const WalletList = () => {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      {hasNetworkError && (
+      {hasNetworkError && connected && (
         <>
           <div
             className="mr-auto flex items-center gap-2 hover:cursor-pointer"
@@ -81,6 +79,7 @@ const WalletList = () => {
       )}
 
       {!hasNetworkError &&
+        connected &&
         walletList.map((wallet) => {
           const isConnected = connected && wallet.name === name;
           const shouldShowWarning = isConnected;

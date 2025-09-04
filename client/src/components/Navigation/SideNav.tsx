@@ -6,7 +6,7 @@ import SettingsIcon from '@/components/atoms/SettingsIcon';
 import Title from '@/components/atoms/Title';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
-import { useApp } from '@/context/AppContext';
+import { useUserAuth } from '@/hooks/useUserAuth';
 import { useWallet } from '@meshsdk/react';
 import { NavigationSection } from '@types';
 import { GridIcon } from 'lucide-react';
@@ -73,7 +73,7 @@ const adminToolsSection: NavigationSection = {
 };
 
 const SideNav = () => {
-  const { user } = useApp();
+  const { user, isAdmin } = useUserAuth();
   const pathname = usePathname();
 
   const [sections, setSections] = useState(defaultNavigationSections);
@@ -94,7 +94,6 @@ const SideNav = () => {
 
   // Update sections when roles change
   useEffect(() => {
-    const isAdmin = !!user?.roles?.includes('admin');
     const updated = [...defaultNavigationSections];
 
     if (isAdmin) {
@@ -106,7 +105,7 @@ const SideNav = () => {
     }
 
     setSections(updated);
-  }, [user?.roles]);
+  }, [user, isAdmin]);
 
   return (
     <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col border-r lg:flex">
