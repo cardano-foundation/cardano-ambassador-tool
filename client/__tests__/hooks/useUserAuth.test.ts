@@ -32,7 +32,6 @@ describe('useUserAuth', () => {
     (window.localStorage.getItem as jest.Mock).mockReturnValue(null);
     (window.localStorage.setItem as jest.Mock).mockClear();
     (window.localStorage.removeItem as jest.Mock).mockClear();
-
     // Reset wallet state
     Object.assign(mockWalletState, {
       wallet: null,
@@ -46,7 +45,6 @@ describe('useUserAuth', () => {
 
   it('should initialize with no user when localStorage is empty', () => {
     const { result } = renderHook(() => useUserAuth());
-
     expect(result.current.user).toBeNull();
     expect(result.current.isAuthenticated).toBe(false);
     expect(result.current.userAddress).toBeNull();
@@ -86,7 +84,6 @@ describe('useUserAuth', () => {
 
   it('should set wallet persistence on mount', () => {
     renderHook(() => useUserAuth());
-
     expect(mockWalletState.setPersist).toHaveBeenCalledWith(true);
   });
 
@@ -213,7 +210,6 @@ describe('useUserAuth', () => {
 
   it('should handle multiple rapid address changes', async () => {
     const { result, rerender } = renderHook(() => useUserAuth());
-
     const addresses = [
       'addr_test1_address1',
       'addr_test1_address2',
