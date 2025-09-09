@@ -1,4 +1,4 @@
-console.log("worker started!!!!!!!!!!!!!");
+console.log("App started!!!!!!!!!!!!!");
 self.importScripts("sql-wasm.js");
 
 self.onmessage = async function (e) {

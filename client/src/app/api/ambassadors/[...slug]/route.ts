@@ -4,7 +4,7 @@ import path from "path";
 
 export async function GET(
   req: Request,
-  context: { params: { slug: string[] } }
+  context: { params: Promise<{ slug: string[] }> }
 ) {
   try {
     const { slug } = await context.params;

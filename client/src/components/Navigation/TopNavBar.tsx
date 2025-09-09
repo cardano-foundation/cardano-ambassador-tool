@@ -3,13 +3,12 @@ import ThemeToggle from '@/components/ThemeToggle';
 import Breadcrumb from '@/components/atoms/Breadcrumbs';
 import Button from '@/components/atoms/Button';
 import NotificationIcon from '@/components/atoms/NotificationIcon';
-import { useUser } from '@/context/AppContext';
-import InboxIcon from '../atoms/InboxIcon';
-import LinkButton from '../atoms/LinkButton';
+import { useUserAuth } from '@/hooks/useUserAuth';
 import UserAvatar from '../atoms/UserAvatar';
+import { shortenString } from '@/utils';
 
 export default function TopNavBar() {
-  const { user } = useUser();
+  const { user, isAdmin } = useUserAuth();
 
   return (
     <div className="bg-background flex items-center justify-between px-3 py-4 sm:px-6 sm:py-6">
@@ -25,19 +24,15 @@ export default function TopNavBar() {
         >
           <NotificationIcon />
         </Button>
-        {user ? (
-          <UserAvatar size="size-8" name={'kk'} />
-        ) : (
-          <LinkButton
-            href="/login"
-            variant="outline"
-            size="md"
-            rounded="full"
-            className="flex w-full gap-2 px-2! py-2! lg:gap-4"
-          >
-            <span className="text-primary-base font-bold">Sign In</span>
-            <InboxIcon />
-          </LinkButton>
+        {user && (
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <span className="bg-primary-base rounded-full px-2 py-1 text-xs text-white">
+                Admin
+              </span>
+            )}
+            <UserAvatar size="size-8" name={shortenString(user.address)} />
+          </div>
         )}
       </div>
     </div>

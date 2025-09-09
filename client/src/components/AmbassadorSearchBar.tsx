@@ -220,7 +220,7 @@ export default function AmbassadorSearch({
           <button
             className={`p-1.5 rounded-md flex justify-center items-center ${
               currentView === "list"
-                ? "bg-white dark:bg-gray-900 shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] outline outline-1 outline-offset-[-1px] outline-gray-100"
+                ? "bg-white dark:bg-gray-900 shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] outline-1 outline-offset-[-1px] outline-gray-100"
                 : "hover:bg-white/50 dark:hover:bg-gray-900/50"
             }`}
             onClick={() => onViewChange?.("list")}

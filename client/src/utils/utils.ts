@@ -1,41 +1,41 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { toast } from '@/components/toast/toast-manager';
+import { BlockfrostService } from '@/services/blockfrostService';
 import {
   BlockfrostProvider,
   UTxO,
+  deserializeAddress,
   deserializeDatum,
   hexToString,
   serializeAddressObj,
-} from "@meshsdk/core";
+} from '@meshsdk/core';
 import {
-  scripts,
-  MembershipIntentDatum,
-  MemberData,
-  MembershipMetadata,
-  MemberDatum,
   Member,
+  MemberData,
+  MemberDatum,
+  MembershipIntentDatum,
+  MembershipMetadata,
   ProposalData,
   ProposalDatum,
   ProposalMetadata,
-  OracleDatum,
-} from "@sidan-lab/cardano-ambassador-tool";
-import { toast } from "@/components/toast/toast-manager";
-import { BlockfrostService } from "@/services/blockfrostService";
+  scripts,
+} from '@sidan-lab/cardano-ambassador-tool';
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function copyToClipboard(text: string) {
-  navigator.clipboard.writeText(text)
+  navigator.clipboard
+    .writeText(text)
     .then(() => {
-      toast.success("Copied!", text)
+      toast.success('Copied!', text);
     })
-    .catch(err => {
-      toast.error("Failed to copy:", err)
+    .catch((err) => {
+      toast.error('Failed to copy:', err);
     });
 }
-
 
 const blockfrostService = new BlockfrostService();
 
@@ -71,7 +71,7 @@ export const POLICY_IDS = {
  * @param network The network to connect to (default: "preprod")
  * @returns Configured BlockfrostProvider instance
  */
-export function getProvider(network = "preprod"): BlockfrostProvider {
+export function getProvider(network = 'preprod'): BlockfrostProvider {
   const provider = new BlockfrostProvider(`/api/blockfrost/${network}/`);
   provider.setSubmitTxToBytes(false);
   return provider;
@@ -86,7 +86,7 @@ export function getProvider(network = "preprod"): BlockfrostProvider {
  * @returns The parsed MembershipIntentDatum and MemberData, or null if invalid
  */
 export function parseMembershipIntentDatum(
-  plutusData: string
+  plutusData: string,
 ): { datum: MembershipIntentDatum; metadata: MemberData } | null {
   try {
     const datum = deserializeDatum(plutusData);
@@ -108,13 +108,13 @@ export function parseMembershipIntentDatum(
     };
     return { datum: datum as MembershipIntentDatum, metadata };
   } catch (error) {
-    console.error("Error parsing membership intent datum:", error);
+    console.error('Error parsing membership intent datum:', error);
     return null;
   }
 }
 
 export function parseMemberDatum(
-  plutusData: string
+  plutusData: string,
 ): { datum: MemberDatum; member: Member } | null {
   try {
     const datum = deserializeDatum(plutusData);
@@ -123,7 +123,7 @@ export function parseMemberDatum(
       !datum.fields ||
       !datum.fields[0]?.list ||
       !datum.fields[1] || // todo: check map
-      typeof datum.fields[2]?.int === "undefined" ||
+      typeof datum.fields[2]?.int === 'undefined' ||
       !datum.fields[3]?.fields
     ) {
       return null;
@@ -141,14 +141,16 @@ export function parseMemberDatum(
     const assetName = datum.fields[0].list[1].bytes;
 
     const completion: Map<ProposalData, number> = new Map();
-    datum.fields[1].map.forEach((item: { k: { fields: { bytes: string; }[]; }; v: { int: number; }; }) => {
-      completion.set(
-        {
-          projectDetails: hexToString(item.k.fields[0].bytes),
-        },
-        Number(item.v.int)
-      );
-    });
+    datum.fields[1].map.forEach(
+      (item: { k: { fields: { bytes: string }[] }; v: { int: number } }) => {
+        completion.set(
+          {
+            projectDetails: hexToString(item.k.fields[0].bytes),
+          },
+          Number(item.v.int),
+        );
+      },
+    );
 
     const fundReceived = Number(datum.fields[2].int);
 
@@ -161,7 +163,7 @@ export function parseMemberDatum(
 
     return { datum: datum as MemberDatum, member };
   } catch (error) {
-    console.error("Error parsing member datum:", error);
+    console.error('Error parsing member datum:', error);
     return null;
   }
 }
@@ -172,16 +174,16 @@ export function parseMemberDatum(
  * @returns The parsed ProposalDatum and ProposalData, or null if invalid
  */
 export function parseProposalDatum(
-  plutusData: string
+  plutusData: string,
 ): { datum: ProposalDatum; metadata: ProposalData } | null {
   try {
     const datum = deserializeDatum(plutusData);
     if (
       !datum ||
       !datum.fields ||
-      typeof datum.fields[0]?.int === "undefined" ||
+      typeof datum.fields[0]?.int === 'undefined' ||
       !datum.fields[1] ||
-      typeof datum.fields[2]?.int === "undefined" ||
+      typeof datum.fields[2]?.int === 'undefined' ||
       !datum.fields[3]?.fields
     ) {
       return null;
@@ -192,7 +194,7 @@ export function parseProposalDatum(
     };
     return { datum: datum as ProposalDatum, metadata };
   } catch (error) {
-    console.error("Error parsing proposal datum:", error);
+    console.error('Error parsing proposal datum:', error);
     return null;
   }
 }
@@ -210,7 +212,7 @@ export function parseProposalDatum(
 async function fetchAndValidateUtxos<T>(
   address: string,
   parser: (plutusData: string) => T | null,
-  errorContext: string
+  errorContext: string,
 ): Promise<UTxO[]> {
   try {
     const utxos = await blockfrostService.fetchAddressUTxOs(address);
@@ -228,7 +230,7 @@ async function fetchAndValidateUtxos<T>(
             console.error(`Error parsing ${errorContext} UTxO:`, error);
             return null;
           }
-        })
+        }),
     );
     return validUtxos.filter((utxo): utxo is UTxO => utxo !== null);
   } catch (error) {
@@ -245,7 +247,7 @@ export async function fetchMembershipIntentUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     parseMembershipIntentDatum,
-    "membership intent"
+    'membership intent',
   );
 }
 
@@ -257,7 +259,7 @@ export async function fetchProposeIntentUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.PROPOSE_INTENT,
     parseProposalDatum,
-    "propose intent"
+    'propose intent',
   );
 }
 
@@ -269,7 +271,7 @@ export async function fetchProposalUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.PROPOSAL,
     parseProposalDatum,
-    "proposal"
+    'proposal',
   );
 }
 
@@ -281,7 +283,7 @@ export async function fetchSignOffApprovalUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.SIGN_OFF_APPROVAL,
     parseProposalDatum,
-    "sign off approval"
+    'sign off approval',
   );
 }
 
@@ -293,7 +295,7 @@ export async function fetchMemberUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.MEMBER_NFT,
     parseMemberDatum,
-    "member"
+    'member',
   );
 }
 
@@ -306,30 +308,30 @@ export async function fetchMemberUtxos(): Promise<UTxO[]> {
  * @returns The matching UTxO or null if not found
  */
 export async function findMembershipIntentUtxo(
-  address: string
+  address: string,
 ): Promise<UTxO | null> {
   try {
     const utxos = await blockfrostService.fetchAddressUTxOs(
-      SCRIPT_ADDRESSES.MEMBERSHIP_INTENT
+      SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     );
     const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) => {
       try {
         if (!utxo.output.plutusData) return false;
         const datum: MembershipIntentDatum = deserializeDatum(
-          utxo.output.plutusData
+          utxo.output.plutusData,
         );
         const metadataPluts: MembershipMetadata = datum.fields[1];
         const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
         return walletAddress === address;
       } catch (error) {
-        console.error("Error processing UTxO:", error);
+        console.error('Error processing UTxO:', error);
         return false;
       }
     });
     return matchingUtxo || null;
   } catch (error) {
-    console.error("Error fetching or processing UTxOs:", error);
+    console.error('Error fetching or processing UTxOs:', error);
     return null;
   }
 }
@@ -341,10 +343,11 @@ export async function findMembershipIntentUtxo(
  */
 export async function findMemberUtxo(address: string): Promise<UTxO | null> {
   try {
-    const utxos = await blockfrostService.fetchAddressUTxOs(
-      SCRIPT_ADDRESSES.MEMBER_NFT
-    );
-    const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
+    const utxos =
+      (await blockfrostService.fetchAddressUTxOs(
+        SCRIPT_ADDRESSES.MEMBER_NFT,
+      )) ?? [];
+    const utxosWithData = utxos?.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) => {
       try {
         if (!utxo.output.plutusData) return false;
@@ -353,13 +356,13 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
         const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
         return walletAddress === address;
       } catch (error) {
-        console.error("Error processing UTxO:", error);
+        console.error('Error processing UTxO:', error);
         return false;
       }
     });
     return matchingUtxo || null;
   } catch (error) {
-    console.error("Error fetching or processing UTxOs:", error);
+    console.error('Error fetching or processing UTxOs:', error);
     return null;
   }
 }
@@ -370,20 +373,20 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
  * @returns The matching UTxO or null if not found
  */
 export async function findMemberUtxoByAssetName(
-  assetName: string
+  assetName: string,
 ): Promise<UTxO | null> {
   try {
     const utxos = await blockfrostService.fetchAddressUTxOs(
-      SCRIPT_ADDRESSES.MEMBER_NFT
+      SCRIPT_ADDRESSES.MEMBER_NFT,
     );
     const tokenUnit = POLICY_IDS.MEMBER_NFT + assetName;
     const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) =>
-      utxo.output.amount.some((asset) => asset.unit === tokenUnit)
+      utxo.output.amount.some((asset) => asset.unit === tokenUnit),
     );
     return matchingUtxo || null;
   } catch (error) {
-    console.error("Error finding member UTxO by asset:", error);
+    console.error('Error finding member UTxO by asset:', error);
     return null;
   }
 }
@@ -394,11 +397,11 @@ export async function findMemberUtxoByAssetName(
  * @returns The matching token UTxO or null if not found
  */
 export async function findTokenUtxoByMemberUtxo(
-  memberUtxo: UTxO
+  memberUtxo: UTxO,
 ): Promise<UTxO | null> {
   try {
     if (!memberUtxo.output.plutusData) {
-      console.error("Member UTxO does not contain Plutus data");
+      console.error('Member UTxO does not contain Plutus data');
       return null;
     }
     const datum: MemberDatum = deserializeDatum(memberUtxo.output.plutusData);
@@ -408,7 +411,7 @@ export async function findTokenUtxoByMemberUtxo(
     const assetName = datum.fields[0].list[1].bytes;
     const tokenUnit = policyId + assetName;
     const utxos = await blockfrostService.fetchAddressUTxOs(walletAddress);
-    const tokenUtxo = utxos.find((utxo: { output: { amount: any[]; }; }) => {
+    const tokenUtxo = utxos.find((utxo: { output: { amount: any[] } }) => {
       return utxo.output.amount.some((asset) => asset.unit === tokenUnit);
     });
     if (!tokenUtxo) {
@@ -417,7 +420,7 @@ export async function findTokenUtxoByMemberUtxo(
     }
     return tokenUtxo;
   } catch (error) {
-    console.error("Error finding token UTxO:", error);
+    console.error('Error finding token UTxO:', error);
     return null;
   }
 }
@@ -428,15 +431,15 @@ export async function findTokenUtxoByMemberUtxo(
  * @returns The matching token UTxO or null if not found
  */
 export async function findTokenUtxoByMembershipIntentUtxo(
-  membershipIntentUtxo: UTxO
+  membershipIntentUtxo: UTxO,
 ): Promise<UTxO | null> {
   try {
     if (!membershipIntentUtxo.output.plutusData) {
-      console.error("Member UTxO does not contain Plutus data");
+      console.error('Member UTxO does not contain Plutus data');
       return null;
     }
     const datum: MembershipIntentDatum = deserializeDatum(
-      membershipIntentUtxo.output.plutusData
+      membershipIntentUtxo.output.plutusData,
     );
     const metadataPluts: MembershipMetadata = datum.fields[1];
     const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
@@ -444,7 +447,7 @@ export async function findTokenUtxoByMembershipIntentUtxo(
     const assetName = datum.fields[0].list[1].bytes;
     const tokenUnit = policyId + assetName;
     const utxos = await blockfrostService.fetchAddressUTxOs(walletAddress);
-    const tokenUtxo = utxos.find((utxo: { output: { amount: any[]; }; }) => {
+    const tokenUtxo = utxos.find((utxo: { output: { amount: any[] } }) => {
       return utxo.output.amount.some((asset) => asset.unit === tokenUnit);
     });
     if (!tokenUtxo) {
@@ -453,7 +456,7 @@ export async function findTokenUtxoByMembershipIntentUtxo(
     }
     return tokenUtxo;
   } catch (error) {
-    console.error("Error finding token UTxO:", error);
+    console.error('Error finding token UTxO:', error);
     return null;
   }
 }
@@ -463,52 +466,21 @@ export async function findTokenUtxoByMembershipIntentUtxo(
  * @param membershipIntentUtxo The membership intent UTxO to find the associated token for
  * @returns array of admins pubkHash or null
  */
-export async function findAdmins(): Promise<string[] | null> {
+export  function findAdmins(): string[] | null {
+  const adminList = Object.keys(process.env)
+    .filter((key) => key.startsWith('ADMIN_WALLET'))
+    .map((key) => deserializeAddress(process.env[key]!).pubKeyHash)
+    .filter(Boolean);
 
-  const blockfrost = getProvider();
-
-  const utxos = (await blockfrost.fetchUTxOs(
-    process.env.NEXT_PUBLIC_ORACLE_TX_HASH!, parseInt(process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX!)
-  ))[0];
-
-  if (!utxos.output.plutusData) {
-    console.error("Member UTxO does not contain Plutus data");
-    return null;
-  }
-  const datum: OracleDatum = deserializeDatum(
-    utxos.output.plutusData
-  );
-  const adminList = datum.fields[0].list.map((item: any) => {
-    if (item.bytes) {
-      return item.bytes;
-    }
-    if (item.fields) {
-      return item.fields.map((f: any) => f.bytes || f);
-    }
-    return item;
-  });
 
   if (!adminList.length) {
     return null;
-
   }
 
-  return adminList
-
+  return adminList;
 }
 
-
-
-
-export function shortenString(address: string) {
-  if (!address) return '';
-  return `${address.substring(0, 15)}...${address.substring(address.length - 8)}`;
-};
-
-
-
-
-
-
-
-
+export function shortenString(text: string, length = 8) {
+  if (!text) return '';
+  return `${text.substring(0, length)}...${text.substring(text.length - length)}`;
+}

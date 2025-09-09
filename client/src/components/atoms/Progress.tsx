@@ -5,7 +5,7 @@ export type ProgressStatus = 'pending' | 'current' | 'completed';
 
 export interface ProgressStep {
   id: string;
-  title: string;
+  title: string | React.ReactNode;
   description?: string;
   status: ProgressStatus;
 }
@@ -47,17 +47,17 @@ const ProgressItem: React.FC<{
     if (isCurrent) {
       return `${base} bg-background border-1 border-primary-base`;
     }
-    return `${base} bg-background border-1 border-border`; 
+    return `${base} bg-background border-1 border-border`;
   };
 
   const getIconColor = () => {
     if (isCompleted) {
-      return "white";
+      return 'white';
     }
     if (isCurrent) {
-      return "#DC2626";
+      return '#DC2626';
     }
-    return "#9CA3AF";
+    return '#9CA3AF';
   };
 
   const getLineClasses = () => {
@@ -71,36 +71,30 @@ const ProgressItem: React.FC<{
   return (
     <div className={`relative flex items-start ${clickable ? 'group' : ''}`}>
       {!isLast && (
-        <div 
-          className={`absolute left-5 top-11 w-0.5 ${getLineClasses()}`}
+        <div
+          className={`absolute top-11 left-5 w-0.5 ${getLineClasses()}`}
           style={{ height: 'calc(100% - 44px)' }}
         />
       )}
-      
-      <div 
+
+      <div
         className={`${getStepCircleClasses()} relative z-10 flex-shrink-0`}
         onClick={clickable ? handleClick : undefined}
       >
-        <CardanoIcon 
-          size={25}
-          color={getIconColor()}
-        />
+        <CardanoIcon size={25} color={getIconColor()} />
       </div>
 
-      <div 
+      <div
         className={`ml-4 pb-8 ${clickable ? 'cursor-pointer' : ''}`}
         onClick={clickable ? handleClick : undefined}
       >
         <div
-          className={`
-            font-medium text-base text-foreground
-            ${clickable ? 'group-hover:text-primary' : ''}
-          `}
+          className={`text-foreground text-base font-medium ${clickable ? 'group-hover:text-primary' : ''} `}
         >
           {step.title}
         </div>
         {step.description && (
-          <div className="text-sm text-muted-foreground mt-1">
+          <div className="text-muted-foreground mt-1 text-sm">
             {step.description}
           </div>
         )}
@@ -115,16 +109,19 @@ export const Progress: React.FC<ProgressProps> = ({
   onStepClick,
   clickable = false,
 }) => {
-  const currentStepIndex = steps.findIndex(step => step.status === 'current');
-  const correctedSteps = currentStepIndex !== -1 ? steps.map((step, index) => {
-    if (index < currentStepIndex) {
-      return { ...step, status: 'completed' as ProgressStatus };
-    } else if (index === currentStepIndex) {
-      return { ...step, status: 'current' as ProgressStatus };
-    } else {
-      return { ...step, status: 'pending' as ProgressStatus };
-    }
-  }) : steps;
+  const currentStepIndex = steps.findIndex((step) => step.status === 'current');
+  const correctedSteps =
+    currentStepIndex !== -1
+      ? steps.map((step, index) => {
+          if (index < currentStepIndex) {
+            return { ...step, status: 'completed' as ProgressStatus };
+          } else if (index === currentStepIndex) {
+            return { ...step, status: 'current' as ProgressStatus };
+          } else {
+            return { ...step, status: 'pending' as ProgressStatus };
+          }
+        })
+      : steps;
 
   return (
     <div className={`flex flex-col ${className}`}>

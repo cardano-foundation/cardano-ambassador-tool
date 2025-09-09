@@ -25,7 +25,7 @@ describe('useDatabase', () => {
   it('should initialize with loading state', () => {
     const { result } = renderHook(() => useDatabase());
     
-    expect(result.current.loading).toBe(true);
+    expect(result.current.dbLoading).toBe(true);
     expect(result.current.intents).toEqual([]);
   });
 
@@ -63,7 +63,7 @@ describe('useDatabase', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.dbLoading).toBe(false);
     });
 
     expect(result.current.intents).toBeDefined();
@@ -77,7 +77,7 @@ describe('useDatabase', () => {
     const { result } = renderHook(() => useDatabase());
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.dbLoading).toBe(false);
     });
   });
 
@@ -96,7 +96,7 @@ describe('useDatabase', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.dbLoading).toBe(false);
     });
   });
 
@@ -162,7 +162,7 @@ describe('useDatabase', () => {
     jest.advanceTimersByTime(10000);
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.dbLoading).toBe(false);
     });
   }, 15000);
 
@@ -191,7 +191,7 @@ describe('useDatabase', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.dbLoading).toBe(false);
     });
   });
 });

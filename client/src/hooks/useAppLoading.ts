@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export function useAppLoading() {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -16,20 +16,24 @@ export function useAppLoading() {
   });
 
   // App loading control - depends on external loading states
-  const updateLoadingState = (dbLoading: boolean, isThemeInitialized: boolean) => {
+  const updateLoadingState = (
+    dbLoading: boolean,
+    isThemeInitialized: boolean,
+    authLoading: boolean,
+  ) => {
     if (!isInitialLoad) {
-      // Skip loading screen for navigation (not full page reload)
+      // Skip loading screen for navigation 
       setIsAppLoading(false);
       return;
     }
 
+
     // check if all resources are ready
-    if (!dbLoading && isThemeInitialized) {
-      
+    if (!dbLoading && isThemeInitialized && !authLoading) {
       setIsAppLoading(false);
       return null;
     }
-    
+
     return null;
   };
 

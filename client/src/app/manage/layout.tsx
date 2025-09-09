@@ -1,15 +1,16 @@
 'use client';
 
 import { AppLoadingScreen } from '@/components/AppLoadingScreen';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import Footer from '@/components/Footer';
 import SideNav from '@/components/Navigation/SideNav';
 import TopNavBar from '@/components/Navigation/TopNavBar';
 import ToastContainer from '@/components/toast/toast';
-import { useAppLoadingStatus } from '@/context/AppContext';
+import { useApp } from '@/context';
 import React from 'react';
 
 function ManageContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useAppLoadingStatus();
+  const { shouldShowLoading } = useApp();
 
   return (
     <>
@@ -34,5 +35,9 @@ export default function ManageLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <ManageContent>{children}</ManageContent>;
+  return (
+    <ProtectedRoute requireAdmin={true} requireAuth={true}>
+      <ManageContent>{children}</ManageContent>
+    </ProtectedRoute>
+  );
 }

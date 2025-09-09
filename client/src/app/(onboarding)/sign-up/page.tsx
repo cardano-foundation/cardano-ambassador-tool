@@ -140,14 +140,13 @@ function SignUp() {
 
   return (
     <div className="h-full w-full gap-8 p-6 lg:p-24">
-      {/* Replace circle breadcrumbs with Stepper */}
       <div className="mb-6 flex justify-center">
         <SingleRowStepper
           currentStep={currentStep}
           totalSteps={steps.length}
           stepLabels={steps.map(step => step.name)}
           clickable={true}
-          onStepClick={handleStepClick}
+          // onStepClick={handleStepClick}
           className="max-w-md"
         />
       </div>

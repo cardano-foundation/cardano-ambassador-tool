@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { cn } from '@/utils/utils';
+import { useState } from 'react';
 
 interface StepItem {
   id: string | number;
@@ -21,7 +21,11 @@ interface StepperProps {
   totalStepsPerRow?: number;
   activeStepIds?: (string | number)[];
   onStepClick?: (step: StepItem, rowIndex: number, stepIndex: number) => void;
-  onActiveStepChange?: (rowIndex: number, stepId: string | number, step: StepItem) => void;
+  onActiveStepChange?: (
+    rowIndex: number,
+    stepId: string | number,
+    step: StepItem,
+  ) => void;
   className?: string;
   activeColor?: string;
   completedColor?: string;
@@ -48,14 +52,18 @@ export default function Stepper({
   stepHeight = 'h-2',
   clickable = false,
 }: StepperProps) {
-  const [currentActiveStepIds, setCurrentActiveStepIds] = useState<(string | number)[]>(
-    activeStepIds || []
-  );
+  const [currentActiveStepIds, setCurrentActiveStepIds] = useState<
+    (string | number)[]
+  >(activeStepIds || []);
 
-  const handleStepClick = (step: StepItem, rowIndex: number, stepIndex: number) => {
+  const handleStepClick = (
+    step: StepItem,
+    rowIndex: number,
+    stepIndex: number,
+  ) => {
     if (step.disabled || !clickable) return;
 
-    setCurrentActiveStepIds(prev => {
+    setCurrentActiveStepIds((prev) => {
       const newIds = [...prev];
       newIds[rowIndex] = step.id;
       return newIds;
@@ -70,9 +78,14 @@ export default function Stepper({
     return (
       <div className={cn('flex flex-col gap-4', className)}>
         {rows.map((row, rowIndex) => (
-          <div key={row.id} className={cn('inline-flex justify-center items-start', gap)}>
+          <div
+            key={row.id}
+            className={cn('inline-flex items-start justify-center', gap)}
+          >
             {row.steps.map((step, stepIndex) => {
-              const isActive = (currentActiveStepIds[rowIndex] || row.activeStepId) === step.id;
+              const isActive =
+                (currentActiveStepIds[rowIndex] || row.activeStepId) ===
+                step.id;
               const isCompleted = step.completed;
               const isDisabled = step.disabled;
 
@@ -83,15 +96,17 @@ export default function Stepper({
                   className={cn(
                     stepHeight,
                     'rounded-[30px] transition-all duration-300',
-                    clickable && !isDisabled && 'cursor-pointer hover:scale-110',
+                    clickable &&
+                      !isDisabled &&
+                      'cursor-pointer hover:scale-110',
                     isDisabled && 'cursor-not-allowed',
                     isActive
                       ? `w-5 ${activeColor}`
                       : isCompleted
-                      ? `w-3 ${completedColor}`
-                      : isDisabled
-                      ? `w-2 ${disabledColor}`
-                      : `w-2 ${inactiveColor}`
+                        ? `w-3 ${completedColor}`
+                        : isDisabled
+                          ? `w-2 ${disabledColor}`
+                          : `w-2 ${inactiveColor}`,
                   )}
                   title={step.label || `Step ${stepIndex + 1}`}
                 />
@@ -106,7 +121,10 @@ export default function Stepper({
   return (
     <div className={cn('flex flex-col gap-4', className)}>
       {steps.map((rowActiveSteps, rowIndex) => (
-        <div key={rowIndex} className={cn('inline-flex justify-center items-start', gap)}>
+        <div
+          key={rowIndex}
+          className={cn('inline-flex items-start justify-center', gap)}
+        >
           {Array.from({ length: totalStepsPerRow }, (_, stepIndex) => {
             const isActive = rowActiveSteps.includes(stepIndex);
             return (
@@ -115,7 +133,7 @@ export default function Stepper({
                 className={cn(
                   stepHeight,
                   'rounded-[30px] transition-all duration-300',
-                  isActive ? `w-5 ${activeColor}` : `w-2 ${inactiveColor}`
+                  isActive ? `w-5 ${activeColor}` : `w-2 ${inactiveColor}`,
                 )}
               />
             );
@@ -141,20 +159,24 @@ export function SingleRowStepper({
   onStepClick?: (stepIndex: number) => void;
   clickable?: boolean;
   className?: string;
-} & Partial<StepperProps>) {
+} & Omit<Partial<StepperProps>, 'onStepClick'>) {
+  const stepItems: StepItem[] = Array.from(
+    { length: totalSteps },
+    (_, index) => ({
+      id: index,
+      label: stepLabels[index] || `Step ${index + 1}`,
+      completed: index < currentStep,
+      onClick: onStepClick ? () => onStepClick(index) : undefined,
+    }),
+  );
 
-  const stepItems: StepItem[] = Array.from({ length: totalSteps }, (_, index) => ({
-    id: index,
-    label: stepLabels[index] || `Step ${index + 1}`,
-    completed: index < currentStep,
-    onClick: onStepClick ? () => onStepClick(index) : undefined,
-  }));
-
-  const rows: StepperRow[] = [{
-    id: 'single-row',
-    steps: stepItems,
-    activeStepId: currentStep,
-  }];
+  const rows: StepperRow[] = [
+    {
+      id: 'single-row',
+      steps: stepItems,
+      activeStepId: currentStep,
+    },
+  ];
 
   return (
     <Stepper
@@ -168,11 +190,13 @@ export function SingleRowStepper({
 
 export function useStepper(totalRows: number, totalStepsPerRow: number) {
   const [activeSteps, setActiveSteps] = useState<number[][]>(
-    Array(totalRows).fill([]).map(() => [])
+    Array(totalRows)
+      .fill([])
+      .map(() => []),
   );
 
   const setActiveStep = (row: number, step: number) => {
-    setActiveSteps(prev => {
+    setActiveSteps((prev) => {
       const newSteps = [...prev];
       newSteps[row] = [step];
       return newSteps;
@@ -180,7 +204,7 @@ export function useStepper(totalRows: number, totalStepsPerRow: number) {
   };
 
   const nextStep = (row: number) => {
-    setActiveSteps(prev => {
+    setActiveSteps((prev) => {
       const newSteps = [...prev];
       const currentActive = newSteps[row][0] || 0;
       if (currentActive < totalStepsPerRow - 1) {
@@ -191,7 +215,7 @@ export function useStepper(totalRows: number, totalStepsPerRow: number) {
   };
 
   const prevStep = (row: number) => {
-    setActiveSteps(prev => {
+    setActiveSteps((prev) => {
       const newSteps = [...prev];
       const currentActive = newSteps[row][0] || 0;
       if (currentActive > 0) {
@@ -202,7 +226,11 @@ export function useStepper(totalRows: number, totalStepsPerRow: number) {
   };
 
   const reset = () => {
-    setActiveSteps(Array(totalRows).fill([]).map(() => []));
+    setActiveSteps(
+      Array(totalRows)
+        .fill([])
+        .map(() => []),
+    );
   };
 
   return {
