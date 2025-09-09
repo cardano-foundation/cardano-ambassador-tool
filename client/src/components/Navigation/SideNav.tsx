@@ -6,6 +6,7 @@ import SettingsIcon from '@/components/atoms/SettingsIcon';
 import Title from '@/components/atoms/Title';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
+import { useApp } from '@/context';
 import { useUserAuth } from '@/hooks/useUserAuth';
 import { useWallet } from '@meshsdk/react';
 import { NavigationSection } from '@types';
@@ -79,6 +80,7 @@ const SideNav = () => {
   const [sections, setSections] = useState(defaultNavigationSections);
 
   const { connected } = useWallet();
+  const { isNetworkValid} = useApp();
 
   // Active link handling
   const [currentActiveId, setCurrentActiveId] = useState('');
@@ -90,11 +92,15 @@ const SideNav = () => {
     ];
     const match = allItems.find((item) => item.href === pathname);
     if (match) setCurrentActiveId(match.id);
-  }, [pathname]);
+  }, [pathname, connected]);
 
   // Update sections when roles change
   useEffect(() => {
     const updated = [...defaultNavigationSections];
+
+    if (!isNetworkValid) {
+      return;
+    }
 
     if (isAdmin) {
       updated.push(adminToolsSection);
@@ -105,7 +111,7 @@ const SideNav = () => {
     }
 
     setSections(updated);
-  }, [user, isAdmin]);
+  }, [user, isAdmin, connected]);
 
   return (
     <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col border-r lg:flex">
@@ -113,7 +119,7 @@ const SideNav = () => {
         <AppLogo />
       </div>
 
-      <div className="space-y-8 py-6">
+      <div className="space-y-8">
         {sections.map((section, i) => (
           <div key={i}>
             {section.title && (
@@ -165,7 +171,7 @@ const SideNav = () => {
 
       <Card padding="sm" className="mx-4 mt-auto mb-4">
         <CardContent className="flex flex-col">
-          {connected ? (
+          {connected && isNetworkValid ? (
             <span className="text-muted-foreground text-sm">
               Connected Wallet{' '}
             </span>

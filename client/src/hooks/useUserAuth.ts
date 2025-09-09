@@ -16,12 +16,12 @@ export function useUserAuth() {
   // User state
   const [user, setUserState] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { setPersist, address, wallet, disconnect } = useWallet();
+  const { setPersist, address, wallet, connected } = useWallet();
 
   // Load existing session on mount
   useEffect(() => {
     const existingSession = getClientSession();
-    if (existingSession && wallet) {
+    if (existingSession && connected) {
       setUserState({
         wallet,
         roles: existingSession.roles.map((r: { role: string }) => r.role),
@@ -38,18 +38,17 @@ export function useUserAuth() {
   // Handle wallet connection and session creation
   useEffect(() => {
     async function handleWalletConnection() {
-      if (address && address.length && wallet) {
+      if (connected) {
         setIsLoading(true);
         try {
           const roles = await resolveRoles(address);
-          
+
           // Store session in frontend
           createClientSession(address, roles);
-          
-          // Set user state
-          const userRoles = roles.map(r => r.role);
-          setUserState({ wallet, roles: userRoles, address });
 
+          // Set user state
+          const userRoles = roles.map((r) => r.role);
+          setUserState({ wallet, roles: userRoles, address });
         } catch (error) {
           console.error('Failed to resolve user roles:', error);
           setUserState(null);
@@ -57,7 +56,7 @@ export function useUserAuth() {
         } finally {
           setIsLoading(false);
         }
-      } else if (!address && user) {
+      } else if (!connected) {
         // Wallet disconnected, clear user state and session
         setUserState(null);
         destroyClientSession();
@@ -65,12 +64,11 @@ export function useUserAuth() {
     }
 
     handleWalletConnection();
-  }, [address, wallet]);
+  }, [address, wallet, connected]);
 
   const logout = async () => {
-    try {
-      destroyClientSession();
-      disconnect();
+    try {      
+      localStorage.removeItem('user_session');
       setUserState(null);
     } catch (error) {
       console.error('Failed to logout:', error);

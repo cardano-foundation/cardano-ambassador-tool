@@ -5,9 +5,10 @@ import Button from '@/components/atoms/Button';
 import NotificationIcon from '@/components/atoms/NotificationIcon';
 import { useUserAuth } from '@/hooks/useUserAuth';
 import UserAvatar from '../atoms/UserAvatar';
+import { shortenString } from '@/utils';
 
 export default function TopNavBar() {
-  const { user, isAdmin, logout } = useUserAuth();
+  const { user, isAdmin } = useUserAuth();
 
   return (
     <div className="bg-background flex items-center justify-between px-3 py-4 sm:px-6 sm:py-6">
@@ -30,7 +31,7 @@ export default function TopNavBar() {
                 Admin
               </span>
             )}
-            <UserAvatar size="size-8" name={user.address.slice(0, 8)} />
+            <UserAvatar size="size-8" name={shortenString(user.address)} />
           </div>
         )}
       </div>

@@ -2,16 +2,17 @@
 
 import { useApp } from '@/context';
 import { useWallet, useWalletList } from '@meshsdk/react';
-import { AlertTriangle, ChevronLeft, X } from 'lucide-react';
+import { AlertTriangle, X } from 'lucide-react';
 import Image from 'next/image';
 import { MouseEvent, useEffect } from 'react';
 import Button from '../atoms/Button';
 import { toast } from '../toast/toast-manager';
+import { shortenString } from '@/utils';
 
 const WalletList = () => {
   const walletList = useWalletList();
 
-  const { isNetworkValid, hasNetworkError, dismissNetworkError } = useApp();
+  const { isNetworkValid, hasNetworkError, logout } = useApp();
 
   const {
     connected,
@@ -36,7 +37,7 @@ const WalletList = () => {
 
   useEffect(() => {
     if (connected && address.length && isNetworkValid) {
-      toast.success('Wallet connected', address);
+      toast.success('Wallet connected', shortenString(address,8));
     }
 
     if (error) {
@@ -58,15 +59,8 @@ const WalletList = () => {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      {hasNetworkError && connected && (
+      {hasNetworkError && (
         <>
-          <div
-            className="mr-auto flex items-center gap-2 hover:cursor-pointer"
-            onClick={() => dismissNetworkError()}
-          >
-            <ChevronLeft className="text-primary-base size-4" />
-            <span className="text-primary-base text-sm">Back</span>
-          </div>
           <div className="bg-muted border-border mb-2 w-full rounded-lg border p-3">
             <div className="flex items-center gap-2 text-sm">
               <AlertTriangle className="text-primary-base h-4 w-4 flex-shrink-0" />
@@ -78,8 +72,7 @@ const WalletList = () => {
         </>
       )}
 
-      {!hasNetworkError &&
-        connected &&
+      {walletList.length ? (
         walletList.map((wallet) => {
           const isConnected = connected && wallet.name === name;
           const shouldShowWarning = isConnected;
@@ -114,6 +107,7 @@ const WalletList = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       disconnect();
+                      logout()
                       toast.warning('Warning!', 'Wallet disconnected');
                     }}
                     className="absolute right-3 z-10 flex cursor-pointer items-center rounded p-1"
@@ -125,7 +119,10 @@ const WalletList = () => {
               </Button>
             </div>
           );
-        })}
+        })
+      ) : (
+        <span className="text-primary-base">No wallets found!</span>
+      )}
     </div>
   );
 };

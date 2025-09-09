@@ -37,6 +37,5 @@ export function getClientSession() {
 }
 
 export function destroyClientSession() {
-    if (typeof window === 'undefined') return;
     localStorage.removeItem('user_session');
 }

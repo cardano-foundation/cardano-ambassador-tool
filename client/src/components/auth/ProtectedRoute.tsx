@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUserAuth } from '@/hooks/useUserAuth';
 import { toast } from '@/components/toast/toast-manager';
+import { useWallet } from '@meshsdk/react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -18,24 +19,27 @@ export function ProtectedRoute({
   requireAuth = true,
   redirectTo = '/'
 }: ProtectedRouteProps) {
-  const { isAuthenticated, isAdmin, isLoading, user } = useUserAuth();
-  const router = useRouter();
+  const {  isAdmin, isLoading } = useUserAuth();
+  const {connected} = useWallet()
+   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return; // Wait for auth check to complete
+    if (isLoading) return; 
 
-    if (requireAuth && !isAuthenticated) {
+    console.log({ isAdmin });
+    
+    if (requireAuth && !connected) {
       toast.error('Authentication Required', 'Please connect your wallet to access this page');
       router.push(redirectTo);
       return;
     }
 
-    if (requireAdmin && !isAdmin) {
-      toast.error('Admin Access Required', 'You need admin privileges to access this page');
-      router.push('/unauthorized');
-      return;
-    }
-  }, [isAuthenticated, isAdmin, isLoading, requireAuth, requireAdmin, router, redirectTo]);
+    // if (requireAdmin && !isAdmin) {
+    //   toast.error('Admin Access Required', 'You need admin privileges to access this page');
+    //   router.push('/unauthorized');
+    //   return;
+    // }
+  }, [connected, isAdmin, isLoading, requireAuth, requireAdmin, router, redirectTo]);
 
   // Show loading while checking authentication
   if (isLoading) {
@@ -50,7 +54,7 @@ export function ProtectedRoute({
   }
 
   // Don't render children if auth requirements aren't met
-  if (requireAuth && !isAuthenticated) {
+  if (requireAuth && !connected) {
     return null;
   }
 

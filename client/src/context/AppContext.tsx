@@ -1,12 +1,12 @@
 'use client';
 
+import { toast } from '@/components/toast/toast-manager';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useNetworkValidation } from '@/hooks';
 import { useAppLoading } from '@/hooks/useAppLoading';
 import { useDatabase } from '@/hooks/useDatabase';
 import { Theme, useThemeManager } from '@/hooks/useThemeManager';
 import { User, useUserAuth } from '@/hooks/useUserAuth';
-import { findAdmins } from '@/utils';
 import { IWallet } from '@meshsdk/core';
 import {
   Ambassador,
@@ -14,8 +14,8 @@ import {
   NetworkValidationResult,
   Utxo,
 } from '@types';
+import { connected } from 'process';
 import { createContext, useContext, useEffect, useRef } from 'react';
-import { toast } from '@/components/toast/toast-manager';
 
 // ---------- Types ----------
 interface AppContextValue {
@@ -44,6 +44,7 @@ interface AppContextValue {
   userAddress: string | undefined;
   userRoles: string[];
   userWallet: IWallet | undefined;
+  logout: () => void;
 
   // Theme state
   theme: Theme;
@@ -86,6 +87,7 @@ const AppContext = createContext<AppContextValue>({
   // Theme defaults
   theme: 'light',
   setTheme: () => {},
+  logout: () => {},
   toggleTheme: () => {},
   updateLoadingState: function (
     dbLoading: boolean,
@@ -140,40 +142,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     getUtxosByContext,
   } = useDatabase();
 
-  const { user, isLoading: authLoading, isAuthenticated, userAddress, userRoles, userWallet } = useUserAuth();
-
-  // Track previous user state to show appropriate toast notifications
-  const prevUserRef = useRef(user);
-  const prevAuthLoadingRef = useRef(authLoading);
-  
-  // Show toast notifications when user authentication state changes
-  useEffect(() => {
-    const prevUser = prevUserRef.current;
-    const prevAuthLoading = prevAuthLoadingRef.current;
-    
-    // Only show notifications after initial load is complete
-    if (prevAuthLoading && !authLoading) {
-      // Authentication just finished loading
-      if (!prevUser && user) {
-        // User just logged in
-        if (user.roles.includes('admin')) {
-          toast.success('Welcome Admin!', `Logged in as admin: ${user.address.slice(0, 10)}...`);
-        } else {
-          toast.success('Welcome!', `Logged in: ${user.address.slice(0, 10)}...`);
-        }
-      }
-    } else if (!authLoading) {
-      // Not currently loading
-      if (prevUser && !user) {
-        // User just logged out (only show if it wasn't due to an error)
-        toast.success('Logged Out', 'You have been successfully logged out');
-      }
-    }
-    
-    // Update refs
-    prevUserRef.current = user;
-    prevAuthLoadingRef.current = authLoading;
-  }, [user, authLoading]);
+  const {
+    user,
+    isLoading: authLoading,
+    isAuthenticated,
+    userAddress,
+    userRoles,
+    userWallet,
+    logout,
+  } = useUserAuth();
 
   const {
     theme,
@@ -200,7 +177,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Coordinate app loading state based on dependencies
   useEffect(() => {
-    const timer = updateLoadingState(dbLoading, isThemeInitialized, authLoading);
+    const timer = updateLoadingState(
+      dbLoading,
+      isThemeInitialized,
+      authLoading,
+    );
 
     return () => {
       if (timer) {
@@ -209,12 +190,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, [dbLoading, isThemeInitialized, authLoading, updateLoadingState]);
 
-  // Temporary debug: confirm provider mount
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('[AppProvider] mounted');
-  }, []);
-
+ 
   // Create the context value
   const contextValue: AppContextValue = {
     // App loading
@@ -232,6 +208,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     // User
     user,
+    logout,
     isAuthenticated,
     userAddress,
     userRoles,

@@ -12,22 +12,26 @@ import {
 import { useApp } from '@/context';
 import { shortenString } from '@/utils';
 import { useWallet } from '@meshsdk/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import WalletList from './WalletList';
 
 const ConnectWallet = () => {
   const [open, setOpen] = useState(false);
   const { connected, disconnect, address } = useWallet();
-  const { dismissNetworkError } = useApp();
+  const { dismissNetworkError, isNetworkValid } = useApp();
 
   const handlechange = (open: boolean | ((prevState: boolean) => boolean)) => {
-    dismissNetworkError();
     setOpen(open);
+    // dismissNetworkError();
   };
 
+  useEffect(() => {}, [connected]);
+
+  console.log({connected , isNetworkValid});
+  
   return (
     <Dialog open={open} onOpenChange={(open) => handlechange(open)}>
-      {connected ? (
+      {connected && isNetworkValid ? (
         <div className="flex justify-between">
           <span className="text-sm">{shortenString(address, 8)}</span>
           <span
