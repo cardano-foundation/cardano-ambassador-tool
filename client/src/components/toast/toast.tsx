@@ -13,9 +13,9 @@ const icons = {
 };
 
 const bgColor = {
-  success: 'bg-green-100/10',
-  error: 'bg-primary-100/10',
-  warning: 'bg-yellow-100/10',
+  success: 'bg-green-300/10',
+  error: 'bg-primary-300/10',
+  warning: 'bg-yellow-200/10',
   info: 'bg-background',
   default: 'bg-background',
 };
