@@ -20,6 +20,8 @@ function getAdminPubKeyHashes(): string[] {
   return adminList;
 }
 
+
+
 export async function resolveRoles(address: string): Promise<
   {
     role: string;

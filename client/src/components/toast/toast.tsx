@@ -24,7 +24,7 @@ function ToastItem({ toast }: { toast: Toast }) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setIsVisible(true), 500000);
+    setTimeout(() => setIsVisible(true), 50);
   }, []);
 
   return (
@@ -34,7 +34,7 @@ function ToastItem({ toast }: { toast: Toast }) {
       }`}
     >
       <div
-        className={`${bgColor[toast.type || 'default']} max-w-96 min-w-80 rounded-lg p-4 shadow-md`}
+        className={`${bgColor[toast.type || 'default']} z-50 max-w-96 min-w-80 rounded-lg p-4 shadow-md backdrop-blur-sm`}
       >
         <div className="flex items-start gap-3">
           <div className="mt-0.5 flex-shrink-0">
@@ -74,7 +74,7 @@ export default function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 max-h-screen overflow-hidden">
+    <div className="fixed top-4 right-4  max-h-screen overflow-hidden">
       <div className="flex max-h-screen flex-col-reverse overflow-y-auto">
         {toasts.length > 1 && (
           <div className="mb-3">

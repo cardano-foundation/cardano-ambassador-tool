@@ -13,6 +13,7 @@ import { useApp } from '@/context';
 import { shortenString } from '@/utils';
 import { useWallet } from '@meshsdk/react';
 import { useEffect, useState } from 'react';
+import { toast } from '../toast/toast-manager';
 import WalletList from './WalletList';
 
 const ConnectWallet = () => {
@@ -24,11 +25,8 @@ const ConnectWallet = () => {
     setOpen(open);
     // dismissNetworkError();
   };
-
   useEffect(() => {}, [connected]);
 
-  console.log({connected , isNetworkValid});
-  
   return (
     <Dialog open={open} onOpenChange={(open) => handlechange(open)}>
       {connected && isNetworkValid ? (
@@ -36,7 +34,10 @@ const ConnectWallet = () => {
           <span className="text-sm">{shortenString(address, 8)}</span>
           <span
             className="text-primary-base border-primary-base border-b border-dotted text-sm hover:cursor-pointer"
-            onClick={(e) => disconnect()}
+            onClick={(e) => {
+              disconnect();
+              toast.warning('Warning!', 'Wallet disconnected');
+            }}
           >
             Disconnect
           </span>
