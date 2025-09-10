@@ -36,37 +36,39 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
   };
 
   return (
-    <Tabs
-      className={cn(
-        "self-stretch inline-flex justify-start items-start gap-2.5",
-        className
-      )}
-    >
-      <TabsList className="overflow-x-auto scroll-smooth whitespace-nowrap w-full min-w-0">
-        {tabs.map((tab) => {
-          const isActive = currentActiveId === tab.id;
-          return (
-            <TabsTrigger
-              key={tab.id}
-              onClick={() => handleTabClick(tab)}
-              disabled={tab.disabled}
-              value={tab.label}
-            >
-              <div
-                className={cn(
-                  "text-sm  leading-none  duration-200 transition-all",
-                  isActive
-                    ? "text-primary-base font-bold"
-                    : "text-neutral-500 font-normal hover:text-neutral-700"
-                )}
+    <div className="w-full overflow-hidden"> {/* Add container with overflow hidden */}
+      <Tabs
+        className={cn(
+          "w-full min-w-0",
+          className
+        )}
+      >
+        <TabsList className="overflow-x-auto scroll-smooth whitespace-nowrap w-full min-w-0 scrollbar-hide">
+          {tabs.map((tab) => {
+            const isActive = currentActiveId === tab.id;
+            return (
+              <TabsTrigger
+                key={tab.id}
+                onClick={() => handleTabClick(tab)}
+                disabled={tab.disabled}
+                value={tab.label}
               >
-                {tab.label}
-              </div>
-            </TabsTrigger>
-          );
-        })}
-      </TabsList>
-    </Tabs>
+                <div
+                  className={cn(
+                    "text-sm leading-none duration-200 transition-all whitespace-nowrap",
+                    isActive
+                      ? "text-primary-base font-bold"
+                      : "text-neutral-500 font-normal hover:text-neutral-700"
+                  )}
+                >
+                  {tab.label}
+                </div>
+              </TabsTrigger>
+            );
+          })}
+        </TabsList>
+      </Tabs>
+    </div>
   );
 };
 

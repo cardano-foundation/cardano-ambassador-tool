@@ -59,16 +59,16 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({ ambassado
       <ProfileHeader profile={profile} />
       
       <div className="block lg:grid lg:grid-cols-[320px_1fr] lg:gap-6 p-4 lg:p-6 lg:items-start">
-  <div className="lg:sticky lg:top-20 w-full lg:w-auto">
-    <ProfileSidebar 
-      profile={profile}
-      formatDate={formatDate}
-      cleanHtml={cleanHtml}
-    />
-  </div>
+      <div className="lg:sticky lg:top-20 w-full lg:w-auto">
+        <ProfileSidebar 
+          profile={profile}
+          formatDate={formatDate}
+          cleanHtml={cleanHtml}
+        />
+    </div>
   <div className="flex flex-col min-w-0 w-full lg:w-auto mt-6 lg:mt-0">
     <div className="border-b border-border bg-card lg:sticky lg:top-6 lg:z-10 w-full mb-4">
-      <div className="px-0 w-full">
+      <div className="px-0 w-full min-w-0">
         <TopNav
           tabs={tabs}
           activeTabId={activeTab}
