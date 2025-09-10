@@ -1,6 +1,6 @@
-import { cn } from "@/utils/utils";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
-import * as React from "react";
+import { cn } from '@/utils/utils';
+import * as TabsPrimitive from '@radix-ui/react-tabs';
+import * as React from 'react';
 
 const Tabs = TabsPrimitive.Root;
 
@@ -11,7 +11,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "flex flex-nowrap w-full min-w-0", 
+      "flex flex-nowrap w-full min-w-0",
       "lg:space-x-4",
       className
     )}
@@ -46,7 +46,7 @@ const TabsContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
     ref={ref}
-    className={cn("mt-4", className)}
+    className={cn('mt-4', className)}
     {...props}
   />
 ));

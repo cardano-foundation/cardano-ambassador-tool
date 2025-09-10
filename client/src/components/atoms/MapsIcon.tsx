@@ -12,7 +12,7 @@ export interface MapsIconProps {
 }
 
 export const MapsIcon: React.FC<MapsIconProps> = ({ 
-  size = 66, 
+  size = 66,
   pinColor = "white",
   backgroundColor = "#ef4444",
   className = "",
@@ -20,17 +20,17 @@ export const MapsIcon: React.FC<MapsIconProps> = ({
 }) => {
   const height = Math.round(size * (76/66));
   const scale = size / 66;
-  
-  const iconScale = (cardanoIconSize * scale) / 20; 
+
+  const iconScale = (cardanoIconSize * scale) / 20;
   const iconX = (33 - cardanoIconSize/2) * scale;
   const iconY = (29.9846 - cardanoIconSize/2) * scale;
 
   return (
-    <svg 
-      width={size} 
-      height={height} 
-      viewBox="0 0 66 76" 
-      fill="none" 
+    <svg
+      width={size}
+      height={height}
+      viewBox="0 0 66 76"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
@@ -39,26 +39,26 @@ export const MapsIcon: React.FC<MapsIconProps> = ({
         <path d="M15 29.9846C15 20.0406 23.0594 11.9846 33 11.9846C42.9406 11.9846 51 20.0406 51 29.9846C51 39.9286 42.9406 47.9846 33 47.9846C23.0594 47.9846 15 39.9286 15 29.9846Z" fill={backgroundColor}/>
         <path d="M34.7321 58.9846C33.9623 60.318 32.0378 60.318 31.268 58.9846L26.0718 49.9846C25.302 48.6513 26.2642 46.9846 27.8038 46.9846H38.1961C39.7358 46.9846 40.698 48.6513 39.9282 49.9846L34.7321 58.9846Z" fill={pinColor}/>
       </g>
-      <foreignObject 
-        x={iconX} 
-        y={iconY} 
-        width={cardanoIconSize * scale} 
+      <foreignObject
+        x={iconX}
+        y={iconY}
+        width={cardanoIconSize * scale}
         height={cardanoIconSize * scale}
       >
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'center',
           width: '100%',
           height: '100%'
         }}>
-          <CardanoIcon 
+          <CardanoIcon
             size={40}
-            color="#ffffff" 
+            color="#ffffff"
           />
         </div>
       </foreignObject>
-      
+
       <defs>
         <filter id="filter0_d_605_1578" x="0" y="0.984619" width="66" height="75" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>

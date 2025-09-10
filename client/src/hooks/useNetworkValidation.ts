@@ -16,12 +16,14 @@ export function useNetworkValidation() {
 
   const [isValidatingNetwork, setIsValidatingNetwork] = useState(false);
 
-  const { wallet, address, connected } = useWallet();
+  const { wallet, connected } = useWallet();
 
   // Validate wallet network when wallet or address changes
   useEffect(() => {
-    validateCurrentWallet();
-  }, [connected, address, wallet]);
+    if (connected) {
+      validateCurrentWallet();
+    }
+  }, [connected]);
 
   // Network validation functions
   const validateCurrentWallet = async () => {
@@ -34,6 +36,18 @@ export function useNetworkValidation() {
 
     try {
       const expectedNetwork = getCurrentNetworkConfig();
+
+      if (!wallet) {
+        setNetworkValidation({
+          isValid: false,
+          expectedNetwork: currentNetwork.name,
+          error: 'WALLET_ERROR',
+          message:
+            'Failed to validate wallet network. Please try reconnecting your wallet.',
+        });
+
+        return;
+      }
 
       let walletNetwork = await wallet.getNetworkId();
 

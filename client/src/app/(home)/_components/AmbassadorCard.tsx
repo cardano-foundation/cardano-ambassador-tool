@@ -13,8 +13,8 @@ export default function AmbassadorCard({
   ambassador: Ambassador;
   isListView?: boolean;
 }) {
-
-  const ambassadorId = ambassador.username || ambassador.name.toLowerCase().replace(/\s+/g, '');
+  const ambassadorId =
+    ambassador.username || ambassador.name.toLowerCase().replace(/\s+/g, '');
   const getCountryFlag = (country: string) => {
     const flags: { [key: string]: string } = {
       Argentina: '🇦🇷',

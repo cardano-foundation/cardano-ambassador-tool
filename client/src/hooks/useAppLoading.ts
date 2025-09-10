@@ -19,6 +19,7 @@ export function useAppLoading() {
   const updateLoadingState = (
     dbLoading: boolean,
     isThemeInitialized: boolean,
+    authLoading: boolean,
   ) => {
     if (!isInitialLoad) {
       // Skip loading screen for navigation 
@@ -26,8 +27,9 @@ export function useAppLoading() {
       return;
     }
 
+
     // check if all resources are ready
-    if (!dbLoading && isThemeInitialized) {
+    if (!dbLoading && isThemeInitialized && !authLoading) {
       setIsAppLoading(false);
       return null;
     }

@@ -62,7 +62,6 @@ export function useDatabase() {
             setDbError(null);
           } catch (err) {
             clearTimeout(timeoutId);
-            console.error('[DB] Error initializing database from worker:', err);
             setDbLoading(false);
             setDbError(err instanceof Error ? err.message : 'Database initialization failed');
           }

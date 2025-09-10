@@ -1,5 +1,6 @@
 'use client';
 
+import { toast } from '@/components/toast/toast-manager';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useNetworkValidation } from '@/hooks';
 import { useAppLoading } from '@/hooks/useAppLoading';
@@ -13,7 +14,8 @@ import {
   NetworkValidationResult,
   Utxo,
 } from '@types';
-import { createContext, useContext, useEffect } from 'react';
+import { connected } from 'process';
+import { createContext, useContext, useEffect, useRef } from 'react';
 
 // ---------- Types ----------
 interface AppContextValue {
@@ -23,6 +25,7 @@ interface AppContextValue {
   updateLoadingState: (
     dbLoading: boolean,
     isThemeInitialized: boolean,
+    authLoading: boolean,
   ) => null | undefined;
   shouldShowLoading: boolean;
 
@@ -41,6 +44,7 @@ interface AppContextValue {
   userAddress: string | undefined;
   userRoles: string[];
   userWallet: IWallet | undefined;
+  logout: () => void;
 
   // Theme state
   theme: Theme;
@@ -83,10 +87,12 @@ const AppContext = createContext<AppContextValue>({
   // Theme defaults
   theme: 'light',
   setTheme: () => {},
+  logout: () => {},
   toggleTheme: () => {},
   updateLoadingState: function (
     dbLoading: boolean,
     isThemeInitialized: boolean,
+    authLoading: boolean,
   ): null | undefined {
     throw new Error('Function not implemented.');
   },
@@ -138,7 +144,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const {
     user,
-
+    isLoading: authLoading,
+    isAuthenticated,
+    userAddress,
+    userRoles,
+    userWallet,
+    logout,
   } = useUserAuth();
 
   const {
@@ -166,21 +177,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Coordinate app loading state based on dependencies
   useEffect(() => {
-    const timer = updateLoadingState(dbLoading, isThemeInitialized);
+    const timer = updateLoadingState(
+      dbLoading,
+      isThemeInitialized,
+      authLoading,
+    );
 
     return () => {
       if (timer) {
         clearTimeout(timer);
       }
     };
-  }, [dbLoading, isThemeInitialized, updateLoadingState]);
+  }, [dbLoading, isThemeInitialized, authLoading, updateLoadingState]);
 
-  // Temporary debug: confirm provider mount
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('[AppProvider] mounted');
-  }, []);
-
+ 
   // Create the context value
   const contextValue: AppContextValue = {
     // App loading
@@ -198,7 +208,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     // User
     user,
-    // setUser: userAuth.setUser,
+    logout,
+    isAuthenticated,
+    userAddress,
+    userRoles,
+    userWallet,
     // Theme
     theme,
     setTheme,
@@ -217,18 +231,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     hasNetworkError,
     networkErrorMessage,
     walletNetwork,
-    updateLoadingState: function (
-      dbLoading: boolean,
-      isThemeInitialized: boolean,
-    ): null | undefined {
-      throw new Error('Function not implemented.');
-    },
-    shouldShowLoading: false,
-    isAuthenticated: false,
-    userAddress: undefined,
-    userRoles: [],
-    userWallet: undefined,
-    isThemeInitialized: false,
+    updateLoadingState,
+    shouldShowLoading,
+    isThemeInitialized,
   };
 
   return (
@@ -245,4 +250,3 @@ export function useApp() {
   }
   return context;
 }
-
