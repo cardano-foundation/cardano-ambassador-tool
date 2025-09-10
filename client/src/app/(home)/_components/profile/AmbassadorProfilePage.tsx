@@ -55,30 +55,30 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({ ambassado
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background max-w-full">
       <ProfileHeader profile={profile} />
       
-      <div className="flex p-6">
-        <ProfileSidebar 
-          profile={profile}
-          formatDate={formatDate}
-          cleanHtml={cleanHtml}
+      <div className="block lg:grid lg:grid-cols-[320px_1fr] lg:gap-6 p-4 lg:p-6 lg:items-start">
+  <div className="lg:sticky lg:top-20 w-full lg:w-auto">
+    <ProfileSidebar 
+      profile={profile}
+      formatDate={formatDate}
+      cleanHtml={cleanHtml}
+    />
+  </div>
+  <div className="flex flex-col min-w-0 w-full lg:w-auto mt-6 lg:mt-0">
+    <div className="border-b border-border bg-card lg:sticky lg:top-6 lg:z-10 w-full mb-4">
+      <div className="px-0 w-full">
+        <TopNav
+          tabs={tabs}
+          activeTabId={activeTab}
+          onTabChange={setActiveTab}
         />
-        
-        <div className="flex-1 flex flex-col">
-          <div className="border-b border-border bg-card">
-            <div className="px-6">
-              <TopNav
-                tabs={tabs}
-                activeTabId={activeTab}
-                onTabChange={setActiveTab}
-              />
-            </div>
-          </div>
-          
-          <div className="p-6 flex-1">
+      </div>
+    </div>
+    <div className="flex-1 w-full max-w-full">
             {activeTab === 'summary' && (
-              <div className="space-y-8">
+              <div className="space-y-6 lg:space-y-8 w-full">
                 <ActivitySection
                   activities={profile.activities}
                   showAllActivities={showAllActivities}
@@ -86,9 +86,9 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({ ambassado
                   notificationsEnabled={notificationsEnabled}
                   onNotificationsToggle={setNotificationsEnabled}
                   getRelativeTime={getRelativeTime}
-                />
+                /> 
                 
-                <TopicsSection
+               <TopicsSection
                   topics={profile.summary.top_topics}
                   showAllTopics={showAllTopics}
                   onToggleShowAll={() => setShowAllTopics(!showAllTopics)}

@@ -31,37 +31,52 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
 }) => {
   return (
     <Card>
-      <CardContent className="p-2 border-b border-border/60">
-        <div className="flex items-center justify-between border-b border-border/60 pb-4">
-          <Title level="6" className="text-neutral text-lg">Recent Activities</Title>
-          <div className="flex items-center gap-3">
-            <Paragraph size="sm" className="text-muted-foreground">Enable Notifications:</Paragraph>
-            <Paragraph size="sm" className="text-muted-foreground">{notificationsEnabled ? 'On' : 'Off'}</Paragraph>
+      <CardContent className="p-3 sm:p-4 lg:p-4">
+        <div className="block sm:hidden border-b border-border/60 pb-3">
+          <Title level="6" className="text-neutral text-base mb-2">Recent Activities</Title>
+          <div className="flex items-center">
+            <span className="text-muted-foreground text-sm mr-1">Enable Notifications: {notificationsEnabled ? 'On' : 'Off'}</span>
             <Switch 
               checked={notificationsEnabled}
               onCheckedChange={onNotificationsToggle}
             />
           </div>
         </div>
-        <Progress
-          steps={(showAllActivities ? activities : activities.slice(0, 5)).map((activity, index) => ({
-            id: `activity-${index}`,
-            title: (
-              <Link href={activity.url} target="_blank" rel="noopener noreferrer" className="inline">
-                <span className="hover:text-primary-base transition-colors cursor-pointer">
-                  {activity.title}
-                </span>
-              </Link>
-            ),
-            description: getRelativeTime(activity.created_at),
-            status: 'pending' as const
-          }))}
-        />
+
+        {/* Desktop Layout - Horizontal */}
+        <div className="hidden sm:flex items-center justify-between border-b border-border/60 pb-4">
+          <Title level="6" className="text-neutral text-lg">Recent Activities</Title>
+          <div className="flex items-center">
+            <span className="text-muted-foreground text-sm mr-1">Enable Notifications: {notificationsEnabled ? 'On' : 'Off'}</span>
+            <Switch 
+              checked={notificationsEnabled}
+              onCheckedChange={onNotificationsToggle}
+            />
+          </div>
+        </div>
+        
+        <div className="mt-3 sm:mt-4">
+          <Progress
+            steps={(showAllActivities ? activities : activities.slice(0, 5)).map((activity, index) => ({
+              id: `activity-${index}`,
+              title: (
+                <Link href={activity.url} target="_blank" rel="noopener noreferrer" className="inline">
+                  <span className="hover:text-primary-base transition-colors cursor-pointer text-sm sm:text-base">
+                    {activity.title}
+                  </span>
+                </Link>
+              ),
+              description: getRelativeTime(activity.created_at),
+              status: 'pending' as const
+            }))}
+          />
+        </div>
+        
         {activities.length > 5 && (
-          <div className="mt-4 text-center">
+          <div className="mt-3 sm:mt-4 text-center">
             <TextLink 
-              href="#" 
-              variant="dotted" 
+              href="#"
+              variant="dotted"
               size="sm"
               onClick={(e) => {
                 e.preventDefault();

@@ -21,7 +21,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   cleanHtml 
 }) => {
   return (
-    <div className="w-80 flex-shrink-0 p-2 space-y-6 sticky top-6 self-start h-fit">
+    <div className="w-full p-2 space-y-6">
       <AboutSection 
         profile={profile}
         formatDate={formatDate}

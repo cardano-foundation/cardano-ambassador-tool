@@ -3,7 +3,6 @@ import Title  from '@/components/atoms/Title';
 import Paragraph  from '@/components/atoms/Paragraph';
 import Card, { CardContent } from '@/components/atoms/Card';
 import EditIcon  from '@/components/atoms/EditIcon';
-import  MapsIcon  from '@/components/atoms/MapsIcon';
 import { CountryMap } from './CountryMap';
 
 interface AboutSectionProps {
@@ -32,10 +31,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             <span>Edit</span>
           </div>
         </div>
-        <Paragraph className="text-foreground text-sm font-normal leading-snug mb-6 break-words overflow-wrap-anywhere">
+        <Paragraph className="text-foreground text-sm font-normal leading-snug mb-6 break-all">
           {cleanHtml(profile.bio_excerpt)}
         </Paragraph>
-        
         <div className="space-y-3 text-sm">
           <div><span className="font-semibold text-neutral">Country:</span> <span className="text-muted-foreground">{profile.country}</span></div>
           <div><span className="font-semibold text-neutral">Username:</span> <span className="text-muted-foreground">{profile.username}</span></div>

@@ -42,7 +42,7 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
         className
       )}
     >
-      <TabsList className="no-scrollbar overflow-x-auto scroll-smooth whitespace-nowrap">
+      <TabsList className="overflow-x-auto scroll-smooth whitespace-nowrap w-full min-w-0">
         {tabs.map((tab) => {
           const isActive = currentActiveId === tab.id;
           return (

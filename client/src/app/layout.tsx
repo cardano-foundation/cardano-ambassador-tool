@@ -2,6 +2,8 @@
 
 import { AppProvider } from '@/context/AppContext';
 import { MeshProvider } from '@meshsdk/react';
+import 'leaflet/dist/leaflet.css';
+
 import type { Metadata } from 'next';
 import './app.css';
 
