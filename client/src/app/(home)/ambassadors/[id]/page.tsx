@@ -1,5 +1,5 @@
 'use client';
-import AmbassadorProfilePage from '@/app/(home)/_components/AmbassadorProfilePage';
+import AmbassadorProfile from '@/app/(home)/_components/AmbassadorProfilePage';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -7,5 +7,5 @@ interface PageProps {
 
 export default async function AmbassadorPage({ params }: PageProps) {
   const { id } = await params;
-  return <AmbassadorProfilePage ambassadorId={id} />;
+  return <AmbassadorProfile ambassadorId={id} />;
 }

@@ -19,7 +19,7 @@ import WalletList from './WalletList';
 const ConnectWallet = () => {
   const [open, setOpen] = useState(false);
   const { connected, disconnect, address } = useWallet();
-  const { dismissNetworkError, isNetworkValid } = useApp();
+  const { isNetworkValid } = useApp();
 
   const handlechange = (open: boolean | ((prevState: boolean) => boolean)) => {
     setOpen(open);

@@ -12,7 +12,10 @@ import { useEffect, useState } from 'react';
 // ---------- Database operations ----------
 const dbManager = DatabaseManager.getInstance();
 
-const queryDb = <T = Record<string, unknown>>(sql: string, params: any[] = []): T[] => {
+const queryDb = <T = Record<string, unknown>>(
+  sql: string,
+  params: any[] = [],
+): T[] => {
   return dbManager.query<T>(sql, params);
 };
 
@@ -23,7 +26,11 @@ const getUtxosByContext = (contextName: string): Utxo[] => {
 export function useDatabase() {
   // Database state
   const [dbLoading, setDbLoading] = useState(true);
-  const [intents, setIntents] = useState<Utxo[]>([]);
+  const [membershipIntents, setMembershipIntents] = useState<Utxo[]>([]);
+  const [proposalIntents, setProposalIntents] = useState<Utxo[]>([]);
+  const [members, setMembers] = useState<Utxo[]>([]);
+  const [proposals, setProposals] = useState<Utxo[]>([]);
+
   const [ambassadors, setAmbassadors] = useState<Ambassador[]>([]);
   const [dbError, setDbError] = useState<string | null>(null);
 
@@ -33,7 +40,9 @@ export function useDatabase() {
 
     // Set a timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
-      console.warn('[DB] Database loading timeout - proceeding without full data');
+      console.warn(
+        '[DB] Database loading timeout - proceeding without full data',
+      );
       setDbLoading(false);
       setDbError('Database loading timed out');
     }, 10000); // 10 second timeout
@@ -44,7 +53,6 @@ export function useDatabase() {
 
       // Listen for DB updates from worker
       const unsubscribe = onUtxoWorkerMessage(async (data) => {
-
         if (data.db) {
           try {
             clearTimeout(timeoutId); // Cancel timeout
@@ -53,17 +61,31 @@ export function useDatabase() {
             await dbManager.initializeDatabase(data.db);
 
             // Query the initialized database
-            const intents = dbManager.getUtxosByContext('membership_intent');
+            const membershipIntents =
+              dbManager.getUtxosByContext('membership_intent');
+            const proposalIntents =
+              dbManager.getUtxosByContext('proposal_intent');
+            const members =
+              dbManager.getUtxosByContext('membership_intent');
+            const proposals =
+              dbManager.getUtxosByContext('proposal_intent');
             const ambassadors = dbManager.getAmbasaddors();
-            
-            setIntents(intents);
+
+            setMembershipIntents(membershipIntents);
+            setProposalIntents(proposalIntents);
+            setMembers(members);
+            setProposals(proposals);
             setAmbassadors(ambassadors);
             setDbLoading(false);
             setDbError(null);
           } catch (err) {
             clearTimeout(timeoutId);
             setDbLoading(false);
-            setDbError(err instanceof Error ? err.message : 'Database initialization failed');
+            setDbError(
+              err instanceof Error
+                ? err.message
+                : 'Database initialization failed',
+            );
           }
         }
       });
@@ -93,7 +115,7 @@ export function useDatabase() {
         'proposal',
         'proposal_intent',
         'sign_of_approval',
-        'ambassadors'
+        'ambassadors',
       ],
     });
   }
@@ -109,7 +131,11 @@ export function useDatabase() {
   return {
     // State
     dbLoading: dbLoading,
-    intents,
+    membershipIntents,
+    proposalIntents,
+    members,
+    proposals,
+
     ambassadors,
 
     // Operations

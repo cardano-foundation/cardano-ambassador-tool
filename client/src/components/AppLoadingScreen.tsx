@@ -56,7 +56,7 @@ export function AppLoadingScreen({
             <div className="text-muted-foreground flex items-center justify-center space-x-2 text-sm">
               <div className="bg-primary-base h-2 w-2 rounded-full" />
               <span>
-                Mode{' '}
+                Network {' '}
                 <span className="text-primary-base font-medium">
                   {currentNetwork}
                 </span>

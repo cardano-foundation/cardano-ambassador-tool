@@ -12,6 +12,12 @@ export class BlockfrostService {
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          params: {
+            txHash,
+            outputIndex,
+          },
+        }),
       });
 
       if (!response.ok) {

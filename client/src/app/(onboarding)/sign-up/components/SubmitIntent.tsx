@@ -7,9 +7,15 @@ import Input from '@/components/atoms/Input';
 import Paragraph from '@/components/atoms/Paragraph';
 import TextArea from '@/components/atoms/TextArea';
 import { toast } from '@/components/toast/toast-manager';
-import { applyMembership } from '@/services/memberService';
+import { getCatConstants, getProvider } from '@/utils';
+import { stringToHex } from '@meshsdk/core';
 import { useWallet } from '@meshsdk/react';
-import { MemberTokenDetail } from '@types';
+import {
+  membershipMetadata,
+  MembershipMetadata,
+  UserActionTx,
+} from '@sidan-lab/cardano-ambassador-tool';
+import { MembershipIntentPayoad, MemberTokenDetail } from '@types';
 import { useState } from 'react';
 
 const SubmitIntent = ({
@@ -20,6 +26,12 @@ const SubmitIntent = ({
   goNext?: () => void;
 }) => {
   const { address, wallet } = useWallet();
+  const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
+  const ORACLE_OUTPUT_INDEX = parseInt(
+    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
+  );
+
+  const blockfrost = getProvider();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -54,12 +66,110 @@ const SubmitIntent = ({
 
     try {
       const result = await applyMembership(payload);
-      if (result.success) {
-        goNext;
+      console.log({ result });
+
+      if (result.success && goNext) {
+        goNext();
       }
     } catch (error) {
       console.error('Failed to apply membership:', error);
     }
+  };
+
+  const applyMembership = async (payload: MembershipIntentPayoad) => {
+    const {
+      tokenUtxoHash,
+      tokenUtxoIndex,
+      address,
+      wallet,
+      tokenPolicyId,
+      tokenAssetName,
+      userMetadata,
+    } = payload;
+
+
+    const [oracleUtxos, tokenUtxos] = await Promise.all([
+      blockfrost.fetchUTxOs(ORACLE_TX_HASH, ORACLE_OUTPUT_INDEX),
+      blockfrost.fetchUTxOs(tokenUtxoHash, tokenUtxoIndex),
+    ]);
+
+    if (!oracleUtxos?.length) {
+      toast.error(
+        'Submission Failed!',
+        'Unexpected error during membership application.',
+      );
+      return {
+        success: false,
+        message: 'Membership application failed.',
+        data: null,
+      };
+    }
+
+    if (!tokenUtxos?.length) {
+      toast.error(
+        'Submission Failed!',
+        'Unexpected error during membership application.',
+      );
+      return {
+        success: false,
+        message: 'Membership application failed.',
+        data: null,
+      };
+    }
+
+    const oracleUtxo = oracleUtxos[0];
+    const tokenUtxo = tokenUtxos[0];
+
+    const userAction = new UserActionTx(
+      address,
+      wallet,
+      blockfrost,
+      getCatConstants(),
+    );
+
+    console.log({ userAction });
+
+    const metadata: MembershipMetadata = membershipMetadata(
+      address,
+      stringToHex(userMetadata.fullname),
+      stringToHex(userMetadata.displayName),
+      stringToHex(userMetadata.email),
+      stringToHex(userMetadata.bio),
+    );
+
+    console.log({
+      oracleUtxo,
+      tokenUtxo,
+      tokenPolicyId,
+      tokenAssetName,
+      metadata,
+    });
+
+    const result = await userAction.applyMembership(
+      oracleUtxo,
+      tokenUtxo,
+      tokenPolicyId,
+      tokenAssetName,
+      metadata,
+    );
+
+    if (!result) {
+      toast.error(
+        'Submission Failed!',
+        'Unexpected error during membership application.',
+      );
+      return {
+        success: false,
+        message: 'Membership successfully applied.',
+        data: null,
+      };
+    }
+
+    return {
+      success: true,
+      message: 'Membership successfully applied.',
+      data: result,
+    };
   };
   return (
     <>

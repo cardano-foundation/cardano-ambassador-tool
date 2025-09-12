@@ -83,7 +83,7 @@ export default function AmbassadorCard({
             </div>
           </div>
           <div className="flex-shrink-0">
-            <Link href={`/ambassador/${ambassadorId}`}>
+            <Link href={`/ambassadors/${ambassadorId}`}>
               <Button
                 variant={'primary'}
                 size="sm"
@@ -117,7 +117,7 @@ export default function AmbassadorCard({
             {ambassador.country}
           </Paragraph>
         </div>
-        <Link href={`/ambassador/${ambassadorId}`}>
+        <Link href={`/ambassadors/${ambassadorId}`}>
           <Button
             variant={'primary'}
             size="sm"
