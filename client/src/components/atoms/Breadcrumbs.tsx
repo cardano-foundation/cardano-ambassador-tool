@@ -1,9 +1,9 @@
-"use client";
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { breadcrumbRoutes } from "@/lib/BreadcrumbRoutes";
-import { useEffect, useState } from "react";
+'use client';
+import { breadcrumbRoutes } from '@/lib/BreadcrumbRoutes';
+import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface BreadcrumbItem {
   href: string;
@@ -30,29 +30,32 @@ export default function Breadcrumbs() {
             setDynamicCrumbs([
               {
                 href: pathname,
-                label: ambassadorData.name
-              }
+                label: ambassadorData.name,
+              },
             ]);
             return;
           }
         } catch (error) {
-          console.error('Failed to fetch ambassador data for breadcrumb:', error);
+          console.error(
+            'Failed to fetch ambassador data for breadcrumb:',
+            error,
+          );
         }
 
         // Fallback if API call fails
         setDynamicCrumbs([
           {
             href: pathname,
-            label: 'Ambassador Profile'
-          }
+            label: 'Ambassador Profile',
+          },
         ]);
         return;
       }
 
       // Generate standard breadcrumbs for other pages
-      const segments = pathname.split("/").filter(Boolean);
+      const segments = pathname.split('/').filter(Boolean);
       const paths = segments.map((_, i) => {
-        return "/" + segments.slice(0, i + 1).join("/");
+        return '/' + segments.slice(0, i + 1).join('/');
       });
 
       const crumbs = paths
@@ -79,7 +82,7 @@ export default function Breadcrumbs() {
             Home
           </Link>
           {dynamicCrumbs.length > 0 && (
-            <ChevronRight className="w-4 h-4 mx-1 text-muted-foreground" />
+            <ChevronRight className="text-muted-foreground mx-1 h-4 w-4" />
           )}
         </li>
         {dynamicCrumbs.map((crumb, idx) => (
