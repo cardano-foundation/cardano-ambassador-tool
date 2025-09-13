@@ -4,25 +4,33 @@ import { Copy, ExternalLink } from 'lucide-react';
 const Copyable = ({
   keyLabel,
   value,
-  link = false,
+  link = '',
   withKey = true,
 }: {
   keyLabel?: string;
   value: string;
-  link?: boolean;
+  link?: string;
   withKey?: boolean;
 }) => {
   console.log({ keyLabel, value });
 
   return (
     <>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2">
         <span className="text-neutral">{`${withKey ? keyLabel + ';' : ''} ${shortenString(value, 12)}`}</span>
-        <Copy
-          className="text-neutral size-4"
-          onClick={() => copyToClipboard(value)}
-        />
-        {link && <ExternalLink className="text-neutral size-4" />}
+        <span className="flex items-center gap-2">
+          <Copy
+            className="text-neutral size-4 hover:cursor-pointer"
+            onClick={() => copyToClipboard(shortenString(value))}
+          />
+          <a
+            href={link}
+            target="_blank"
+            className={`${link.length ? 'hover:cursor-pointer' : 'hover:cursor-not-allowed'}`}
+          >
+            <ExternalLink className="text-neutral size-4" />
+          </a>
+        </span>
       </div>
     </>
   );

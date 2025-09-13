@@ -5,6 +5,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
+import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context/AppContext';
 import { parseMembershipIntentDatum } from '@/utils';
 
@@ -179,14 +180,22 @@ export default function MembershipIntentPage() {
       header: '#',
       accessor: 'index',
       sortable: true,
+      cell: (value: string) => (
+        <span className="text-neutral font-normal">{value}</span>
+      ),
     },
     {
       header: 'Tx Hash',
       accessor: 'txHash',
       sortable: false,
-      copyable: true,
+      // copyable: true,
       cell: (value: string) => (
-        <Copyable withKey={false} link={true} value={value} keyLabel={''} />
+        <Copyable
+          withKey={false}
+          link={`${getCurrentNetworkConfig().explorerUrl}/transaction/${value}`}
+          value={value}
+          keyLabel={''}
+        />
       ),
     },
     {
@@ -196,7 +205,6 @@ export default function MembershipIntentPage() {
       cell: (value: string) => (
         <span className="text-neutral font-normal">{value}</span>
       ),
-      getCopyText: (value: string) => value,
     },
     {
       header: 'Email',
@@ -232,6 +240,14 @@ export default function MembershipIntentPage() {
         <Title level="2" className="text-xl sm:text-2xl">
           Membership intent
         </Title>
+        <Copyable
+          withKey={false}
+          link={true}
+          value={
+            ' Review and manage Membership intent requests submitted by users who wish to become recognized ambassadors.'
+          }
+          keyLabel={''}
+        />
         <Paragraph
           size="base"
           className="text-muted-foreground max-w-4xl text-sm sm:text-base"

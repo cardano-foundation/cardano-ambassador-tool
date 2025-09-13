@@ -5,7 +5,7 @@ import { useMemo, useRef, useState } from 'react';
 type ColumnDef<T> = {
   header: string;
   accessor?: keyof T;
-  cell?: (value: any, row: T) => React.ReactNode;
+  cell: (value: any, row: T) => React.ReactNode;
   sortable?: boolean;
   copyable?: boolean;
   getCopyText?: (value: any, row: T) => string;
@@ -48,23 +48,6 @@ export function Table<T>({
 
   const pageSize = onPageSizeChange ? initialPageSize : internalPageSize;
 
-  
-  const truncateText = (text: string, maxLength: number = 20) => {
-    if (text.length <= maxLength) return text;
-
-    if (text.length > 40) {
-      const start = text.slice(0, 8);
-      const end = text.slice(-6);
-      return `${start}...${end}`;
-    }
-
-    return text.slice(0, maxLength - 3) + '...';
-  };
-
-  const isLikelyAddress = (value: any): boolean => {
-    if (typeof value !== 'string') return false;
-    return value.length > 40 && /^[a-zA-Z0-9]+$/.test(value);
-  };
 
   const filteredData = useMemo(() => {
     if (!searchTerm) return data;
@@ -126,38 +109,6 @@ export function Table<T>({
     }
   };
 
-  const getCellContent = (column: ColumnDef<T>, row: T, rowIndex: number) => {
-    const value = column.accessor ? row[column.accessor] : null;
-
-    const shouldTruncate =
-      column.truncate || (autoSize && isLikelyAddress(value));
-
-    let displayContent: React.ReactNode;
-    if (column.cell) {
-      displayContent = column.cell(value, row);
-    } else {
-      let displayValue = String(value);
-      if (shouldTruncate && typeof value === 'string') {
-        const maxLength =
-          typeof column.truncate === 'number' ? column.truncate : 20;
-        displayValue = truncateText(value, maxLength);
-      }
-      displayContent = displayValue;
-    }
-
-    if (shouldTruncate && typeof value === 'string') {
-      const maxLength =
-        typeof column.truncate === 'number' ? column.truncate : 20;
-      const truncatedValue = truncateText(value, maxLength);
-      return <span title={value}>{truncatedValue}</span>;
-    }
-
-    return displayContent;
-  };
-
-  const getColumnClass = (column: ColumnDef<T>) => {
-    return '';
-  };
 
   const itemsPerPageStart =
     paginatedData.length > 0 ? (currentPage - 1) * pageSize + 1 : 0;
@@ -214,7 +165,7 @@ export function Table<T>({
                     scope="col"
                     className={`border-border border px-6 py-3 font-normal whitespace-nowrap last:border-r-0 ${
                       column.sortable ? 'cursor-pointer select-none' : ''
-                    } ${getColumnClass(column)}`}
+                    } }`}
                     onClick={() =>
                       column.sortable &&
                       column.accessor &&
@@ -260,7 +211,10 @@ export function Table<T>({
                         key={column.header}
                         className="border-border border-r px-6 py-4 last:border-r-0"
                       >
-                        {getCellContent(column, row, rowIndex)}
+                        {column?.cell(
+                          column?.accessor ? row[column?.accessor] : '',
+                          row,
+                        )}
                       </td>
                     ))}
                   </tr>
