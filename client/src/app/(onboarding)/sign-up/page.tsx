@@ -146,7 +146,7 @@ function SignUp() {
           totalSteps={steps.length}
           stepLabels={steps.map(step => step.name)}
           clickable={true}
-          // onStepClick={handleStepClick}
+          onStepClick={handleStepClick}
           className="max-w-md"
         />
       </div>

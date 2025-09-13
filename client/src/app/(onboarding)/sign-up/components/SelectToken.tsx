@@ -4,11 +4,11 @@ import Button from '@/components/atoms/Button';
 import KeyValue from '@/components/atoms/KeyValue';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
+import Copyable from '@/components/Copyable';
 import { shortenString } from '@/utils';
 import { hexToString } from '@meshsdk/core';
 import { useWallet } from '@meshsdk/react';
 import { MemberTokenDetail } from '@types';
-import { Copy, ExternalLink } from 'lucide-react';
 
 const SelectToken = ({
   setAsset,
@@ -67,11 +67,7 @@ const SelectToken = ({
 
                 {/* Token Info */}
                 <div className="flex flex-col gap-1 pr-8">
-                  <div className="flex items-center gap-2 font-semibold">
-                    <span>Policy ID: {shortenString(asset.policyId)}</span>
-                    <Copy className="text-muted-foreground size-4" />
-                    <ExternalLink className="text-muted-foreground size-4" />
-                  </div>
+                  <Copyable keyLabel="Policy ID" value={asset.policyId} />
                   <KeyValue
                     keyLabel={'Token Name'}
                     value={hexToString(asset.assetName)}

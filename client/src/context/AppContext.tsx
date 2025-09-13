@@ -31,7 +31,10 @@ interface AppContextValue {
 
   // Database state
   dbLoading: boolean;
-  intents: Utxo[];
+  membershipIntents: Utxo[];
+  proposalIntents: Utxo[];
+  members: Utxo[];
+  proposals: Utxo[];
   ambassadors: Ambassador[];
   syncData: (context: string) => void;
   syncAllData: () => void;
@@ -74,7 +77,10 @@ const AppContext = createContext<AppContextValue>({
 
   // Database defaults
   dbLoading: true,
-  intents: [],
+  membershipIntents: [],
+  proposalIntents: [],
+  members: [],
+  proposals: [],
   ambassadors: [],
   syncData: () => {},
   syncAllData: () => {},
@@ -132,7 +138,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const {
     // State
     dbLoading,
-    intents,
+    membershipIntents,
+    proposalIntents,
+    members,
+    proposals,
     ambassadors,
 
     // Operations
@@ -199,7 +208,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     // Database
     dbLoading,
-    intents,
+    membershipIntents,
+    proposalIntents,
+    members,
+    proposals,
     ambassadors,
     syncData,
     syncAllData,

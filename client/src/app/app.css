@@ -128,10 +128,12 @@
 |--------------------------------------------------------------------------
 |
 */
+html,
 body {
   background-color: var(--color-background);
   color: var(--color-text-default);
   font-family: 'Chivo', sans-serif;
+  overflow-x: hidden;
 }
 
 /*

@@ -114,7 +114,7 @@ const SideNav = () => {
   }, [user, isAdmin, connected]);
 
   return (
-    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col border-r lg:flex">
+    <div className="bg-background border-border hidden h-screen w-80 flex-col border-r lg:flex sticky top-0 overflow-y-auto">
       <div className="flex items-center justify-start p-6">
         <AppLogo />
       </div>

@@ -70,11 +70,11 @@ interface AmbassadorProfile {
   }>;
 }
 
-interface AmbassadorProfilePageProps {
+interface AmbassadorProfileProps {
   ambassadorId: string;
 }
 
-const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
+const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
   ambassadorId,
 }) => {
   const [activeTab, setActiveTab] = useState('summary');
@@ -88,12 +88,14 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
   const [showAllReplies, setShowAllReplies] = useState(false);
   const [showAllActivities, setShowAllActivities] = useState(false);
 
+
+
   useEffect(() => {
     const fetchAmbassadorProfile = async () => {
       try {
         setLoading(true);
         console.log('Fetching profile for:', ambassadorId);
-        const response = await fetch(`/api/ambassadors/${ambassadorId}`);
+        const response = await fetch(`/api/member/${ambassadorId}`);
         console.log('Response status:', response.status);
 
         if (!response.ok) {
@@ -631,4 +633,4 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
   );
 };
 
-export default AmbassadorProfilePage;
+export default AmbassadorProfile;
