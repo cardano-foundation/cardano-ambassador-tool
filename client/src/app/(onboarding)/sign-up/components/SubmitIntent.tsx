@@ -127,7 +127,6 @@ const SubmitIntent = ({
       getCatConstants(),
     );
 
-    console.log({ userAction });
 
     const metadata: MembershipMetadata = membershipMetadata(
       address,
@@ -136,14 +135,6 @@ const SubmitIntent = ({
       stringToHex(userMetadata.email),
       stringToHex(userMetadata.bio),
     );
-
-    console.log({
-      oracleUtxo,
-      tokenUtxo,
-      tokenPolicyId,
-      tokenAssetName,
-      metadata,
-    });
 
     const result = await userAction.applyMembership(
       oracleUtxo,
