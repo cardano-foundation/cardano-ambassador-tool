@@ -11,7 +11,6 @@ import TextArea from '@/components/atoms/TextArea';
 import { toast } from '@/components/toast/toast-manager';
 import { getCatConstants, getProvider } from '@/utils';
 import { stringToHex } from '@meshsdk/core';
-import { useWallet } from '@meshsdk/react';
 import {
   membershipMetadata,
   MembershipMetadata,
@@ -19,6 +18,7 @@ import {
 } from '@sidan-lab/cardano-ambassador-tool';
 import { MembershipIntentPayoad, MemberTokenDetail } from '@types';
 import { useEffect, useState } from 'react';
+import { useApp } from '@/context/AppContext';
 
 const SubmitIntent = ({
   asset,
@@ -27,7 +27,8 @@ const SubmitIntent = ({
   asset?: MemberTokenDetail;
   goNext?: () => void;
 }) => {
-  const { address, wallet } = useWallet();
+  const { wallet: walletState } = useApp();
+  const { address, wallet } = walletState;
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
     process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',

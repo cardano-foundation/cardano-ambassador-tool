@@ -7,8 +7,8 @@ import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
 import { shortenString } from '@/utils';
 import { hexToString } from '@meshsdk/core';
-import { useWallet } from '@meshsdk/react';
 import { MemberTokenDetail } from '@types';
+import { useApp } from '@/context/AppContext';
 
 const SelectToken = ({
   setAsset,
@@ -25,7 +25,8 @@ const SelectToken = ({
   setSelectedAssetName: (name: string | null) => void;
   selectedAssetName: string | null;
 }) => {
-  const { address } = useWallet();
+  const { wallet } = useApp();
+  const { address } = wallet;
 
   return (
     <>
@@ -33,7 +34,7 @@ const SelectToken = ({
         <Title level="5">Wallet Connected ✅</Title>
         <div className="flex gap-2">
           <span className="base font-semibold">Address: </span>
-          <span className="base">{shortenString(address)}</span>
+          <span className="base">{shortenString(address!)}</span>
         </div>
       </div>
 

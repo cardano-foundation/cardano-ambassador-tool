@@ -3,12 +3,12 @@ import ThemeToggle from '@/components/ThemeToggle';
 import Breadcrumb from '@/components/atoms/Breadcrumbs';
 import Button from '@/components/atoms/Button';
 import NotificationIcon from '@/components/atoms/NotificationIcon';
-import { useUserAuth } from '@/hooks/useUserAuth';
-import UserAvatar from '../atoms/UserAvatar';
+import { useApp } from '@/context/AppContext';
 import { shortenString } from '@/utils';
+import UserAvatar from '../atoms/UserAvatar';
 
 export default function TopNavBar() {
-  const { user, isAdmin } = useUserAuth();
+  const { user, isAdmin } = useApp();
 
   return (
     <div className="bg-background flex items-center justify-between px-3 py-4 sm:px-6 sm:py-6">

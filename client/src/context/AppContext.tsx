@@ -1,12 +1,13 @@
 'use client';
 
-import { toast } from '@/components/toast/toast-manager';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useNetworkValidation } from '@/hooks';
 import { useAppLoading } from '@/hooks/useAppLoading';
 import { useDatabase } from '@/hooks/useDatabase';
 import { Theme, useThemeManager } from '@/hooks/useThemeManager';
 import { User, useUserAuth } from '@/hooks/useUserAuth';
+import { useWalletManager } from '@/hooks/useWalletManager';
+import { WalletContextValue } from '@/types/wallet';
 import { IWallet } from '@meshsdk/core';
 import {
   Ambassador,
@@ -14,8 +15,7 @@ import {
   NetworkValidationResult,
   Utxo,
 } from '@types';
-import { connected } from 'process';
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 
 // ---------- Types ----------
 interface AppContextValue {
@@ -28,6 +28,9 @@ interface AppContextValue {
     authLoading: boolean,
   ) => null | undefined;
   shouldShowLoading: boolean;
+
+  // Wallet state (centralized)
+  wallet: WalletContextValue;
 
   // Database state
   dbLoading: boolean;
@@ -44,6 +47,8 @@ interface AppContextValue {
   // User state
   user: User;
   isAuthenticated: boolean;
+  isAdmin: boolean;
+  isLoading: boolean;
   userAddress: string | undefined;
   userRoles: string[];
   userWallet: IWallet | undefined;
@@ -62,6 +67,7 @@ interface AppContextValue {
   networkValidation: NetworkValidationResult | null;
   isValidatingNetwork: boolean;
   validateCurrentWallet: () => Promise<void>;
+  validateBeforeConnection: (wallet: IWallet) => Promise<boolean>;
   dismissNetworkError: () => void;
   isNetworkValid: boolean | undefined;
   hasNetworkError: boolean | null;
@@ -74,6 +80,24 @@ const AppContext = createContext<AppContextValue>({
   // App loading defaults
   isAppLoading: true,
   isInitialLoad: true,
+
+  // Wallet defaults
+  wallet: {
+    isConnected: false,
+    isConnecting: false,
+    hasAttemptedAutoConnect: false,
+    selectedWalletId: null,
+    walletName: null,
+    address: null,
+    wallet: null,
+    availableWallets: [],
+    error: null,
+    isNetworkValid: true,
+    connectWallet: async () => {},
+    disconnectWallet: () => {},
+    clearError: () => {},
+    refreshWalletList: async () => {},
+  },
 
   // Database defaults
   dbLoading: true,
@@ -89,11 +113,17 @@ const AppContext = createContext<AppContextValue>({
 
   // User defaults
   user: null,
-  // setUser: () => {},
+  isAuthenticated: false,
+  isAdmin: false,
+  isLoading: false,
+  userAddress: undefined,
+  userRoles: [],
+  userWallet: undefined,
+  logout: () => {},
+  
   // Theme defaults
   theme: 'light',
   setTheme: () => {},
-  logout: () => {},
   toggleTheme: () => {},
   updateLoadingState: function (
     dbLoading: boolean,
@@ -103,10 +133,6 @@ const AppContext = createContext<AppContextValue>({
     throw new Error('Function not implemented.');
   },
   shouldShowLoading: false,
-  isAuthenticated: false,
-  userAddress: undefined,
-  userRoles: [],
-  userWallet: undefined,
   isThemeInitialized: false,
   isDark: false,
   isLight: false,
@@ -114,6 +140,9 @@ const AppContext = createContext<AppContextValue>({
   networkValidation: null,
   isValidatingNetwork: false,
   validateCurrentWallet: function (): Promise<void> {
+    throw new Error('Function not implemented.');
+  },
+  validateBeforeConnection: function (): Promise<boolean> {
     throw new Error('Function not implemented.');
   },
   dismissNetworkError: function (): void {
@@ -134,6 +163,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // Helper values
     shouldShowLoading,
   } = useAppLoading();
+
+  // Centralized wallet management
+  const wallet = useWalletManager();
 
   const {
     // State
@@ -158,8 +190,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     userAddress,
     userRoles,
     userWallet,
+    isAdmin,
     logout,
-  } = useUserAuth();
+  } = useUserAuth({
+    wallet: wallet.wallet,
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+  });
 
   const {
     theme,
@@ -176,15 +213,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     networkValidation,
     isValidatingNetwork,
     validateCurrentWallet,
+    validateBeforeConnection,
     dismissNetworkError,
     // Helper computed values
     isNetworkValid,
     hasNetworkError,
     networkErrorMessage,
     walletNetwork,
-  } = useNetworkValidation();
+  } = useNetworkValidation({
+    wallet: wallet.wallet,
+    isConnected: wallet.isConnected,
+  });
 
-  // Coordinate app loading state based on dependencies
+  // Coordinate app loading state 
   useEffect(() => {
     const timer = updateLoadingState(
       dbLoading,
@@ -199,12 +240,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, [dbLoading, isThemeInitialized, authLoading, updateLoadingState]);
 
- 
   // Create the context value
   const contextValue: AppContextValue = {
     // App loading
     isAppLoading: isAppLoading,
     isInitialLoad: isInitialLoad,
+
+    // Wallet
+    wallet,
 
     // Database
     dbLoading,
@@ -222,6 +265,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     user,
     logout,
     isAuthenticated,
+    isAdmin,
+    isLoading: authLoading,
     userAddress,
     userRoles,
     userWallet,
@@ -237,6 +282,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     networkValidation,
     isValidatingNetwork,
     validateCurrentWallet,
+    validateBeforeConnection,
     dismissNetworkError,
     // Helper computed values
     isNetworkValid,

@@ -1,10 +1,10 @@
 'use client';
 
-import { useWallet } from '@meshsdk/react';
 import { MemberTokenDetail } from '@types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { SingleRowStepper } from '@/components/atoms/Stepper';
+import { useApp } from '@/context/AppContext';
 import ConnectWallet from './components/ConnectWallet';
 import SelectToken from './components/SelectToken';
 import SubmissionSuccess from './components/SubmissionSuccess';
@@ -15,7 +15,8 @@ function SignUp() {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(0);
   const [asset, setAsset] = useState<MemberTokenDetail | undefined>(undefined);
-  const { address, wallet } = useWallet();
+  const { wallet: walletState } = useApp();
+  const { address, wallet } = walletState;
   const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
   const [walletAssets, setWalletAssets] = useState<MemberTokenDetail[]>([]);
   const [selectedAssetName, setSelectedAssetName] = useState<string | null>(
@@ -108,8 +109,8 @@ function SignUp() {
   }, [address, steps]);
 
   async function getAssetsDetails() {
-    const utxos = await wallet.getUtxos();
-    const assets = await wallet.getPolicyIdAssets(policyId);
+    const utxos = await wallet!.getUtxos();
+    const assets = await wallet!.getPolicyIdAssets(policyId);
 
     // Flatten UTXOs and filter for assets that match policyId
     const utxoAssets = utxos.flatMap((utxo) =>
