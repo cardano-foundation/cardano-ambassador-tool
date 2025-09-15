@@ -1,4 +1,5 @@
 // forumService.ts
+import { NormalizedUser } from '@types';
 import axios from 'axios';
 
 const SUMMARY_URL = 'https://forum.cardano.org/u/{username}/summary.json';
@@ -10,23 +11,6 @@ export interface Ambassador {
   flag?: string;
 }
 
-export interface NormalizedUser {
-  href: string;
-  username: string;
-  name?: string;
-  bio_excerpt?: string;
-  country?: string;
-  flag?: string;
-  avatar?: string;
-  created_at?: string;
-  summary: {
-    stats: Record<string, any>;
-    top_replies: any[];
-    top_topics: any[];
-  };
-  activities: any[];
-  badges: any[];
-}
 
 async function fetchJson(url: string) {
   const res = await axios.get(url, { timeout: 15000 });

@@ -4,15 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { ReactNode } from 'react';
 
-type TBreadCrumbProps = {
-  homeElement: ReactNode;
-  separator: ReactNode;
-  containerClasses?: string;
-  listClasses?: string;
-  activeClasses?: string;
-  capitalizeLinks?: boolean;
-};
-
 export default function Breadcrumbs() {
   const paths = usePathname();
   const pathNames = paths.split('/').filter((path) => path);
@@ -31,7 +22,7 @@ export default function Breadcrumbs() {
         )}
 
         {pathNames.map((link, index) => {
-          console.log({ pathNames });
+          
           if (link == 'manage') {
             return;
           }
@@ -44,9 +35,6 @@ export default function Breadcrumbs() {
           if (link == 'ambassadors') {
              href = `/`;
           }
-
-          // let itemClasses =
-          //   paths === href ? `${listClasses} ${activeClasses}` : listClasses;
           let itemLink = true
             ? link[0].toUpperCase() + link.slice(1, link.length)
             : link;

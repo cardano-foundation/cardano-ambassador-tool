@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/utils/utils";
 
 interface DropdownOption {
@@ -25,29 +25,57 @@ export default function Dropdown({
   className,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const selectedOption = options.find((opt) => opt.value === value);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const handleSelect = (optionValue: string) => {
     onValueChange?.(optionValue);
     setIsOpen(false);
+    // Return focus to button after selection
+    setTimeout(() => {
+      buttonRef.current?.focus();
+    }, 0);
   };
 
   return (
     <div
+      ref={dropdownRef}
       className={cn(
         "relative inline-block text-left w-full min-w-0 sm:min-w-[200px]",
         className
       )}
     >
       <button
+        ref={buttonRef}
         type="button"
         disabled={disabled}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!disabled) setIsOpen(!isOpen);
+        }}
         className={cn(
-          "inline-flex w-full justify-between items-center rounded-md border px-3 py-4 text-sm transition-colors focus-visible:outline-none",
-          "bg-background  dark:bg-card border-border",
-          disabled && "opacity-50 cursor-not-allowed",
-          isOpen && " "
+          "inline-flex w-full justify-between items-center rounded-md border px-3 py-4 text-sm transition-colors focus-visible:outline-none cursor-pointer",
+          "bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/20",
+          disabled && "opacity-50 cursor-not-allowed hover:border-border",
+          isOpen && "border-primary ring-2 ring-primary/20"
         )}
       >
         <span
@@ -77,36 +105,47 @@ export default function Dropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 z-50 mt-1 w-full min-w-0 sm:min-w-[200px] origin-top rounded-md bg-background shadow-lg border border-border">
-          <div className="py-1">
-            {options.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleSelect(option.value)}
-                className={cn(
-                  "flex w-full justify-between items-center px-4 py-3 text-left text-sm transition-colors",
-                  "text-muted-foreground hover:bg-muted",
-                  value === option.value && "bg-primary-100 text-primary-base"
-                )}
-              >
-                <span className="flex-1 truncate mr-2">{option.label}</span>
-                {value === option.value && (
-                  <svg
-                    className="h-4 w-4 flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                )}
-              </button>
-            ))}
+        <div className="absolute left-0 right-0 z-[9999] mt-1 origin-top rounded-md bg-background shadow-lg border border-border max-h-60 overflow-hidden">
+          <div className="max-h-60 overflow-y-auto py-1">
+            {options.length === 0 ? (
+              <div className="px-4 py-3 text-sm text-muted-foreground">
+                No options available
+              </div>
+            ) : (
+              options.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSelect(option.value);
+                  }}
+                  className={cn(
+                    "flex w-full justify-between items-center px-4 py-3 text-left text-sm transition-colors cursor-pointer",
+                    "text-foreground hover:bg-muted hover:text-foreground",
+                    value === option.value && "bg-muted text-primary font-medium"
+                  )}
+                >
+                  <span className="flex-1 truncate mr-2">{option.label}</span>
+                  {value === option.value && (
+                    <svg
+                      className="h-4 w-4 flex-shrink-0 text-primary"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </button>
+              ))
+            )}
           </div>
         </div>
       )}

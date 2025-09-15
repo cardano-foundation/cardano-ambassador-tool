@@ -1,20 +1,14 @@
 import { IWallet, Quantity, Unit } from '@meshsdk/core';
+import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
 
 export interface MembershipIntentPayoad {
   tokenUtxoHash: string;
   tokenUtxoIndex: number;
-  userMetadata: MemberMetadata;
+  userMetadata: MemberData;
   wallet: IWallet;
   address: string;
   tokenPolicyId: string;
   tokenAssetName: string;
-}
-
-export interface MemberMetadata {
-  fullname: string;
-  bio: string;
-  email: string;
-  displayName: string;
 }
 
 export type MemberTokenDetail = {
@@ -132,3 +126,21 @@ export type SessionPayload = {
     role: string;
   }[];
 };
+
+export interface NormalizedUser {
+  href: string;
+  username: string;
+  name?: string;
+  bio_excerpt?: string;
+  country?: string;
+  flag?: string;
+  avatar?: string;
+  created_at?: string;
+  summary: {
+    stats: Record<string, any>;
+    top_replies: any[];
+    top_topics: any[];
+  };
+  activities: any[];
+  badges: any[];
+}

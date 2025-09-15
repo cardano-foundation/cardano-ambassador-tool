@@ -12,7 +12,6 @@ const Copyable = ({
   link?: string;
   withKey?: boolean;
 }) => {
-  console.log({ keyLabel, value });
 
   return (
     <>

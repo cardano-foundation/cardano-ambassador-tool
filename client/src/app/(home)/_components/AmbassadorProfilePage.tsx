@@ -389,8 +389,8 @@ const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex p-6">
-        <div className="sticky w-80 flex-shrink-0 space-y-6 p-2 top-0">
+      <div className="flex p-6 gap-6">
+        <aside className="sticky top-6 h-fit w-80 flex-shrink-0 space-y-6">
           <Card>
             <CardContent>
               <div className="border-border/60 mb-4 flex items-center justify-between border-b pb-2">
@@ -439,7 +439,9 @@ const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
                 </div>
               </div>
               <div className="bg-muted/20 border-border/40 mt-6 flex flex-col items-center justify-center rounded-lg border">
-                <MapsIcon size={50} color="var(--color-muted-foreground)" />
+                <MapsIcon
+                  size={50}
+                />
               </div>
             </CardContent>
           </Card>
@@ -467,8 +469,8 @@ const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
           <Paragraph className="text-muted-foreground mt-4 text-base">
             Member Since: {formatDate(profile.created_at)}
           </Paragraph>
-        </div>
-        <div className="flex flex-1 flex-col">
+        </aside>
+        <main className="flex flex-1 flex-col min-w-0">
           <div className="border-border bg-card border-b">
             <div className="px-6">
               <TopNav
@@ -627,7 +629,7 @@ const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
               </div>
             )}
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
