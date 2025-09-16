@@ -48,18 +48,15 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
             </div>
           </div>
         </div>
-        <div className="space-y-3 mb-6">
-          <div className="flex gap-2">
-            <StatCard label="Topics Created" value={profile.summary.stats.topics_created} />
-            <StatCard label="Given" value={profile.summary.stats.likes_given} showHeart />
-          </div>
-          
-          <div className="flex gap-2">
-            <StatCard label="Received" value={profile.summary.stats.likes_received} showHeart />
-            <StatCard label="Days Visited" value={profile.summary.stats.days_visited} />
-          </div>
-          <div className="flex">
-            <StatCard label="Posts Created" value={profile.summary.stats.replies_created} />
+        <div className="grid md:grid-cols-2 gap-3 mb-6">
+          <StatCard label="Topics Created" value={profile.summary.stats.topics_created} />
+          <StatCard label="Given" value={profile.summary.stats.likes_given} showHeart />
+          <StatCard label="Received" value={profile.summary.stats.likes_received} showHeart />
+          <StatCard label="Days Visited" value={profile.summary.stats.days_visited} />
+          <div className="col-span-2 flex justify-center">
+            <div className="w-1/2">
+              <StatCard label="Posts Created" value={profile.summary.stats.replies_created} />
+            </div>
           </div>
         </div>
         <Button variant="primary" className="bg-primary-base hover:bg-primary-400 w-full">
@@ -88,7 +85,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
                   <span className="text-sm text-muted-foreground">{profile.country}</span>
                 </div>
               </div>
-              <div className="flex justify-center space-x-4 mx-8">
+              <div className="flex justify-center space-x-2 mx-8">
                 <StatCard label="Topics Created" value={profile.summary.stats.topics_created} />
                 <StatCard label="Given" value={profile.summary.stats.likes_given} showHeart />
                 <StatCard label="Received" value={profile.summary.stats.likes_received} showHeart />

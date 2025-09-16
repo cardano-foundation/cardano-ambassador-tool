@@ -67,7 +67,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({ ambassado
         />
     </div>
   <div className="flex flex-col min-w-0 w-full lg:w-auto mt-6 lg:mt-0">
-    <div className="border-b border-border bg-card lg:sticky lg:top-6 lg:z-10 w-full mb-4">
+    <div className="border-b border-border lg:sticky lg:top-6 lg:z-10 w-full mb-4">
       <div className="px-0 w-full min-w-0">
         <TopNav
           tabs={tabs}

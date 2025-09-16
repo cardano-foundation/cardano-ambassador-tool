@@ -269,3 +269,11 @@ svg *,
     min-height: 44px;
   }
 }
+
+.leaflet-container {
+  z-index: 1 !important;
+}
+
+.leaflet-control-container {
+  z-index: 1 !important;
+}
