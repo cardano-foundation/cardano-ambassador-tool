@@ -183,10 +183,14 @@ export type SummaryPlutusData = ConStr0<
 export type MembershipMetadata = ConStr0<
   [
     ByteString | List<ByteString>, // href
-    ByteString | List<ByteString>, // username
+    ByteString | List<ByteString>, // forum_username
+    ByteString | List<ByteString>, // email
+    ByteString | List<ByteString>, // address
     ByteString | List<ByteString>, // name
     ByteString | List<ByteString>, // bio_excerpt
+    ByteString | List<ByteString>, // bio
     ByteString | List<ByteString>, // country
+    ByteString | List<ByteString>, // city
     ByteString | List<ByteString>, // flag
     ByteString | List<ByteString>, // avatar
     ByteString | List<ByteString>, // created_at
@@ -277,10 +281,14 @@ export const membershipMetadata = (
 ): MembershipMetadata => {
   return conStr0([
     handleString(jsonData.href || ""),
-    handleString(jsonData.username || ""),
+    handleString(jsonData.forum_username || ""),
+    handleString(jsonData.email || ""),
+    handleString(jsonData.address || ""),
     handleString(jsonData.name || ""),
     handleString(jsonData.bio_excerpt || ""),
+    handleString(jsonData.bio || ""),
     handleString(jsonData.country || ""),
+    handleString(jsonData.city || ""),
     handleString(jsonData.flag || ""),
     handleString(jsonData.avatar || ""),
     handleString(jsonData.created_at || ""),
@@ -478,10 +486,14 @@ export type SummaryData = {
 
 export type MemberData = {
   href?: string;
-  username?: string;
+  forum_username?: string;
+  email?: string;
+  address?: string;
   name?: string;
   bio_excerpt?: string;
+  bio?: string;
   country?: string;
+  city?: string;
   flag?: string;
   avatar?: string;
   created_at?: string;
