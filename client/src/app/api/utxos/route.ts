@@ -97,13 +97,9 @@ export async function POST(req: NextRequest): Promise<
 
     const utxos = await fetchAddressUTxOs(userAddress);
 
-    const validUtxos = await Promise.all(
-      utxos.filter((utxo) => utxo.output.plutusData),
-    );
+    const validUtxos = utxos.filter((utxo) => utxo.output.plutusData);
 
-    const filtered = validUtxos.filter((utxo): utxo is UTxO => utxo !== null);
-
-    return NextResponse.json(filtered, { status: 200 });
+    return NextResponse.json(validUtxos, { status: 200 });
   } catch (error) {
     console.error('Error in POST /api/utxos:', error);
     return NextResponse.json(

@@ -44,7 +44,7 @@ describe('useUserAuth', () => {
   });
 
   it('should initialize with no user when localStorage is empty', () => {
-    const { result } = renderHook(() => useUserAuth());
+    const { result } = renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
     expect(result.current.user).toBeNull();
     expect(result.current.isAuthenticated).toBe(false);
     expect(result.current.userAddress).toBeNull();
@@ -58,7 +58,7 @@ describe('useUserAuth', () => {
       JSON.stringify(storedUser),
     );
 
-    const { result } = renderHook(() => useUserAuth());
+    const { result } = renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
 
     expect(result.current.user).toEqual(storedUser);
     expect(result.current.isAuthenticated).toBe(true);
@@ -70,7 +70,7 @@ describe('useUserAuth', () => {
     (window.localStorage.getItem as jest.Mock).mockReturnValue('invalid json');
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
-    const { result } = renderHook(() => useUserAuth());
+    const { result } = renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
 
     expect(result.current.user).toBeNull();
     expect(consoleSpy).toHaveBeenCalledWith(
@@ -83,7 +83,7 @@ describe('useUserAuth', () => {
   });
 
   it('should set wallet persistence on mount', () => {
-    renderHook(() => useUserAuth());
+    renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
     expect(mockWalletState.setPersist).toHaveBeenCalledWith(true);
   });
 
@@ -93,7 +93,7 @@ describe('useUserAuth', () => {
 
     mockResolveRoles.mockResolvedValue(mockRoles);
 
-    const { result, rerender } = renderHook(() => useUserAuth());
+    const { result, rerender } = renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
 
     // Simulate wallet connection
     act(() => {
@@ -119,7 +119,7 @@ describe('useUserAuth', () => {
 
     mockResolveRoles.mockRejectedValue(new Error('Role resolution failed'));
 
-    const { result, rerender } = renderHook(() => useUserAuth());
+    const { result, rerender } = renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
 
     act(() => {
       Object.assign(mockWalletState, {
@@ -145,7 +145,7 @@ describe('useUserAuth', () => {
   it('should not fetch roles when address is empty', async () => {
     const mockWallet = { name: 'TestWallet' };
 
-    const { rerender } = renderHook(() => useUserAuth());
+    const { rerender } = renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
 
     act(() => {
       Object.assign(mockWalletState, {
@@ -170,7 +170,7 @@ describe('useUserAuth', () => {
       JSON.stringify(adminUser),
     );
 
-    const { result } = renderHook(() => useUserAuth());
+    const { result } = renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
 
     expect(result.current.isAuthenticated).toBe(true);
     expect(result.current.userRoles).toEqual(['admin', 'member']);
@@ -187,7 +187,7 @@ describe('useUserAuth', () => {
 
     mockResolveRoles.mockResolvedValue(['member']);
 
-    const { result, rerender } = renderHook(() => useUserAuth());
+    const { result, rerender } = renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
 
     await waitFor(() => {
       expect(result.current.isAuthenticated).toBe(true);
@@ -209,7 +209,7 @@ describe('useUserAuth', () => {
   });
 
   it('should handle multiple rapid address changes', async () => {
-    const { result, rerender } = renderHook(() => useUserAuth());
+    const { result, rerender } = renderHook(() => useUserAuth({ wallet: null, address: null, isConnected: false }));
     const addresses = [
       'addr_test1_address1',
       'addr_test1_address2',
