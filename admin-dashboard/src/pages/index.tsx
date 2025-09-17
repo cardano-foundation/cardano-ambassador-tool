@@ -6,7 +6,7 @@ import Layout from "@/components/Layout";
 
 import { getProvider } from "@/utils/utils";
 
-import { stringToHex } from "@meshsdk/core";
+import { deserializeAddress, stringToHex } from "@meshsdk/core";
 import {
   CATConstants,
   SetupTx,
@@ -235,9 +235,10 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
+          const adminPk = admins.map((add: string) => deserializeAddress(add).pubKeyHash);
           const result = await setup.mintSpendOracleNFT(
             paramUtxo,
-            admins,
+            adminPk,
             adminTenure,
             Number(multiSigThreshold)
           );
@@ -301,8 +302,6 @@ export default function Home() {
             blockfrost.fetchUTxOs(tokenUtxoHash, parseInt(tokenUtxoIndex)),
           ]);
 
-          
-          
           const oracleUtxo = oracleUtxos[0];
           const tokenUtxo = tokenUtxos[0];
           if (!oracleUtxo || !tokenUtxo) {
@@ -322,6 +321,14 @@ export default function Home() {
             stringToHex(userData.emailAddress),
             stringToHex(userData.bio)
           );
+
+          console.log({
+            oracleUtxo,
+            tokenUtxo,
+            uesr: userData.tokenPolicyId,
+            uesrd: userData.tokenAssetName,
+            metadata,
+          });
 
           const result = await userAction.applyMembership(
             oracleUtxo,

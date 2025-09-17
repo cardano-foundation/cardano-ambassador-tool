@@ -19,7 +19,7 @@ export const useAmbassadorProfile = (ambassadorId: string): UseAmbassadorProfile
       setError(null);
       
       console.log('Fetching profile for:', ambassadorId);
-      const response = await fetch(`/api/ambassadors/${ambassadorId}`);
+      const response = await fetch(`/api/member/${ambassadorId}`);
       console.log('Response status:', response.status);
       
       if (!response.ok) {

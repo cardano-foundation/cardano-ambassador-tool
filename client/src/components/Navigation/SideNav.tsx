@@ -2,21 +2,115 @@
 
 import Card, { CardContent } from '@/components/atoms/Card';
 import AppLogo from '@/components/atoms/Logo';
-import HambugerIcon from '@/components/atoms/HumbugerIcon';
+import SettingsIcon from '@/components/atoms/SettingsIcon';
 import Title from '@/components/atoms/Title';
+import UsersIcon from '@/components/atoms/UsersIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { useApp } from '@/context';
-import { useWallet } from '@meshsdk/react';
+import { NavigationSection } from '@types';
+import { GridIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useNavigation } from '@/hooks/UseNavigation';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+const defaultNavigationSections: NavigationSection[] = [
+  {
+    items: [
+      { id: 'home', label: 'Home', href: '/', icon: GridIcon },
+      { id: 'learn', label: 'Learn', href: '/learn', icon: GridIcon },
+      { id: 'about', label: 'About', href: '/about', icon: GridIcon },
+      {
+        id: 'ambassador',
+        label: 'Become an Ambassador',
+        href: '/sign-up',
+        icon: GridIcon,
+      },
+    ],
+  },
+];
+
+const memberToolsSection: NavigationSection = {
+  title: 'Member Tools',
+  items: [
+    {
+      id: 'submissions',
+      label: 'Submissions',
+      href: '/dashboard/submissions',
+      icon: UsersIcon,
+    },
+    {
+      id: 'dashboard',
+      label: 'Profile',
+      href: '/dashboard',
+      icon: SettingsIcon,
+    },
+  ],
+};
+
+const adminToolsSection: NavigationSection = {
+  title: 'Admin Tools',
+  items: [
+    {
+      id: 'manage-ambassadors',
+      label: 'Manage Ambassadors',
+      href: '/manage/ambassadors',
+      icon: UsersIcon,
+    },
+    {
+      id: 'membership-intent',
+      label: 'Membership intent',
+      href: '/manage/membership',
+      icon: SettingsIcon,
+    },
+    {
+      id: 'proposal-intent',
+      label: 'Proposal intent',
+      href: '/manage/proposals',
+      icon: SettingsIcon,
+    },
+  ],
+};
 
 const SideNav = () => {
-  const { sections, currentActiveId } = useNavigation(); 
-  const { connected } = useWallet();
-  const { isNetworkValid } = useApp();
+  const { user, isAdmin, wallet, isNetworkValid, userRoles } = useApp();
+
+  const pathname = usePathname();
+
+  const [sections, setSections] = useState(defaultNavigationSections);
+
+  // Active link handling
+  const [currentActiveId, setCurrentActiveId] = useState('');
+  useEffect(() => {
+    const allItems = [
+      ...defaultNavigationSections.flatMap((s) => s.items),
+      ...memberToolsSection.items,
+      ...adminToolsSection.items,
+    ];
+    const match = allItems.find((item) => item.href === pathname);
+    if (match) setCurrentActiveId(match.id);
+  }, [pathname, wallet.isConnected, userRoles]);
+
+  // Update sections when roles change
+  useEffect(() => {
+    const updated = [...defaultNavigationSections];
+
+    // if (!isNetworkValid) {
+    //   return;
+    // }
+
+    if (isAdmin) {
+      updated.push(adminToolsSection);
+    }
+
+    if (user) {
+      updated.push(memberToolsSection);
+    }
+
+    setSections(updated);
+  }, [user, isAdmin, wallet.isConnected, userRoles]);
 
   return (
-    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col border-r lg:flex">
+    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r lg:flex">
       <div className="flex items-center justify-start p-6">
         <AppLogo />
       </div>
@@ -36,7 +130,7 @@ const SideNav = () => {
             )}
             <nav className="space-y-1">
               {section.items.map((item) => {
-                const IconComponent = item.icon || HambugerIcon;
+                const IconComponent = item.icon || GridIcon;
                 const isActive = item.id === currentActiveId;
                 return (
                   <Link
@@ -73,7 +167,7 @@ const SideNav = () => {
 
       <Card padding="sm" className="mx-4 mt-auto mb-4">
         <CardContent className="flex flex-col">
-          {connected && isNetworkValid ? (
+          {wallet.isConnected && isNetworkValid ? (
             <span className="text-muted-foreground text-sm">
               Connected Wallet{' '}
             </span>

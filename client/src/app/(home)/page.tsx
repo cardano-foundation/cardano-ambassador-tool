@@ -5,6 +5,7 @@ import Title from '@/components/atoms/Title';
 import { Pagination } from '@/components/Pagination'; // Import your Pagination component
 import { useApp } from '@/context';
 import React, { useMemo, useState } from 'react';
+import Link from 'next/link';
 import AmbassadorCard from './_components/AmbassadorCard';
 
 export default function HomePage() {
@@ -95,11 +96,11 @@ export default function HomePage() {
         }
       >
         {displayedAmbassadors.map((ambassador) => (
-          <AmbassadorCard
-            key={ambassador.name}
-            ambassador={ambassador}
-            isListView={currentView === 'list'}
-          />
+            <AmbassadorCard
+              key={ambassador.username}
+              ambassador={ambassador}
+              isListView={currentView === 'list'}
+            />
         ))}
       </div>
 

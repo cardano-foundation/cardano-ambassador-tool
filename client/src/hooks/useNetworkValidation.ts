@@ -1,11 +1,16 @@
 'use client';
 
 import { getCurrentNetworkConfig, NETWORK_NAMES } from '@/config/cardano';
-import { useWallet } from '@meshsdk/react';
 import { NetworkConfig, NetworkValidationResult } from '@types';
-import { useEffect, useState } from 'react';
+import { IWallet } from '@meshsdk/core';
+import { useEffect, useState, useCallback } from 'react';
 
-export function useNetworkValidation() {
+interface UseNetworkValidationProps {
+  wallet: IWallet | null;
+  isConnected: boolean;
+}
+
+export function useNetworkValidation({ wallet, isConnected }: UseNetworkValidationProps) {
   // Network state
   const [currentNetwork] = useState<NetworkConfig>(() =>
     getCurrentNetworkConfig(),
@@ -16,18 +21,9 @@ export function useNetworkValidation() {
 
   const [isValidatingNetwork, setIsValidatingNetwork] = useState(false);
 
-  const { wallet, connected } = useWallet();
-
-  // Validate wallet network when wallet or address changes
-  useEffect(() => {
-    if (connected) {
-      validateCurrentWallet();
-    }
-  }, [connected]);
-
   // Network validation functions
-  const validateCurrentWallet = async () => {
-    if (!connected && !networkValidation) {
+  const validateCurrentWallet = useCallback(async () => {
+    if (!isConnected && !networkValidation) {
       setNetworkValidation(null);
       return;
     }
@@ -81,17 +77,60 @@ export function useNetworkValidation() {
     } finally {
       setIsValidatingNetwork(false);
     }
-  };
+  }, [isConnected, wallet, currentNetwork.name]);
 
   const dismissNetworkError = () => {
     setNetworkValidation(null);
   };
+
+  // Validate network before connection attempt
+  const validateBeforeConnection = useCallback(async (testWallet: IWallet): Promise<boolean> => {
+    setIsValidatingNetwork(true);
+    
+    try {
+      const expectedNetwork = getCurrentNetworkConfig();
+      const walletNetwork = await testWallet.getNetworkId();
+      const isValid = walletNetwork == expectedNetwork.networkId;
+
+      if (!isValid) {
+        setNetworkValidation({
+          isValid: false,
+          walletNetwork: NETWORK_NAMES[walletNetwork],
+          expectedNetwork: expectedNetwork.name,
+          error: 'NETWORK_MISMATCH',
+          message: `Network mismatch! Your wallet is connected to ${NETWORK_NAMES[walletNetwork]}, but this app is configured for ${expectedNetwork.name}. Please switch your wallet to ${expectedNetwork.name} network.`,
+        });
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Network validation error:', error);
+      setNetworkValidation({
+        isValid: false,
+        expectedNetwork: currentNetwork.name,
+        error: 'WALLET_ERROR',
+        message: 'Failed to validate wallet network. Please try reconnecting your wallet.',
+      });
+      return false;
+    } finally {
+      setIsValidatingNetwork(false);
+    }
+  }, [currentNetwork.name]);
+
+  // Clear validation when wallet disconnects
+  useEffect(() => {
+    if (!isConnected) {
+      setNetworkValidation(null);
+    }
+  }, [isConnected]);
 
   return {
     currentNetwork,
     networkValidation,
     isValidatingNetwork,
     validateCurrentWallet,
+    validateBeforeConnection,
     dismissNetworkError,
     // Helper computed values
     isNetworkValid: networkValidation?.isValid,

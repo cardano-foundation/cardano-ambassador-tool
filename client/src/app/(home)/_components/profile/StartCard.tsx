@@ -7,14 +7,14 @@ interface StatCardProps {
   showHeart?: boolean;
 }
 
-export const StatCard: React.FC<StatCardProps> = ({ 
-  label, 
-  value, 
-  showHeart = false 
+export const StatCard: React.FC<StatCardProps> = ({
+  label,
+  value,
+  showHeart = false
 }) => {
   return (
-    <Card 
-      padding="sm" 
+    <Card
+      padding="sm"
       className="border-2 border-dotted border-border/60 h-20 sm:h-20 w-full"
     >
       <CardContent className="flex flex-col justify-center items-center h-full space-y-0">

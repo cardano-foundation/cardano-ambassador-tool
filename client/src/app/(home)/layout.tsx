@@ -13,21 +13,21 @@ function HomeContent({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AppLoadingScreen isVisible={shouldShowLoading} />
-      <div className="flex min-h-screen">
-        <div className="sticky top-0 z-20">
+      <div className="flex h-screen overflow-hidden">
+        <div className="flex-shrink-0">
           <SideNav />
         </div>
 
-        <div className="min-h-screen flex-1">
-          <div className="sticky top-0 z-20">
+        <div className="flex flex-1 flex-col min-w-0 h-screen">
+          <div className="flex-shrink-0 sticky top-0 z-20">
             <TopNavBar />
           </div>
-          {children}
+          <main className="flex-1 overflow-auto">
+            {children}
+            <Footer />
+          </main>
           <div className="sticky top-0 z-60">
             <ToastContainer />
-          </div>
-          <div className="bottom-0">
-            <Footer />
           </div>
         </div>
       </div>

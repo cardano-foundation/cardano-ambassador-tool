@@ -2,7 +2,7 @@ import { CATConstants } from "@sidan-lab/cardano-ambassador-tool";
 
 export function getCatConstants() {
     const network =
-        (process.env.NEXT_PUBLIC_NETWORK as "mainnet" | "preprod") || "preprod";
+        (process.env.NEXT_PUBLIC_NETWORK as "mainnet" | "preprod") ?? "preprod";
 
     const SETUP_UTXO = {
         oracle: {

@@ -98,14 +98,18 @@ export function parseMembershipIntentDatum(
     ) {
       return null;
     }
-    const metadataPluts: MembershipMetadata = datum.fields[1];
+
+    
+    
+    const metadataPlutus: MembershipMetadata = datum.fields[1];
+    
     const metadata: MemberData = {
-      walletAddress: serializeAddressObj(metadataPluts.fields[0]),
-      fullName: hexToString(metadataPluts.fields[1].bytes),
-      displayName: hexToString(metadataPluts.fields[2].bytes),
-      emailAddress: hexToString(metadataPluts.fields[3].bytes),
-      bio: hexToString(metadataPluts.fields[4].bytes),
+      forum_username: hexToString(metadataPlutus.fields[1].bytes),
+      name: hexToString(metadataPlutus.fields[2].bytes),
+      email: hexToString(metadataPlutus.fields[3].bytes),
+      bio: hexToString(metadataPlutus.fields[4].bytes),
     };
+    
     return { datum: datum as MembershipIntentDatum, metadata };
   } catch (error) {
     console.error('Error parsing membership intent datum:', error);

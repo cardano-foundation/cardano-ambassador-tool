@@ -1,7 +1,6 @@
 'use client';
 
 import { AppProvider } from '@/context/AppContext';
-import { MeshProvider } from '@meshsdk/react';
 import 'leaflet/dist/leaflet.css';
 
 import type { Metadata } from 'next';
@@ -60,9 +59,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <MeshProvider>
-          <AppProvider>{children}</AppProvider>
-        </MeshProvider>
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );
