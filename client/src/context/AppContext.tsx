@@ -120,7 +120,7 @@ const AppContext = createContext<AppContextValue>({
   userRoles: [],
   userWallet: undefined,
   logout: () => {},
-  
+
   // Theme defaults
   theme: 'light',
   setTheme: () => {},
@@ -225,7 +225,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     isConnected: wallet.isConnected,
   });
 
-  // Coordinate app loading state 
+  // Coordinate app loading state
   useEffect(() => {
     const timer = updateLoadingState(
       dbLoading,

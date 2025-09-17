@@ -31,7 +31,9 @@ export default function ComponentShowcase() {
       id: 'admin-review',
       title: 'Admin Review In Progress',
       content: (
-        <div className="text-muted-foreground text-base font-medium">2 hours ago</div>
+        <div className="text-muted-foreground text-base font-medium">
+          2 hours ago
+        </div>
       ),
       status: 'current',
     },

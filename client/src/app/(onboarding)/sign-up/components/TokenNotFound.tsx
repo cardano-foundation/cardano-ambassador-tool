@@ -1,8 +1,7 @@
 import CardanoLogo from '@/components/atoms/CardanoLogo';
 import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
 import TextLink from '@/components/atoms/TextLink';
-import Link from 'next/link';
+import Title from '@/components/atoms/Title';
 
 const TokenNotFound = () => {
   return (
@@ -18,9 +17,12 @@ const TokenNotFound = () => {
           contains the required token.
         </Paragraph>
       </div>
-      <div className="flex justify-center lg:pt-6 pt-4 gap-2">
+      <div className="flex justify-center gap-2 pt-4 lg:pt-6">
         <span className="text-muted-foreground text-sm">Need Help? </span>
-        <TextLink href="#" variant="dotted"> Contact support </TextLink>
+        <TextLink href="#" variant="dotted">
+          {' '}
+          Contact support{' '}
+        </TextLink>
       </div>
     </div>
   );

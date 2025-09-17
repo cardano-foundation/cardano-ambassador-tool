@@ -38,5 +38,4 @@ function ManageContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-
 export default ManageContent;

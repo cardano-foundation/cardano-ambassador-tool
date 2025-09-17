@@ -6,11 +6,9 @@ import Title from '@/components/atoms/Title';
 import MembershipIntentTimeline from '@/components/MembershipIntentTimeline';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { useApp } from '@/context/AppContext';
-import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
 import { Utxo } from '@types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
 
 interface PageProps {
   params: Promise<{ txHash: string[] }>;
@@ -81,7 +79,7 @@ const MembershipIntentPage = ({ params }: PageProps) => {
 
   return (
     <div className="space-y-6 px-4 py-2 pb-8 sm:px-6">
-      <MembershipIntentTimeline  intentUtxo={membershipUtxo} />
+      <MembershipIntentTimeline intentUtxo={membershipUtxo} />
     </div>
   );
 };

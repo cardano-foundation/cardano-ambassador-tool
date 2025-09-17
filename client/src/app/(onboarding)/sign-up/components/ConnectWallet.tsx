@@ -6,11 +6,7 @@ import Title from '@/components/atoms/Title';
 import WalletList from '@/components/wallet/WalletList';
 import { useApp } from '@/context/AppContext';
 
-const ConnectWallet = ({
-  goNext,
-}: {
-  goNext?: () => void;
-}) => {
+const ConnectWallet = ({ goNext }: { goNext?: () => void }) => {
   const { wallet } = useApp();
   const { address } = wallet;
   return (
@@ -20,7 +16,7 @@ const ConnectWallet = ({
         <Paragraph size="sm">Use a supported Cardano wallet:</Paragraph>
       </div>
 
-      <WalletList/>
+      <WalletList />
 
       <Paragraph size="sm" className="text-center">
         If your wallet is whitelisted and holds the CIP-68 token issued to

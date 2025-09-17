@@ -22,11 +22,10 @@ export function useAppLoading() {
     authLoading: boolean,
   ) => {
     if (!isInitialLoad) {
-      // Skip loading screen for navigation 
+      // Skip loading screen for navigation
       setIsAppLoading(false);
       return;
     }
-
 
     // check if all resources are ready
     if (!dbLoading && isThemeInitialized && !authLoading) {

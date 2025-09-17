@@ -22,7 +22,7 @@ export default function MembershipIntentPage() {
   }
 
   const decodedUtxos = membershipIntents.map((utxo, idx) => {
-    let decodedDatum: {
+    const decodedDatum: {
       fullName: string;
       displayName: string;
       email: string;
@@ -38,7 +38,7 @@ export default function MembershipIntentPage() {
     };
 
     if (utxo.plutusData) {
-      const parsed = parseMembershipIntentDatum(utxo.plutusData);      
+      const parsed = parseMembershipIntentDatum(utxo.plutusData);
 
       if (parsed && parsed.metadata) {
         decodedDatum['fullName'] = parsed.metadata.name!;

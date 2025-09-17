@@ -1,5 +1,3 @@
-import React from "react";
-
 const OnboardingSvg = ({ className }: { className: string }) => {
   return (
     <>
@@ -15,7 +13,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
           d="M197.65 164.336C197.65 156.238 197.65 152.218 199.224 149.13C200.623 146.45 202.837 144.178 205.519 142.838C208.608 141.265 212.63 141.265 220.731 141.265H644.942V646.029H197.65V164.394V164.336Z"
           fill="#F6F8FA"
         />
-        <g style={{ mixBlendMode: "multiply" }}>
+        <g style={{ mixBlendMode: 'multiply' }}>
           <path
             d="M197.65 158.568C197.65 152.509 197.65 149.48 198.874 147.149C199.923 145.168 201.555 143.479 203.595 142.43C205.868 141.207 208.958 141.207 215.019 141.207H645V645.97H197.65V158.568Z"
             fill="#F8F9FB"
@@ -58,7 +56,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
         />
         <mask
           id="mask0_793_3325"
-          style={{ maskType: "luminance" }}
+          style={{ maskType: 'luminance' }}
           maskUnits="userSpaceOnUse"
           x="231"
           y="454"
@@ -214,7 +212,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
         />
         <mask
           id="mask1_793_3325"
-          style={{ maskType: "luminance" }}
+          style={{ maskType: 'luminance' }}
           maskUnits="userSpaceOnUse"
           x="231"
           y="312"
@@ -401,7 +399,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
         />
         <mask
           id="mask2_793_3325"
-          style={{ maskType: "luminance" }}
+          style={{ maskType: 'luminance' }}
           maskUnits="userSpaceOnUse"
           x="171"
           y="221"
@@ -549,7 +547,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
         />
         <mask
           id="mask3_793_3325"
-          style={{ maskType: "luminance" }}
+          style={{ maskType: 'luminance' }}
           maskUnits="userSpaceOnUse"
           x="26"
           y="46"
@@ -720,7 +718,7 @@ const OnboardingSvg = ({ className }: { className: string }) => {
         />
         <mask
           id="mask4_793_3325"
-          style={{ maskType: "luminance" }}
+          style={{ maskType: 'luminance' }}
           maskUnits="userSpaceOnUse"
           x="26"
           y="146"

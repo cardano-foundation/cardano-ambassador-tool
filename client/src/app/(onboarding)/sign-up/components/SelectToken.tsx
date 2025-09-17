@@ -5,10 +5,10 @@ import KeyValue from '@/components/atoms/KeyValue';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
+import { useApp } from '@/context/AppContext';
 import { shortenString } from '@/utils';
 import { hexToString } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
-import { useApp } from '@/context/AppContext';
 
 const SelectToken = ({
   setAsset,
@@ -52,9 +52,13 @@ const SelectToken = ({
                 className="peer hidden"
                 checked={selectedAssetName === asset.assetName}
                 onChange={() => {
-                  selectedAssetName === asset.assetName
-                    ? (setSelectedAssetName(null), setAsset(undefined))
-                    : (setSelectedAssetName(asset.assetName), setAsset(asset));
+                  if (selectedAssetName === asset.assetName) {
+                    setSelectedAssetName(null);
+                    setAsset(undefined);
+                  } else {
+                    setSelectedAssetName(asset.assetName);
+                    setAsset(asset);
+                  }
                 }}
               />
               <label

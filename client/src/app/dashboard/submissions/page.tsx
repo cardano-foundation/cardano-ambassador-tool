@@ -9,11 +9,11 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import { useApp } from '@/context';
 import {
+  dbUtxoToMeshUtxo,
   getCatConstants,
   getProvider,
   parseMembershipIntentDatum,
 } from '@/utils';
-import { UTxO } from '@meshsdk/core';
 import {
   MemberData,
   membershipMetadata,
@@ -97,14 +97,10 @@ export default function SubmissionsPage() {
     }
 
     const tokenUtxo = await import('@/utils/utils').then((utils) =>
-      utils.findTokenUtxoByMembershipIntentUtxo(
-        membershipUtxo as unknown as UTxO,
-      ),
+      utils.findTokenUtxoByMembershipIntentUtxo(membershipUtxo),
     );
 
     console.log({ tokenUtxo, userMetadata, membershipUtxo });
-
-    return;
 
     if (!tokenUtxo) {
       throw new Error('No token UTxO found for this membership intent');
@@ -121,24 +117,24 @@ export default function SubmissionsPage() {
     }
 
     if (!userAddress || !userWallet) {
-      return;
+      throw new Error('User address or wallet not available');
     }
 
     const userAction = new UserActionTx(
-      userAddress,
-      userWallet,
+      userAddress!,
+      userWallet!,
       blockfrost,
       getCatConstants(),
     );
     const metadata = membershipMetadata({
-      address: userAddress,
+      address: userAddress!,
       ...userMetadata,
     });
 
     const result = await userAction.updateMembershipIntentMetadata(
       oracleUtxo,
       tokenUtxo,
-      membershipUtxo as unknown as UTxO,
+      dbUtxoToMeshUtxo(membershipUtxo),
       metadata,
     );
 

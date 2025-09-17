@@ -3,13 +3,14 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   req: Request,
-  { params }: { params: { username: string } },
+  context: { params: Promise<{ username: string[] }> },
 ) {
   try {
-    const data = await getUserProfile({ username: params.username });
+    const { username } = await context.params;
+    const data = await getUserProfile({ username: username[0] });
     return NextResponse.json(data, {
       headers: {
-        'Cache-Control': 's-maxage=600, stale-while-revalidate=300', 
+        'Cache-Control': 's-maxage=600, stale-while-revalidate=300',
       },
     });
   } catch (e: any) {

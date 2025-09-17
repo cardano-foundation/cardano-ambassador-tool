@@ -2,6 +2,9 @@ import { toast } from '@/components/toast/toast-manager';
 import { BlockfrostService } from '@/services/blockfrostService';
 import {
   BlockfrostProvider,
+  ByteString,
+  PubKeyAddress,
+  ScriptAddress,
   UTxO,
   deserializeAddress,
   deserializeDatum,
@@ -100,16 +103,18 @@ export function parseMembershipIntentDatum(
       return null;
     }
 
-    
-    
     const metadataPlutus: MembershipMetadata = datum.fields[1];
-    
+
     const metadata: MemberData = {
-      address: serializeAddressObj(metadataPlutus.fields[0]),
-      forum_username: hexToString(metadataPlutus.fields[1].bytes),
-      name: hexToString(metadataPlutus.fields[2].bytes),
-      email: hexToString(metadataPlutus.fields[3].bytes),
-      bio: hexToString(metadataPlutus.fields[4].bytes),
+      address: serializeAddressObj(
+        metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+      ),
+      forum_username: hexToString(
+        (metadataPlutus.fields[1] as ByteString).bytes,
+      ),
+      name: hexToString((metadataPlutus.fields[2] as ByteString).bytes),
+      email: hexToString((metadataPlutus.fields[3] as ByteString).bytes),
+      bio: hexToString((metadataPlutus.fields[4] as ByteString).bytes),
     };
 
     return { datum: datum as MembershipIntentDatum, metadata };
@@ -128,23 +133,27 @@ export function parseMemberDatum(
       !datum ||
       !datum.fields ||
       !datum.fields[0]?.list ||
-      !datum.fields[1] || // todo: check map
+      !datum.fields[1] ||
       typeof datum.fields[2]?.int === 'undefined' ||
       !datum.fields[3]?.fields
     ) {
       return null;
     }
-    const metadataPluts: MembershipMetadata = datum.fields[3];
+    const metadataPlutus: MembershipMetadata = datum.fields[3];
     const metadata: MemberData = {
-      walletAddress: serializeAddressObj(metadataPluts.fields[0]),
-      fullName: hexToString(metadataPluts.fields[1].bytes),
-      displayName: hexToString(metadataPluts.fields[2].bytes),
-      emailAddress: hexToString(metadataPluts.fields[3].bytes),
-      bio: hexToString(metadataPluts.fields[4].bytes),
+      address: serializeAddressObj(
+        metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+      ),
+      name: hexToString((metadataPlutus.fields[1] as ByteString).bytes),
+      forum_username: hexToString(
+        (metadataPlutus.fields[2] as ByteString).bytes,
+      ),
+      email: hexToString((metadataPlutus.fields[3] as ByteString).bytes),
+      bio: hexToString((metadataPlutus.fields[4] as ByteString).bytes),
     };
 
-    const policyId = datum.fields[0].list[0].bytes;
-    const assetName = datum.fields[0].list[1].bytes;
+    const policyId = (datum.fields[0].list[0] as ByteString).bytes;
+    const assetName = (datum.fields[0].list[1] as ByteString).bytes;
 
     const completion: Map<ProposalData, number> = new Map();
     datum.fields[1].map.forEach(
@@ -194,9 +203,11 @@ export function parseProposalDatum(
     ) {
       return null;
     }
-    const metadataPluts: ProposalMetadata = datum.fields[3];
+    const metadataPlutus: ProposalMetadata = datum.fields[3];
     const metadata: ProposalData = {
-      projectDetails: hexToString(metadataPluts.fields[0].bytes),
+      projectDetails: hexToString(
+        (metadataPlutus.fields[0] as ByteString).bytes,
+      ),
     };
     return { datum: datum as ProposalDatum, metadata };
   } catch (error) {
@@ -327,8 +338,10 @@ export async function findMembershipIntentUtxo(
         const datum: MembershipIntentDatum = deserializeDatum(
           utxo.output.plutusData,
         );
-        const metadataPluts: MembershipMetadata = datum.fields[1];
-        const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
+        const metadataPlutus: MembershipMetadata = datum.fields[1];
+        const walletAddress = serializeAddressObj(
+          metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+        );
         return walletAddress === address;
       } catch (error) {
         console.error('Error processing UTxO:', error);
@@ -358,8 +371,10 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
       try {
         if (!utxo.output.plutusData) return false;
         const datum: MemberDatum = deserializeDatum(utxo.output.plutusData);
-        const metadataPluts: MembershipMetadata = datum.fields[3];
-        const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
+        const metadataPlutus: MembershipMetadata = datum.fields[3];
+        const walletAddress = serializeAddressObj(
+          metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+        );
         return walletAddress === address;
       } catch (error) {
         console.error('Error processing UTxO:', error);
@@ -411,8 +426,10 @@ export async function findTokenUtxoByMemberUtxo(
       return null;
     }
     const datum: MemberDatum = deserializeDatum(memberUtxo.output.plutusData);
-    const metadataPluts: MembershipMetadata = datum.fields[3];
-    const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
+    const metadataPlutus: MembershipMetadata = datum.fields[3];
+    const walletAddress = serializeAddressObj(
+      metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+    );
     const policyId = datum.fields[0].list[0].bytes;
     const assetName = datum.fields[0].list[1].bytes;
     const tokenUnit = policyId + assetName;
@@ -432,7 +449,7 @@ export async function findTokenUtxoByMemberUtxo(
 }
 
 /**
- * Finds a token UTxO associated with a membership intent UTxO
+ * Finds a token UTxO associated with a membership intent UTxO (database version)
  * @param membershipIntentUtxo The membership intent UTxO to find the associated token for
  * @returns The matching token UTxO or null if not found
  */
@@ -447,8 +464,48 @@ export async function findTokenUtxoByMembershipIntentUtxo(
     const datum: MembershipIntentDatum = deserializeDatum(
       membershipIntentUtxo.plutusData,
     );
-    const metadataPluts: MembershipMetadata = datum.fields[1];
-    const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
+    const metadataPlutus: MembershipMetadata = datum.fields[1];
+    const walletAddress = serializeAddressObj(
+      metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+    );
+    const policyId = datum.fields[0].list[0].bytes;
+    const assetName = datum.fields[0].list[1].bytes;
+    const tokenUnit = policyId + assetName;
+    const utxos = await blockfrostService.fetchAddressUTxOs(walletAddress);
+    const tokenUtxo = utxos.find((utxo: { output: { amount: any[] } }) => {
+      return utxo.output.amount.some((asset) => asset.unit === tokenUnit);
+    });
+    if (!tokenUtxo) {
+      console.log(`No token UTxO found for token: ${tokenUnit}`);
+      return null;
+    }
+    return tokenUtxo;
+  } catch (error) {
+    console.error('Error finding token UTxO:', error);
+    return null;
+  }
+}
+
+/**
+ * Finds a token UTxO associated with a membership intent UTxO (blockchain version)
+ * @param membershipIntentUtxo The membership intent UTxO to find the associated token for
+ * @returns The matching token UTxO or null if not found
+ */
+export async function findTokenUtxoByMembershipIntentUtxoMesh(
+  membershipIntentUtxo: UTxO,
+): Promise<UTxO | null> {
+  try {
+    if (!membershipIntentUtxo.output.plutusData) {
+      console.error('Member UTxO does not contain Plutus data');
+      return null;
+    }
+    const datum: MembershipIntentDatum = deserializeDatum(
+      membershipIntentUtxo.output.plutusData,
+    );
+    const metadataPlutus: MembershipMetadata = datum.fields[1];
+    const walletAddress = serializeAddressObj(
+      metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+    );
     const policyId = datum.fields[0].list[0].bytes;
     const assetName = datum.fields[0].list[1].bytes;
     const tokenUnit = policyId + assetName;
@@ -472,12 +529,11 @@ export async function findTokenUtxoByMembershipIntentUtxo(
  * @param membershipIntentUtxo The membership intent UTxO to find the associated token for
  * @returns array of admins pubkHash or null
  */
-export  function findAdmins(): string[] | null {
+export function findAdmins(): string[] | null {
   const adminList = Object.keys(process.env)
     .filter((key) => key.startsWith('ADMIN_WALLET'))
     .map((key) => deserializeAddress(process.env[key]!).pubKeyHash)
     .filter(Boolean);
-
 
   if (!adminList.length) {
     return null;
@@ -489,4 +545,27 @@ export  function findAdmins(): string[] | null {
 export function shortenString(text: string, length = 8) {
   if (!text) return '';
   return `${text.substring(0, length)}...${text.substring(text.length - length)}`;
+}
+
+// ============================================================================
+// Type Conversion Utilities
+// ============================================================================
+/**
+ * Converts database Utxo type to MeshJS UTxO type
+ * @param dbUtxo The database Utxo to convert
+ * @returns The converted MeshJS UTxO
+ */
+export function dbUtxoToMeshUtxo(dbUtxo: Utxo): UTxO {
+  return {
+    input: {
+      txHash: dbUtxo.txHash,
+      outputIndex: dbUtxo.outputIndex,
+    },
+    output: {
+      address: dbUtxo.address,
+      amount: JSON.parse(dbUtxo.amount || '[]'),
+      dataHash: dbUtxo.dataHash || undefined,
+      plutusData: dbUtxo.plutusData || undefined,
+    },
+  };
 }

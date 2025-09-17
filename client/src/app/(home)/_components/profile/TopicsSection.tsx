@@ -1,9 +1,9 @@
-import React from 'react';
-import Link from 'next/link';
-import Title  from '@/components/atoms/Title';
 import Card, { CardContent } from '@/components/atoms/Card';
-import Paragraph  from '@/components/atoms/Paragraph';
+import Paragraph from '@/components/atoms/Paragraph';
 import TextLink from '@/components/atoms/TextLink';
+import Title from '@/components/atoms/Title';
+import Link from 'next/link';
+import React from 'react';
 
 interface TopicsSectionProps {
   topics: Array<{
@@ -22,20 +22,24 @@ export const TopicsSection: React.FC<TopicsSectionProps> = ({
   topics,
   showAllTopics,
   onToggleShowAll,
-  formatDate
+  formatDate,
 }) => {
   const TopicItem = ({ topic }: { topic: TopicsSectionProps['topics'][0] }) => (
-    <div className="flex items-start justify-between py-3 border-b border-border/60 last:border-b-0">
+    <div className="border-border/60 flex items-start justify-between border-b py-3 last:border-b-0">
       <div className="flex-1">
         <Link href={topic.url} target="_blank" rel="noopener noreferrer">
-          <Paragraph className="text-sm font-medium text-foreground mb-1 hover:text-primary-base transition-colors cursor-pointer">
+          <Paragraph className="text-foreground hover:text-primary-base mb-1 cursor-pointer text-sm font-medium transition-colors">
             {topic.title}
           </Paragraph>
         </Link>
         <div className="flex items-center space-x-2">
-          <Paragraph className="text-xs text-muted-foreground">{formatDate(topic.created_at)}</Paragraph>
-          <span className="text-sm text-primary-base">❤</span>
-          <span className="text-sm text-muted-foreground">{topic.like_count}</span>
+          <Paragraph className="text-muted-foreground text-xs">
+            {formatDate(topic.created_at)}
+          </Paragraph>
+          <span className="text-primary-base text-sm">❤</span>
+          <span className="text-muted-foreground text-sm">
+            {topic.like_count}
+          </span>
         </div>
       </div>
     </div>
@@ -44,12 +48,14 @@ export const TopicsSection: React.FC<TopicsSectionProps> = ({
   return (
     <Card>
       <CardContent className="p-2">
-        <div className="flex items-center justify-between mb-4 border-b border-border/60 pb-4">
-          <Title level="6" className="text-neutral text-lg">Top Topics</Title>
+        <div className="border-border/60 mb-4 flex items-center justify-between border-b pb-4">
+          <Title level="6" className="text-neutral text-lg">
+            Top Topics
+          </Title>
           {topics.length > 5 && (
-            <TextLink 
-              href="#" 
-              variant="dotted" 
+            <TextLink
+              href="#"
+              variant="dotted"
               size="sm"
               onClick={(e) => {
                 e.preventDefault();

@@ -9,11 +9,7 @@ import Button from '../atoms/Button';
 import { toast } from '../toast/toast-manager';
 
 const WalletList = () => {
-  const {
-    wallet,
-    isNetworkValid,
-    logout,
-  } = useApp();
+  const { wallet, isNetworkValid, logout } = useApp();
 
   const {
     availableWallets,
@@ -25,7 +21,6 @@ const WalletList = () => {
     connectWallet,
     disconnectWallet,
   } = wallet;
-
 
   const handleConnect = async (
     e: MouseEvent<HTMLButtonElement>,

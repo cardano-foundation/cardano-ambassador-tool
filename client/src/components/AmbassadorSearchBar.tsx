@@ -1,8 +1,8 @@
-"use client";
-import React, { useState } from "react";
-import Input from "@/components/atoms/Input";
+'use client';
+import Input from '@/components/atoms/Input';
+import React, { useState } from 'react';
 
-const SearchIcon = ({ className = "" }: { className?: string }) => (
+const SearchIcon = ({ className = '' }: { className?: string }) => (
   <svg
     className={className}
     width="20"
@@ -20,7 +20,7 @@ const SearchIcon = ({ className = "" }: { className?: string }) => (
   </svg>
 );
 
-const GridIcon = ({ className = "" }: { className?: string }) => (
+const GridIcon = ({ className = '' }: { className?: string }) => (
   <svg className={className} viewBox="0 0 16 16" fill="none">
     <rect
       x="2"
@@ -65,7 +65,7 @@ const GridIcon = ({ className = "" }: { className?: string }) => (
   </svg>
 );
 
-const ListIcon = ({ className = "" }: { className?: string }) => (
+const ListIcon = ({ className = '' }: { className?: string }) => (
   <svg className={className} viewBox="0 0 16 16" fill="none">
     <path
       d="M2 4h12M2 8h12M2 12h12"
@@ -82,8 +82,8 @@ interface AmbassadorSearchProps {
   selectedRegion: string;
   onRegionChange: (region: string) => void;
   availableRegions: string[];
-  onViewChange?: (view: "grid" | "list") => void;
-  currentView?: "grid" | "list";
+  onViewChange?: (view: 'grid' | 'list') => void;
+  currentView?: 'grid' | 'list';
 }
 
 export default function AmbassadorSearch({
@@ -93,12 +93,12 @@ export default function AmbassadorSearch({
   onRegionChange,
   availableRegions,
   onViewChange,
-  currentView = "grid",
+  currentView = 'grid',
 }: AmbassadorSearchProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const regionOptions = [
-    { value: "all", label: "All Regions" },
+    { value: 'all', label: 'All Regions' },
     ...availableRegions.map((region) => ({
       value: region,
       label: region,
@@ -107,7 +107,7 @@ export default function AmbassadorSearch({
 
   const handleClearRegion = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onRegionChange("all");
+    onRegionChange('all');
   };
 
   const handleRegionSelect = (value: string) => {
@@ -116,45 +116,45 @@ export default function AmbassadorSearch({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-end">
-      <div className="flex-1 relative">
-        <div className="absolute left-3 top-[34px] z-10 pointer-events-none">
+    <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-end sm:gap-4">
+      <div className="relative flex-1">
+        <div className="pointer-events-none absolute top-[34px] left-3 z-10">
           <SearchIcon className="text-muted-foreground" />
         </div>
         <Input
           placeholder="Search ambassador"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10 !bg-neutral-50 dark:!bg-card"
+          className="dark:!bg-card !bg-neutral-50 pl-10"
         />
       </div>
 
-      <div className="flex gap-2 sm:gap-3 items-center pb-1.5">
+      <div className="flex items-center gap-2 pb-1.5 sm:gap-3">
         <div className="relative flex-1 sm:flex-none">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="w-full sm:w-auto px-2.5 py-2.5 bg-neutral-50 dark:bg-card  border border-border rounded-md inline-flex justify-between sm:justify-start items-center gap-2.5 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors min-w-0"
+            className="dark:bg-card border-border inline-flex w-full min-w-0 items-center justify-between gap-2.5 rounded-md border bg-neutral-50 px-2.5 py-2.5 transition-colors hover:bg-gray-200 sm:w-auto sm:justify-start dark:hover:bg-gray-700"
           >
-            <div className="flex justify-start items-center gap-1 min-w-0">
-              <div className="text-muted-foreground text-sm font-normal font-['Chivo'] leading-3 flex-shrink-0">
+            <div className="flex min-w-0 items-center justify-start gap-1">
+              <div className="text-muted-foreground flex-shrink-0 font-['Chivo'] text-sm leading-3 font-normal">
                 Sort
               </div>
-              <div className="text-slate-800 dark:text-slate-200 text-sm font-normal font-['Chivo'] leading-3 truncate">
-                {selectedRegion === "all" ? "Region" : selectedRegion}
+              <div className="truncate font-['Chivo'] text-sm leading-3 font-normal text-slate-800 dark:text-slate-200">
+                {selectedRegion === 'all' ? 'Region' : selectedRegion}
               </div>
             </div>
-            <div className="w-4 h-4 relative overflow-hidden flex items-center justify-center flex-shrink-0">
-              {selectedRegion !== "all" ? (
+            <div className="relative flex h-4 w-4 flex-shrink-0 items-center justify-center overflow-hidden">
+              {selectedRegion !== 'all' ? (
                 <button
                   onClick={handleClearRegion}
-                  className="text-slate-400 text-sm hover:text-slate-600 transition-colors"
+                  className="text-sm text-slate-400 transition-colors hover:text-slate-600"
                 >
                   ×
                 </button>
               ) : (
                 <svg
-                  className={`h-3 w-3 transition-transform text-muted-foreground ${
-                    isDropdownOpen ? "rotate-180" : ""
+                  className={`text-muted-foreground h-3 w-3 transition-transform ${
+                    isDropdownOpen ? 'rotate-180' : ''
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -171,19 +171,19 @@ export default function AmbassadorSearch({
             </div>
           </button>
           {isDropdownOpen && (
-            <div className="absolute left-0 right-0 sm:left-0 sm:right-auto z-50 mt-1 sm:min-w-[200px] origin-top rounded-md bg-background shadow-lg border border-border">
-              <div className="py-1 max-h-60 overflow-y-auto">
+            <div className="bg-background border-border absolute right-0 left-0 z-50 mt-1 origin-top rounded-md border shadow-lg sm:right-auto sm:left-0 sm:min-w-[200px]">
+              <div className="max-h-60 overflow-y-auto py-1">
                 {regionOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => handleRegionSelect(option.value)}
-                    className={`flex w-full justify-between items-center px-4 py-3 text-left text-sm transition-colors hover:bg-muted ${
+                    className={`hover:bg-muted flex w-full items-center justify-between px-4 py-3 text-left text-sm transition-colors ${
                       selectedRegion === option.value
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground"
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-muted-foreground'
                     }`}
                   >
-                    <span className="flex-1 truncate mr-2">{option.label}</span>
+                    <span className="mr-2 flex-1 truncate">{option.label}</span>
                     {selectedRegion === option.value && (
                       <svg
                         className="h-4 w-4 flex-shrink-0"
@@ -205,28 +205,28 @@ export default function AmbassadorSearch({
             </div>
           )}
         </div>
-        <div className="px-[2px] py-1 bg-neutral-50 dark:bg-card border border-border rounded-md inline-flex justify-center items-center flex-shrink-0">
+        <div className="dark:bg-card border-border inline-flex flex-shrink-0 items-center justify-center rounded-md border bg-neutral-50 px-[2px] py-1">
           <button
-            className={`p-1.5 rounded-md bg-white dark:bg-muted flex justify-center items-center ${
-              currentView === "grid"
-                ? "bg-white dark:bg-gray-900 shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)]"
-                : "hover:bg-white/50 dark:hover:bg-gray-900/50"
+            className={`dark:bg-muted flex items-center justify-center rounded-md bg-white p-1.5 ${
+              currentView === 'grid'
+                ? 'bg-white shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] dark:bg-gray-900'
+                : 'hover:bg-white/50 dark:hover:bg-gray-900/50'
             }`}
-            onClick={() => onViewChange?.("grid")}
+            onClick={() => onViewChange?.('grid')}
             title="Grid view"
           >
-            <GridIcon className="w-4 h-4 text-muted-foreground" />
+            <GridIcon className="text-muted-foreground h-4 w-4" />
           </button>
           <button
-            className={`p-1.5 rounded-md flex justify-center items-center ${
-              currentView === "list"
-                ? "bg-white dark:bg-gray-900 shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] outline-1 outline-offset-[-1px] outline-gray-100"
-                : "hover:bg-white/50 dark:hover:bg-gray-900/50"
+            className={`flex items-center justify-center rounded-md p-1.5 ${
+              currentView === 'list'
+                ? 'bg-white shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] outline-1 outline-offset-[-1px] outline-gray-100 dark:bg-gray-900'
+                : 'hover:bg-white/50 dark:hover:bg-gray-900/50'
             }`}
-            onClick={() => onViewChange?.("list")}
+            onClick={() => onViewChange?.('list')}
             title="List view"
           >
-            <ListIcon className="w-4 h-4 text-muted-foreground" />
+            <ListIcon className="text-muted-foreground h-4 w-4" />
           </button>
         </div>
       </div>

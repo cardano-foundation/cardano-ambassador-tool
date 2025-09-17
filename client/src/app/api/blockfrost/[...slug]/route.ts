@@ -11,7 +11,6 @@ export async function GET(
     const network = slug[0];
     let key = process.env.BLOCKFROST_API_KEY_PREPROD;
 
-
     switch (network) {
       case 'testnet':
         key = process.env.BLOCKFROST_API_KEY_TESTNET;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/components/atoms/ArrowIcons';
 
 type PaginationProps = {
@@ -26,7 +25,7 @@ export function Pagination({
   onPageSizeChange,
   pageSizeOptions = [10, 20, 50, 100],
   showPageSizeSelector = true,
-  maxVisiblePages = 5
+  maxVisiblePages = 5,
 }: PaginationProps) {
   const handlePrevious = () => {
     if (currentPage > 1) {
@@ -73,27 +72,27 @@ export function Pagination({
 
   if (totalPages === 0) {
     return (
-      <div className="px-5 py-3.5 border-t border-border bg-card">
+      <div className="border-border bg-card border-t px-5 py-3.5">
         <div className="flex items-center justify-between">
           {showPageSizeSelector && onPageSizeChange && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
               <span>Show</span>
               <select
                 value={pageSize}
                 onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-                className="px-2 py-1 border border-border rounded bg-card text-neutral hover:bg-rose-200"
+                className="border-border bg-card text-neutral rounded border px-2 py-1 hover:bg-rose-200"
               >
-                {pageSizeOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
+                {pageSizeOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
               <span>per page</span>
             </div>
           )}
           <div className="flex items-center gap-1">
-            <div className="text-sm text-muted-foreground m-2">
-              0 of 0
-            </div>
+            <div className="text-muted-foreground m-2 text-sm">0 of 0</div>
           </div>
         </div>
       </div>
@@ -101,18 +100,20 @@ export function Pagination({
   }
 
   return (
-    <div className="px-5 py-3.5 border-t border-border bg-card">
+    <div className="border-border bg-card border-t px-5 py-3.5">
       <div className="flex items-center justify-between">
         {showPageSizeSelector && onPageSizeChange && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <span>Show</span>
             <select
               value={pageSize}
               onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-              className="px-2 py-1 border border-border rounded bg-card text-neutral hover:bg-rose-200"
+              className="border-border bg-card text-neutral rounded border px-2 py-1 hover:bg-rose-200"
             >
-              {pageSizeOptions.map(option => (
-                <option key={option} value={option}>{option}</option>
+              {pageSizeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
               ))}
             </select>
             <span>per page</span>
@@ -120,24 +121,24 @@ export function Pagination({
         )}
 
         <div className="flex items-center gap-1">
-          <div className="text-sm text-muted-foreground m-2">
+          <div className="text-muted-foreground m-2 text-sm">
             {itemsPerPageStart}-{itemsPerPageEnd} of {totalItems}
           </div>
 
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
-            className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="hover:bg-muted rounded p-1 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <ArrowLeftIcon className="w-4 h-4 text-neutral" />
+            <ArrowLeftIcon className="text-neutral h-4 w-4" />
           </button>
 
           <div className="flex items-center gap-1">
-            {getVisiblePages().map(pageNum => (
+            {getVisiblePages().map((pageNum) => (
               <button
                 key={pageNum}
                 onClick={() => onPageChange(pageNum)}
-                className={`w-8 h-8 rounded transition-colors ${
+                className={`h-8 w-8 rounded transition-colors ${
                   currentPage === pageNum
                     ? 'bg-muted text-neutral'
                     : 'text-foreground opacity-50'
@@ -151,9 +152,9 @@ export function Pagination({
           <button
             onClick={handleNext}
             disabled={currentPage === totalPages}
-            className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="hover:bg-muted rounded p-1 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <ArrowRightIcon className="w-4 h-4 text-neutral" />
+            <ArrowRightIcon className="text-neutral h-4 w-4" />
           </button>
         </div>
       </div>

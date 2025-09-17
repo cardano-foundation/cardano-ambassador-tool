@@ -12,7 +12,6 @@ const Copyable = ({
   link?: string;
   withKey?: boolean;
 }) => {
-
   return (
     <>
       <div className="flex items-center gap-8">
@@ -26,6 +25,7 @@ const Copyable = ({
             href={link}
             target="_blank"
             className={`${link.length ? 'hover:cursor-pointer' : 'hover:cursor-not-allowed'}`}
+            rel="noreferrer"
           >
             <ExternalLink className="text-neutral size-4" />
           </a>

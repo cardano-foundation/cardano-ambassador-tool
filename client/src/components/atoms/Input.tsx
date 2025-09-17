@@ -1,5 +1,5 @@
-import React, { InputHTMLAttributes, forwardRef } from "react";
-import { cn } from "@/utils/utils";
+import { cn } from '@/utils/utils';
+import { InputHTMLAttributes, forwardRef } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -17,30 +17,30 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
-      <div className="h-16 relative w-full">
+      <div className="relative h-16 w-full">
         <input
           ref={ref}
           disabled={disabled}
           className={cn(
-            "w-full h-10 px-3 py-3 absolute top-[22px] left-0 rounded-md border transition-colors",
-            "text-sm font-normal leading-none",
-            "bg-background dark:bg-card border-border placeholder:text-muted-foreground",
-            "focus:outline-none focus:!border-primary-300 focus:ring-2 focus:ring-primary-300/20",
-            "hover:!border-primary-300",
+            'absolute top-[22px] left-0 h-10 w-full rounded-md border px-3 py-3 transition-colors',
+            'text-sm leading-none font-normal',
+            'bg-background dark:bg-card border-border placeholder:text-muted-foreground',
+            'focus:!border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
+            'hover:!border-primary-300',
             disabled && [
-              "opacity-30 cursor-not-allowed",
-              "hover:!border-border focus:!border-border",
+              'cursor-not-allowed opacity-30',
+              'hover:!border-border focus:!border-border',
             ],
 
             error && [
-              "!border-primary-500",
-              "focus:!border-primary-500 focus:ring-primary-500/20",
+              '!border-primary-500',
+              'focus:!border-primary-500 focus:ring-primary-500/20',
             ],
 
-            className
+            className,
           )}
           {...props}
         />
@@ -48,10 +48,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             className={cn(
-              "absolute left-0 top-[-1px] text-sm font-normal leading-none",
-              "text-muted-foreground",
-              disabled && "opacity-50",
-              error && "text-primary-base"
+              'absolute top-[-1px] left-0 text-sm leading-none font-normal',
+              'text-muted-foreground',
+              disabled && 'opacity-50',
+              error && 'text-primary-base',
             )}
           >
             {label}
@@ -59,15 +59,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {error && errorMessage && (
-          <div className="absolute top-[60px] left-0 text-xs text-primary-base font-normal">
+          <div className="text-primary-base absolute top-[60px] left-0 text-xs font-normal">
             {errorMessage}
           </div>
         )}
       </div>
     );
-  }
+  },
 );
 
-Input.displayName = "Input";
+Input.displayName = 'Input';
 
 export default Input;

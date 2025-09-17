@@ -1,4 +1,3 @@
-import Button from '@/components/atoms/Button';
 import CardanoLogo from '@/components/atoms/CardanoLogo';
 import LinkButton from '@/components/atoms/LinkButton';
 import Paragraph from '@/components/atoms/Paragraph';

@@ -2,7 +2,7 @@
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 export default function Breadcrumbs() {
   const paths = usePathname();
@@ -22,7 +22,6 @@ export default function Breadcrumbs() {
         )}
 
         {pathNames.map((link, index) => {
-          
           if (link == 'manage') {
             return;
           }
@@ -33,9 +32,9 @@ export default function Breadcrumbs() {
           let href = `/${pathNames.slice(0, index + 1).join('/')}`;
 
           if (link == 'ambassadors') {
-             href = `/`;
+            href = `/`;
           }
-          let itemLink = true
+          const itemLink = true
             ? link[0].toUpperCase() + link.slice(1, link.length)
             : link;
           return (

@@ -16,7 +16,7 @@ type ExtendedMemberData = MemberData & {
 interface PageProps {
   intentUtxo?: Utxo;
   readonly?: boolean;
-  onSave?: () => void;
+  onSave?: (userMetadata: MemberData) => void;
 }
 
 const MembershipIntentTimeline = ({
@@ -26,6 +26,21 @@ const MembershipIntentTimeline = ({
 }: PageProps) => {
   const [membershipData, setMembershipData] =
     useState<ExtendedMemberData | null>(null);
+
+  // Wrapper function to handle callback
+  const handleMemberDataSave = (updatedData: Partial<ExtendedMemberData>) => {
+    if (onSave && membershipData) {
+      const memberData: MemberData = {
+        address: membershipData.address,
+        name: updatedData.name || membershipData.name,
+        forum_username:
+          updatedData.forum_username || membershipData.forum_username,
+        email: updatedData.email || membershipData.email,
+        bio: updatedData.bio || membershipData.bio,
+      };
+      onSave(memberData);
+    }
+  };
 
   // Parse membership data when intentUtxo changes
   useEffect(() => {
@@ -55,7 +70,7 @@ const MembershipIntentTimeline = ({
         <MemberDataComponent
           readonly={readonly}
           membershipData={membershipData}
-          onSave={onSave}
+          onSave={handleMemberDataSave}
         />
       ),
       status: 'completed',

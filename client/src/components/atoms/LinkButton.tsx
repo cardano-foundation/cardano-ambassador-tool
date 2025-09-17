@@ -2,8 +2,17 @@ import { cn } from '@/utils/utils';
 import Link from 'next/link';
 import React from 'react';
 
-interface LinkButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  variant?: 'primary' | 'primary-light' | 'secondary' | 'outline' | 'ghost' | 'nav' | 'warning' | 'success';
+interface LinkButtonProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  variant?:
+    | 'primary'
+    | 'primary-light'
+    | 'secondary'
+    | 'outline'
+    | 'ghost'
+    | 'nav'
+    | 'warning'
+    | 'success';
   size?: 'sm' | 'md' | 'lg';
   rounded?: 'lg' | 'full';
   children?: React.ReactNode;
@@ -58,11 +67,10 @@ export default function LinkButton({
           'hover:bg-muted text-foreground bg-white-400': variant === 'nav',
 
           'bg-primary-200 hover:bg-primary-400 text-white':
-              variant === 'primary-light',
-          'bg-amber-500 hover:bg-amber-600 text-white':
-             variant === 'warning',
-          'bg-emerald-400 hover:bg-emerald-500 text-white':
-             variant === 'success',
+            variant === 'primary-light',
+          'bg-amber-500 text-white hover:bg-amber-600': variant === 'warning',
+          'bg-emerald-400 text-white hover:bg-emerald-500':
+            variant === 'success',
         },
         fullWidth && 'w-full',
         className,

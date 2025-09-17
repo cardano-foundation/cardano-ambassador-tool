@@ -1,12 +1,12 @@
 'use client';
 
+import { MemberMetadata } from '@/types/MemberMetadata';
 import { getCatConstants, getProvider } from '@/utils';
 import { IWallet, stringToHex } from '@meshsdk/core';
 import {
   membershipMetadata,
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
-import { MemberMetadata } from '@types';
 
 // Environment variables
 const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
@@ -31,7 +31,7 @@ export const updateMembershipIntentMetadata = async (
   }
   // Find token UTxO by membership intent UTxO
   const tokenUtxo = await import('@/utils/utils').then((utils) =>
-    utils.findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo),
+    utils.findTokenUtxoByMembershipIntentUtxoMesh(membershipIntentUtxo),
   );
   if (!tokenUtxo) {
     throw new Error('No token UTxO found for this membership intent');
@@ -51,13 +51,15 @@ export const updateMembershipIntentMetadata = async (
     blockfrost,
     getCatConstants(),
   );
-  const userMetadata = membershipMetadata(
-    address,
-    stringToHex(metadata.fullname),
-    stringToHex(metadata.displayName),
-    stringToHex(metadata.email),
-    stringToHex(metadata.bio),
-  );
+  const userMetadata = membershipMetadata({
+    address: stringToHex(address),
+    name: stringToHex(metadata.fullname),
+    forum_username: stringToHex(metadata.displayName),
+    email: stringToHex(metadata.email),
+    bio: stringToHex(metadata.bio),
+    country: stringToHex(''), // default empty
+    city: stringToHex(''), // default empty
+  });
   const result = await userAction.updateMembershipIntentMetadata(
     oracleUtxo,
     tokenUtxo,
@@ -102,13 +104,15 @@ export const updateMemberMetadata = async (
     blockfrost,
     getCatConstants(),
   );
-  const userMetadata = membershipMetadata(
-    address,
-    stringToHex(metadata.fullname),
-    stringToHex(metadata.displayName),
-    stringToHex(metadata.email),
-    stringToHex(metadata.bio),
-  );
+  const userMetadata = membershipMetadata({
+    address: stringToHex(address),
+    name: stringToHex(metadata.fullname),
+    forum_username: stringToHex(metadata.displayName),
+    email: stringToHex(metadata.email),
+    bio: stringToHex(metadata.bio),
+    country: stringToHex(''), // default empty
+    city: stringToHex(''), // default empty
+  });
   const result = await userAction.updateMemberMetadata(
     oracleUtxo,
     memberUtxo,

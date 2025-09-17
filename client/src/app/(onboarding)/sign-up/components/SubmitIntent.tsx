@@ -9,6 +9,7 @@ import Input from '@/components/atoms/Input';
 import Paragraph from '@/components/atoms/Paragraph';
 import TextArea from '@/components/atoms/TextArea';
 import { toast } from '@/components/toast/toast-manager';
+import { useApp } from '@/context/AppContext';
 import { getCatConstants, getProvider } from '@/utils';
 import { stringToHex } from '@meshsdk/core';
 import {
@@ -18,7 +19,6 @@ import {
 } from '@sidan-lab/cardano-ambassador-tool';
 import { MembershipIntentPayoad, MemberTokenDetail } from '@types';
 import { useEffect, useState } from 'react';
-import { useApp } from '@/context/AppContext';
 
 const SubmitIntent = ({
   asset,
@@ -133,13 +133,13 @@ const SubmitIntent = ({
     );
 
     const metadata: MembershipMetadata = membershipMetadata({
-      name: stringToHex(userMetadata.name!),
-      email: stringToHex(userMetadata?.email!),
-      bio: stringToHex(userMetadata?.bio!),
-      country: stringToHex(userMetadata.country!),
-      city: stringToHex(userMetadata.city!),
-      forum_username: stringToHex(userMetadata.forum_username!),
-      address: stringToHex(userMetadata.address!),
+      name: stringToHex(userMetadata.name || ''),
+      email: stringToHex(userMetadata.email || ''),
+      bio: stringToHex(userMetadata.bio || ''),
+      country: stringToHex(userMetadata.country || ''),
+      city: stringToHex(userMetadata.city || ''),
+      forum_username: stringToHex(userMetadata.forum_username || ''),
+      address: stringToHex(address || ''),
     });
 
     const result = await userAction.applyMembership(

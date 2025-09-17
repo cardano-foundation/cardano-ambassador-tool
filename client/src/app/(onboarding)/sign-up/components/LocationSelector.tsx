@@ -43,7 +43,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     onCityChange(newCity);
   };
 
-
   return (
     <div className={`space-y-4 ${className}`}>
       <div>
