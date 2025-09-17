@@ -1,11 +1,10 @@
-import React from 'react';
-import Link from 'next/link';
-import Title  from '@/components/atoms/Title';
 import Card, { CardContent } from '@/components/atoms/Card';
-import Paragraph  from '@/components/atoms/Paragraph';
-import Switch  from '@/components/atoms/Switch';
-import Progress  from '@/components/atoms/Progress';
+import Switch from '@/components/atoms/Switch';
 import TextLink from '@/components/atoms/TextLink';
+import Progress from '@/components/atoms/Timeline';
+import Title from '@/components/atoms/Title';
+import Link from 'next/link';
+import React from 'react';
 
 interface ActivitySectionProps {
   activities: Array<{
@@ -27,16 +26,20 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
   onToggleShowAll,
   notificationsEnabled,
   onNotificationsToggle,
-  getRelativeTime
+  getRelativeTime,
 }) => {
   return (
     <Card>
       <CardContent className="p-3 sm:p-4 lg:p-4">
-        <div className="block sm:hidden border-b border-border/60 pb-3">
-          <Title level="6" className="text-neutral text-base mb-2">Recent Activities</Title>
+        <div className="border-border/60 block border-b pb-3 sm:hidden">
+          <Title level="6" className="text-neutral mb-2 text-base">
+            Recent Activities
+          </Title>
           <div className="flex items-center">
-            <span className="text-muted-foreground text-sm mr-1">Enable Notifications: {notificationsEnabled ? 'On' : 'Off'}</span>
-            <Switch 
+            <span className="text-muted-foreground mr-1 text-sm">
+              Enable Notifications: {notificationsEnabled ? 'On' : 'Off'}
+            </span>
+            <Switch
               checked={notificationsEnabled}
               onCheckedChange={onNotificationsToggle}
             />
@@ -44,37 +47,49 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
         </div>
 
         {/* Desktop Layout - Horizontal */}
-        <div className="hidden sm:flex items-center justify-between border-b border-border/60 pb-4">
-          <Title level="6" className="text-neutral text-lg">Recent Activities</Title>
+        <div className="border-border/60 hidden items-center justify-between border-b pb-4 sm:flex">
+          <Title level="6" className="text-neutral text-lg">
+            Recent Activities
+          </Title>
           <div className="flex items-center">
-            <span className="text-muted-foreground text-sm mr-1">Enable Notifications: {notificationsEnabled ? 'On' : 'Off'}</span>
-            <Switch 
+            <span className="text-muted-foreground mr-1 text-sm">
+              Enable Notifications: {notificationsEnabled ? 'On' : 'Off'}
+            </span>
+            <Switch
               checked={notificationsEnabled}
               onCheckedChange={onNotificationsToggle}
             />
           </div>
         </div>
-        
+
         <div className="mt-3 sm:mt-4">
           <Progress
-            steps={(showAllActivities ? activities : activities.slice(0, 5)).map((activity, index) => ({
+            steps={(showAllActivities
+              ? activities
+              : activities.slice(0, 5)
+            ).map((activity, index) => ({
               id: `activity-${index}`,
               title: (
-                <Link href={activity.url} target="_blank" rel="noopener noreferrer" className="inline">
-                  <span className="hover:text-primary-base transition-colors cursor-pointer text-sm sm:text-base">
+                <Link
+                  href={activity.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline"
+                >
+                  <span className="hover:text-primary-base cursor-pointer text-sm transition-colors sm:text-base">
                     {activity.title}
                   </span>
                 </Link>
               ),
               description: getRelativeTime(activity.created_at),
-              status: 'pending' as const
+              status: 'pending' as const,
             }))}
           />
         </div>
-        
+
         {activities.length > 5 && (
-          <div className="mt-3 sm:mt-4 text-center">
-            <TextLink 
+          <div className="mt-3 text-center sm:mt-4">
+            <TextLink
               href="#"
               variant="dotted"
               size="sm"

@@ -26,7 +26,7 @@ function ManageContent({ children }: { children: React.ReactNode }) {
 
           <main className="flex-1 overflow-auto">
             <ProtectedRoute requireAdmin={true} requireAuth={true}>
-              {children}
+              <div className="min-h-screen">{children}</div>
             </ProtectedRoute>
             <Footer />
           </main>

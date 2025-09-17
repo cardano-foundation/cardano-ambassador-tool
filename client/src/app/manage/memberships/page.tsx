@@ -8,6 +8,7 @@ import { ColumnDef, Table } from '@/components/Table/Table';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context/AppContext';
 import { parseMembershipIntentDatum } from '@/utils';
+import Link from 'next/link';
 
 export default function MembershipIntentPage() {
   const { membershipIntents, dbLoading } = useApp();
@@ -25,26 +26,25 @@ export default function MembershipIntentPage() {
       fullName: string;
       displayName: string;
       email: string;
-      wallet: string;
+      address: string;
       bio: string;
       index?: number;
     } = {
       fullName: '',
       displayName: '',
       email: '',
-      wallet: '',
+      address: '',
       bio: '',
     };
 
     if (utxo.plutusData) {
-      const parsed = parseMembershipIntentDatum(utxo.plutusData);
+      const parsed = parseMembershipIntentDatum(utxo.plutusData);      
 
       if (parsed && parsed.metadata) {
         decodedDatum['fullName'] = parsed.metadata.name!;
         decodedDatum['displayName'] = parsed.metadata.forum_username!;
         decodedDatum['email'] = parsed.metadata.email!;
-        decodedDatum['wallet'] = parsed.metadata.address!;
-
+        decodedDatum['address'] = parsed.metadata.address!;
         decodedDatum['bio'] = parsed.metadata.bio!;
         decodedDatum['index'] = idx;
       }
@@ -71,6 +71,20 @@ export default function MembershipIntentPage() {
         <Copyable
           withKey={false}
           link={`${getCurrentNetworkConfig().explorerUrl}/transaction/${value}`}
+          value={value}
+          keyLabel={''}
+        />
+      ),
+    },
+    {
+      header: 'Address',
+      accessor: 'address',
+      sortable: false,
+      // copyable: true,
+      cell: (value: string) => (
+        <Copyable
+          withKey={false}
+          link={`${getCurrentNetworkConfig().explorerUrl}/address/${value}`}
           value={value}
           keyLabel={''}
         />
@@ -104,10 +118,13 @@ export default function MembershipIntentPage() {
       header: 'Action',
       sortable: true,
       copyable: true,
+      accessor: 'txHash',
       cell: (value: string) => (
-        <Button variant={'primary'} size="sm" className="text-nowrap">
-          {'View intent'}
-        </Button>
+        <Link href={`/manage/memberships/${value}`}>
+          <Button variant={'primary'} size="sm" className="text-nowrap">
+            {'View intent'}
+          </Button>
+        </Link>
       ),
     },
   ];

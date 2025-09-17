@@ -59,7 +59,7 @@ const adminToolsSection: NavigationSection = {
     {
       id: 'membership-intent',
       label: 'Membership intent',
-      href: '/manage/membership',
+      href: '/manage/memberships',
       icon: SettingsIcon,
     },
     {

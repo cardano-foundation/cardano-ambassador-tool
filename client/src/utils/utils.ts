@@ -19,6 +19,7 @@ import {
   ProposalMetadata,
   scripts,
 } from '@sidan-lab/cardano-ambassador-tool';
+import { Utxo } from '@types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -104,12 +105,13 @@ export function parseMembershipIntentDatum(
     const metadataPlutus: MembershipMetadata = datum.fields[1];
     
     const metadata: MemberData = {
+      address: serializeAddressObj(metadataPlutus.fields[0]),
       forum_username: hexToString(metadataPlutus.fields[1].bytes),
       name: hexToString(metadataPlutus.fields[2].bytes),
       email: hexToString(metadataPlutus.fields[3].bytes),
       bio: hexToString(metadataPlutus.fields[4].bytes),
     };
-    
+
     return { datum: datum as MembershipIntentDatum, metadata };
   } catch (error) {
     console.error('Error parsing membership intent datum:', error);
@@ -435,15 +437,15 @@ export async function findTokenUtxoByMemberUtxo(
  * @returns The matching token UTxO or null if not found
  */
 export async function findTokenUtxoByMembershipIntentUtxo(
-  membershipIntentUtxo: UTxO,
+  membershipIntentUtxo: Utxo,
 ): Promise<UTxO | null> {
   try {
-    if (!membershipIntentUtxo.output.plutusData) {
+    if (!membershipIntentUtxo.plutusData) {
       console.error('Member UTxO does not contain Plutus data');
       return null;
     }
     const datum: MembershipIntentDatum = deserializeDatum(
-      membershipIntentUtxo.output.plutusData,
+      membershipIntentUtxo.plutusData,
     );
     const metadataPluts: MembershipMetadata = datum.fields[1];
     const walletAddress = serializeAddressObj(metadataPluts.fields[0]);

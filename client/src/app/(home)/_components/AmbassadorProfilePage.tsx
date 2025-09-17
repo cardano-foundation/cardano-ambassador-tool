@@ -10,13 +10,14 @@ import LinkedInIcon from '@/components/atoms/LinkedinIcon';
 import MapsIcon from '@/components/atoms/MapsIcon';
 import NoNotificationsIcon from '@/components/atoms/NoNotificationsIcon';
 import Paragraph from '@/components/atoms/Paragraph';
-import Progress from '@/components/atoms/Progress';
 import Switch from '@/components/atoms/Switch';
 import TextLink from '@/components/atoms/TextLink';
+import Progress from '@/components/atoms/Timeline';
 import Title from '@/components/atoms/Title';
 import UserAvatar from '@/components/atoms/UserAvatar';
 import XIcon from '@/components/atoms/XIcon';
 import TopNav from '@/components/Navigation/TabNav';
+import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCountryFlag } from '@/utils/countryFlags';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -71,11 +72,11 @@ interface AmbassadorProfile {
 }
 
 interface AmbassadorProfileProps {
-  ambassadorId: string;
+  ambassadorUsername: string;
 }
 
 const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
-  ambassadorId,
+  ambassadorUsername,
 }) => {
   const [activeTab, setActiveTab] = useState('summary');
   const [profile, setProfile] = useState<AmbassadorProfile | null>(null);
@@ -88,19 +89,14 @@ const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
   const [showAllReplies, setShowAllReplies] = useState(false);
   const [showAllActivities, setShowAllActivities] = useState(false);
 
-
-
   useEffect(() => {
     const fetchAmbassadorProfile = async () => {
       try {
         setLoading(true);
-        console.log('Fetching profile for:', ambassadorId);
-        const response = await fetch(`/api/member/${ambassadorId}`);
-        console.log('Response status:', response.status);
+        const response = await fetch(`/api/member/${ambassadorUsername}`);
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('API Error:', errorText);
           throw new Error(
             `Failed to fetch ambassador profile: ${response.status} - ${errorText}`,
           );
@@ -118,19 +114,13 @@ const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
       }
     };
 
-    if (ambassadorId) {
+    if (ambassadorUsername) {
       fetchAmbassadorProfile();
     }
-  }, [ambassadorId]);
+  }, [ambassadorUsername]);
 
   if (loading) {
-    return (
-      <div className="bg-background flex min-h-screen items-center justify-center">
-        <div className="text-muted-foreground">
-          Loading ambassador profile...
-        </div>
-      </div>
-    );
+    return <SimpleCardanoLoader />;
   }
 
   if (error || !profile) {
@@ -389,7 +379,7 @@ const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex p-6 gap-6">
+      <div className="flex gap-6 p-6">
         <aside className="sticky top-6 h-fit w-80 flex-shrink-0 space-y-6">
           <Card>
             <CardContent>
@@ -439,9 +429,7 @@ const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
                 </div>
               </div>
               <div className="bg-muted/20 border-border/40 mt-6 flex flex-col items-center justify-center rounded-lg border">
-                <MapsIcon
-                  size={50}
-                />
+                <MapsIcon size={50} />
               </div>
             </CardContent>
           </Card>
@@ -470,7 +458,7 @@ const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
             Member Since: {formatDate(profile.created_at)}
           </Paragraph>
         </aside>
-        <main className="flex flex-1 flex-col min-w-0">
+        <main className="flex min-w-0 flex-1 flex-col">
           <div className="border-border bg-card border-b">
             <div className="px-6">
               <TopNav

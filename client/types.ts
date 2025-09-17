@@ -144,3 +144,24 @@ export interface NormalizedUser {
   activities: any[];
   badges: any[];
 }
+
+export type TimelineStatus = 'pending' | 'current' | 'completed';
+
+export interface TimelineStep {
+  id: string;
+  title: string | React.ReactNode;
+  content?:  React.ReactNode;
+  status: TimelineStatus;
+}
+
+export interface TimelineProps {
+  steps: TimelineStep[];
+  className?: string;
+  onStepClick?: (stepId: string, stepIndex: number) => void;
+  clickable?: boolean;
+}
+
+
+export type ExtendedMemberData = MemberData & {
+  txHash?: string;
+};

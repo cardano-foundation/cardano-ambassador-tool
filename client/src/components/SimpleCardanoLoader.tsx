@@ -14,7 +14,7 @@ export function SimpleCardanoLoader({
   message = 'Loading...' 
 }: SimpleCardanoLoaderProps) {
   return (
-    <div className={`flex flex-col items-center justify-center min-h-[300px] space-y-6 ${className}`}>
+    <div className={`flex flex-col items-center justify-center min-h-screen space-y-6 ${className}`}>
       <CardanoLoaderSVG size={size} />
       <div className="text-center space-y-2">
         <p className="text-base text-muted-foreground animate-pulse">

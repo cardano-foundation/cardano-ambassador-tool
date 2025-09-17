@@ -1,35 +1,58 @@
 'use client';
 
-import { Progress, ProgressStep } from '@/components/atoms/Progress';
+import { Timeline } from '@/components/atoms/Timeline';
 import Title from '@/components/atoms/Title';
+import { TimelineStep } from '@types';
 import { TableTestPage } from '../_components/TableTestPage';
 
 export default function ComponentShowcase() {
-  const applicationProgress: ProgressStep[] = [
+  const applicationProgress: TimelineStep[] = [
     {
       id: 'intent-submitted',
       title:
         'Intent form submitted with a very long title that might wrap to multiple lines',
-      description:
-        'Today, 2:00 AM - This is a much longer description that demonstrates how the component handles multi-line content gracefully without breaking the layout, Today, 2:00 AM - This is a much longer description that demonstrates how the component handles multi-line content gracefully without breaking the layout, Today, 2:00 AM - This is a much longer description that demonstrates how the component handles multi-line content gracefully without breaking the layout, Today, 2:00 AM - This is a much longer description that demonstrates how the component handles multi-line content gracefully without breaking the layout',
+      content: (
+        <div className="text-muted-foreground text-base font-medium">
+          Today, 2:00 AM - This is a much longer description that demonstrates
+          how the component handles multi-line content gracefully without
+          breaking the layout, Today, 2:00 AM - This is a much longer
+          description that demonstrates how the component handles multi-line
+          content gracefully without breaking the layout, Today, 2:00 AM - This
+          is a much longer description that demonstrates how the component
+          handles multi-line content gracefully without breaking the layout,
+          Today, 2:00 AM - This is a much longer description that demonstrates
+          how the component handles multi-line content gracefully without
+          breaking the layout
+        </div>
+      ),
       status: 'completed',
     },
     {
       id: 'admin-review',
       title: 'Admin Review In Progress',
-      description: '2 hours ago',
+      content: (
+        <div className="text-muted-foreground text-base font-medium">2 hours ago</div>
+      ),
       status: 'current',
     },
     {
       id: 'member-approval',
       title: 'Member Approval',
-      description: 'Pending approval',
+      content: (
+        <div className="text-muted-foreground text-base font-medium">
+          Pending approval
+        </div>
+      ),
       status: 'pending',
     },
     {
       id: 'membership-activated',
       title: 'Membership activated',
-      description: 'Welcome to Cardano!',
+      content: (
+        <div className="text-muted-foreground text-base font-medium">
+          Welcome to Cardano!
+        </div>
+      ),
       status: 'pending',
     },
   ];
@@ -46,7 +69,7 @@ export default function ComponentShowcase() {
             </Title>
             <div className="space-y-4">
               <div className="border-border flex justify-center rounded-lg border p-6">
-                <Progress steps={applicationProgress} />
+                <Timeline steps={applicationProgress} />
               </div>
             </div>
           </div>

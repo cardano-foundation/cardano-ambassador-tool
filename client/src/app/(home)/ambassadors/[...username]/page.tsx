@@ -2,10 +2,10 @@
 import AmbassadorProfile from '@/app/(home)/_components/AmbassadorProfilePage';
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ username: string }>;
 }
 
 export default async function AmbassadorPage({ params }: PageProps) {
-  const { id } = await params;
-  return <AmbassadorProfile ambassadorId={id} />;
+  const { username } = await params;
+  return <AmbassadorProfile ambassadorUsername={username} />;
 }

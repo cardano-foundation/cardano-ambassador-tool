@@ -1,24 +1,9 @@
+import { TimelineProps, TimelineStatus, TimelineStep } from '@types';
 import React from 'react';
 import { CardanoIcon } from './CardanoIcon';
 
-export type ProgressStatus = 'pending' | 'current' | 'completed';
-
-export interface ProgressStep {
-  id: string;
-  title: string | React.ReactNode;
-  description?: string;
-  status: ProgressStatus;
-}
-
-export interface ProgressProps {
-  steps: ProgressStep[];
-  className?: string;
-  onStepClick?: (stepId: string, stepIndex: number) => void;
-  clickable?: boolean;
-}
-
-const ProgressItem: React.FC<{
-  step: ProgressStep;
+const TimelineItem: React.FC<{
+  step: TimelineStep;
   index: number;
   isLast: boolean;
   onClick?: (stepId: string, stepIndex: number) => void;
@@ -93,17 +78,13 @@ const ProgressItem: React.FC<{
         >
           {step.title}
         </div>
-        {step.description && (
-          <div className="text-muted-foreground mt-1 text-sm">
-            {step.description}
-          </div>
-        )}
+        {step.content}
       </div>
     </div>
   );
 };
 
-export const Progress: React.FC<ProgressProps> = ({
+export const Timeline: React.FC<TimelineProps> = ({
   steps,
   className = '',
   onStepClick,
@@ -114,11 +95,11 @@ export const Progress: React.FC<ProgressProps> = ({
     currentStepIndex !== -1
       ? steps.map((step, index) => {
           if (index < currentStepIndex) {
-            return { ...step, status: 'completed' as ProgressStatus };
+            return { ...step, status: 'completed' as TimelineStatus };
           } else if (index === currentStepIndex) {
-            return { ...step, status: 'current' as ProgressStatus };
+            return { ...step, status: 'current' as TimelineStatus };
           } else {
-            return { ...step, status: 'pending' as ProgressStatus };
+            return { ...step, status: 'pending' as TimelineStatus };
           }
         })
       : steps;
@@ -126,7 +107,7 @@ export const Progress: React.FC<ProgressProps> = ({
   return (
     <div className={`flex flex-col ${className}`}>
       {correctedSteps.map((step, index) => (
-        <ProgressItem
+        <TimelineItem
           key={step.id}
           step={step}
           index={index}
@@ -139,4 +120,4 @@ export const Progress: React.FC<ProgressProps> = ({
   );
 };
 
-export default Progress;
+export default Timeline;
