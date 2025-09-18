@@ -3,6 +3,7 @@ import type { NextConfig } from 'next';
 import path from 'path';
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,
@@ -31,7 +32,9 @@ const nextConfig: NextConfig = {
           patterns: [
             // Copy to root server directory
             {
-              from: path.resolve('./node_modules/@sidan-lab/whisky-js-nodejs/whisky_js_bg.wasm'),
+              from: path.resolve(
+                './node_modules/@sidan-lab/whisky-js-nodejs/whisky_js_bg.wasm',
+              ),
               to: path.resolve('./.next/server/whisky_js_bg.wasm'),
               noErrorOnMissing: true,
             },
@@ -42,13 +45,17 @@ const nextConfig: NextConfig = {
       // Configure aliases for server-side WASM resolution
       config.resolve.alias = {
         ...config.resolve.alias,
-        'whisky_js_bg.wasm': path.resolve('./node_modules/@sidan-lab/whisky-js-nodejs/whisky_js_bg.wasm'),
+        'whisky_js_bg.wasm': path.resolve(
+          './node_modules/@sidan-lab/whisky-js-nodejs/whisky_js_bg.wasm',
+        ),
       };
     } else {
       // Client-side configuration
       config.resolve.alias = {
         ...config.resolve.alias,
-        'whisky_js_bg.wasm': path.resolve('./node_modules/@sidan-lab/whisky-js-browser/whisky_js_bg.wasm'),
+        'whisky_js_bg.wasm': path.resolve(
+          './node_modules/@sidan-lab/whisky-js-browser/whisky_js_bg.wasm',
+        ),
       };
     }
 
