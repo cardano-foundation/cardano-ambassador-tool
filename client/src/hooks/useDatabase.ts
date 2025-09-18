@@ -26,6 +26,7 @@ const getUtxosByContext = (contextName: string): Utxo[] => {
 export function useDatabase() {
   // Database state
   const [dbLoading, setDbLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false); // For individual seed operations
   const [membershipIntents, setMembershipIntents] = useState<Utxo[]>([]);
   const [proposalIntents, setProposalIntents] = useState<Utxo[]>([]);
   const [members, setMembers] = useState<Utxo[]>([]);
@@ -74,11 +75,19 @@ export function useDatabase() {
             setMembers(members);
             setProposals(proposals);
             setAmbassadors(ambassadors);
-            setDbLoading(false);
+
+            // Set loading states based on operation type
+            if (data.isSyncOperation) {
+              setIsSyncing(false); 
+            } else {
+              setDbLoading(false); 
+            }
+
             setDbError(null);
           } catch (err) {
             clearTimeout(timeoutId);
             setDbLoading(false);
+            setIsSyncing(false);
             setDbError(
               err instanceof Error
                 ? err.message
@@ -119,16 +128,19 @@ export function useDatabase() {
   }
 
   function syncData(context: string) {
+    setIsSyncing(true);
     sendUtxoWorkerMessage({
       action: 'seed',
       apiBaseUrl: window.location.origin,
       context,
+      isSyncOperation: true,
     });
   }
 
   return {
     // State
     dbLoading: dbLoading,
+    isSyncing,
     membershipIntents,
     proposalIntents,
     members,

@@ -2,7 +2,7 @@ console.log('App started!!!!!!!!!!!!!');
 self.importScripts('sql-wasm.js');
 
 self.onmessage = async function (e) {
-  const { action, context, contexts, apiBaseUrl, existingDb } = e.data;
+  const { action, context, contexts, apiBaseUrl, existingDb, isSyncOperation } = e.data;
 
   const SQL = await initSqlJs({ locateFile: () => '/sql-wasm.wasm' });
   let db = new SQL.Database();
@@ -163,5 +163,8 @@ self.onmessage = async function (e) {
    * -------------------------
    */
   const exported = db.export();
-  self.postMessage({ db: Array.from(exported) });
+  self.postMessage({ 
+    db: Array.from(exported),
+    isSyncOperation: isSyncOperation || false
+  });
 };

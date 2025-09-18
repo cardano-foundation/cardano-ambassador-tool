@@ -20,6 +20,7 @@ import {
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
 import { Utxo } from '@types';
+import { RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -38,9 +39,11 @@ export default function SubmissionsPage() {
     membershipIntents,
     proposalIntents,
     dbLoading,
+    isSyncing,
     userAddress,
     isAuthenticated,
     userWallet,
+    syncData,
   } = useApp();
 
   useEffect(() => {
@@ -83,6 +86,17 @@ export default function SubmissionsPage() {
     dbLoading,
     isAuthenticated,
   ]);
+
+  const handleRefresh = () => {
+    console.log('[Submissions] Starting refresh...');
+    setError(null); // Clear any existing errors
+    
+    // Sync membership intent data specifically
+    syncData('membership_intent');
+    
+    // Also sync proposal intents if needed
+    syncData('proposal_intent');
+  };
 
   const handleMetadatUpdate = async (userMetadata: MemberData) => {
     const blockfrost = getProvider();
@@ -161,11 +175,27 @@ export default function SubmissionsPage() {
   return (
     <div className="space-y-4 px-4 py-2 pb-8 sm:space-y-6 sm:px-6">
       <div className="border-border bg-card border-b">
-        <TopNav
-          tabs={tabs}
-          activeTabId={activeTab}
-          onTabChange={setActiveTab}
-        />
+        <div className="flex items-center justify-between">
+          <TopNav
+            tabs={tabs}
+            activeTabId={activeTab}
+            onTabChange={setActiveTab}
+          />
+          <div className="px-4 py-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isSyncing || dbLoading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
+              />
+              {isSyncing ? 'Refreshing...' : 'Refresh'}
+            </Button>
+          </div>
+        </div>
       </div>
 
       {activeTab === 'membership' && (
@@ -183,10 +213,14 @@ export default function SubmissionsPage() {
                 <Title level="6" className="text-foreground mb-3">
                   No Membership Submission
                 </Title>
-                <Paragraph className="text-muted-foreground mb-6">
+                <Paragraph className="text-muted-foreground mb-4">
                   You haven't submitted a membership intent yet. Start your
                   journey to become a Cardano Ambassador by submitting your
                   application.
+                </Paragraph>
+                <Paragraph className="text-muted-foreground mb-6 text-sm">
+                  Just submitted an application? Click the refresh button above
+                  to check for your latest submission.
                 </Paragraph>
                 <Link href="/sign-up">
                   <Button variant="primary" size="lg">
