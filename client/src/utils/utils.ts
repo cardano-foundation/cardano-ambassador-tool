@@ -86,8 +86,9 @@ export function getProvider(network = 'preprod'): BlockfrostProvider {
 // ============================================================================
 /**
  * Validates and converts Plutus data to MembershipIntentDatum
+ * Only supports old 5-field structure - filters out new 15-field structure
  * @param plutusData The Plutus data to validate
- * @returns The parsed MembershipIntentDatum and MemberData, or null if invalid
+ * @returns The parsed MembershipIntentDatum and MemberData for old structure, or null for new/invalid
  */
 export function parseMembershipIntentDatum(
   plutusData: string,
@@ -105,15 +106,24 @@ export function parseMembershipIntentDatum(
 
     const metadataPlutus: MembershipMetadata = datum.fields[1];
 
+    console.log({ metadataPlutus });
+
+    //TODO update to v0.7
+    try {
+      serializeAddressObj(
+        metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+      );
+    } catch {
+      return null;
+    }
+
     const metadata: MemberData = {
-      address: serializeAddressObj(
+      walletAddress: serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
       ),
-      forum_username: hexToString(
-        (metadataPlutus.fields[1] as ByteString).bytes,
-      ),
-      name: hexToString((metadataPlutus.fields[2] as ByteString).bytes),
-      email: hexToString((metadataPlutus.fields[3] as ByteString).bytes),
+      displayName: hexToString((metadataPlutus.fields[1] as ByteString).bytes),
+      fullName: hexToString((metadataPlutus.fields[2] as ByteString).bytes),
+      emailAddress: hexToString((metadataPlutus.fields[3] as ByteString).bytes),
       bio: hexToString((metadataPlutus.fields[4] as ByteString).bytes),
     };
 
@@ -139,16 +149,24 @@ export function parseMemberDatum(
     ) {
       return null;
     }
+
     const metadataPlutus: MembershipMetadata = datum.fields[3];
+    //TODO update to v0.7
+    try {
+      serializeAddressObj(
+        metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+      );
+    } catch {
+      return null;
+    }
+
     const metadata: MemberData = {
-      address: serializeAddressObj(
+      walletAddress: serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
       ),
-      name: hexToString((metadataPlutus.fields[1] as ByteString).bytes),
-      forum_username: hexToString(
-        (metadataPlutus.fields[2] as ByteString).bytes,
-      ),
-      email: hexToString((metadataPlutus.fields[3] as ByteString).bytes),
+      fullName: hexToString((metadataPlutus.fields[1] as ByteString).bytes),
+      displayName: hexToString((metadataPlutus.fields[2] as ByteString).bytes),
+      emailAddress: hexToString((metadataPlutus.fields[3] as ByteString).bytes),
       bio: hexToString((metadataPlutus.fields[4] as ByteString).bytes),
     };
 
@@ -568,4 +586,34 @@ export function dbUtxoToMeshUtxo(dbUtxo: Utxo): UTxO {
       plutusData: dbUtxo.plutusData || undefined,
     },
   };
+}
+
+export function formatTimestamp(timestamp: Date) {
+  return timestamp.toLocaleString('en-US', {
+    month: 'long', // Full month name (June)
+    day: 'numeric', // Day (29)
+    year: 'numeric', // Year (2025)
+    hour: 'numeric', // Hour (2)
+    minute: '2-digit', // Minute (00)
+    hour12: true, // AM/PM format
+  });
+}
+
+
+export async function fetchTransactionTimestamp(txHash: string) {
+  try {
+    const blockfrost = getProvider();
+    const txDetails = await blockfrost.fetchTxInfo(txHash);
+    const blockDetails = await blockfrost.fetchBlockInfo(txDetails.block);
+
+    if (blockDetails && blockDetails.time) {
+      // block_time is Unix timestamp
+      const timestamp = new Date(blockDetails.time * 1000);
+      return timestamp;
+    }
+
+    return null;
+  } catch (error) {
+    throw new Error('Error fetching transaction timestamp:' + error);
+  }
 }

@@ -14,6 +14,7 @@ import {
   getProvider,
   parseMembershipIntentDatum,
 } from '@/utils';
+import { stringToHex } from '@meshsdk/core';
 import {
   MemberData,
   membershipMetadata,
@@ -24,17 +25,21 @@ import { RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-export default function SubmissionsPage() {
+export default function IntentSubmissionsPage() {
   const tabs = [
-    { id: 'membership', label: 'Membership Intent' },
-    { id: 'proposals', label: 'Proposal' },
+    { id: 'membership-intent', label: 'Membership Intent' },
+    { id: 'proposal-intent', label: 'Proposal Intent' },
   ];
 
-  const [activeTab, setActiveTab] = useState('membership');
+  const [activeTab, setActiveTab] = useState('membership-intent');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [membershipUtxo, setMembershipUtxo] = useState<Utxo | null>(null);
-  const [proposalUtxo, setProposalUtxo] = useState<Utxo | null>(null);
+  const [membershipIntentUtxo, setMembershipIntentUtxo] = useState<Utxo | null>(
+    null,
+  );
+  const [proposalIntentUtxo, setProposalIntentUtxo] = useState<Utxo | null>(
+    null,
+  );
   const {
     membershipIntents,
     proposalIntents,
@@ -44,6 +49,7 @@ export default function SubmissionsPage() {
     isAuthenticated,
     userWallet,
     syncData,
+    wallet,
   } = useApp();
 
   useEffect(() => {
@@ -60,24 +66,24 @@ export default function SubmissionsPage() {
     // Find membership intent UTXO that belongs to the current user
     const userMembershipIntent = membershipIntents.find((intent) => {
       if (!intent.plutusData) {
-        return;
+        return false;
       }
       const parsed = parseMembershipIntentDatum(intent.plutusData);
-
-      return parsed?.metadata.address === userAddress;
+      return parsed?.metadata.walletAddress === userAddress;
     });
 
     // Find proposal intent UTXO that belongs to the current user
     const userProposalIntent = proposalIntents.find((intent) => {
       if (!intent.plutusData) {
-        return;
+        return false;
       }
+      // TODO: Add proper proposal intent datum parser
       const parsed = parseMembershipIntentDatum(intent.plutusData);
-      return parsed?.metadata.address === userAddress;
+      return parsed?.metadata.walletAddress === userAddress;
     });
 
-    setMembershipUtxo(userMembershipIntent || null);
-    setProposalUtxo(userProposalIntent || null);
+    setMembershipIntentUtxo(userMembershipIntent || null);
+    setProposalIntentUtxo(userProposalIntent || null);
     setLoading(false);
   }, [
     userAddress,
@@ -88,33 +94,39 @@ export default function SubmissionsPage() {
   ]);
 
   const handleRefresh = () => {
-    console.log('[Submissions] Starting refresh...');
+    console.log('[Intent Submissions] Starting refresh...');
     setError(null); // Clear any existing errors
-    
+
     // Sync membership intent data specifically
     syncData('membership_intent');
-    
+
     // Also sync proposal intents if needed
     syncData('proposal_intent');
   };
 
-  const handleMetadatUpdate = async (userMetadata: MemberData) => {
+  const handleMetadataUpdate = async (userMetadata: MemberData) => {
+    console.log({ userMetadata });
+
+    // try {
+    const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
+
+    const utxos = await userWallet!.getUtxos();
+
+    // Flatten UTXOs and filter for assets that match policyId
+    const tokenUtxo = utxos.filter((utxo) =>
+      utxo.output.amount.some((amt) => amt.unit.startsWith(policyId)),
+    )?.[0];
+
     const blockfrost = getProvider();
     const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
     const ORACLE_OUTPUT_INDEX = parseInt(
       process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
     );
 
-    if (!membershipUtxo) {
+    if (!membershipIntentUtxo) {
       throw new Error('No token UTxO found for this membership intent');
       return;
     }
-
-    const tokenUtxo = await import('@/utils/utils').then((utils) =>
-      utils.findTokenUtxoByMembershipIntentUtxo(membershipUtxo),
-    );
-
-    console.log({ tokenUtxo, userMetadata, membershipUtxo });
 
     if (!tokenUtxo) {
       throw new Error('No token UTxO found for this membership intent');
@@ -140,19 +152,37 @@ export default function SubmissionsPage() {
       blockfrost,
       getCatConstants(),
     );
-    const metadata = membershipMetadata({
-      address: userAddress!,
-      ...userMetadata,
-    });
+
+    const metadata = membershipMetadata(
+      stringToHex(userMetadata.walletAddress),
+      stringToHex(userMetadata.fullName || ''),
+      stringToHex(userMetadata.displayName || ''),
+      stringToHex(userMetadata.emailAddress || ''),
+      stringToHex(userMetadata.bio || ''),
+    );
 
     const result = await userAction.updateMembershipIntentMetadata(
       oracleUtxo,
       tokenUtxo,
-      dbUtxoToMeshUtxo(membershipUtxo),
+      dbUtxoToMeshUtxo(membershipIntentUtxo),
       metadata,
     );
 
+    console.log({ result });
+
+    // if (result?.txHex.length) {
+    //   console.log({ result });
+    // }
+
     // setResult(JSON.stringify(result, null, 2));
+    // } catch (error) {
+    //   console.error('Error updating metadata:', error);
+    //   setError(
+    //     error instanceof Error
+    //       ? error.message
+    //       : 'An unexpected error occurred while updating metadata'
+    //   );
+    // }
   };
 
   if (loading || dbLoading) {
@@ -164,7 +194,7 @@ export default function SubmissionsPage() {
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
           <Title level="3" className="text-foreground mb-2">
-            Unable to Load Submissions
+            Unable to Load Intent Submissions
           </Title>
           <Paragraph className="text-muted-foreground">{error}</Paragraph>
         </div>
@@ -198,20 +228,20 @@ export default function SubmissionsPage() {
         </div>
       </div>
 
-      {activeTab === 'membership' && (
+      {activeTab === 'membership-intent' && (
         <div className="">
-          {membershipUtxo ? (
+          {membershipIntentUtxo ? (
             <MembershipIntentTimeline
               readonly={false}
-              intentUtxo={membershipUtxo}
-              onSave={handleMetadatUpdate}
+              intentUtxo={membershipIntentUtxo}
+              onSave={handleMetadataUpdate}
             />
           ) : (
             <div className="flex min-h-[400px] flex-col items-center justify-center">
               <Empty />
               <div className="mt-6 max-w-md text-center">
                 <Title level="6" className="text-foreground mb-3">
-                  No Membership Submission
+                  No Membership Intent Submission
                 </Title>
                 <Paragraph className="text-muted-foreground mb-4">
                   You haven't submitted a membership intent yet. Start your
@@ -233,12 +263,12 @@ export default function SubmissionsPage() {
         </div>
       )}
 
-      {activeTab === 'proposals' && (
+      {activeTab === 'proposal-intent' && (
         <div className="">
-          {proposalUtxo ? (
+          {proposalIntentUtxo ? (
             <div className="bg-card rounded-lg border p-6">
               <Title level="3" className="text-foreground mb-4">
-                Your Proposal Submission
+                Your Proposal Intent Submission
               </Title>
               <Paragraph className="text-muted-foreground">
                 Proposal timeline and details will be displayed here.
@@ -250,7 +280,7 @@ export default function SubmissionsPage() {
               <Empty />
               <div className="mt-6 max-w-md text-center">
                 <Title level="6" className="text-foreground mb-3">
-                  No Proposal Submissions
+                  No Proposal Intent Submissions
                 </Title>
                 <Paragraph className="text-muted-foreground mb-6">
                   You haven't submitted any proposals yet. Share your ideas and

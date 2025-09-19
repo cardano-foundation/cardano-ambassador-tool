@@ -21,37 +21,39 @@ export default function MembershipIntentPage() {
     return <div className="p-4">No membership intents found.</div>;
   }
 
-  const decodedUtxos = membershipIntents.map((utxo, idx) => {
-    const decodedDatum: {
-      fullName: string;
-      displayName: string;
-      email: string;
-      address: string;
-      bio: string;
-      index?: number;
-    } = {
-      fullName: '',
-      displayName: '',
-      email: '',
-      address: '',
-      bio: '',
-    };
+  const decodedUtxos = membershipIntents
+    .map((utxo, idx) => {
+      const decodedDatum: {
+        fullName: string;
+        displayName: string;
+        email: string;
+        address: string;
+        bio: string;
+        index?: number;
+      } = {
+        fullName: '',
+        displayName: '',
+        email: '',
+        address: '',
+        bio: '',
+      };
 
-    if (utxo.plutusData) {
-      const parsed = parseMembershipIntentDatum(utxo.plutusData);
+      if (utxo.plutusData) {
+        const parsed = parseMembershipIntentDatum(utxo.plutusData);
 
-      if (parsed && parsed.metadata) {
-        decodedDatum['fullName'] = parsed.metadata.name!;
-        decodedDatum['displayName'] = parsed.metadata.forum_username!;
-        decodedDatum['email'] = parsed.metadata.email!;
-        decodedDatum['address'] = parsed.metadata.address!;
-        decodedDatum['bio'] = parsed.metadata.bio!;
-        decodedDatum['index'] = idx;
+        if (parsed && parsed.metadata) {
+          decodedDatum['fullName'] = parsed.metadata.fullName!;
+          decodedDatum['displayName'] = parsed.metadata.displayName!;
+          decodedDatum['email'] = parsed.metadata.emailAddress!;
+          decodedDatum['address'] = parsed.metadata.walletAddress!;
+          decodedDatum['bio'] = parsed.metadata.bio!;
+          decodedDatum['index'] = idx;
+        }
       }
-    }
 
-    return { ...utxo, ...decodedDatum };
-  });
+      return { ...utxo, ...decodedDatum };
+    })
+    .filter((utxo) => utxo.address && utxo.address.trim() !== ''); 
 
   const columns: ColumnDef<(typeof decodedUtxos)[number]>[] = [
     {

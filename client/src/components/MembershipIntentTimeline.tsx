@@ -13,6 +13,14 @@ type ExtendedMemberData = MemberData & {
   txHash?: string;
 };
 
+// Type for edited data coming from MemberDataComponent
+type EditedMemberData = {
+  fullName: string;
+  displayName: string;
+  emailAddress: string;
+  bio: string;
+};
+
 interface PageProps {
   intentUtxo?: Utxo;
   readonly?: boolean;
@@ -21,22 +29,20 @@ interface PageProps {
 
 const MembershipIntentTimeline = ({
   intentUtxo,
-  readonly = false,
+  readonly = true,
   onSave,
 }: PageProps) => {
   const [membershipData, setMembershipData] =
     useState<ExtendedMemberData | null>(null);
 
-  // Wrapper function to handle callback
-  const handleMemberDataSave = (updatedData: Partial<ExtendedMemberData>) => {
+  const handleMemberDataSave = (updatedData: EditedMemberData) => {
     if (onSave && membershipData) {
       const memberData: MemberData = {
-        address: membershipData.address,
-        name: updatedData.name || membershipData.name,
-        forum_username:
-          updatedData.forum_username || membershipData.forum_username,
-        email: updatedData.email || membershipData.email,
-        bio: updatedData.bio || membershipData.bio,
+        walletAddress: membershipData.walletAddress,
+        fullName: updatedData.fullName ?? membershipData.fullName,
+        displayName: updatedData.displayName ?? membershipData.displayName,
+        emailAddress: updatedData.emailAddress ?? membershipData.emailAddress,
+        bio: updatedData.bio ?? membershipData.bio,
       };
       onSave(memberData);
     }
@@ -48,11 +54,10 @@ const MembershipIntentTimeline = ({
       const parsed = parseMembershipIntentDatum(intentUtxo.plutusData);
       if (parsed && parsed.metadata) {
         setMembershipData({
-          ...intentUtxo,
-          name: parsed.metadata.name,
-          forum_username: parsed.metadata.forum_username,
-          email: parsed.metadata.email,
-          address: parsed.metadata.address,
+          walletAddress: parsed.metadata.walletAddress,
+          fullName: parsed.metadata.fullName,
+          displayName: parsed.metadata.displayName,
+          emailAddress: parsed.metadata.emailAddress,
           bio: parsed.metadata.bio,
           txHash: intentUtxo.txHash,
         });
@@ -65,7 +70,7 @@ const MembershipIntentTimeline = ({
   const applicationProgress: TimelineStep[] = [
     {
       id: 'intent-submitted',
-      title: 'Intent form submitted',
+      title: 'Intent Form Submitted',
       content: (
         <MemberDataComponent
           readonly={readonly}
@@ -80,7 +85,7 @@ const MembershipIntentTimeline = ({
       title: 'Admin Review In Progress',
       content: (
         <div className="text-muted-foreground text-base font-medium">
-          2 hours ago
+          Waiting for review
         </div>
       ),
       status: 'current',
@@ -95,23 +100,23 @@ const MembershipIntentTimeline = ({
       ),
       status: 'pending',
     },
-    {
-      id: 'membership-activated',
-      title: 'Membership activated',
-      content: (
-        <div className="text-muted-foreground text-base font-medium">
-          Welcome to Cardano!
-        </div>
-      ),
-      status: 'pending',
-    },
+    // {
+    //   id: 'membership-activated',
+    //   title: 'Membership activated',
+    //   content: (
+    //     <div className="text-muted-foreground text-base font-medium">
+    //       Welcome to Cardano!
+    //     </div>
+    //   ),
+    //   status: 'pending',
+    // },
   ];
 
   return (
     <>
       {readonly && (
         <Title level="2" className="text-xl capitalize sm:text-2xl">
-          {membershipData?.name ?? membershipData?.forum_username}
+          {membershipData?.fullName ?? membershipData?.displayName}
         </Title>
       )}
       <Timeline steps={applicationProgress} />
