@@ -53,7 +53,7 @@ export default function MembershipIntentPage() {
 
       return { ...utxo, ...decodedDatum };
     })
-    .filter((utxo) => utxo.address && utxo.address.trim() !== ''); 
+    .filter((utxo) => utxo.address && utxo.address.trim() !== '');
 
   const columns: ColumnDef<(typeof decodedUtxos)[number]>[] = [
     {

@@ -1,12 +1,6 @@
 'use client';
 
-import { MemberMetadata } from '@/types/MemberMetadata';
-import { getCatConstants, getProvider } from '@/utils';
-import { IWallet, stringToHex } from '@meshsdk/core';
-import {
-  membershipMetadata,
-  UserActionTx,
-} from '@sidan-lab/cardano-ambassador-tool';
+import { getProvider } from '@/utils';
 
 // Environment variables
 const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;

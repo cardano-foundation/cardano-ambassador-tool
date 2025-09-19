@@ -599,7 +599,6 @@ export function formatTimestamp(timestamp: Date) {
   });
 }
 
-
 export async function fetchTransactionTimestamp(txHash: string) {
   try {
     const blockfrost = getProvider();

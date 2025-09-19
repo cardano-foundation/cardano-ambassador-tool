@@ -78,9 +78,9 @@ export function useDatabase() {
 
             // Set loading states based on operation type
             if (data.isSyncOperation) {
-              setIsSyncing(false); 
+              setIsSyncing(false);
             } else {
-              setDbLoading(false); 
+              setDbLoading(false);
             }
 
             setDbError(null);
