@@ -35,7 +35,7 @@ const MembershipIntentTimeline = ({
   const [membershipData, setMembershipData] =
     useState<ExtendedMemberData | null>(null);
 
-  const handleMemberDataSave = (updatedData: EditedMemberData) => {
+  const handleMemberDataSave = (updatedData: Partial<ExtendedMemberData>) => {
     if (onSave && membershipData) {
       const memberData: MemberData = {
         walletAddress: membershipData.walletAddress,
