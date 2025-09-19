@@ -20,6 +20,7 @@ import {
   conStr2,
   ConStr0,
   List,
+  PubKeyAddress,
 } from "@meshsdk/core";
 import {
   AddMember,
@@ -182,21 +183,13 @@ export type SummaryPlutusData = ConStr0<
 
 export type MembershipMetadata = ConStr0<
   [
-    ByteString | List<ByteString>, // href
-    ByteString | List<ByteString>, // forum_username
-    ByteString | List<ByteString>, // email
-    ByteString | List<ByteString>, // address
-    ByteString | List<ByteString>, // name
-    ByteString | List<ByteString>, // bio_excerpt
+    PubKeyAddress, // WalletAddress
+    ByteString | List<ByteString>, // fullName
+    ByteString | List<ByteString>, // displayName
+    ByteString | List<ByteString>, // emailAddress
     ByteString | List<ByteString>, // bio
     ByteString | List<ByteString>, // country
-    ByteString | List<ByteString>, // city
-    ByteString | List<ByteString>, // flag
-    ByteString | List<ByteString>, // avatar
-    ByteString | List<ByteString>, // created_at
-    SummaryPlutusData, // summary stats
-    List<ActivityPlutusData>, // activities
-    List<BadgePlutusData> // badges
+    ByteString | List<ByteString> // city
   ]
 >;
 
@@ -280,37 +273,13 @@ export const membershipMetadata = (
   jsonData: MemberData
 ): MembershipMetadata => {
   return conStr0([
-    handleString(jsonData.href || ""),
-    handleString(jsonData.forum_username || ""),
-    handleString(jsonData.email || ""),
-    handleString(jsonData.address || ""),
-    handleString(jsonData.name || ""),
-    handleString(jsonData.bio_excerpt || ""),
+    addrBech32ToPlutusDataObj(jsonData.walletAddress!),
+    handleString(jsonData.fullName || ""),
+    handleString(jsonData.displayName || ""),
+    handleString(jsonData.emailAddress || ""),
     handleString(jsonData.bio || ""),
     handleString(jsonData.country || ""),
     handleString(jsonData.city || ""),
-    handleString(jsonData.flag || ""),
-    handleString(jsonData.avatar || ""),
-    handleString(jsonData.created_at || ""),
-    convertSummaryToPlutus(
-      jsonData.summary || {
-        stats: {
-          topics_entered: 0,
-          posts_read_count: 0,
-          days_visited: 0,
-          likes_given: 0,
-          likes_received: 0,
-          topics_created: 0,
-          replies_created: 0,
-          time_read: 0,
-          recent_time_read: 0,
-        },
-        top_replies: [],
-        top_topics: [],
-      }
-    ),
-    list((jsonData.activities || []).map(convertActivityToPlutus)),
-    list((jsonData.badges || []).map(convertBadgeToPlutus)),
   ]);
 };
 
@@ -485,21 +454,13 @@ export type SummaryData = {
 };
 
 export type MemberData = {
-  href?: string;
-  forum_username?: string;
-  email?: string;
-  address?: string;
-  name?: string;
-  bio_excerpt?: string;
-  bio?: string;
-  country?: string;
-  city?: string;
-  flag?: string;
-  avatar?: string;
-  created_at?: string;
-  summary?: SummaryData;
-  activities?: ActivityData[];
-  badges?: BadgeData[];
+  walletAddress: string;
+  fullName: string;
+  displayName: string;
+  emailAddress: string;
+  bio: string;
+  country: string;
+  city: string;
 };
 
 export type Member = {

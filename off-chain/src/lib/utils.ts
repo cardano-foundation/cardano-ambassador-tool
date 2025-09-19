@@ -227,21 +227,13 @@ export const getMembershipIntentDatum = (
   };
 
   const metadata: MemberData = {
-    href: extractString(metadataPluts.fields[0]),
-    forum_username: extractString(metadataPluts.fields[1]),
-    email: extractString(metadataPluts.fields[2]),
-    address: extractString(metadataPluts.fields[3]),
-    name: extractString(metadataPluts.fields[4]),
-    bio_excerpt: extractString(metadataPluts.fields[5]),
-    bio: extractString(metadataPluts.fields[6]),
-    country: extractString(metadataPluts.fields[7]),
-    city: extractString(metadataPluts.fields[8]),
-    flag: extractString(metadataPluts.fields[9]),
-    avatar: extractString(metadataPluts.fields[10]),
-    created_at: extractString(metadataPluts.fields[11]),
-    summary: extractSummary(metadataPluts.fields[12]),
-    activities: extractActivities(metadataPluts.fields[13]),
-    badges: extractBadges(metadataPluts.fields[14]),
+    walletAddress: serializeAddressObj(metadataPluts.fields[0]),
+    fullName: extractString(metadataPluts.fields[1]),
+    displayName: extractString(metadataPluts.fields[2]),
+    emailAddress: extractString(metadataPluts.fields[3]),
+    bio: extractString(metadataPluts.fields[4]),
+    country: extractString(metadataPluts.fields[5]),
+    city: extractString(metadataPluts.fields[6]),
   };
   return { policyId, assetName, metadata };
 };
@@ -252,21 +244,13 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
   const metadataPluts: MembershipMetadata = datum.fields[3];
 
   const metadata: MemberData = {
-    href: extractString(metadataPluts.fields[0]),
-    forum_username: extractString(metadataPluts.fields[1]),
-    email: extractString(metadataPluts.fields[2]),
-    address: extractString(metadataPluts.fields[3]),
-    name: extractString(metadataPluts.fields[4]),
-    bio_excerpt: extractString(metadataPluts.fields[5]),
-    bio: extractString(metadataPluts.fields[6]),
-    country: extractString(metadataPluts.fields[7]),
-    city: extractString(metadataPluts.fields[8]),
-    flag: extractString(metadataPluts.fields[9]),
-    avatar: extractString(metadataPluts.fields[10]),
-    created_at: extractString(metadataPluts.fields[11]),
-    summary: extractSummary(metadataPluts.fields[12]),
-    activities: extractActivities(metadataPluts.fields[13]),
-    badges: extractBadges(metadataPluts.fields[14]),
+    walletAddress: serializeAddressObj(metadataPluts.fields[0]),
+    fullName: extractString(metadataPluts.fields[1]),
+    displayName: extractString(metadataPluts.fields[2]),
+    emailAddress: extractString(metadataPluts.fields[3]),
+    bio: extractString(metadataPluts.fields[4]),
+    country: extractString(metadataPluts.fields[5]),
+    city: extractString(metadataPluts.fields[6]),
   };
 
   const policyId = datum.fields[0].list[0].bytes;
