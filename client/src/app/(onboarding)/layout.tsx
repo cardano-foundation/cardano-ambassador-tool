@@ -9,6 +9,7 @@ import Title from '@/components/atoms/Title';
 import Footer from '@/components/Footer';
 import ToastContainer from '@/components/toast/toast';
 import { useApp } from '@/context/AppContext';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 function OnboardingContent({ children }: { children: React.ReactNode }) {
@@ -23,8 +24,10 @@ function OnboardingContent({ children }: { children: React.ReactNode }) {
         <div className="flex min-h-screen w-full p-2">
           <div className="flex h-full flex-1 flex-col items-center">
             <div className="flex w-full justify-between p-2 lg:p-6">
-              <AppLogo />
-              <div>
+              <Link href='/'>
+                <AppLogo />
+              </Link>
+              {/* <div>
                 {signUp ? (
                   <LinkButton
                     href="/login"
@@ -50,7 +53,7 @@ function OnboardingContent({ children }: { children: React.ReactNode }) {
                     <InboxIcon />
                   </LinkButton>
                 )}
-              </div>
+              </div> */}
             </div>
             {children}
             <ToastContainer />
