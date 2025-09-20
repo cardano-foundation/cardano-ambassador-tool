@@ -1,11 +1,11 @@
-'use client';
-import AmbassadorProfile from '@/app/(home)/_components/AmbassadorProfilePage';
+import * as React from 'react';
+import AmbassadorProfile from '@/app/(home)/_components/profile/AmbassadorProfilePage';
 
 interface PageProps {
-  params: Promise<{ username: string }>;
+  params: { username: string };
 }
 
-export default async function AmbassadorPage({ params }: PageProps) {
-  const { username } = await params;
+export default function AmbassadorPage({ params }: PageProps) {
+  const { username } = params;
   return <AmbassadorProfile ambassadorUsername={username} />;
 }

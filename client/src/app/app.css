@@ -55,6 +55,7 @@
   --color-white-400: oklch(0.928 0 0);
   --color-white: oklch(1 0 0);
 
+
   --color-neutral-900: oklch(0.2046 0 0);
 
   --color-text-default: var(--color-text-default);
@@ -265,4 +266,13 @@ svg *,
   button {
     min-height: 44px;
   }
+}
+
+
+.leaflet-container {
+  z-index: 1 !important;
+}
+
+.leaflet-control-container {
+  z-index: 1 !important;
 }

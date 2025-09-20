@@ -9,7 +9,7 @@ interface UseAmbassadorProfileReturn {
 }
 
 export const useAmbassadorProfile = (
-  ambassadorId: string,
+  ambassadorUsername: string,
 ): UseAmbassadorProfileReturn => {
   const [profile, setProfile] = useState<AmbassadorProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -20,8 +20,8 @@ export const useAmbassadorProfile = (
       setLoading(true);
       setError(null);
 
-      console.log('Fetching profile for:', ambassadorId);
-      const response = await fetch(`/api/ambassadors/${ambassadorId}`);
+      console.log('Fetching profile for:', ambassadorUsername);
+      const response = await fetch(`/api/member/${ambassadorUsername}`);
       console.log('Response status:', response.status);
 
       if (!response.ok) {
@@ -44,10 +44,10 @@ export const useAmbassadorProfile = (
   };
 
   useEffect(() => {
-    if (ambassadorId) {
+    if (ambassadorUsername) {
       fetchAmbassadorProfile();
     }
-  }, [ambassadorId]);
+  }, [ambassadorUsername]);
 
   return {
     profile,

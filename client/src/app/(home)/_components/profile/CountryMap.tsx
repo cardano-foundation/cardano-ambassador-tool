@@ -42,9 +42,7 @@ export const CountryMap: React.FC<CountryMapProps> = ({
   });
 
   return (
-    <div
-      className={`border-border/40 mt-6 overflow-hidden rounded-lg border ${className}`}
-    >
+    <div className={`mt-6 rounded-lg border border-border/40 overflow-hidden z-0 ${className}`}>
       <MapContainer
         center={[coordinates.lat, coordinates.lng]}
         zoom={4}

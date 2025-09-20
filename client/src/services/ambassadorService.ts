@@ -12,7 +12,7 @@ export interface Ambassador {
 }
 
 async function fetchJson(url: string) {
-  const res = await axios.get(url, { timeout: 15000 });
+  const res = await axios.get(url, { timeout: 15000, family: 4 });
   return res.data;
 }
 
@@ -20,6 +20,10 @@ export async function getUserProfile(
   ambassador: Ambassador,
 ): Promise<NormalizedUser> {
   const username = ambassador.username;
+  console.log("Fetching profile for", username);
+  console.log("URL1", SUMMARY_URL.replace("{username}", username));
+  console.log("URL2", PROFILE_URL.replace("{username}", username));
+
 
   const summaryRaw = await fetchJson(
     SUMMARY_URL.replace('{username}', username),

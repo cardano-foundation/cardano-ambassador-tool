@@ -27,7 +27,7 @@ function OnboardingContent({ children }: { children: React.ReactNode }) {
               <Link href='/'>
                 <AppLogo />
               </Link>
-              {/* <div>
+             {/* <div>
                 {signUp ? (
                   <LinkButton
                     href="/login"
@@ -53,7 +53,7 @@ function OnboardingContent({ children }: { children: React.ReactNode }) {
                     <InboxIcon />
                   </LinkButton>
                 )}
-              </div> */}
+              </div>*/}
             </div>
             {children}
             <ToastContainer />
