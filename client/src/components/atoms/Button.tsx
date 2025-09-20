@@ -2,7 +2,16 @@ import { cn } from '@/utils/utils';
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary'| 'primary-light' | 'secondary' | 'outline' | 'ghost' | 'nav'  | 'warning' | 'success' | 'primary-light';
+  variant?:
+    | 'primary'
+    | 'primary-light'
+    | 'secondary'
+    | 'outline'
+    | 'ghost'
+    | 'nav'
+    | 'warning'
+    | 'success'
+    | 'primary-light';
   size?: 'sm' | 'md' | 'lg';
   rounded?: 'lg' | 'full';
   children?: React.ReactNode;
@@ -54,11 +63,11 @@ export default function Button({
           'hover:bg-muted text-foreground bg-white-400': variant === 'nav',
 
           'bg-primary-200 hover:bg-primary-400 primary text-white':
-              variant === 'primary-light',
-          'bg-amber-500 hover:bg-amber-600 primary text-white':
-             variant === 'warning',
-           'bg-emerald-400 hover:bg-emerald-500 primary text-white':
-              variant === 'success',
+            variant === 'primary-light',
+          'primary bg-amber-500 text-white hover:bg-amber-600':
+            variant === 'warning',
+          'primary bg-emerald-400 text-white hover:bg-emerald-500':
+            variant === 'success',
         },
         fullWidth && 'w-full',
         className,

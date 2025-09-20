@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AmbassadorProfile } from '../types/AmbassadorProfile';
 
 interface UseAmbassadorProfileReturn {
@@ -8,7 +8,9 @@ interface UseAmbassadorProfileReturn {
   refetch: () => void;
 }
 
-export const useAmbassadorProfile = (ambassadorId: string): UseAmbassadorProfileReturn => {
+export const useAmbassadorProfile = (
+  ambassadorUsername: string,
+): UseAmbassadorProfileReturn => {
   const [profile, setProfile] = useState<AmbassadorProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,17 +19,19 @@ export const useAmbassadorProfile = (ambassadorId: string): UseAmbassadorProfile
     try {
       setLoading(true);
       setError(null);
-      
-      console.log('Fetching profile for:', ambassadorId);
-      const response = await fetch(`/api/member/${ambassadorId}`);
+
+      console.log('Fetching profile for:', ambassadorUsername);
+      const response = await fetch(`/api/member/${ambassadorUsername}`);
       console.log('Response status:', response.status);
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('API Error:', errorText);
-        throw new Error(`Failed to fetch ambassador profile: ${response.status} - ${errorText}`);
+        throw new Error(
+          `Failed to fetch ambassador profile: ${response.status} - ${errorText}`,
+        );
       }
-      
+
       const data: AmbassadorProfile = await response.json();
       console.log('Profile data loaded:', data.name);
       setProfile(data);
@@ -40,15 +44,15 @@ export const useAmbassadorProfile = (ambassadorId: string): UseAmbassadorProfile
   };
 
   useEffect(() => {
-    if (ambassadorId) {
+    if (ambassadorUsername) {
       fetchAmbassadorProfile();
     }
-  }, [ambassadorId]);
+  }, [ambassadorUsername]);
 
   return {
     profile,
     loading,
     error,
-    refetch: fetchAmbassadorProfile
+    refetch: fetchAmbassadorProfile,
   };
 };

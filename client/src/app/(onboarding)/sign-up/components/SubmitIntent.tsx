@@ -9,6 +9,7 @@ import Input from '@/components/atoms/Input';
 import Paragraph from '@/components/atoms/Paragraph';
 import TextArea from '@/components/atoms/TextArea';
 import { toast } from '@/components/toast/toast-manager';
+import { useApp } from '@/context/AppContext';
 import { getCatConstants, getProvider } from '@/utils';
 import { stringToHex } from '@meshsdk/core';
 import {
@@ -18,7 +19,6 @@ import {
 } from '@sidan-lab/cardano-ambassador-tool';
 import { MembershipIntentPayoad, MemberTokenDetail } from '@types';
 import { useEffect, useState } from 'react';
-import { useApp } from '@/context/AppContext';
 
 const SubmitIntent = ({
   asset,
@@ -37,10 +37,9 @@ const SubmitIntent = ({
   const blockfrost = getProvider();
 
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     wallet_address: address,
-    full_name: '',
     forum_username: '',
     country: '',
     city: '',
@@ -57,12 +56,11 @@ const SubmitIntent = ({
       tokenUtxoHash: asset.txHash,
       tokenUtxoIndex: asset.outputIndex,
       userMetadata: {
-        fullName: formData.full_name,
+        walletAddress: address,
+        fullName: formData.fullName,
+        displayName: formData.forum_username,
+        emailAddress: formData.email,
         bio: formData.bio,
-        email: formData.email,
-        forumUsername: formData.forum_username,
-        country: formData.country,
-        city: formData.city,
       },
       wallet,
       address,
@@ -132,15 +130,13 @@ const SubmitIntent = ({
       getCatConstants(),
     );
 
-    const metadata: MembershipMetadata = membershipMetadata({
-      name: stringToHex(userMetadata.name!),
-      email: stringToHex(userMetadata?.email!),
-      bio: stringToHex(userMetadata?.bio!),
-      country: stringToHex(userMetadata.country!),
-      city: stringToHex(userMetadata.city!),
-      forum_username: stringToHex(userMetadata.forum_username!),
-      address: stringToHex(userMetadata.address!),
-    });
+    const metadata: MembershipMetadata = membershipMetadata(
+      stringToHex(userMetadata.walletAddress || ''),
+      stringToHex(userMetadata.fullName || ''),
+      stringToHex(userMetadata.displayName || ''),
+      stringToHex(userMetadata.emailAddress || ''),
+      stringToHex(userMetadata.bio || ''),
+    );
 
     const result = await userAction.applyMembership(
       oracleUtxo,
@@ -189,9 +185,9 @@ const SubmitIntent = ({
           label="Full Name"
           placeholder="Lovelace"
           type="name"
-          value={formData.full_name}
+          value={formData.fullName}
           onChange={(e) =>
-            setFormData({ ...formData, full_name: e.target.value })
+            setFormData({ ...formData, fullName: e.target.value })
           }
         />
 

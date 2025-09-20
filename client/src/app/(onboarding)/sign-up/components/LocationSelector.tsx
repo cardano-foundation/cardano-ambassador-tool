@@ -2,7 +2,7 @@
 
 import { countries, getCitiesForCountry } from '@/utils/locationData';
 import React from 'react';
-import Dropdown from '../../../../components/atoms/Dropdown';
+import SearchableDropdown from '../../../../components/atoms/SearchableDropdown';
 
 interface LocationSelectorProps {
   countryCode?: string;
@@ -43,18 +43,19 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     onCityChange(newCity);
   };
 
-
   return (
     <div className={`space-y-4 ${className}`}>
       <div>
         <label className="text-foreground mb-2 block text-sm font-medium">
           Country
         </label>
-        <Dropdown
+        <SearchableDropdown
           options={countryOptions}
           value={countryCode}
           onValueChange={handleCountryChange}
           placeholder="Select your country..."
+          searchPlaceholder="Search countries..."
+          noOptionsMessage="No countries found"
         />
       </div>
 
@@ -62,13 +63,15 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
         <label className="text-foreground mb-2 block text-sm font-medium">
           City
         </label>
-        <Dropdown
+        <SearchableDropdown
           options={cityOptions}
           value={city}
           onValueChange={handleCityChange}
           placeholder={
             countryCode ? 'Select your city...' : 'Select a country first'
           }
+          searchPlaceholder="Search cities..."
+          noOptionsMessage="No cities found"
           disabled={!countryCode || cityOptions.length === 0}
         />
       </div>

@@ -1,11 +1,9 @@
 'use client';
 
-import { Table, ColumnDef } from '@/components/Table/Table';
-import Button from '@/components/atoms/Button';
+import { ColumnDef, Table } from '@/components/Table/Table';
 import { Ambassador } from '@types';
 
 export function TableTestPage() {
-
   const getCountryFlag = (country: string) => {
     const flags: { [key: string]: string } = {
       Argentina: '🇦🇷',
@@ -57,6 +55,9 @@ export function TableTestPage() {
       header: '#',
       accessor: 'username',
       sortable: false,
+      cell: (value: string) => (
+        <span className="text-neutral font-normal">{value}</span>
+      ),
     },
     {
       header: 'Name',
@@ -80,22 +81,16 @@ export function TableTestPage() {
       getCopyText: (value: string) => value,
     },
     {
-      header: 'Status',
-      accessor: 'isFollowing',
-
-      cell: (value: boolean) => (
-        <Button
-          variant={value ? 'secondary' : 'primary'}
-          size="sm"
-          className="pointer-events-none w-[80px]"
-        >
-          {value ? 'Following' : 'Follow'}
-        </Button>
+      header: 'Bio',
+      accessor: 'bio_excerpt',
+      sortable: false,
+      cell: (value: string | null) => (
+        <span className="text-neutral text-sm">{value || '-'}</span>
       ),
     },
     {
       header: 'Join Date',
-      accessor: 'joinDate',
+      accessor: 'created_at',
       sortable: true,
       copyable: true,
       cell: (value: string) => (
@@ -106,25 +101,24 @@ export function TableTestPage() {
       getCopyText: (value: string) => new Date(value).toISOString(),
     },
     {
-      header: 'Contributions',
-      accessor: 'contributions',
+      header: 'Topics Created',
+      accessor: 'summary',
       sortable: true,
-      cell: (value: number) => (
+      cell: (value: Ambassador['summary']) => (
         <span className="text-neutral font-medium">
-          {value.toLocaleString()}
+          {value.stats.topics_created.toLocaleString()}
         </span>
       ),
     },
     {
-      header: 'Tx Hash',
-      accessor: 'transactionHash',
+      header: 'Profile',
+      accessor: 'href',
       copyable: true,
       truncate: 25,
-      cell: (value: string | undefined) => {
-        if (!value) return <span className="text-neutral">-</span>;
+      cell: (value: string) => {
         const truncated =
-          value.length > 16
-            ? `${value.slice(0, 8)}...${value.slice(-4)}`
+          value.length > 30
+            ? `${value.slice(0, 15)}...${value.slice(-10)}`
             : value;
         return (
           <span className="text-neutral text-xs" title={value}>
@@ -140,11 +134,10 @@ export function TableTestPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-
-      <Table 
-        data={[]} 
-        columns={columns} 
+    <div className="mx-auto max-w-7xl p-6">
+      <Table
+        data={[]}
+        columns={columns}
         pageSize={10}
         searchable={true}
         onCopy={handleCopy}

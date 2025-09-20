@@ -6,10 +6,10 @@ interface GithubIconProps {
   color?: string;
 }
 
-const GithubIcon: React.FC<GithubIconProps> = ({ 
-  className = '', 
-  size = 24, 
-  color = 'currentColor' 
+const GithubIcon: React.FC<GithubIconProps> = ({
+  className = '',
+  size = 24,
+  color = 'currentColor',
 }) => {
   return (
     <svg

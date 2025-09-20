@@ -59,7 +59,7 @@ const adminToolsSection: NavigationSection = {
     {
       id: 'membership-intent',
       label: 'Membership intent',
-      href: '/manage/membership',
+      href: '/manage/memberships',
       icon: SettingsIcon,
     },
     {
@@ -112,7 +112,9 @@ const SideNav = () => {
   return (
     <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r lg:flex">
       <div className="flex items-center justify-start p-6">
-        <AppLogo />
+        <Link href="/">
+          <AppLogo />
+        </Link>
       </div>
 
       <div className="space-y-8">

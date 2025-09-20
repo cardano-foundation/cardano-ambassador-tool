@@ -5,10 +5,10 @@ import KeyValue from '@/components/atoms/KeyValue';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
+import { useApp } from '@/context/AppContext';
 import { shortenString } from '@/utils';
 import { hexToString } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
-import { useApp } from '@/context/AppContext';
 
 const SelectToken = ({
   setAsset,
@@ -30,7 +30,7 @@ const SelectToken = ({
 
   return (
     <>
-      <div className="mb-8 flex flex-col items-center">
+      <div className="flex h-full w-full mb-8 flex-col items-center">
         <Title level="5">Wallet Connected ✅</Title>
         <div className="flex gap-2">
           <span className="base font-semibold">Address: </span>
@@ -52,9 +52,13 @@ const SelectToken = ({
                 className="peer hidden"
                 checked={selectedAssetName === asset.assetName}
                 onChange={() => {
-                  selectedAssetName === asset.assetName
-                    ? (setSelectedAssetName(null), setAsset(undefined))
-                    : (setSelectedAssetName(asset.assetName), setAsset(asset));
+                  if (selectedAssetName === asset.assetName) {
+                    setSelectedAssetName(null);
+                    setAsset(undefined);
+                  } else {
+                    setSelectedAssetName(asset.assetName);
+                    setAsset(asset);
+                  }
                 }}
               />
               <label

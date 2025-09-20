@@ -10,10 +10,13 @@ export const useDateFormatting = (): UseDateFormattingReturn => {
   return useMemo(() => {
     const formatDate = (dateString: string): string => {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
         day: 'numeric',
-        year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+        year:
+          date.getFullYear() !== new Date().getFullYear()
+            ? 'numeric'
+            : undefined,
       });
     };
 
@@ -29,46 +32,46 @@ export const useDateFormatting = (): UseDateFormattingReturn => {
       const diffInYears = Math.floor(diffInDays / 365);
 
       const formatTime = (date: Date) => {
-        return date.toLocaleTimeString('en-US', { 
-          hour: 'numeric', 
+        return date.toLocaleTimeString('en-US', {
+          hour: 'numeric',
           minute: '2-digit',
-          hour12: true 
+          hour12: true,
         });
       };
 
       if (diffInMinutes < 60) {
         return `${diffInMinutes} minutes ago`;
       }
-      
+
       if (diffInHours < 24) {
         return `${diffInHours} hours ago`;
       }
-      
+
       const isToday = date.toDateString() === now.toDateString();
       const yesterday = new Date(now);
       yesterday.setDate(yesterday.getDate() - 1);
       const isYesterday = date.toDateString() === yesterday.toDateString();
-      
+
       if (isToday) {
         return `Today, ${formatTime(date)}`;
       }
-      
+
       if (isYesterday) {
         return `Yesterday, ${formatTime(date)}`;
       }
-      
+
       if (diffInDays < 7) {
         return `${diffInDays} days ago, ${formatTime(date)}`;
       }
-      
+
       if (diffInWeeks < 4) {
         return `${diffInWeeks} ${diffInWeeks === 1 ? 'week' : 'weeks'} ago`;
       }
-      
+
       if (diffInMonths < 12) {
         return `${diffInMonths} ${diffInMonths === 1 ? 'month' : 'months'} ago`;
       }
-      
+
       return `${diffInYears} ${diffInYears === 1 ? 'year' : 'years'} ago`;
     };
 
@@ -79,7 +82,7 @@ export const useDateFormatting = (): UseDateFormattingReturn => {
     return {
       formatDate,
       getRelativeTime,
-      cleanHtml
+      cleanHtml,
     };
   }, []);
 };

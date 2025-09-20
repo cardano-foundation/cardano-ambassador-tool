@@ -1,7 +1,6 @@
 'use client';
 
 import Button from '@/components/atoms/Button';
-import Paragraph from '@/components/atoms/Paragraph';
 import {
   Dialog,
   DialogContent,
@@ -12,20 +11,16 @@ import {
 } from '@/components/Dialog';
 import { useApp } from '@/context';
 import { shortenString } from '@/utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from '../toast/toast-manager';
 import WalletList from './WalletList';
 
 const ConnectWallet = () => {
   const [open, setOpen] = useState(false);
-  const { wallet, isNetworkValid, hasNetworkError, dismissNetworkError } = useApp();
-  
-  const {
-    isConnected,
-    address,
-    disconnectWallet,
-    clearError
-  } = wallet;
+  const { wallet, isNetworkValid, hasNetworkError, dismissNetworkError } =
+    useApp();
+
+  const { isConnected, address, disconnectWallet, clearError } = wallet;
 
   const handlechange = (open: boolean | ((prevState: boolean) => boolean)) => {
     if (!open) {
@@ -36,7 +31,6 @@ const ConnectWallet = () => {
   };
 
   // Don't auto-close dialog on connection - let user see network errors in dialog
-
 
   return (
     <Dialog open={open} onOpenChange={(open) => handlechange(open)}>
@@ -64,12 +58,12 @@ const ConnectWallet = () => {
         <DialogHeader>
           <DialogTitle>Connect Wallet</DialogTitle>
           <DialogDescription>
-            Choose from one of the supported Cardano wallets to connect to this application.
+            Choose from one of the supported Cardano wallets to connect to this
+            application.
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex h-full w-full flex-col gap-6 p-6">
-
           <WalletList />
         </div>
       </DialogContent>

@@ -1,11 +1,12 @@
 # Cardano Ambassador Tool - Client
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app). 
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
 First, clone the repository and install dependencies:
- - `cd client`
+
+- `cd client`
 
 ## Available Scripts
 
@@ -24,17 +25,17 @@ In the `client` directory, you can run:
 
 A **Makefile** is included to streamline common development tasks. Use these commands in the `client` directory:
 
-| Command           | Description                                 |
-|-------------------|---------------------------------------------|
-| `make init`       | Complete first-time project setup           |
-| `make install`    | Install dependencies and set up hooks       |
-| `make setup-hooks`| Set up Git hooks using Husky                |
-| `make dev`        | Start the development server                |
-| `make build`      | Build the app for production                |
-| `make lint`       | Run ESLint                                  |
-| `make format`     | Format code with Prettier                   |
-| `make type-check` | Run TypeScript type checking                |
-| `make clean`      | Clean build files                           |
+| Command            | Description                           |
+| ------------------ | ------------------------------------- |
+| `make init`        | Complete first-time project setup     |
+| `make install`     | Install dependencies and set up hooks |
+| `make setup-hooks` | Set up Git hooks using Husky          |
+| `make dev`         | Start the development server          |
+| `make build`       | Build the app for production          |
+| `make lint`        | Run ESLint                            |
+| `make format`      | Format code with Prettier             |
+| `make type-check`  | Run TypeScript type checking          |
+| `make clean`       | Clean build files                     |
 
 > **Tip:** Run `make help` to see all available commands.
 
@@ -47,21 +48,17 @@ This project uses [Husky](https://typicode.github.io/husky/) and [lint-staged](h
 
 Make sure to run `npm run prepare` after cloning to install Git hooks.
 
-
-
 ## Commit Guidelines
 
- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) to maintain clear and consistent commit history.
-
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) to maintain clear and consistent commit history.
 
 ### Commit Types
 
-| Type       | Description                              |
-|------------|----------------------------------------|
-| `feat:`    | New features                           |
-| `fix:`     | Bug fixes                             |
-| `test:`    | Adding or updating tests                      |
-
+| Type    | Description              |
+| ------- | ------------------------ |
+| `feat:` | New features             |
+| `fix:`  | Bug fixes                |
+| `test:` | Adding or updating tests |
 
 ### Example Commit Messages
 

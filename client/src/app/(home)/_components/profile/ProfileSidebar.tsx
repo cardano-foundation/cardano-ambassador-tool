@@ -1,5 +1,5 @@
+import Paragraph from '@/components/atoms/Paragraph';
 import React from 'react';
-import Paragraph  from '@/components/atoms/Paragraph';
 import { AboutSection } from './AboutSection';
 import { NetworkSection } from './NetworkSection';
 
@@ -15,20 +15,20 @@ interface ProfileSidebarProps {
   cleanHtml: (html: string | null | undefined) => string;
 }
 
-export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ 
-  profile, 
-  formatDate, 
-  cleanHtml 
+export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
+  profile,
+  formatDate,
+  cleanHtml,
 }) => {
   return (
-    <div className="w-full p-2 space-y-6">
-      <AboutSection 
+    <div className="w-full space-y-6 p-2">
+      <AboutSection
         profile={profile}
         formatDate={formatDate}
         cleanHtml={cleanHtml}
       />
       <NetworkSection profileName={profile.name} />
-      <Paragraph className="text-base text-muted-foreground mt-4">
+      <Paragraph className="text-muted-foreground mt-4 text-base">
         Member Since: {formatDate(profile.created_at)}
       </Paragraph>
     </div>

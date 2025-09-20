@@ -34,6 +34,7 @@ interface AppContextValue {
 
   // Database state
   dbLoading: boolean;
+  isSyncing: boolean;
   membershipIntents: Utxo[];
   proposalIntents: Utxo[];
   members: Utxo[];
@@ -101,6 +102,7 @@ const AppContext = createContext<AppContextValue>({
 
   // Database defaults
   dbLoading: true,
+  isSyncing: false,
   membershipIntents: [],
   proposalIntents: [],
   members: [],
@@ -120,7 +122,7 @@ const AppContext = createContext<AppContextValue>({
   userRoles: [],
   userWallet: undefined,
   logout: () => {},
-  
+
   // Theme defaults
   theme: 'light',
   setTheme: () => {},
@@ -170,6 +172,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const {
     // State
     dbLoading,
+    isSyncing,
     membershipIntents,
     proposalIntents,
     members,
@@ -225,7 +228,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     isConnected: wallet.isConnected,
   });
 
-  // Coordinate app loading state 
+  // Coordinate app loading state
   useEffect(() => {
     const timer = updateLoadingState(
       dbLoading,
@@ -251,6 +254,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     // Database
     dbLoading,
+    isSyncing,
     membershipIntents,
     proposalIntents,
     members,

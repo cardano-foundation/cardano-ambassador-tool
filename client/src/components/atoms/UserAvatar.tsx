@@ -41,7 +41,6 @@ export default function UserAvatar({
     };
   }, [imageUrl, fallbackSvg]);
 
-
   return (
     <div className="group relative inline-block">
       <img

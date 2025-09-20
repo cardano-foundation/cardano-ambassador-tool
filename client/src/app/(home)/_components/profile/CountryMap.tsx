@@ -1,9 +1,9 @@
 'use client';
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import ReactDOMServer from "react-dom/server";
 import { MapsIcon } from '@/components/atoms/MapsIcon';
+import L from 'leaflet';
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import countryCoordinates from '../../../../utils/CountryCoordinates';
 
 interface CountryMapProps {
@@ -11,28 +11,31 @@ interface CountryMapProps {
   className?: string;
 }
 
-export const CountryMap: React.FC<CountryMapProps> = ({ country, className = "" }) => {
+export const CountryMap: React.FC<CountryMapProps> = ({
+  country,
+  className = '',
+}) => {
   const coordinates = countryCoordinates[country];
-  
+
   if (!coordinates) {
     return <div className={className}>Unknown country: {country}</div>;
   }
 
   const CardanoPin = () => (
-    <div className="relative group">
-        <MapsIcon 
-          size={66} 
-          pinColor="white"  
-          backgroundColor="#ef4444"
-          cardanoIconColor="#ffffff"
-          cardanoIconSize={20}
-        />
+    <div className="group relative">
+      <MapsIcon
+        size={66}
+        pinColor="white"
+        backgroundColor="#ef4444"
+        cardanoIconColor="#ffffff"
+        cardanoIconSize={20}
+      />
     </div>
   );
 
   const cardanoIcon = L.divIcon({
     html: ReactDOMServer.renderToString(<CardanoPin />),
-    className: "!bg-transparent !border-none",
+    className: '!bg-transparent !border-none',
     iconSize: [32, 40],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
@@ -46,11 +49,11 @@ export const CountryMap: React.FC<CountryMapProps> = ({ country, className = "" 
         scrollWheelZoom={false}
         className="h-40 w-full"
       >
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-        />
-        <Marker position={[coordinates.lat, coordinates.lng]} icon={cardanoIcon}>
-        </Marker>
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+        <Marker
+          position={[coordinates.lat, coordinates.lng]}
+          icon={cardanoIcon}
+        ></Marker>
       </MapContainer>
     </div>
   );

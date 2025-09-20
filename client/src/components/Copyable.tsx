@@ -12,10 +12,9 @@ const Copyable = ({
   link?: string;
   withKey?: boolean;
 }) => {
-
   return (
     <>
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-8">
         <span className="text-neutral">{`${withKey ? keyLabel + ';' : ''} ${shortenString(value, 12)}`}</span>
         <span className="flex items-center gap-2">
           <Copy
@@ -26,6 +25,7 @@ const Copyable = ({
             href={link}
             target="_blank"
             className={`${link.length ? 'hover:cursor-pointer' : 'hover:cursor-not-allowed'}`}
+            rel="noreferrer"
           >
             <ExternalLink className="text-neutral size-4" />
           </a>

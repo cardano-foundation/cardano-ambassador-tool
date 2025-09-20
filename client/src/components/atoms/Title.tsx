@@ -1,8 +1,8 @@
-import React, { HTMLAttributes } from "react";
-import { cn } from "@/utils/utils";
+import { cn } from '@/utils/utils';
+import { HTMLAttributes } from 'react';
 
 interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
-  level?: "1" | "2" | "3" | "4" | "5" | "6";
+  level?: '1' | '2' | '3' | '4' | '5' | '6';
 }
 
 const titleSizes = {
@@ -16,16 +16,16 @@ const titleSizes = {
 } as const;
 
 export default function Title({
-  level = "1",
+  level = '1',
   className,
   children,
   ...props
 }: TitleProps) {
-  const Tag = `h${level}` as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
   return (
     <Tag
-      className={cn("font-bold tracking-normal", titleSizes[level], className)}
+      className={cn('font-bold tracking-normal', titleSizes[level], className)}
       {...props}
     >
       {children}

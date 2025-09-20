@@ -1,5 +1,5 @@
 // 'use client';
-
+//
 // import BadgeIcon from '@/components/atoms/BadgeIcon';
 // import Button from '@/components/atoms/Button';
 // import Card, { CardContent } from '@/components/atoms/Card';
@@ -10,17 +10,18 @@
 // import MapsIcon from '@/components/atoms/MapsIcon';
 // import NoNotificationsIcon from '@/components/atoms/NoNotificationsIcon';
 // import Paragraph from '@/components/atoms/Paragraph';
-// import Progress from '@/components/atoms/Progress';
 // import Switch from '@/components/atoms/Switch';
 // import TextLink from '@/components/atoms/TextLink';
+// import Progress from '@/components/atoms/Timeline';
 // import Title from '@/components/atoms/Title';
 // import UserAvatar from '@/components/atoms/UserAvatar';
 // import XIcon from '@/components/atoms/XIcon';
 // import TopNav from '@/components/Navigation/TabNav';
+// import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 // import { getCountryFlag } from '@/utils/countryFlags';
 // import Link from 'next/link';
 // import React, { useEffect, useState } from 'react';
-
+//
 // interface AmbassadorProfile {
 //   href: string;
 //   username: string;
@@ -69,43 +70,38 @@
 //     granted_at: string;
 //   }>;
 // }
-
+//
 // interface AmbassadorProfileProps {
-//   ambassadorId: string;
+//   ambassadorUsername: string;
 // }
-
+//
 // const AmbassadorProfile: React.FC<AmbassadorProfileProps> = ({
-//   ambassadorId,
+//   ambassadorUsername,
 // }) => {
 //   const [activeTab, setActiveTab] = useState('summary');
 //   const [profile, setProfile] = useState<AmbassadorProfile | null>(null);
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState<string | null>(null);
 //   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-
+//
 //   // Add states for expanded sections
 //   const [showAllTopics, setShowAllTopics] = useState(false);
 //   const [showAllReplies, setShowAllReplies] = useState(false);
 //   const [showAllActivities, setShowAllActivities] = useState(false);
-
-
-
+//
 //   useEffect(() => {
 //     const fetchAmbassadorProfile = async () => {
 //       try {
 //         setLoading(true);
-//         console.log('Fetching profile for:', ambassadorId);
-//         const response = await fetch(`/api/member/${ambassadorId}`);
-//         console.log('Response status:', response.status);
-
+//         const response = await fetch(`/api/member/${ambassadorUsername}`);
+//
 //         if (!response.ok) {
 //           const errorText = await response.text();
-//           console.error('API Error:', errorText);
 //           throw new Error(
 //             `Failed to fetch ambassador profile: ${response.status} - ${errorText}`,
 //           );
 //         }
-
+//
 //         const data: AmbassadorProfile = await response.json();
 //         console.log('Profile data loaded:', data.name);
 //         setProfile(data);
@@ -117,22 +113,16 @@
 //         setLoading(false);
 //       }
 //     };
-
-//     if (ambassadorId) {
+//
+//     if (ambassadorUsername) {
 //       fetchAmbassadorProfile();
 //     }
-//   }, [ambassadorId]);
-
+//   }, [ambassadorUsername]);
+//
 //   if (loading) {
-//     return (
-//       <div className="bg-background flex min-h-screen items-center justify-center">
-//         <div className="text-muted-foreground">
-//           Loading ambassador profile...
-//         </div>
-//       </div>
-//     );
+//     return <SimpleCardanoLoader />;
 //   }
-
+//
 //   if (error || !profile) {
 //     return (
 //       <div className="bg-background flex min-h-screen items-center justify-center">
@@ -147,7 +137,7 @@
 //       </div>
 //     );
 //   }
-
+//
 //   const formatDate = (dateString: string) => {
 //     const date = new Date(dateString);
 //     return date.toLocaleDateString('en-US', {
@@ -157,7 +147,7 @@
 //         date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined,
 //     });
 //   };
-
+//
 //   const getRelativeTime = (dateString: string) => {
 //     const date = new Date(dateString);
 //     const now = new Date();
@@ -168,7 +158,7 @@
 //     const diffInWeeks = Math.floor(diffInDays / 7);
 //     const diffInMonths = Math.floor(diffInDays / 30);
 //     const diffInYears = Math.floor(diffInDays / 365);
-
+//
 //     const formatTime = (date: Date) => {
 //       return date.toLocaleTimeString('en-US', {
 //         hour: 'numeric',
@@ -176,58 +166,58 @@
 //         hour12: true,
 //       });
 //     };
-
+//
 //     if (diffInMinutes < 60) {
 //       return `${diffInMinutes} minutes ago`;
 //     }
-
+//
 //     if (diffInHours < 24) {
 //       return `${diffInHours} hours ago`;
 //     }
-
+//
 //     const isToday = date.toDateString() === now.toDateString();
 //     const yesterday = new Date(now);
 //     yesterday.setDate(yesterday.getDate() - 1);
 //     const isYesterday = date.toDateString() === yesterday.toDateString();
-
+//
 //     if (isToday) {
 //       return `Today, ${formatTime(date)}`;
 //     }
-
+//
 //     if (isYesterday) {
 //       return `Yesterday, ${formatTime(date)}`;
 //     }
-
+//
 //     if (diffInDays < 7) {
 //       return `${diffInDays} days ago, ${formatTime(date)}`;
 //     }
-
+//
 //     if (diffInWeeks < 4) {
 //       return `${diffInWeeks} ${diffInWeeks === 1 ? 'week' : 'weeks'} ago`;
 //     }
-
+//
 //     if (diffInMonths < 12) {
 //       return `${diffInMonths} ${diffInMonths === 1 ? 'month' : 'months'} ago`;
 //     }
-
+//
 //     return `${diffInYears} ${diffInYears === 1 ? 'year' : 'years'} ago`;
 //   };
-
+//
 //   const cleanHtml = (html: string | null | undefined): string => {
 //     return html?.replace(/<[^>]*>/g, '') ?? '';
 //   };
-
+//
 //   const tabs = [
 //     { id: 'summary', label: 'Summary' },
 //     { id: 'badges', label: 'Badges' },
 //     { id: 'announcements', label: 'Announcements' },
 //     { id: 'proposals', label: 'Proposals' },
 //   ];
-
+//
 //   const handleTabChange = (tabId: string) => {
 //     setActiveTab(tabId);
 //   };
-
+//
 //   const StatCard = ({
 //     label,
 //     value,
@@ -245,7 +235,7 @@
 //       </div>
 //     </div>
 //   );
-
+//
 //   const BadgeCard = ({ badge }: { badge: AmbassadorProfile['badges'][0] }) => (
 //     <Card className="p-4">
 //       <CardContent>
@@ -263,7 +253,7 @@
 //       </CardContent>
 //     </Card>
 //   );
-
+//
 //   const TopicItem = ({
 //     topic,
 //   }: {
@@ -288,7 +278,7 @@
 //       </div>
 //     </div>
 //   );
-
+//
 //   const ReplyItem = ({
 //     reply,
 //   }: {
@@ -315,7 +305,7 @@
 //       </div>
 //     </div>
 //   );
-
+//
 //   return (
 //     <div className="bg-background min-h-screen">
 //       <div className="bg-card">
@@ -389,7 +379,7 @@
 //           </div>
 //         </div>
 //       </div>
-//       <div className="flex p-6 gap-6">
+//       <div className="flex gap-6 p-6">
 //         <aside className="sticky top-6 h-fit w-80 flex-shrink-0 space-y-6">
 //           <Card>
 //             <CardContent>
@@ -405,7 +395,7 @@
 //               <Paragraph className="text-foreground overflow-wrap-anywhere mb-6 text-sm leading-snug font-normal break-words">
 //                 {cleanHtml(profile.bio_excerpt)}
 //               </Paragraph>
-
+//
 //               <div className="space-y-3 text-sm">
 //                 <div>
 //                   <span className="text-neutral font-semibold">Country:</span>{' '}
@@ -439,9 +429,7 @@
 //                 </div>
 //               </div>
 //               <div className="bg-muted/20 border-border/40 mt-6 flex flex-col items-center justify-center rounded-lg border">
-//                 <MapsIcon
-//                   size={50}
-//                 />
+//                 <MapsIcon size={50} />
 //               </div>
 //             </CardContent>
 //           </Card>
@@ -470,7 +458,7 @@
 //             Member Since: {formatDate(profile.created_at)}
 //           </Paragraph>
 //         </aside>
-//         <main className="flex flex-1 flex-col min-w-0">
+//         <main className="flex min-w-0 flex-1 flex-col">
 //           <div className="border-border bg-card border-b">
 //             <div className="px-6">
 //               <TopNav
@@ -603,7 +591,7 @@
 //                 </Card>
 //               </div>
 //             )}
-
+//
 //             {activeTab === 'badges' && (
 //               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 //                 {profile.badges.map((badge, index) => (
@@ -611,7 +599,7 @@
 //                 ))}
 //               </div>
 //             )}
-
+//
 //             {activeTab === 'announcements' && (
 //               <div className="flex flex-col items-center justify-center py-24">
 //                 <NoNotificationsIcon className="mb-6" />
@@ -620,7 +608,7 @@
 //                 </Paragraph>
 //               </div>
 //             )}
-
+//
 //             {activeTab === 'proposals' && (
 //               <div className="py-12 text-center">
 //                 <Paragraph size="sm" className="text-muted-foreground">
@@ -634,5 +622,5 @@
 //     </div>
 //   );
 // };
-
+//
 // export default AmbassadorProfile;

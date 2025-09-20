@@ -26,7 +26,7 @@ describe('useDatabase', () => {
     const { result } = renderHook(() => useDatabase());
     
     expect(result.current.dbLoading).toBe(true);
-    expect(result.current.intents).toEqual([]);
+    expect(result.current.membershipIntents).toEqual([]);
   });
 
   it('should initialize worker and set up message listener', () => {
@@ -66,7 +66,7 @@ describe('useDatabase', () => {
       expect(result.current.dbLoading).toBe(false);
     });
 
-    expect(result.current.intents).toBeDefined();
+    expect(result.current.membershipIntents).toBeDefined();
   });
 
   it('should handle worker initialization error', async () => {

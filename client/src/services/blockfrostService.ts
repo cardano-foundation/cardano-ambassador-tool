@@ -35,7 +35,6 @@ export class BlockfrostService {
 
   fetchAddressUTxOs = async (address: string): Promise<UTxO[]> => {
     try {
-
       const response = await fetch(`${window.location.origin}/api/utxos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

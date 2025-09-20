@@ -1,19 +1,23 @@
-import React from 'react';
-import Title  from '@/components/atoms/Title';
 import Card, { CardContent } from '@/components/atoms/Card';
-import LinkedInIcon  from '@/components/atoms/LinkedinIcon';
-import XIcon  from '@/components/atoms/XIcon';
-import GithubIcon  from '@/components/atoms/GithubIcon';
+import GithubIcon from '@/components/atoms/GithubIcon';
+import LinkedInIcon from '@/components/atoms/LinkedinIcon';
+import Title from '@/components/atoms/Title';
+import XIcon from '@/components/atoms/XIcon';
+import React from 'react';
 
 interface NetworkSectionProps {
   profileName: string;
 }
 
-export const NetworkSection: React.FC<NetworkSectionProps> = ({ profileName }) => {
+export const NetworkSection: React.FC<NetworkSectionProps> = ({
+  profileName,
+}) => {
   return (
     <Card>
       <CardContent className="p-2">
-        <Title level="6" className="text-neutral text-lg mb-4">Network</Title>
+        <Title level="6" className="text-neutral mb-4 text-lg">
+          Network
+        </Title>
         <div className="space-y-3">
           <div className="flex items-center space-x-3">
             <LinkedInIcon size={15} />

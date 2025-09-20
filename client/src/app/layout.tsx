@@ -3,7 +3,6 @@
 import { AppProvider } from '@/context/AppContext';
 import 'leaflet/dist/leaflet.css';
 
-import type { Metadata } from 'next';
 import './app.css';
 
 // export const metadata: Metadata = {

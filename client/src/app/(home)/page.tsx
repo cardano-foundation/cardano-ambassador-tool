@@ -2,7 +2,7 @@
 import AmbassadorSearchBar from '@/components/AmbassadorSearchBar';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
-import { Pagination } from '@/components/Pagination'; // Import your Pagination component
+import { Pagination } from '@/components/Pagination';
 import { useApp } from '@/context';
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -45,13 +45,12 @@ export default function HomePage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Optional: Scroll to top when page changes
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
-    setCurrentPage(1); // Reset to first page when page size changes
+    setCurrentPage(1);
   };
 
   return (

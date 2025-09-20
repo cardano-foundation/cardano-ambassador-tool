@@ -1,10 +1,10 @@
 'use client';
 
+import { SingleRowStepper } from '@/components/atoms/Stepper';
+import { useApp } from '@/context/AppContext';
 import { MemberTokenDetail } from '@types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { SingleRowStepper } from '@/components/atoms/Stepper';
-import { useApp } from '@/context/AppContext';
 import ConnectWallet from './components/ConnectWallet';
 import SelectToken from './components/SelectToken';
 import SubmissionSuccess from './components/SubmissionSuccess';
@@ -145,7 +145,7 @@ function SignUp() {
         <SingleRowStepper
           currentStep={currentStep}
           totalSteps={steps.length}
-          stepLabels={steps.map(step => step.name)}
+          stepLabels={steps.map((step) => step.name)}
           clickable={true}
           onStepClick={handleStepClick}
           className="max-w-md"

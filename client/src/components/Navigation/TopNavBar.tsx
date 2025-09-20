@@ -155,7 +155,6 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
           </div>
         ))}
       </div>
-
       <Card padding="sm" className="mx-4 mt-auto mb-4">
         <CardContent className="flex flex-col">
           {connected ? (

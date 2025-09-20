@@ -1,7 +1,11 @@
 'use client';
 
 import { resolveRoles } from '@/lib/auth/roles';
-import { createClientSession, getClientSession, destroyClientSession } from '@/lib/auth/session';
+import {
+  createClientSession,
+  destroyClientSession,
+  getClientSession,
+} from '@/lib/auth/session';
 import { IWallet } from '@meshsdk/core';
 import { useEffect, useState } from 'react';
 
@@ -17,7 +21,11 @@ interface UseUserAuthProps {
   isConnected: boolean;
 }
 
-export function useUserAuth({ wallet, address, isConnected }: UseUserAuthProps) {
+export function useUserAuth({
+  wallet,
+  address,
+  isConnected,
+}: UseUserAuthProps) {
   const [user, setUserState] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -36,7 +44,7 @@ export function useUserAuth({ wallet, address, isConnected }: UseUserAuthProps) 
         setUserState({
           wallet,
           roles: existingSession.roles.map((r: { role: string }) => r.role),
-          address: existingSession.address
+          address: existingSession.address,
         });
         return;
       }
@@ -46,10 +54,10 @@ export function useUserAuth({ wallet, address, isConnected }: UseUserAuthProps) 
       try {
         const roles = await resolveRoles(address);
         createClientSession(address, roles);
-        setUserState({ 
-          wallet, 
-          roles: roles.map((r) => r.role), 
-          address 
+        setUserState({
+          wallet,
+          roles: roles.map((r) => r.role),
+          address,
         });
       } catch (error) {
         setUserState(null);
@@ -63,7 +71,7 @@ export function useUserAuth({ wallet, address, isConnected }: UseUserAuthProps) 
   }, [address, wallet, isConnected]);
 
   const logout = async () => {
-    try {      
+    try {
       localStorage.removeItem('user_session');
       setUserState(null);
     } catch (error) {

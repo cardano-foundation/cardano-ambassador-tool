@@ -1,5 +1,5 @@
-import { BrowserWallet, checkSignature } from '@meshsdk/core';
 import { getCurrentNetworkConfig } from '@/config/cardano';
+import { BrowserWallet, IWallet } from '@meshsdk/core';
 
 const WALLET_PERSISTENCE_KEY = 'wallet-selection';
 
@@ -14,7 +14,7 @@ export const connectToWallet = async (walletId: string) => {
 };
 
 // Network validation
-export const validateNetwork = async (wallet: any) => {
+export const validateNetwork = async (wallet: IWallet) => {
   try {
     const networkId = await wallet.getNetworkId();
     const expectedNetwork = getCurrentNetworkConfig();
@@ -38,7 +38,7 @@ export const clearWalletSelection = () => {
 };
 
 // Address utilities
-export const getWalletAddress = async (wallet: any) => {
+export const getWalletAddress = async (wallet: IWallet) => {
   const addresses = await wallet.getUsedAddresses();
   return addresses[0] || null;
 };

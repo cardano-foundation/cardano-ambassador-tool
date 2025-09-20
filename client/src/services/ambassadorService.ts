@@ -11,7 +11,6 @@ export interface Ambassador {
   flag?: string;
 }
 
-
 async function fetchJson(url: string) {
   const res = await axios.get(url, { timeout: 15000, family: 4 });
   return res.data;

@@ -1,4 +1,4 @@
-'use server'
+'use server';
 
 import { deserializeAddress } from '@meshsdk/core';
 
@@ -20,8 +20,6 @@ function getAdminPubKeyHashes(): string[] {
   return adminList;
 }
 
-
-
 export async function resolveRoles(address: string): Promise<
   {
     role: string;
@@ -30,21 +28,18 @@ export async function resolveRoles(address: string): Promise<
   const roles: { role: string }[] = [];
 
   try {
-    
     // Get admin pub key hashes from environment
     const adminsPubKeyHashes = getAdminPubKeyHashes();
-    
+
     // Get user's pub key hash
     const userPubKeyHash = deserializeAddress(address).pubKeyHash;
-    
+
     // Check if user is admin
     if (adminsPubKeyHashes.includes(userPubKeyHash)) {
       roles.push({ role: 'admin' });
     } else {
       console.log('User is not admin');
     }
-    
-    
   } catch (error) {
     console.error('Error resolving user roles:', error);
   }

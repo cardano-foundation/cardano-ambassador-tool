@@ -48,7 +48,6 @@ export function Table<T>({
 
   const pageSize = onPageSizeChange ? initialPageSize : internalPageSize;
 
-
   const filteredData = useMemo(() => {
     if (!searchTerm) return data;
     const searchLower = searchTerm.toLowerCase();
@@ -108,7 +107,6 @@ export function Table<T>({
       setInternalPageSize(newPageSize);
     }
   };
-
 
   const itemsPerPageStart =
     paginatedData.length > 0 ? (currentPage - 1) * pageSize + 1 : 0;

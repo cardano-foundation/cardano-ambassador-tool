@@ -1,17 +1,17 @@
-import React from "react";
-import { cn } from "@/utils/utils";
-import Title from "./Title";
-import Paragraph from "./Paragraph";
+import { cn } from '@/utils/utils';
+import React from 'react';
+import Paragraph from './Paragraph';
+import Title from './Title';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  padding?: "none" | "sm" | "md" | "lg";
+  padding?: 'none' | 'sm' | 'md' | 'lg';
   clickable?: boolean;
   onCardClick?: () => void;
   children: React.ReactNode;
 }
 
 export default function Card({
-  padding = "md",
+  padding = 'md',
   clickable = false,
   onCardClick,
   className,
@@ -27,22 +27,22 @@ export default function Card({
   return (
     <div
       className={cn(
-        "bg-card rounded-xl shadow-[0px_3px_4px_rgba(0,0,0,0.03)]",
-        "outline-1 outline-offset-[-1px] outline-border",
-        "transition-all duration-200 ease-in-out",
+        'bg-card rounded-xl shadow-[0px_3px_4px_rgba(0,0,0,0.03)]',
+        'outline-border outline-1 outline-offset-[-1px]',
+        'transition-all duration-200 ease-in-out',
 
         {
-          "p-0": padding === "none",
-          "p-4": padding === "sm",
-          "p-6": padding === "md",
-          "p-8": padding === "lg",
+          'p-0': padding === 'none',
+          'p-4': padding === 'sm',
+          'p-6': padding === 'md',
+          'p-8': padding === 'lg',
         },
 
         clickable && [
-          "cursor-pointer",
-          "hover:shadow-[0px_3px_8px_rgba(0,0,0,0.08)]",
-          "hover:outline-muted",
-          "active:scale-[0.98]",
+          'cursor-pointer',
+          'hover:shadow-[0px_3px_8px_rgba(0,0,0,0.08)]',
+          'hover:outline-muted',
+          'active:scale-[0.98]',
         ],
 
         className,
@@ -67,7 +67,7 @@ export function CardHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-start justify-between mb-6", className)}>
+    <div className={cn('mb-6 flex items-start justify-between', className)}>
       <div>
         {title && (
           <Title level="4" className="text-card-foreground mb-2">
@@ -92,7 +92,7 @@ export function CardContent({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={cn("space-y-4", className)}>{children}</div>;
+  return <div className={cn('space-y-4', className)}>{children}</div>;
 }
 
 export function CardFooter({
@@ -102,5 +102,5 @@ export function CardFooter({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={cn("mt-6 pt-4", className)}>{children}</div>;
+  return <div className={cn('mt-6 pt-4', className)}>{children}</div>;
 }

@@ -1,10 +1,11 @@
-console.log("App started!!!!!!!!!!!!!");
-self.importScripts("sql-wasm.js");
+console.log('App started!!!!!!!!!!!!!');
+self.importScripts('sql-wasm.js');
 
 self.onmessage = async function (e) {
-  const { action, context, contexts, apiBaseUrl, existingDb } = e.data;
+  const { action, context, contexts, apiBaseUrl, existingDb, isSyncOperation } =
+    e.data;
 
-  const SQL = await initSqlJs({ locateFile: () => "/sql-wasm.wasm" });
+  const SQL = await initSqlJs({ locateFile: () => '/sql-wasm.wasm' });
   let db = new SQL.Database();
 
   /**
@@ -107,15 +108,14 @@ self.onmessage = async function (e) {
 
   // Fetch and store UTxOs
   async function fetchAndStoreContext(contextName) {
-
-    if (contextName === "ambassadors") {
+    if (contextName === 'ambassadors') {
       await fetchAndStoreAmbassadors();
       return;
     }
 
     const res = await fetch(`${apiBaseUrl}/api/utxos`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ context: contextName }),
     });
 
@@ -142,22 +142,21 @@ self.onmessage = async function (e) {
    * -------------------------
    */
 
-  if (action === "seed" && context) {
+  if (action === 'seed' && context) {
     await fetchAndStoreContext(context);
   }
 
-  if (action === "seedAll" && Array.isArray(contexts)) {
+  if (action === 'seedAll' && Array.isArray(contexts)) {
     const results = await Promise.allSettled(
-      contexts.map((ctx) => fetchAndStoreContext(ctx))
+      contexts.map((ctx) => fetchAndStoreContext(ctx)),
     );
 
     results.forEach((result, i) => {
-      if (result.status === "rejected") {
+      if (result.status === 'rejected') {
         console.error(`Failed to seed context ${contexts[i]}:`, result.reason);
       }
     });
   }
-
 
   /**
    * -------------------------
@@ -165,5 +164,8 @@ self.onmessage = async function (e) {
    * -------------------------
    */
   const exported = db.export();
-  self.postMessage({ db: Array.from(exported) });
+  self.postMessage({
+    db: Array.from(exported),
+    isSyncOperation: isSyncOperation || false,
+  });
 };

@@ -1,6 +1,6 @@
-"use client";
-import React, { useState, useEffect, useRef } from "react";
-import { cn } from "@/utils/utils";
+'use client';
+import { cn } from '@/utils/utils';
+import { useEffect, useRef, useState } from 'react';
 
 interface DropdownOption {
   value: string;
@@ -20,7 +20,7 @@ export default function Dropdown({
   options,
   value,
   onValueChange,
-  placeholder = "Select option...",
+  placeholder = 'Select option...',
   disabled = false,
   className,
 }: DropdownProps) {
@@ -31,7 +31,10 @@ export default function Dropdown({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -58,8 +61,8 @@ export default function Dropdown({
     <div
       ref={dropdownRef}
       className={cn(
-        "relative inline-block text-left w-full min-w-0 sm:min-w-[200px]",
-        className
+        'relative inline-block w-full min-w-0 text-left sm:min-w-[200px]',
+        className,
       )}
     >
       <button
@@ -72,24 +75,24 @@ export default function Dropdown({
           if (!disabled) setIsOpen(!isOpen);
         }}
         className={cn(
-          "inline-flex w-full justify-between items-center rounded-md border px-3 py-4 text-sm transition-colors focus-visible:outline-none cursor-pointer",
-          "bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/20",
-          disabled && "opacity-50 cursor-not-allowed hover:border-border",
-          isOpen && "border-primary ring-2 ring-primary/20"
+          'inline-flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-4 text-sm transition-colors focus-visible:outline-none',
+          'bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-primary/20 focus:ring-2',
+          disabled && 'hover:border-border cursor-not-allowed opacity-50',
+          isOpen && 'border-primary ring-primary/20 ring-2',
         )}
       >
         <span
           className={cn(
-            selectedOption ? "text-foreground" : "text-muted-foreground",
-            "truncate mr-2"
+            selectedOption ? 'text-foreground' : 'text-muted-foreground',
+            'mr-2 truncate',
           )}
         >
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <svg
           className={cn(
-            "h-4 w-4 transition-transform text-muted-foreground flex-shrink-0",
-            isOpen && "rotate-180"
+            'text-muted-foreground h-4 w-4 flex-shrink-0 transition-transform',
+            isOpen && 'rotate-180',
           )}
           fill="none"
           stroke="currentColor"
@@ -105,10 +108,10 @@ export default function Dropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 z-[9999] mt-1 origin-top rounded-md bg-background shadow-lg border border-border max-h-60 overflow-hidden">
+        <div className="bg-background border-border absolute right-0 left-0 z-[9999] mt-1 max-h-60 origin-top overflow-hidden rounded-md border shadow-lg">
           <div className="max-h-60 overflow-y-auto py-1">
             {options.length === 0 ? (
-              <div className="px-4 py-3 text-sm text-muted-foreground">
+              <div className="text-muted-foreground px-4 py-3 text-sm">
                 No options available
               </div>
             ) : (
@@ -122,15 +125,16 @@ export default function Dropdown({
                     handleSelect(option.value);
                   }}
                   className={cn(
-                    "flex w-full justify-between items-center px-4 py-3 text-left text-sm transition-colors cursor-pointer",
-                    "text-foreground hover:bg-muted hover:text-foreground",
-                    value === option.value && "bg-muted text-primary font-medium"
+                    'flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm transition-colors',
+                    'text-foreground hover:bg-muted hover:text-foreground',
+                    value === option.value &&
+                      'bg-muted text-primary font-medium',
                   )}
                 >
-                  <span className="flex-1 truncate mr-2">{option.label}</span>
+                  <span className="mr-2 flex-1 truncate">{option.label}</span>
                   {value === option.value && (
                     <svg
-                      className="h-4 w-4 flex-shrink-0 text-primary"
+                      className="text-primary h-4 w-4 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

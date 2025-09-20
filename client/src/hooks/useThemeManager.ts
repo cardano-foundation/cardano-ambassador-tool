@@ -20,7 +20,7 @@ export function useThemeManager() {
     }
     return 'light';
   });
-  
+
   const [isThemeInitialized, setIsThemeInitialized] = useState(false);
 
   // Apply theme immediately on mount and changes

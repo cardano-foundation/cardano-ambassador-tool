@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { cn } from "@/utils/utils";
-import { Tabs, TabsList, TabsTrigger } from "@/components/Tabs";
+import { Tabs, TabsList, TabsTrigger } from '@/components/Tabs';
+import { cn } from '@/utils/utils';
+import React, { useState } from 'react';
 
 interface TabItem {
   id: string;
@@ -21,10 +21,10 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
   tabs,
   activeTabId,
   onTabChange,
-  className = "",
+  className = '',
 }) => {
   const [currentActiveId, setCurrentActiveId] = useState(
-    activeTabId || tabs[0]?.id
+    activeTabId || tabs[0]?.id,
   );
 
   const handleTabClick = (tab: TabItem) => {
@@ -36,16 +36,12 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
   };
 
   return (
-    <div className="w-full overflow-hidden"> {/* Add container with overflow hidden */}
-      <Tabs
-        className={cn(
-          "w-full min-w-0",
-          className
-        )}
-      >
-        <TabsList className="overflow-x-auto scroll-smooth whitespace-nowrap w-full min-w-0 scrollbar-hide">
+    <div className="w-full overflow-hidden">
+      {' '}
+      {/* Add container with overflow hidden */}
+      <Tabs className={cn('w-full min-w-0', className)}>
+        <TabsList className="scrollbar-hide w-full min-w-0 overflow-x-auto scroll-smooth whitespace-nowrap">
           {tabs.map((tab) => {
-            const isActive = currentActiveId === tab.id;
             return (
               <TabsTrigger
                 key={tab.id}
@@ -55,10 +51,10 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
               >
                 <div
                   className={cn(
-                    "text-sm leading-none duration-200 transition-all whitespace-nowrap",
-                    isActive
-                      ? "text-primary-base font-bold"
-                      : "text-neutral-500 font-normal hover:text-neutral-700"
+                    'text-sm leading-none whitespace-nowrap transition-all duration-200',
+                    currentActiveId == tab.id
+                      ? 'text-primary-base font-bold'
+                      : 'font-normal text-neutral-500 hover:text-neutral-700',
                   )}
                 >
                   {tab.label}

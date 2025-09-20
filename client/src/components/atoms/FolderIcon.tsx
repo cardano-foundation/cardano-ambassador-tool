@@ -1,6 +1,3 @@
-
-import React from 'react';
-
 type FolderIconProps = {
   className?: string;
   width?: number;
@@ -38,7 +35,14 @@ export default function FolderIcon({
         </g>
         <g transform="translate(9.85, 1.33) scale(0.82, 0.96)">
           <defs>
-            <linearGradient id="paint0_linear_light" x1="30.9745" y1="28.7638" x2="-6.66995" y2="-8.88101" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id="paint0_linear_light"
+              x1="30.9745"
+              y1="28.7638"
+              x2="-6.66995"
+              y2="-8.88101"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop stopColor="white" className="dark:stop-color-gray-500" />
             </linearGradient>
           </defs>
@@ -58,10 +62,17 @@ export default function FolderIcon({
         </g>
         <g transform="translate(23.64, 29.31) scale(0.91, 0.91)">
           <defs>
-            <linearGradient id="paint1_linear_light" x1="7.00227" y1="11.4799" x2="-4.63103" y2="-0.153078" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#C2CECE" stopOpacity="0"/>
-              <stop offset="0.179" stopColor="#AFBCBC" stopOpacity="0.179"/>
-              <stop offset="1" stopColor="#5B6A6A"/>
+            <linearGradient
+              id="paint1_linear_light"
+              x1="7.00227"
+              y1="11.4799"
+              x2="-4.63103"
+              y2="-0.153078"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#C2CECE" stopOpacity="0" />
+              <stop offset="0.179" stopColor="#AFBCBC" stopOpacity="0.179" />
+              <stop offset="1" stopColor="#5B6A6A" />
             </linearGradient>
           </defs>
           <path
@@ -71,36 +82,47 @@ export default function FolderIcon({
         </g>
 
         <g transform="translate(0, 28.02) scale(1.0, 0.95)">
-                  <defs>
-                    <linearGradient id="paint2_linear_light" x1="37.5" y1="0.0211182" x2="37.5" y2="45.6694" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#EEF0F4" className="dark:stop-color-gray-700"/>
-                      <stop offset="0.927" stopColor="#E4E4E4" className="dark:stop-color-gray-800"/>
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M74.9702 13.7326L70.8203 43.1092C70.6128 44.5779 69.3559 45.6694 67.8728 45.6694H8.58532C7.10222 45.6694 5.84536 44.5779 5.63788 43.1092L0.0297861 3.41425C-0.223185 1.62224 1.16739 0.0211182 2.97722 0.0211182H21.2864C22.7695 0.0211182 24.0264 1.11261 24.2339 2.58095L24.9688 7.77931C25.1763 9.24796 26.4332 10.3395 27.9163 10.3395H72.0233C73.8326 10.3395 75.2234 11.9406 74.9705 13.7326H74.9702Z"
-                    fill="url(#paint2_linear_light)"
-                    className="dark:fill-[#888989]"
-                  />
-                </g>
+          <defs>
+            <linearGradient
+              id="paint2_linear_light"
+              x1="37.5"
+              y1="0.0211182"
+              x2="37.5"
+              y2="45.6694"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#EEF0F4" className="dark:stop-color-gray-700" />
+              <stop
+                offset="0.927"
+                stopColor="#E4E4E4"
+                className="dark:stop-color-gray-800"
+              />
+            </linearGradient>
+          </defs>
+          <path
+            d="M74.9702 13.7326L70.8203 43.1092C70.6128 44.5779 69.3559 45.6694 67.8728 45.6694H8.58532C7.10222 45.6694 5.84536 44.5779 5.63788 43.1092L0.0297861 3.41425C-0.223185 1.62224 1.16739 0.0211182 2.97722 0.0211182H21.2864C22.7695 0.0211182 24.0264 1.11261 24.2339 2.58095L24.9688 7.77931C25.1763 9.24796 26.4332 10.3395 27.9163 10.3395H72.0233C73.8326 10.3395 75.2234 11.9406 74.9705 13.7326H74.9702Z"
+            fill="url(#paint2_linear_light)"
+            className="dark:fill-[#888989]"
+          />
+        </g>
 
-                <g transform="translate(14.65, 54.22) scale(1.2, 1.0)">
-                  <path
-                    d="M46.2666 6.5662H2.19212C1.95054 6.56611 1.71728 6.47793 1.53604 6.3182C1.35481 6.15846 1.23803 5.93813 1.20759 5.69847L0.656157 1.33249C0.638638 1.19282 0.651018 1.05102 0.692478 0.916502C0.733937 0.781982 0.803528 0.657821 0.896632 0.552246C0.989736 0.446672 1.10423 0.362098 1.23251 0.304144C1.36079 0.24619 1.49992 0.216177 1.64069 0.216095H46.818C46.9588 0.216177 47.0979 0.24619 47.2262 0.304144C47.3545 0.362098 47.469 0.446672 47.5621 0.552246C47.6552 0.657821 47.7248 0.781982 47.7662 0.916502C47.8077 1.05102 47.8201 1.19282 47.8026 1.33249L47.2511 5.69847C47.2207 5.93813 47.1039 6.15846 46.9227 6.3182C46.7414 6.47793 46.5082 6.56611 46.2666 6.5662Z"
-                    fill="#D5D5D5"
-                    className="dark:fill-white-[#B7B8B8]"
-                  />
-                </g>
+        <g transform="translate(14.65, 54.22) scale(1.2, 1.0)">
+          <path
+            d="M46.2666 6.5662H2.19212C1.95054 6.56611 1.71728 6.47793 1.53604 6.3182C1.35481 6.15846 1.23803 5.93813 1.20759 5.69847L0.656157 1.33249C0.638638 1.19282 0.651018 1.05102 0.692478 0.916502C0.733937 0.781982 0.803528 0.657821 0.896632 0.552246C0.989736 0.446672 1.10423 0.362098 1.23251 0.304144C1.36079 0.24619 1.49992 0.216177 1.64069 0.216095H46.818C46.9588 0.216177 47.0979 0.24619 47.2262 0.304144C47.3545 0.362098 47.469 0.446672 47.5621 0.552246C47.6552 0.657821 47.7248 0.781982 47.7662 0.916502C47.8077 1.05102 47.8201 1.19282 47.8026 1.33249L47.2511 5.69847C47.2207 5.93813 47.1039 6.15846 46.9227 6.3182C46.7414 6.47793 46.5082 6.56611 46.2666 6.5662Z"
+            fill="#D5D5D5"
+            className="dark:fill-white-[#B7B8B8]"
+          />
+        </g>
 
-                {/* Star detail - simplified and positioned */}
-                <g transform="translate(34.5, 4) scale(0.6, 0.6)">
-                  <polygon
-                    points="5,0 6,3.5 9.5,3.5 7,5.5 8,9 5,7 2,9 3,5.5 0.5,3.5 4,3.5"
-                    fill="#9CA3AF"
-                    opacity="0.4"
-                    className="dark:fill-gray-500"
-                  />
-                </g>
+        {/* Star detail - simplified and positioned */}
+        <g transform="translate(34.5, 4) scale(0.6, 0.6)">
+          <polygon
+            points="5,0 6,3.5 9.5,3.5 7,5.5 8,9 5,7 2,9 3,5.5 0.5,3.5 4,3.5"
+            fill="#9CA3AF"
+            opacity="0.4"
+            className="dark:fill-gray-500"
+          />
+        </g>
       </svg>
     </div>
   );
