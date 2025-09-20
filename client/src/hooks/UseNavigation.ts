@@ -2,8 +2,9 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useWallet } from '@meshsdk/react';
-import { useApp } from '@/context';
-import { useUserAuth } from '@/hooks/useUserAuth';
+// import { useApp } from '@/context';
+import { useApp } from '@/context/AppContext';
+// import { useUserAuth } from '@/hooks/useUserAuth';
 import { NavigationSection } from '@types';
 import { GridIcon } from 'lucide-react';
 import UsersIcon from '@/components/atoms/UsersIcon';
@@ -68,7 +69,7 @@ const adminToolsSection: NavigationSection = {
 };
 
 export const useNavigation = () => {
-  const { user, isAdmin } = useUserAuth();
+  const { user, isAdmin } = useApp();
   const pathname = usePathname();
   const { connected } = useWallet();
   const { isNetworkValid } = useApp();

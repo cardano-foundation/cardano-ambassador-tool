@@ -18,7 +18,7 @@ function HomeContent({ children }: { children: React.ReactNode }) {
           <SideNav />
         </div>
 
-        <div className="flex flex-1 flex-col min-w-0 h-screen">
+        <div className="flex flex-1 flex-col h-screen">
           <div className="flex-shrink-0 sticky top-0 z-20">
             <TopNavBar />
           </div>
