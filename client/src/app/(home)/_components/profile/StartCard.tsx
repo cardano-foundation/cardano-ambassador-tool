@@ -15,7 +15,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <Card
       padding="sm"
-      className="border-2 border-dotted border-border/60 h-20 lg:min-w-[100px]"
+      className="border-2 border-dotted border-border/60 h-20 lg:min-w-[150px]"
     >
       <CardContent className="flex flex-col justify-center items-center h-full space-y-1 px-2">
         <div className="text-base xl:text-xl font-bold text-foreground leading-none">
