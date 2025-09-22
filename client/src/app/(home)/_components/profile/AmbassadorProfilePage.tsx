@@ -62,68 +62,68 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
       <ProfileHeader profile={profile} />
       
       <div className="block lg:grid lg:grid-cols-[320px_1fr] lg:gap-6 p-4 lg:p-6 lg:items-start">
-      <div className="lg:sticky lg:top-20 w-full lg:w-auto">
-        <ProfileSidebar 
-          profile={profile}
-          formatDate={formatDate}
-          cleanHtml={cleanHtml}
-        />
-    </div>
-  <div className="flex flex-col min-w-0 w-full lg:w-auto mt-6 lg:mt-0">
-  <div className="border-b border-border lg:sticky lg:top-6 lg:z-30 w-full mb-4 bg-background">
-  <div className="px-0 w-full min-w-0">
-    <TopNav
-      tabs={tabs}
-      activeTabId={activeTab}
-      onTabChange={setActiveTab}
-    />
-  </div>
-</div>
+          <div className="lg:sticky lg:z-20 lg:top-0 w-full lg:w-auto">
+            <ProfileSidebar 
+              profile={profile}
+              formatDate={formatDate}
+              cleanHtml={cleanHtml}
+            />
+        </div>
+        <div className="flex flex-col min-w-0 w-full lg:w-auto mt-6 lg:mt-0">
+                <div className="border-b border-border lg:sticky lg:top-0 lg:z-50 w-full mb-4 bg-background">
+                    <div className="px-0 w-full min-w-0">
+                        <TopNav
+                          tabs={tabs}
+                          activeTabId={activeTab}
+                          onTabChange={setActiveTab}
+                        />
+                  </div>
+                </div>
 
-    <div className="flex-1 w-full max-w-full">
+          <div className="flex-1 w-full max-w-full">
             {activeTab === 'summary' && (
               <div className="w-full space-y-6 lg:space-y-8">
-                <ActivitySection
-                  activities={profile.activities}
-                  showAllActivities={showAllActivities}
-                  onToggleShowAll={() =>
-                    setShowAllActivities(!showAllActivities)
-                  }
-                  notificationsEnabled={notificationsEnabled}
-                  onNotificationsToggle={setNotificationsEnabled}
-                  getRelativeTime={getRelativeTime}
-                />
+                    <ActivitySection
+                      activities={profile.activities}
+                      showAllActivities={showAllActivities}
+                      onToggleShowAll={() =>
+                        setShowAllActivities(!showAllActivities)
+                      }
+                      notificationsEnabled={notificationsEnabled}
+                      onNotificationsToggle={setNotificationsEnabled}
+                      getRelativeTime={getRelativeTime}
+                    />
 
-                <TopicsSection
-                  topics={profile.summary.top_topics}
-                  showAllTopics={showAllTopics}
-                  onToggleShowAll={() => setShowAllTopics(!showAllTopics)}
-                  formatDate={formatDate}
-                />
+                    <TopicsSection
+                      topics={profile.summary.top_topics}
+                      showAllTopics={showAllTopics}
+                      onToggleShowAll={() => setShowAllTopics(!showAllTopics)}
+                      formatDate={formatDate}
+                    />
 
-                <RepliesSection
-                  replies={profile.summary.top_replies}
-                  showAllReplies={showAllReplies}
-                  onToggleShowAll={() => setShowAllReplies(!showAllReplies)}
-                  formatDate={formatDate}
-                />
+                    <RepliesSection
+                      replies={profile.summary.top_replies}
+                      showAllReplies={showAllReplies}
+                      onToggleShowAll={() => setShowAllReplies(!showAllReplies)}
+                      formatDate={formatDate}
+                    />
+                </div>
+                  )}
+
+                  {activeTab === 'badges' && (
+                    <BadgesSection badges={profile.badges} cleanHtml={cleanHtml} />
+                  )}
+
+                  {activeTab === 'announcements' && (
+                    <EmptyState message="No new notifications" />
+                  )}
+
+                  {activeTab === 'proposals' && (
+                    <EmptyState message="No proposals yet" />
+                  )}
               </div>
-            )}
-
-            {activeTab === 'badges' && (
-              <BadgesSection badges={profile.badges} cleanHtml={cleanHtml} />
-            )}
-
-            {activeTab === 'announcements' && (
-              <EmptyState message="No new notifications" />
-            )}
-
-            {activeTab === 'proposals' && (
-              <EmptyState message="No proposals yet" />
-            )}
           </div>
         </div>
-      </div>
     </div>
   );
 };
