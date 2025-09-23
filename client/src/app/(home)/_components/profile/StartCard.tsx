@@ -1,4 +1,5 @@
 import React from 'react';
+import Card, { CardContent } from '@/components/atoms/Card';
 
 interface StatCardProps {
   label: string;
@@ -9,13 +10,26 @@ interface StatCardProps {
 export const StatCard: React.FC<StatCardProps> = ({
   label,
   value,
-  showHeart = false,
-}) => (
-  <div className="border-border/60 flex h-16 w-full flex-col justify-center rounded-lg border-2 border-dotted p-3 text-center sm:h-20 sm:w-32 sm:p-4">
-    <div className="text-foreground text-xl font-bold sm:text-2xl">{value}</div>
-    <div className="text-muted-foreground flex items-center justify-center gap-1 text-xs sm:text-sm">
-      {showHeart && <span className="text-primary-base text-base">❤</span>}
-      {label}
-    </div>
-  </div>
-);
+  showHeart = false
+}) => {
+  return (
+    <Card
+      padding="sm"
+      className="border-2 border-dotted border-border/60 h-20 lg:min-w-[150px]"
+    >
+      <CardContent className="flex flex-col justify-center items-center h-full space-y-1 px-2">
+        <div className="text-base xl:text-xl font-bold text-foreground leading-none">
+          {value}
+        </div>
+        <div className="text-xs text-muted-foreground flex items-center justify-center gap-1 text-center leading-tight min-w-0">
+          {showHeart && (
+            <span className="text-base text-primary-base flex-shrink-0">❤</span>
+          )}
+          <span className="truncate max-w-full" title={label}>
+            {label}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
