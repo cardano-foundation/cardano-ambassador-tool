@@ -12,18 +12,37 @@ export interface Ambassador {
 }
 
 async function fetchJson(url: string) {
-  const res = await axios.get(url, { timeout: 15000, family: 4 });
-  return res.data;
+  const apiKey = process.env.CARDANO_FORUM_API_KEY;
+  
+  if (!apiKey) {
+    console.error('❌ [Ambassador Service] CARDANO_FORUM_API_KEY environment variable is not set');
+    throw new Error(
+      'CARDANO_FORUM_API_KEY environment variable is not set. Please add it to your .env.local file.'
+    );
+  }
+
+  console.log('🔑 [Ambassador Service] Using API key from environment variables');
+  
+  try {
+    const res = await axios.get(url, {
+      timeout: 15000,
+      family: 4,
+      api_key: apiKey,
+    });
+    return res.data;
+  } catch (error) {
+    console.error('❌ [Ambassador Service] Failed to fetch data:', {
+      url,
+      error: error instanceof Error ? error.message : error
+    });
+    throw error;
+  }
 }
 
 export async function getUserProfile(
   ambassador: Ambassador,
 ): Promise<NormalizedUser> {
   const username = ambassador.username;
-  console.log("Fetching profile for", username);
-  console.log("URL1", SUMMARY_URL.replace("{username}", username));
-  console.log("URL2", PROFILE_URL.replace("{username}", username));
-
 
   const summaryRaw = await fetchJson(
     SUMMARY_URL.replace('{username}', username),

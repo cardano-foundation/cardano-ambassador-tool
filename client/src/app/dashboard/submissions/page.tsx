@@ -40,6 +40,7 @@ export default function IntentSubmissionsPage() {
   const [proposalIntentUtxo, setProposalIntentUtxo] = useState<Utxo | null>(
     null,
   );
+  const [refreshAttempts, setRefreshAttempts] = useState(0);
   const {
     membershipIntents,
     proposalIntents,
@@ -49,10 +50,19 @@ export default function IntentSubmissionsPage() {
     isAuthenticated,
     userWallet,
     syncData,
-    wallet,
   } = useApp();
 
   useEffect(() => {
+    console.log('📝 [Submissions] useEffect triggered:', {
+      dbLoading,
+      isAuthenticated,
+      userAddress,
+      membershipIntents_count: membershipIntents.length,
+      proposalIntents_count: proposalIntents.length,
+      isSyncing,
+      refreshAttempts
+    });
+
     if (dbLoading || !isAuthenticated) {
       return;
     }
@@ -63,13 +73,28 @@ export default function IntentSubmissionsPage() {
       return;
     }
 
+    console.log('🔍 [Submissions] Processing membershipIntents:', membershipIntents.map(m => ({
+      txHash: m.txHash,
+      context: m.context,
+      hasPlutusData: !!m.plutusData
+    })));
+
     // Find membership intent UTXO that belongs to the current user
     const userMembershipIntent = membershipIntents.find((intent) => {
       if (!intent.plutusData) {
+        console.log(`⚠️ [Submissions] Skipping intent ${intent.txHash} - no plutusData`);
         return false;
       }
-      const parsed = parseMembershipIntentDatum(intent.plutusData);
-      return parsed?.metadata.walletAddress === userAddress;
+      
+      try {
+        const parsed = parseMembershipIntentDatum(intent.plutusData);
+        const matches = parsed?.metadata.walletAddress === userAddress;
+        console.log(`🎯 [Submissions] Intent ${intent.txHash}: wallet ${parsed?.metadata.walletAddress} ${matches ? '✅ MATCHES' : '❌ NO MATCH'} user ${userAddress}`);
+        return matches;
+      } catch (parseError) {
+        console.error(`❌ [Submissions] Failed to parse datum for ${intent.txHash}:`, parseError);
+        return false;
+      }
     });
 
     // Find proposal intent UTXO that belongs to the current user
@@ -77,9 +102,19 @@ export default function IntentSubmissionsPage() {
       if (!intent.plutusData) {
         return false;
       }
-      // TODO: Add proper proposal intent datum parser
-      const parsed = parseMembershipIntentDatum(intent.plutusData);
-      return parsed?.metadata.walletAddress === userAddress;
+      try {
+        // TODO: Add proper proposal intent datum parser
+        const parsed = parseMembershipIntentDatum(intent.plutusData);
+        return parsed?.metadata.walletAddress === userAddress;
+      } catch (parseError) {
+        console.error('Failed to parse proposal datum:', parseError);
+        return false;
+      }
+    });
+
+    console.log('🎯 [Submissions] Found matching UTXOs:', {
+      membershipIntent: userMembershipIntent ? userMembershipIntent.txHash : null,
+      proposalIntent: userProposalIntent ? userProposalIntent.txHash : null
     });
 
     setMembershipIntentUtxo(userMembershipIntent || null);
@@ -91,12 +126,20 @@ export default function IntentSubmissionsPage() {
     proposalIntents,
     dbLoading,
     isAuthenticated,
+    isSyncing,
+    refreshAttempts
   ]);
+  
 
   const handleRefresh = () => {
-    console.log('[Intent Submissions] Starting refresh...');
+    console.log('🔄 [Submissions] Refresh button clicked - starting sync...');
     setError(null);
-
+    setRefreshAttempts(prev => {
+      console.log(`🔄 [Submissions] Refresh attempts: ${prev} -> ${prev + 1}`);
+      return prev + 1;
+    });
+    
+    console.log('🔄 [Submissions] Calling syncData for membership_intent and proposal_intent');
     // Sync membership intent data specifically
     syncData('membership_intent');
 
@@ -104,8 +147,9 @@ export default function IntentSubmissionsPage() {
     syncData('proposal_intent');
   };
 
+  console.log({ membershipIntents });
+
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
-    console.log({ userMetadata });
 
     // try {
     const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
@@ -162,12 +206,6 @@ export default function IntentSubmissionsPage() {
       city: stringToHex(userMetadata.city || ''),
     });
 
-    console.log({
-      oracleUtxo,
-      tokenUtxo,
-      kk: dbUtxoToMeshUtxo(membershipIntentUtxo),
-      metadata,
-    });
 
     const result = await userAction.updateMembershipIntentMetadata(
       oracleUtxo,
@@ -176,21 +214,7 @@ export default function IntentSubmissionsPage() {
       metadata,
     );
 
-    console.log({ result });
 
-    // if (result?.txHex.length) {
-    //   console.log({ result });
-    // }
-
-    // setResult(JSON.stringify(result, null, 2));
-    // } catch (error) {
-    //   console.error('Error updating metadata:', error);
-    //   setError(
-    //     error instanceof Error
-    //       ? error.message
-    //       : 'An unexpected error occurred while updating metadata'
-    //   );
-    // }
   };
 
   if (loading || dbLoading) {

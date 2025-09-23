@@ -59,7 +59,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {error && errorMessage && (
-          <div className="text-primary-base absolute top-[60px] left-0 text-xs font-normal">
+          <div className="text-primary-base absolute top-[60px] left-0 text-xs font-normal mt-2">
             {errorMessage}
           </div>
         )}

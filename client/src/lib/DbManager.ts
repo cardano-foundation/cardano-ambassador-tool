@@ -31,9 +31,10 @@ export class DatabaseManager {
       return;
     }
 
+    // Allow re-initialization (for sync operations)
     if (this.db) {
-      // Database already initialized successfully
-      return;
+      this.db.close();
+      this.db = null;
     }
 
     this.isInitializing = true;

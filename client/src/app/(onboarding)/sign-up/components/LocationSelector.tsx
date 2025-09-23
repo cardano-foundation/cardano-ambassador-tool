@@ -32,14 +32,12 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     : [];
 
   const handleCountryChange = (newCountryCode: string) => {
-    console.log('LocationSelector - Country changing to:', newCountryCode);
     onCountryChange(newCountryCode);
     // Reset city when country changes
     onCityChange('');
   };
 
   const handleCityChange = (newCity: string) => {
-    console.log('LocationSelector - City changing to:', newCity);
     onCityChange(newCity);
   };
 

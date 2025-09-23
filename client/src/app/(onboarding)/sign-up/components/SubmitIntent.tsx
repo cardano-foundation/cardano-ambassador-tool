@@ -12,22 +12,28 @@ import ErrorAccordion from '@/components/ErrorAccordion';
 import { toast } from '@/components/toast/toast-manager';
 import { useApp } from '@/context/AppContext';
 import { getCatConstants, getProvider } from '@/utils';
-import { validateIntentForm, ValidationError, getFieldError } from '@/utils/validation';
+import {
+  getFieldError,
+  validateIntentForm,
+  ValidationError,
+} from '@/utils/validation';
 import {
   membershipMetadata,
   MembershipMetadata,
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
 import { MembershipIntentPayoad, MemberTokenDetail } from '@types';
-import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const SubmitIntent = ({
   asset,
   goNext,
+  goBack,
 }: {
   asset?: MemberTokenDetail;
   goNext?: () => void;
+  goBack?: () => void;
 }) => {
   const { wallet: walletState } = useApp();
   const { address, wallet } = walletState;
@@ -51,8 +57,13 @@ const SubmitIntent = ({
   });
 
   // Validation and error state
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
-  const [submitError, setSubmitError] = useState<{ message: string; details?: string } | null>(null);
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
+    [],
+  );
+  const [submitError, setSubmitError] = useState<{
+    message: string;
+    details?: string;
+  } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Clear submit error when form data changes
@@ -82,7 +93,9 @@ const SubmitIntent = ({
       setValidationErrors(validation.errors);
       // Focus on the first error field
       const firstError = validation.errors[0];
-      const errorElement = document.querySelector(`[name="${firstError.field}"]`) as HTMLElement;
+      const errorElement = document.querySelector(
+        `[name="${firstError.field}"]`,
+      ) as HTMLElement;
       if (errorElement) {
         errorElement.focus();
         errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -94,7 +107,7 @@ const SubmitIntent = ({
     if (!wallet || !address || !asset?.txHash || asset.outputIndex === null) {
       setSubmitError({
         message: 'Wallet or asset information is missing',
-        details: `Wallet: ${!!wallet}, Address: ${!!address}, Asset TX: ${!!asset?.txHash}, Output Index: ${asset?.outputIndex}`
+        details: `Wallet: ${!!wallet}, Address: ${!!address}, Asset TX: ${!!asset?.txHash}, Output Index: ${asset?.outputIndex}`,
       });
       return;
     }
@@ -119,155 +132,127 @@ const SubmitIntent = ({
       tokenAssetName: asset.assetName,
     };
 
-    try {
-      const result = await applyMembership(payload);
-      console.log({ result });
+    const result = await applyMembership(payload);
 
-      if (result?.success && goNext) {
-        toast.success('Success!', 'Your membership application has been submitted successfully.');
-        goNext();
-      } else if (!result?.success) {
-        setSubmitError({
-          message: result?.message || 'Submission failed',
-          details: result?.error || JSON.stringify(result, null, 2)
-        });
-      }
-    } catch (error) {
-      console.error('Failed to apply membership:', error);
-      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      const errorDetails = error instanceof Error 
-        ? `Error: ${error.name}\nMessage: ${error.message}\nStack: ${error.stack}` 
-        : JSON.stringify(error, null, 2);
-      
+    if (result?.success && goNext) {
+      toast.success(
+        'Success!',
+        'Your membership application has been submitted successfully.',
+      );
+      goNext();
+    } else if (!result?.success) {
       setSubmitError({
-        message: 'Failed to submit membership application',
-        details: errorDetails
+        message: result?.message || 'Submission failed',
+        details: result?.error || JSON.stringify(result, null, 2),
       });
-    } finally {
-      setIsSubmitting(false);
+       setIsSubmitting(false);
     }
   };
 
   const applyMembership = async (payload: MembershipIntentPayoad) => {
+    const {
+      tokenUtxoHash,
+      tokenUtxoIndex,
+      tokenPolicyId,
+      address,
+      wallet,
+      userMetadata,
+      tokenAssetName,
+    } = payload;
+
+    // Fetch UTxOs with better error handling
+    let oracleUtxos, tokenUtxos;
     try {
-      const {
-        tokenUtxoHash,
-        tokenUtxoIndex,
-        tokenPolicyId,
-        address,
-        wallet,
-        userMetadata,
-        tokenAssetName,
-      } = payload;
-
-      // Fetch UTxOs with better error handling
-      let oracleUtxos, tokenUtxos;
-      try {
-        [oracleUtxos, tokenUtxos] = await Promise.all([
-          blockfrost.fetchUTxOs(ORACLE_TX_HASH, ORACLE_OUTPUT_INDEX),
-          blockfrost.fetchUTxOs(tokenUtxoHash, tokenUtxoIndex),
-        ]);
-      } catch (fetchError) {
-        return {
-          success: false,
-          message: 'Failed to fetch required UTxOs',
-          data: null,
-          error: `UTxO fetch error: ${fetchError instanceof Error ? fetchError.message : String(fetchError)}`,
-        };
-      }
-
-      if (!oracleUtxos?.length) {
-        return {
-          success: false,
-          message: 'Oracle UTxO not found',
-          data: null,
-          error: `Oracle UTxO not found at ${ORACLE_TX_HASH}#${ORACLE_OUTPUT_INDEX}`,
-        };
-      }
-
-      if (!tokenUtxos?.length) {
-        return {
-          success: false,
-          message: 'Token UTxO not found',
-          data: null,
-          error: `Token UTxO not found at ${tokenUtxoHash}#${tokenUtxoIndex}`,
-        };
-      }
-
-      const oracleUtxo = oracleUtxos[0];
-      const tokenUtxo = tokenUtxos[0];
-
-      const userAction = new UserActionTx(
-        address,
-        wallet,
-        blockfrost,
-        getCatConstants(),
-      );
-
-      const metadata: MembershipMetadata = membershipMetadata({
-        walletAddress: userMetadata.walletAddress,
-        fullName: userMetadata.fullName || '',
-        displayName: userMetadata.displayName || '',
-        emailAddress: userMetadata.emailAddress || '',
-        bio: userMetadata.bio || '',
-        country: userMetadata.country || '',
-        city: userMetadata.city || '',
-      });
-
-      // Apply membership with better error handling
-      let result;
-      try {
-        result = await userAction.applyMembership(
-          oracleUtxo,
-          tokenUtxo,
-          tokenPolicyId,
-          tokenAssetName,
-          metadata,
-        );
-      } catch (membershipError) {
-        return {
-          success: false,
-          message: 'Membership application failed',
-          data: null,
-          error: `Membership error: ${membershipError instanceof Error ? membershipError.message : String(membershipError)}`,
-        };
-      }
-
-      if (!result) {
-        return {
-          success: false,
-          message: 'Membership application returned no result',
-          data: null,
-          error: 'UserAction.applyMembership returned null or undefined',
-        };
-      }
-
-      return {
-        success: true,
-        message: 'Membership successfully applied',
-        data: result,
-      };
-    } catch (error) {
+      [oracleUtxos, tokenUtxos] = await Promise.all([
+        blockfrost.fetchUTxOs(ORACLE_TX_HASH, ORACLE_OUTPUT_INDEX),
+        blockfrost.fetchUTxOs(tokenUtxoHash, tokenUtxoIndex),
+      ]);
+    } catch (fetchError) {
       return {
         success: false,
-        message: 'Unexpected error during membership application',
+        message: 'Failed to fetch required UTxOs',
         data: null,
-        error: error instanceof Error ? error.message : String(error),
+        error: `UTxO fetch error: ${fetchError instanceof Error ? fetchError.message : String(fetchError)}`,
       };
     }
+
+    if (!oracleUtxos?.length) {
+      return {
+        success: false,
+        message: 'Oracle UTxO not found',
+        data: null,
+        error: `Oracle UTxO not found at ${ORACLE_TX_HASH}#${ORACLE_OUTPUT_INDEX}`,
+      };
+    }
+
+    if (!tokenUtxos?.length) {
+      return {
+        success: false,
+        message: 'Token UTxO not found',
+        data: null,
+        error: `Token UTxO not found at ${tokenUtxoHash}#${tokenUtxoIndex}`,
+      };
+    }
+
+    const oracleUtxo = oracleUtxos[0];
+    const tokenUtxo = tokenUtxos[0];
+
+    const userAction = new UserActionTx(
+      address,
+      wallet,
+      blockfrost,
+      getCatConstants(),
+    );
+
+    const metadata: MembershipMetadata = membershipMetadata({
+      walletAddress: userMetadata.walletAddress,
+      fullName: userMetadata.fullName || '',
+      displayName: userMetadata.displayName || '',
+      emailAddress: userMetadata.emailAddress || '',
+      bio: userMetadata.bio || '',
+      country: userMetadata.country || '',
+      city: userMetadata.city || '',
+    });
+
+    // Apply membership 
+    let result;
+    try {
+      result = await userAction.applyMembership(
+        oracleUtxo,
+        tokenUtxo,
+        tokenPolicyId,
+        tokenAssetName,
+        metadata,
+      );
+    } catch (membershipError) {
+      console.log({ membershipError });
+      
+      return {
+        success: false,
+        message: 'Membership application failed',
+        data: null,
+        error: `Membership error: ${membershipError instanceof Error ? membershipError.message : String(membershipError)}`,
+      };
+    }
+
+    if (!result) {
+      return {
+        success: false,
+        message: 'Membership application failed',
+        data: null,
+        error: 'UserAction.applyMembership returned null or undefined',
+      };
+    }
+
+    return {
+      success: true,
+      message: 'Membership successfully applied',
+      data: result,
+    };
   };
 
-  useEffect(() => {
-    console.log('FormData updated:', {
-      country: formData.country,
-      city: formData.city,
-      forum_username: formData.forum_username,
-      fullFormData: formData,
-    });
-  }, [formData.country, formData.city, formData.forum_username]);
-
   return (
-    <>
+    <div className="relative">
       {/* Error Accordion - overlays other content */}
       <ErrorAccordion
         isVisible={!!submitError}
@@ -291,6 +276,7 @@ const SubmitIntent = ({
           onChange={(e) =>
             setFormData({ ...formData, fullName: e.target.value })
           }
+          error={!!getFieldError(validationErrors, 'fullName')}
           errorMessage={getFieldError(validationErrors, 'fullName')}
         />
 
@@ -301,6 +287,7 @@ const SubmitIntent = ({
           name="email"
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          error={!!getFieldError(validationErrors, 'email')}
           errorMessage={getFieldError(validationErrors, 'email')}
         />
 
@@ -312,7 +299,7 @@ const SubmitIntent = ({
             }}
           />
           {getFieldError(validationErrors, 'forum_username') && (
-            <p className="text-sm text-red-600 mt-1">
+            <p className="text-primary-base mt-1 text-sm">
               {getFieldError(validationErrors, 'forum_username')}
             </p>
           )}
@@ -329,9 +316,11 @@ const SubmitIntent = ({
               setFormData((prev) => ({ ...prev, city }));
             }}
           />
-          {(getFieldError(validationErrors, 'country') || getFieldError(validationErrors, 'city')) && (
-            <p className="text-sm text-red-600 mt-1">
-              {getFieldError(validationErrors, 'country') || getFieldError(validationErrors, 'city')}
+          {(getFieldError(validationErrors, 'country') ||
+            getFieldError(validationErrors, 'city')) && (
+            <p className="text-primary-base mt-1 text-sm">
+              {getFieldError(validationErrors, 'country') ||
+                getFieldError(validationErrors, 'city')}
             </p>
           )}
         </div>
@@ -342,6 +331,7 @@ const SubmitIntent = ({
           name="bio"
           value={formData.bio}
           onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+          error={!!getFieldError(validationErrors, 'bio')}
           errorMessage={getFieldError(validationErrors, 'bio')}
         />
 
@@ -352,8 +342,8 @@ const SubmitIntent = ({
                 Accept Terms & Conditions
               </h1>
               <Paragraph size="base" className="text-muted-foreground">
-                By creating an account, you agree to our Terms of Use and Privacy
-                Policy
+                By creating an account, you agree to our Terms of Use and
+                Privacy Policy
               </Paragraph>
             </div>
 
@@ -366,22 +356,25 @@ const SubmitIntent = ({
             />
           </div>
           {getFieldError(validationErrors, 't_c') && (
-            <p className="text-sm text-red-600">
+            <p className="text-primary-base text-sm">
               {getFieldError(validationErrors, 't_c')}
             </p>
           )}
         </div>
 
-        <div className="w-full pt-2">
-          <Button 
-            variant="primary" 
-            className="w-full" 
+        <div className="mt-6 flex w-full justify-between gap-2">
+          <Button variant="outline" onClick={goBack} className="rounded-lg!">
+            Back
+          </Button>
+          <Button
+            variant="primary"
+            className="w-full"
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 flex-1 animate-spin" />
                 Submitting...
               </>
             ) : (
@@ -390,7 +383,7 @@ const SubmitIntent = ({
           </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

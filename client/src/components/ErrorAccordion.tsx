@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { ChevronDown, ChevronUp, AlertTriangle, X } from 'lucide-react';
 import { cn } from '@/utils';
-import Button from './atoms/Button';
+import { AlertTriangle, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { useState } from 'react';
 
 interface ErrorAccordionProps {
   /**
@@ -58,48 +57,44 @@ const ErrorAccordion = ({
 
   const baseClasses = cn(
     'border rounded-lg p-4 shadow-md transition-all duration-300',
-    variant === 'error' 
-      ? 'bg-red-50 border-red-200 text-red-800' 
+    variant === 'error'
+      ? 'bg-red-50 border-red-200 text-red-800'
       : 'bg-yellow-50 border-yellow-200 text-yellow-800',
     overlay && 'relative z-50',
-    className
+    className,
   );
 
-  const overlayClasses = overlay 
-    ? 'fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-md mx-auto' 
-    : '';
+  const overlayClasses = overlay ? 'absolute w-full  mx-auto' : '';
 
   return (
     <div className={cn(overlayClasses)}>
       <div className={baseClasses}>
         <div className="flex items-start gap-3">
           {/* Error Icon */}
-          <div className="flex-shrink-0 mt-0.5">
-            <AlertTriangle 
+          <div className="mt-0.5 flex-shrink-0">
+            <AlertTriangle
               className={cn(
                 'h-5 w-5',
-                variant === 'error' ? 'text-red-500' : 'text-yellow-500'
-              )} 
+                variant === 'error' ? 'text-primary-base' : 'text-yellow-500',
+              )}
             />
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             {/* Main Message */}
             <div className="flex items-start justify-between gap-2">
-              <p className="text-sm font-medium leading-5">
-                {message}
-              </p>
-              
+              <p className="text-sm leading-5 font-medium">{message}</p>
+
               {/* Dismiss Button */}
               {onDismiss && (
                 <button
                   onClick={onDismiss}
                   className={cn(
-                    'flex-shrink-0 p-0.5 rounded-md transition-colors',
-                    variant === 'error' 
-                      ? 'hover:bg-red-100 text-red-400 hover:text-red-500' 
-                      : 'hover:bg-yellow-100 text-yellow-400 hover:text-yellow-500'
+                    'flex-shrink-0 rounded-md p-0.5 transition-colors hover:cursor-pointer',
+                    variant === 'error'
+                      ? 'text-primary-400 hover:text-primary-500 hover:bg-primary-100'
+                      : 'text-yellow-400 hover:bg-yellow-100 hover:text-yellow-500',
                   )}
                   aria-label="Dismiss error"
                 >
@@ -114,9 +109,9 @@ const ErrorAccordion = ({
                 onClick={toggleExpanded}
                 className={cn(
                   'mt-2 inline-flex items-center gap-1 text-xs font-medium transition-colors',
-                  variant === 'error' 
-                    ? 'text-red-600 hover:text-red-700' 
-                    : 'text-yellow-600 hover:text-yellow-700'
+                  variant === 'error'
+                    ? 'text-red-600 hover:text-red-700'
+                    : 'text-yellow-600 hover:text-yellow-700',
                 )}
               >
                 {isExpanded ? 'See less' : 'See more'}
@@ -132,17 +127,19 @@ const ErrorAccordion = ({
             {isExpanded && hasDetails && (
               <div
                 className={cn(
-                  'mt-3 pt-3 border-t transition-all duration-300',
-                  variant === 'error' ? 'border-red-200' : 'border-yellow-200'
+                  'mt-3 border-t pt-3 transition-all duration-300',
+                  variant === 'error' ? 'border-red-200' : 'border-yellow-200',
                 )}
               >
-                <div className={cn(
-                  'text-xs p-3 rounded-md font-mono overflow-auto max-h-40',
-                  variant === 'error' 
-                    ? 'bg-red-100 text-red-700' 
-                    : 'bg-yellow-100 text-yellow-700'
-                )}>
-                  <pre className="whitespace-pre-wrap break-words">
+                <div
+                  className={cn(
+                    'max-h-40 overflow-auto rounded-md p-3 font-mono text-xs',
+                    variant === 'error'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-yellow-100 text-yellow-700',
+                  )}
+                >
+                  <pre className="break-words whitespace-pre-wrap">
                     {details}
                   </pre>
                 </div>
