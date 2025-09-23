@@ -57,6 +57,8 @@ export class AdminActionTx extends Layer1Tx {
       return signedTx;
     } catch (e) {
       console.error(e);
+      throw e;
+      throw e;
     }
   };
 
@@ -66,6 +68,8 @@ export class AdminActionTx extends Layer1Tx {
       return tx;
     } catch (e) {
       console.error(e);
+      throw e;
+      throw e;
     }
   };
 
@@ -194,6 +198,7 @@ export class AdminActionTx extends Layer1Tx {
       return { txHex, counterUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -421,6 +426,7 @@ export class AdminActionTx extends Layer1Tx {
       return { txHex, txIndex: 0 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -607,6 +613,7 @@ export class AdminActionTx extends Layer1Tx {
       return { txHex, txIndex: 0 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -758,6 +765,7 @@ export class AdminActionTx extends Layer1Tx {
       return { txHex, treasuryUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 

@@ -113,6 +113,7 @@ export class UserActionTx extends Layer1Tx {
       return { txHex, txIndex: 0 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -199,6 +200,7 @@ export class UserActionTx extends Layer1Tx {
       return { txHex, membershipIntentUtxoTxIndex: 0, userTokenUtxoTxIndex: 1 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -292,6 +294,7 @@ export class UserActionTx extends Layer1Tx {
       return { txHex, memberUtxoTxIndex: 0, userTokenUtxoTxIndex: 1 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -401,6 +404,7 @@ export class UserActionTx extends Layer1Tx {
       };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 }
