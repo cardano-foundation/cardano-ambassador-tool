@@ -30,7 +30,7 @@ const SelectToken = ({
 
   return (
     <>
-      <div className="mb-8 flex flex-col items-center">
+      <div className="flex h-full w-full mb-8 flex-col items-center">
         <Title level="5">Wallet Connected ✅</Title>
         <div className="flex gap-2">
           <span className="base font-semibold">Address: </span>

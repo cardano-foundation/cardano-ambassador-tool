@@ -25,7 +25,7 @@ interface ProfileHeaderProps {
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
   return (
-    <div className="bg-card p-4 sm:p-6">
+    <div className="px-8">
       <div className="block lg:hidden">
         <div className="mb-6 flex items-start gap-4">
           <div className="relative flex-shrink-0">
@@ -54,35 +54,15 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
             </div>
           </div>
         </div>
-        <div className="mb-6 space-y-3">
-          <div className="flex gap-2">
-            <StatCard
-              label="Topics Created"
-              value={profile.summary.stats.topics_created}
-            />
-            <StatCard
-              label="Given"
-              value={profile.summary.stats.likes_given}
-              showHeart
-            />
-          </div>
-
-          <div className="flex gap-2">
-            <StatCard
-              label="Received"
-              value={profile.summary.stats.likes_received}
-              showHeart
-            />
-            <StatCard
-              label="Days Visited"
-              value={profile.summary.stats.days_visited}
-            />
-          </div>
-          <div className="flex">
-            <StatCard
-              label="Posts Created"
-              value={profile.summary.stats.replies_created}
-            />
+        <div className="grid md:grid-cols-2 gap-3 mb-6 ">
+          <StatCard label="Topics Created" value={profile.summary.stats.topics_created} />
+          <StatCard label="Given" value={profile.summary.stats.likes_given} showHeart />
+          <StatCard label="Received" value={profile.summary.stats.likes_received} showHeart />
+          <StatCard label="Days Visited" value={profile.summary.stats.days_visited} />
+          <div className="col-span-2 flex justify-center">
+            <div className="w-1/2">
+              <StatCard label="Posts Created" value={profile.summary.stats.replies_created} />
+            </div>
           </div>
         </div>
         <Button
@@ -120,31 +100,14 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
                   </span>
                 </div>
               </div>
-              <div className="mx-8 flex justify-center space-x-4">
-                <StatCard
-                  label="Topics Created"
-                  value={profile.summary.stats.topics_created}
-                />
-                <StatCard
-                  label="Given"
-                  value={profile.summary.stats.likes_given}
-                  showHeart
-                />
-                <StatCard
-                  label="Received"
-                  value={profile.summary.stats.likes_received}
-                  showHeart
-                />
-                <StatCard
-                  label="Days Visited"
-                  value={profile.summary.stats.days_visited}
-                />
-                <StatCard
-                  label="Posts Created"
-                  value={profile.summary.stats.replies_created}
-                />
+              <div className="flex justify-center space-x-2 mx-8">
+                <StatCard label="Topics Created" value={profile.summary.stats.topics_created} />
+                <StatCard label="Given" value={profile.summary.stats.likes_given} showHeart />
+                <StatCard label="Received" value={profile.summary.stats.likes_received} showHeart />
+                <StatCard label="Days Visited" value={profile.summary.stats.days_visited} />
+                <StatCard label="Posts Created" value={profile.summary.stats.replies_created} />
               </div>
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0  lg:mt-2">
                 <Button
                   variant="primary"
                   size="md"
