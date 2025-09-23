@@ -9,6 +9,7 @@ import {
   deserializeAddress,
   deserializeDatum,
   hexToString,
+  plutusBSArrayToString,
   serializeAddressObj,
 } from '@meshsdk/core';
 import {
@@ -84,6 +85,29 @@ export function getProvider(network = 'preprod'): BlockfrostProvider {
 // ============================================================================
 // Datum Parsing Utilities
 // ============================================================================
+
+/**
+ * Helper function to safely extract readable string from ByteString | List<ByteString>
+ */
+const safeExtractString = (field: any, fieldName?: string): string => {
+  try {
+    // Check if it's a List<ByteString> (has a 'list' property)
+    if (field?.list) {
+      const hexResult = plutusBSArrayToString(field);
+      // plutusBSArrayToString returns hex, so we need to decode it
+      return hexToString(hexResult);
+    }
+    // Check if it's a single ByteString (has a 'bytes' property)
+    if (field?.bytes) {
+      return hexToString(field.bytes);
+    }
+    return '';
+  } catch (error) {
+    console.error(`Error extracting string from field ${fieldName || 'unknown'}:`, error);
+    return '';
+  }
+};
+
 /**
  * Validates and converts Plutus data to MembershipIntentDatum
  * Only supports old 5-field structure - filters out new 15-field structure
@@ -99,16 +123,15 @@ export function parseMembershipIntentDatum(
       !datum ||
       !datum.fields ||
       !datum.fields[0]?.list ||
-      !datum.fields[1].fields
+      !datum.fields[1]?.fields ||
+      datum.fields[1].fields.length < 7
     ) {
       return null;
     }
 
     const metadataPlutus: MembershipMetadata = datum.fields[1];
 
-    console.log({ metadataPlutus });
-
-    //TODO update to v0.7
+    // //TODO update to v0.7
     try {
       serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
@@ -117,15 +140,19 @@ export function parseMembershipIntentDatum(
       return null;
     }
 
+
     const metadata: MemberData = {
       walletAddress: serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
       ),
-      displayName: hexToString((metadataPlutus.fields[1] as ByteString).bytes),
-      fullName: hexToString((metadataPlutus.fields[2] as ByteString).bytes),
-      emailAddress: hexToString((metadataPlutus.fields[3] as ByteString).bytes),
-      bio: hexToString((metadataPlutus.fields[4] as ByteString).bytes),
+      fullName: safeExtractString(metadataPlutus.fields[1], 'fullName'),
+      displayName: safeExtractString(metadataPlutus.fields[2], 'displayName'),
+      emailAddress: safeExtractString(metadataPlutus.fields[3], 'emailAddress'),
+      bio: safeExtractString(metadataPlutus.fields[4], 'bio'),
+      country: safeExtractString(metadataPlutus.fields[5], 'country'),
+      city: safeExtractString(metadataPlutus.fields[6], 'city'),
     };
+
 
     return { datum: datum as MembershipIntentDatum, metadata };
   } catch (error) {
@@ -151,23 +178,18 @@ export function parseMemberDatum(
     }
 
     const metadataPlutus: MembershipMetadata = datum.fields[3];
-    //TODO update to v0.7
-    try {
-      serializeAddressObj(
-        metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
-      );
-    } catch {
-      return null;
-    }
+
 
     const metadata: MemberData = {
       walletAddress: serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
       ),
-      fullName: hexToString((metadataPlutus.fields[1] as ByteString).bytes),
-      displayName: hexToString((metadataPlutus.fields[2] as ByteString).bytes),
-      emailAddress: hexToString((metadataPlutus.fields[3] as ByteString).bytes),
-      bio: hexToString((metadataPlutus.fields[4] as ByteString).bytes),
+      fullName: safeExtractString(metadataPlutus.fields[1]),
+      displayName: safeExtractString(metadataPlutus.fields[2]),
+      emailAddress: safeExtractString(metadataPlutus.fields[3]),
+      bio: safeExtractString(metadataPlutus.fields[4]),
+      country: safeExtractString(metadataPlutus.fields[5]),
+      city: safeExtractString(metadataPlutus.fields[6]),
     };
 
     const policyId = (datum.fields[0].list[0] as ByteString).bytes;
@@ -456,7 +478,6 @@ export async function findTokenUtxoByMemberUtxo(
       return utxo.output.amount.some((asset) => asset.unit === tokenUnit);
     });
     if (!tokenUtxo) {
-      console.log(`No token UTxO found for token: ${tokenUnit}`);
       return null;
     }
     return tokenUtxo;
@@ -494,7 +515,6 @@ export async function findTokenUtxoByMembershipIntentUtxo(
       return utxo.output.amount.some((asset) => asset.unit === tokenUnit);
     });
     if (!tokenUtxo) {
-      console.log(`No token UTxO found for token: ${tokenUnit}`);
       return null;
     }
     return tokenUtxo;
@@ -532,7 +552,6 @@ export async function findTokenUtxoByMembershipIntentUtxoMesh(
       return utxo.output.amount.some((asset) => asset.unit === tokenUnit);
     });
     if (!tokenUtxo) {
-      console.log(`No token UTxO found for token: ${tokenUnit}`);
       return null;
     }
     return tokenUtxo;

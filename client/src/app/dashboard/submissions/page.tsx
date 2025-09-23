@@ -95,7 +95,7 @@ export default function IntentSubmissionsPage() {
 
   const handleRefresh = () => {
     console.log('[Intent Submissions] Starting refresh...');
-    setError(null); // Clear any existing errors
+    setError(null);
 
     // Sync membership intent data specifically
     syncData('membership_intent');
@@ -125,7 +125,6 @@ export default function IntentSubmissionsPage() {
 
     if (!membershipIntentUtxo) {
       throw new Error('No token UTxO found for this membership intent');
-      return;
     }
 
     if (!tokenUtxo) {
@@ -153,13 +152,22 @@ export default function IntentSubmissionsPage() {
       getCatConstants(),
     );
 
-    const metadata = membershipMetadata(
-      stringToHex(userMetadata.walletAddress),
-      stringToHex(userMetadata.fullName || ''),
-      stringToHex(userMetadata.displayName || ''),
-      stringToHex(userMetadata.emailAddress || ''),
-      stringToHex(userMetadata.bio || ''),
-    );
+    const metadata = membershipMetadata({
+      walletAddress: userMetadata.walletAddress,
+      fullName: stringToHex(userMetadata.fullName || ''),
+      displayName: stringToHex(userMetadata.displayName || ''),
+      emailAddress: stringToHex(userMetadata.emailAddress || ''),
+      bio: stringToHex(userMetadata.bio || ''),
+      country: stringToHex(userMetadata.country || ''),
+      city: stringToHex(userMetadata.city || ''),
+    });
+
+    console.log({
+      oracleUtxo,
+      tokenUtxo,
+      kk: dbUtxoToMeshUtxo(membershipIntentUtxo),
+      metadata,
+    });
 
     const result = await userAction.updateMembershipIntentMetadata(
       oracleUtxo,

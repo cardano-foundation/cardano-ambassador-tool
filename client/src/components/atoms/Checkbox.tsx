@@ -1,5 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
+import { Check } from 'lucide-react';
+import { cn } from '@/utils';
 
 interface CheckboxProps {
   checked?: boolean;
@@ -7,6 +9,7 @@ interface CheckboxProps {
   disabled?: boolean;
   indeterminate?: boolean;
   className?: string;
+  id?: string;
 }
 
 export default function Checkbox({
@@ -15,6 +18,7 @@ export default function Checkbox({
   disabled = false,
   indeterminate = false,
   className,
+  id = 'checkbox',
 }: CheckboxProps) {
   const ref = useRef<HTMLInputElement>(null);
 
@@ -24,11 +28,36 @@ export default function Checkbox({
     }
   }, [indeterminate]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onCheckedChange?.(e.target.checked);
+  };
+
   return (
-    <input
-      id="checkbox"
-      type="checkbox"
-      className="checked:bg-primary-400 focus:border-primary-300 focus:ring-primary-300/20 hover:border-primary-300 accent-primary-400 rounded-md border text-sm leading-none font-normal text-white! transition-colors focus:ring-2 focus:outline-none"
-    />
+    <div className="relative inline-flex items-center">
+      <input
+        ref={ref}
+        id={id}
+        type="checkbox"
+        checked={checked}
+        onChange={handleChange}
+        disabled={disabled}
+        className="sr-only" // Hide the default checkbox
+      />
+      <label
+        htmlFor={id}
+        className={cn(
+          'relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border-2 transition-all duration-200',
+          checked
+            ? 'bg-primary-base border-primary-base text-white'
+            : 'bg-white border-gray-300 hover:border-gray-400',
+          disabled && 'cursor-not-allowed opacity-50',
+          className
+        )}
+      >
+        {checked && (
+          <Check className="h-3 w-3 text-white stroke-[4]" />
+        )}
+      </label>
+    </div>
   );
 }

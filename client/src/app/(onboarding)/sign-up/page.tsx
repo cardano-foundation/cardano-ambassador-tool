@@ -106,7 +106,7 @@ function SignUp() {
     };
 
     fetchAssets();
-  }, [address, steps]);
+  }, [address, wallet, currentStep]);
 
   async function getAssetsDetails() {
     const utxos = await wallet!.getUtxos();
@@ -123,6 +123,9 @@ function SignUp() {
           outputIndex: utxo.input.outputIndex,
         })),
     );
+
+    console.log({ utxoAssets });
+    
 
     // Enrich the wallet assets with matching UTXO info
     const enrichedAssets = assets.map((asset) => {

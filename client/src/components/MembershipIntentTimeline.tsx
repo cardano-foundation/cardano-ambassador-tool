@@ -43,6 +43,8 @@ const MembershipIntentTimeline = ({
         displayName: updatedData.displayName ?? membershipData.displayName,
         emailAddress: updatedData.emailAddress ?? membershipData.emailAddress,
         bio: updatedData.bio ?? membershipData.bio,
+        country: '',
+        city: ''
       };
       onSave(memberData);
     }
@@ -59,6 +61,8 @@ const MembershipIntentTimeline = ({
           displayName: parsed.metadata.displayName,
           emailAddress: parsed.metadata.emailAddress,
           bio: parsed.metadata.bio,
+          country:parsed.metadata.country,
+          city:parsed.metadata.city,
           txHash: intentUtxo.txHash,
         });
       }

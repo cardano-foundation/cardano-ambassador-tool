@@ -58,13 +58,13 @@ const adminToolsSection: NavigationSection = {
     },
     {
       id: 'membership-intent',
-      label: 'Membership intent',
+      label: 'Membership intents',
       href: '/manage/memberships',
       icon: SettingsIcon,
     },
     {
       id: 'proposal-intent',
-      label: 'Proposal intent',
+      label: 'Proposal intents',
       href: '/manage/proposals',
       icon: SettingsIcon,
     },
