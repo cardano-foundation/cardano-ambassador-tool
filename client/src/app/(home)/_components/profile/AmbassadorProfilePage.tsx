@@ -70,16 +70,15 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
             />
         </div>
         <div className="flex flex-col min-w-0 w-full lg:w-auto mt-6 lg:mt-0">
-                <div className="border-b border-border lg:sticky lg:top-0 lg:z-50 w-full mb-4 bg-background">
-                    <div className="px-0 w-full min-w-0">
-                        <TopNav
-                          tabs={tabs}
-                          activeTabId={activeTab}
-                          onTabChange={setActiveTab}
-                        />
-                  </div>
-                </div>
-
+          <div className="border-b border-border lg:sticky lg:top-0 lg:z-50 w-full mb-4 bg-background">
+              <div className="px-0 w-full min-w-0">
+                  <TopNav
+                    tabs={tabs}
+                    activeTabId={activeTab}
+                    onTabChange={setActiveTab}
+                  />
+            </div>
+          </div>
           <div className="flex-1 w-full max-w-full">
             {activeTab === 'summary' && (
               <div className="w-full space-y-6 lg:space-y-8">

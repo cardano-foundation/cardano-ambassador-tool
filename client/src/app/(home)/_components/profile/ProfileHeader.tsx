@@ -23,100 +23,89 @@ interface ProfileHeaderProps {
   };
 }
 
+const StatCardsGrid: React.FC<{ stats: ProfileHeaderProps['profile']['summary']['stats'] }> = ({ stats }) => (
+  <>
+    <StatCard label="Topics Created" value={stats.topics_created} />
+    <StatCard label="Given" value={stats.likes_given} showHeart />
+    <StatCard label="Received" value={stats.likes_received} showHeart />
+    <StatCard label="Days Visited" value={stats.days_visited} />
+    <StatCard label="Posts Created" value={stats.replies_created} />
+  </>
+);
+
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
+  const { name, country, summary: { stats } } = profile;
+
   return (
-    <div className="px-8">
-      <div className="block lg:hidden">
-        <div className="mb-6 flex items-start gap-4">
+    <div className="px-4 sm:px-8">
+      {/* Mobile Layout */}
+      <div className="lg:hidden space-y-6">
+        <div className="flex items-start gap-4">
           <div className="relative flex-shrink-0">
-            <UserAvatar size="size-20" name={profile.name} />
-            <div className="absolute right-0.5 bottom-0.5 z-10 flex h-6 w-6 items-center justify-center rounded-xl border-2 border-white bg-white p-[2px]">
-              <div className="text-primary-base">
-                <CardanoIcon size={16} color="currentColor" />
-              </div>
+            <UserAvatar size="size-16" name={name} />
+            <div className="absolute -right-1 -bottom-1 z-10 flex h-6 w-6 items-center justify-center rounded-xl border-2 border-white bg-white p-0.5">
+              <CardanoIcon size={16} className="text-primary-base" />
             </div>
           </div>
 
           <div className="min-w-0 flex-1">
-            <Title level="5" className="text-neutral text-xl font-bold">
-              {profile.name}
+            <Title level="5" className="text-neutral text-xl font-bold truncate">
+              {name}
             </Title>
             <Paragraph className="text-muted-foreground text-sm">
               Ambassador
             </Paragraph>
-            <div className="mt-1 flex items-center space-x-2">
-              <span className="rounded-full text-base">
-                {getCountryFlag(profile.country)}
-              </span>
-              <span className="text-muted-foreground text-sm">
-                {profile.country}
+            <div className="mt-1 flex items-center gap-2">
+              <span className="text-base">{getCountryFlag(country)}</span>
+              <span className="text-muted-foreground text-sm truncate">
+                {country}
               </span>
             </div>
           </div>
         </div>
-        <div className="grid md:grid-cols-2 gap-3 mb-6 ">
-          <StatCard label="Topics Created" value={profile.summary.stats.topics_created} />
-          <StatCard label="Given" value={profile.summary.stats.likes_given} showHeart />
-          <StatCard label="Received" value={profile.summary.stats.likes_received} showHeart />
-          <StatCard label="Days Visited" value={profile.summary.stats.days_visited} />
-          <div className="col-span-2 flex justify-center">
-            <div className="w-1/2">
-              <StatCard label="Posts Created" value={profile.summary.stats.replies_created} />
-            </div>
-          </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <StatCardsGrid stats={stats} />
         </div>
-        <Button
-          variant="primary"
-          className="bg-primary-base hover:bg-primary-400 w-full"
-        >
+
+        <Button variant="primary" className="w-full">
           Follow
         </Button>
       </div>
+
+      {/* Desktop Layout */}
       <div className="hidden lg:block">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-1 items-start space-x-6">
-            <div className="relative flex-shrink-0">
-              <UserAvatar size="size-30" name={profile.name} />
-              <div className="absolute right-1 bottom-1 z-10 flex h-9 w-9 items-center justify-center rounded-2xl border-[3px] border-white bg-white p-[3px]">
-                <div className="text-primary-base">
-                  <CardanoIcon size={20} color="currentColor" />
-                </div>
+        <div className="flex items-start gap-6">
+          <div className="relative flex-shrink-0">
+            <UserAvatar size="size-30" name={name} />
+            <div className=" text-primary-base absolute -right-1 -bottom-1 z-10 flex h-9 w-9 items-center justify-center rounded-2xl border-[3px] border-white bg-white p-[3px]">
+              <CardanoIcon size={20} color="currentColor" />
+            </div>
+          </div>
+          
+          <div className="flex-1 flex items-start justify-between">
+            <div className="space-y-2">
+              <Title level="5" className="text-neutral text-2xl">
+                {name}
+              </Title>
+              <Paragraph className="text-muted-foreground">
+                Ambassador
+              </Paragraph>
+              <div className="flex items-center gap-2">
+                <span className="text-base">{getCountryFlag(country)}</span>
+                <span className="text-muted-foreground text-sm">
+                  {country}
+                </span>
               </div>
             </div>
-            <div className="flex w-full items-start justify-between">
-              <div className="flex-shrink-0">
-                <Title level="5" className="text-neutral text-2xl">
-                  {profile.name}
-                </Title>
-                <Paragraph className="text-muted-foreground">
-                  Ambassador
-                </Paragraph>
-                <div className="mt-1 flex items-center space-x-2">
-                  <span className="rounded-full text-base">
-                    {getCountryFlag(profile.country)}
-                  </span>
-                  <span className="text-muted-foreground text-sm">
-                    {profile.country}
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-center space-x-2 mx-8">
-                <StatCard label="Topics Created" value={profile.summary.stats.topics_created} />
-                <StatCard label="Given" value={profile.summary.stats.likes_given} showHeart />
-                <StatCard label="Received" value={profile.summary.stats.likes_received} showHeart />
-                <StatCard label="Days Visited" value={profile.summary.stats.days_visited} />
-                <StatCard label="Posts Created" value={profile.summary.stats.replies_created} />
-              </div>
-              <div className="flex-shrink-0  lg:mt-2">
-                <Button
-                  variant="primary"
-                  size="md"
-                  className="bg-primary-base hover:bg-primary-400"
-                >
-                  Follow
-                </Button>
-              </div>
+            
+            <div className="flex items-center gap-4 mx-8">
+              <StatCardsGrid stats={stats} />
             </div>
+            
+            <Button variant="primary" size="md">
+              Follow
+            </Button>
           </div>
         </div>
       </div>
