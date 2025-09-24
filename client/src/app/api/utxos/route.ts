@@ -7,8 +7,13 @@ import { BlockfrostProvider, UTxO } from '@meshsdk/core';
 import { scripts } from '@sidan-lab/cardano-ambassador-tool';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Validate required environment variables
+if (!process.env.BLOCKFROST_API_KEY_PREPROD) {
+  throw new Error('BLOCKFROST_API_KEY_PREPROD environment variable is required');
+}
+
 const blockfrost = new BlockfrostProvider(
-  process.env.BLOCKFROST_API_KEY_PREPROD || '',
+  process.env.BLOCKFROST_API_KEY_PREPROD,
 );
 
 const allScripts = scripts({
@@ -110,6 +115,12 @@ export async function POST(req: NextRequest): Promise<
 }
 
 async function fetchAddressUTxOs(address: string): Promise<UTxO[]> {
-  const utxos = await blockfrost.fetchAddressUTxOs(address);
-  return utxos;
+  try {
+    const utxos = await blockfrost.fetchAddressUTxOs(address);
+    // Ensure we always return an array
+    return Array.isArray(utxos) ? utxos : [];
+  } catch (error) {
+    console.error(`Failed to fetch UTXOs for address ${address}:`, error);
+    return [];
+  }
 }
