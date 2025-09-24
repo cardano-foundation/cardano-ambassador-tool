@@ -1,4 +1,3 @@
-// src/app/(home)/profile/page.tsx
 'use client';
 
 import React from 'react';
@@ -49,12 +48,6 @@ const ProfilePage: React.FC = () => {
           <Title level="3" className="text-foreground mb-2">
             Profile Not Found
           </Title>
-          <Paragraph className="text-muted-foreground mb-4">
-            {error || 'Your profile could not be loaded.'}
-          </Paragraph>
-          <Button onClick={refetch} variant="primary">
-            Try Again
-          </Button>
         </div>
       </div>
     );
