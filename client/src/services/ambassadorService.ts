@@ -27,7 +27,9 @@ async function fetchJson(url: string) {
     const res = await axios.get(url, {
       timeout: 15000,
       family: 4,
-      api_key: apiKey,
+      headers: {
+        'Api-Key': apiKey,
+      },
     });
     return res.data;
   } catch (error) {
