@@ -76,12 +76,6 @@ export function useDatabase() {
               setDbLoading(false);
             }
 
-            console.log('🔄 [useDatabase] Fresh data from worker:', {
-              proposals_intents: proposals_intents.length,
-              memberships_intents: memberships_intents.length,
-              'Setting membershipIntents to': memberships_intents.map(m => ({ txHash: m.txHash, context: m.context })),
-              'Setting proposalIntents to': proposals_intents.map(p => ({ txHash: p.txHash, context: p.context })),
-            });
 
             setDbError(null);
           } catch (err) {
@@ -106,20 +100,10 @@ export function useDatabase() {
       };
     } catch (error) {
       clearTimeout(timeoutId);
-      console.error('[DB] Error setting up database worker:', error);
       setDbLoading(false);
     }
   }, []);
 
-  // Track state changes
-  useEffect(() => {
-    console.log('📊 [useDatabase] State updated:', {
-      membershipIntents: membershipIntents.length,
-      proposalIntents: proposalIntents.length,
-      membershipIntents_details: membershipIntents.map(m => ({ txHash: m.txHash, context: m.context })),
-      proposalIntents_details: proposalIntents.map(p => ({ txHash: p.txHash, context: p.context }))
-    });
-  }, [membershipIntents, proposalIntents]);
 
   // Database operations
   function syncAllData() {

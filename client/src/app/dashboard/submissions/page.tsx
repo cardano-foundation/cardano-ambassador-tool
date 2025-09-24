@@ -53,15 +53,6 @@ export default function IntentSubmissionsPage() {
   } = useApp();
 
   useEffect(() => {
-    console.log('📝 [Submissions] useEffect triggered:', {
-      dbLoading,
-      isAuthenticated,
-      userAddress,
-      membershipIntents_count: membershipIntents.length,
-      proposalIntents_count: proposalIntents.length,
-      isSyncing,
-      refreshAttempts
-    });
 
     if (dbLoading || !isAuthenticated) {
       return;
@@ -73,26 +64,17 @@ export default function IntentSubmissionsPage() {
       return;
     }
 
-    console.log('🔍 [Submissions] Processing membershipIntents:', membershipIntents.map(m => ({
-      txHash: m.txHash,
-      context: m.context,
-      hasPlutusData: !!m.plutusData
-    })));
 
     // Find membership intent UTXO that belongs to the current user
     const userMembershipIntent = membershipIntents.find((intent) => {
       if (!intent.plutusData) {
-        console.log(`⚠️ [Submissions] Skipping intent ${intent.txHash} - no plutusData`);
         return false;
       }
       
       try {
         const parsed = parseMembershipIntentDatum(intent.plutusData);
-        const matches = parsed?.metadata.walletAddress === userAddress;
-        console.log(`🎯 [Submissions] Intent ${intent.txHash}: wallet ${parsed?.metadata.walletAddress} ${matches ? '✅ MATCHES' : '❌ NO MATCH'} user ${userAddress}`);
-        return matches;
+        return parsed?.metadata.walletAddress === userAddress;
       } catch (parseError) {
-        console.error(`❌ [Submissions] Failed to parse datum for ${intent.txHash}:`, parseError);
         return false;
       }
     });
@@ -107,14 +89,8 @@ export default function IntentSubmissionsPage() {
         const parsed = parseMembershipIntentDatum(intent.plutusData);
         return parsed?.metadata.walletAddress === userAddress;
       } catch (parseError) {
-        console.error('Failed to parse proposal datum:', parseError);
         return false;
       }
-    });
-
-    console.log('🎯 [Submissions] Found matching UTXOs:', {
-      membershipIntent: userMembershipIntent ? userMembershipIntent.txHash : null,
-      proposalIntent: userProposalIntent ? userProposalIntent.txHash : null
     });
 
     setMembershipIntentUtxo(userMembershipIntent || null);
@@ -132,22 +108,12 @@ export default function IntentSubmissionsPage() {
   
 
   const handleRefresh = () => {
-    console.log('🔄 [Submissions] Refresh button clicked - starting sync...');
     setError(null);
-    setRefreshAttempts(prev => {
-      console.log(`🔄 [Submissions] Refresh attempts: ${prev} -> ${prev + 1}`);
-      return prev + 1;
-    });
-    
-    console.log('🔄 [Submissions] Calling syncData for membership_intent and proposal_intent');
-    // Sync membership intent data specifically
+    setRefreshAttempts(prev => prev + 1);
     syncData('membership_intent');
-
-    // Also sync proposal intents if needed
     syncData('proposal_intent');
   };
 
-  console.log({ membershipIntents });
 
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
 

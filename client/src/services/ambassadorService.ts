@@ -28,7 +28,7 @@ async function fetchJson(url: string) {
       timeout: 15000,
       family: 4,
       headers: {
-        'Api-Key': apiKey,
+        'API KEY': apiKey,
       },
     });
     return res.data;

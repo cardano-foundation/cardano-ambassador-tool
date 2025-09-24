@@ -106,7 +106,6 @@ export async function POST(req: NextRequest): Promise<
 
     return NextResponse.json(validUtxos, { status: 200 });
   } catch (error) {
-    console.error('Error in POST /api/utxos:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
@@ -120,7 +119,6 @@ async function fetchAddressUTxOs(address: string): Promise<UTxO[]> {
     // Ensure we always return an array
     return Array.isArray(utxos) ? utxos : [];
   } catch (error) {
-    console.error(`Failed to fetch UTXOs for address ${address}:`, error);
     return [];
   }
 }

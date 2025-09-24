@@ -1,4 +1,3 @@
-console.log('App started!!!!!!!!!!!!!');
 self.importScripts('sql-wasm.js');
 
 self.onmessage = async function (e) {
@@ -153,7 +152,7 @@ self.onmessage = async function (e) {
 
     results.forEach((result, i) => {
       if (result.status === 'rejected') {
-        console.error(`Failed to seed context ${contexts[i]}:`, result.reason);
+        // Silent fail during build
       }
     });
   }
