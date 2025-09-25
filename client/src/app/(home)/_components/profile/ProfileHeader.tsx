@@ -43,7 +43,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
         <div className="flex items-start gap-4">
           <div className="relative flex-shrink-0">
             <UserAvatar size="size-16" name={name} />
-            <div className="absolute -right-1 -bottom-1 z-10 flex h-6 w-6 items-center justify-center rounded-xl border-2 border-white bg-white p-0.5">
+            <div className="text-primary-base absolute -right-1 -bottom-1 z-10 flex h-6 w-6 items-center justify-center rounded-xl border-2 border-white bg-white p-0.5">
               <CardanoIcon size={16} className="text-primary-base" />
             </div>
           </div>
