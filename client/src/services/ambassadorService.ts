@@ -13,7 +13,8 @@ export interface Ambassador {
 
 async function fetchJson(url: string) {
   const apiKey = process.env.CARDANO_FORUM_API_KEY;
-  
+  const apiUser = process.env.CARDANO_FORUM_API_USERNAME ?? 'system';
+
   if (!apiKey) {
     console.error('❌ [Ambassador Service] CARDANO_FORUM_API_KEY environment variable is not set');
     throw new Error(
@@ -22,13 +23,14 @@ async function fetchJson(url: string) {
   }
 
   console.log('🔑 [Ambassador Service] Using API key from environment variables');
-  
+
   try {
     const res = await axios.get(url, {
       timeout: 15000,
       family: 4,
       headers: {
-        'API KEY': apiKey,
+        'Api-Key': apiKey,
+        'Api-Username': apiUser,
       },
     });
     return res.data;

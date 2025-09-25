@@ -93,7 +93,7 @@ export default function TopNavBar() {
             className="fixed inset-0 z-40 lg:hidden"
             onClick={toggleMobileMenu}
           />
-          <div className="fixed inset-y-0 left-0 z-50 lg:hidden">
+          <div className="fixed inset-0 z-50 lg:hidden">
             <MobileSideNav onClose={() => setIsMobileMenuOpen(false)} />
           </div>
         </>
@@ -108,10 +108,18 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
   const { user, isAdmin } = useApp();
 
   return (
-    <div className="bg-background h-screen w-80 flex flex-col">
+    <div className="bg-background h-screen w-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-6">
         <AppLogo />
+        <Button
+          variant="outline"
+          size="sm"
+          className="bg-background border-none p-2"
+          onClick={onClose}
+        >
+          <X className="h-5 w-5" />
+        </Button>
       </div>
 
       {/* Navigation sections */}
