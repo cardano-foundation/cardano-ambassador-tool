@@ -19,12 +19,14 @@ type EditedMemberData = {
   displayName: string;
   emailAddress: string;
   bio: string;
+  country: string;
+  city: string;
 };
 
 interface PageProps {
   intentUtxo?: Utxo;
   readonly?: boolean;
-  onSave?: (userMetadata: MemberData) => void;
+  onSave?: (userMetadata: MemberData) => Promise<void>;
 }
 
 const MembershipIntentTimeline = ({
@@ -35,7 +37,7 @@ const MembershipIntentTimeline = ({
   const [membershipData, setMembershipData] =
     useState<ExtendedMemberData | null>(null);
 
-  const handleMemberDataSave = (updatedData: Partial<ExtendedMemberData>) => {
+  const handleMemberDataSave = async (updatedData: Partial<ExtendedMemberData>) => {
     if (onSave && membershipData) {
       const memberData: MemberData = {
         walletAddress: membershipData.walletAddress,
@@ -43,10 +45,10 @@ const MembershipIntentTimeline = ({
         displayName: updatedData.displayName ?? membershipData.displayName,
         emailAddress: updatedData.emailAddress ?? membershipData.emailAddress,
         bio: updatedData.bio ?? membershipData.bio,
-        country: '',
-        city: ''
+        country: updatedData.country ?? membershipData.country ?? '',
+        city: updatedData.city ?? membershipData.city ?? ''
       };
-      onSave(memberData);
+      await onSave(memberData);
     }
   };
 

@@ -14,7 +14,6 @@ import {
   getProvider,
   parseMembershipIntentDatum,
 } from '@/utils';
-import { stringToHex } from '@meshsdk/core';
 import {
   MemberData,
   membershipMetadata,
@@ -30,6 +29,13 @@ export default function IntentSubmissionsPage() {
     { id: 'membership-intent', label: 'Membership Intent' },
     { id: 'proposal-intent', label: 'Proposal Intent' },
   ];
+
+  const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
+  const ORACLE_OUTPUT_INDEX = parseInt(
+    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
+  );
+
+  const blockfrost = getProvider();
 
   const [activeTab, setActiveTab] = useState('membership-intent');
   const [loading, setLoading] = useState(true);
@@ -50,10 +56,10 @@ export default function IntentSubmissionsPage() {
     isAuthenticated,
     userWallet,
     syncData,
+    findMembershipIntentUtxo,
   } = useApp();
 
   useEffect(() => {
-
     if (dbLoading || !isAuthenticated) {
       return;
     }
@@ -64,13 +70,12 @@ export default function IntentSubmissionsPage() {
       return;
     }
 
-
     // Find membership intent UTXO that belongs to the current user
     const userMembershipIntent = membershipIntents.find((intent) => {
       if (!intent.plutusData) {
         return false;
       }
-      
+
       try {
         const parsed = parseMembershipIntentDatum(intent.plutusData);
         return parsed?.metadata.walletAddress === userAddress;
@@ -103,43 +108,35 @@ export default function IntentSubmissionsPage() {
     dbLoading,
     isAuthenticated,
     isSyncing,
-    refreshAttempts
+    refreshAttempts,
   ]);
-  
 
   const handleRefresh = () => {
     setError(null);
-    setRefreshAttempts(prev => prev + 1);
+    setRefreshAttempts((prev) => prev + 1);
     syncData('membership_intent');
     syncData('proposal_intent');
   };
 
-
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
-
     // try {
-    const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
+    const userAddress = await userWallet!.getChangeAddress();
 
-    const utxos = await userWallet!.getUtxos();
-
-    // Flatten UTXOs and filter for assets that match policyId
-    const tokenUtxo = utxos.filter((utxo) =>
-      utxo.output.amount.some((amt) => amt.unit.startsWith(policyId)),
-    )?.[0];
-
-    const blockfrost = getProvider();
-    const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
-    const ORACLE_OUTPUT_INDEX = parseInt(
-      process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
-    );
+    const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
 
     if (!membershipIntentUtxo) {
-      throw new Error('No token UTxO found for this membership intent');
+      throw new Error('No membership intent UTxO found for this address');
+      return;
     }
+    // Find token UTxO by membership intent UTxO
+    const tokenUtxo = await import('@/utils/utils').then((utils) =>
+      utils.findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo),
+    );
 
     if (!tokenUtxo) {
       throw new Error('No token UTxO found for this membership intent');
     }
+
     // Find oracle UTxO
     const oracleUtxos = await blockfrost.fetchUTxOs(
       ORACLE_TX_HASH,
@@ -147,12 +144,9 @@ export default function IntentSubmissionsPage() {
     );
 
     const oracleUtxo = oracleUtxos[0];
+
     if (!oracleUtxo) {
       throw new Error('Failed to fetch required oracle UTxO');
-    }
-
-    if (!userAddress || !userWallet) {
-      throw new Error('User address or wallet not available');
     }
 
     const userAction = new UserActionTx(
@@ -164,14 +158,13 @@ export default function IntentSubmissionsPage() {
 
     const metadata = membershipMetadata({
       walletAddress: userMetadata.walletAddress,
-      fullName: stringToHex(userMetadata.fullName || ''),
-      displayName: stringToHex(userMetadata.displayName || ''),
-      emailAddress: stringToHex(userMetadata.emailAddress || ''),
-      bio: stringToHex(userMetadata.bio || ''),
-      country: stringToHex(userMetadata.country || ''),
-      city: stringToHex(userMetadata.city || ''),
+      fullName: userMetadata.fullName || '',
+      displayName: userMetadata.displayName || '',
+      emailAddress: userMetadata.emailAddress || '',
+      bio: userMetadata.bio || '',
+      country: userMetadata.country || '',
+      city: userMetadata.city || '',
     });
-
 
     const result = await userAction.updateMembershipIntentMetadata(
       oracleUtxo,
@@ -180,7 +173,7 @@ export default function IntentSubmissionsPage() {
       metadata,
     );
 
-
+    console.log({ result });
   };
 
   if (loading || dbLoading) {

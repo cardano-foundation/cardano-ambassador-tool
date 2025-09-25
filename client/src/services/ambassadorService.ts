@@ -15,28 +15,21 @@ async function fetchJson(url: string) {
   const apiKey = process.env.CARDANO_FORUM_API_KEY;
   
   if (!apiKey) {
-    console.error('❌ [Ambassador Service] CARDANO_FORUM_API_KEY environment variable is not set');
     throw new Error(
       'CARDANO_FORUM_API_KEY environment variable is not set. Please add it to your .env.local file.'
     );
   }
-
-  console.log('🔑 [Ambassador Service] Using API key from environment variables');
   
   try {
     const res = await axios.get(url, {
       timeout: 15000,
       family: 4,
       headers: {
-        'API KEY': apiKey,
+        'Api-Key': apiKey,
       },
     });
     return res.data;
   } catch (error) {
-    console.error('❌ [Ambassador Service] Failed to fetch data:', {
-      url,
-      error: error instanceof Error ? error.message : error
-    });
     throw error;
   }
 }

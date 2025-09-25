@@ -164,3 +164,37 @@ export interface TimelineProps {
 export type ExtendedMemberData = MemberData & {
   txHash?: string;
 };
+
+// ============================================================================
+// Transaction Confirmation Types
+// ============================================================================
+
+/**
+ * Interface for transaction confirmation options
+ */
+export interface TransactionConfirmationOptions {
+  /** Maximum time to wait in milliseconds (default: 300000 = 5 minutes) */
+  timeout?: number;
+  /** Interval between polls in milliseconds (default: 10000 = 10 seconds) */
+  pollInterval?: number;
+  /** Callback function called on each poll attempt */
+  onPoll?: (attempt: number, txHash: string) => void;
+  /** Callback function called when timeout is reached */
+  onTimeout?: (txHash: string) => void;
+}
+
+/**
+ * Interface for transaction confirmation result
+ */
+export interface TransactionConfirmationResult {
+  /** Whether the transaction was confirmed */
+  confirmed: boolean;
+  /** Transaction hash */
+  txHash: string;
+  /** Number of poll attempts made */
+  attempts: number;
+  /** Time taken in milliseconds */
+  timeTaken: number;
+  /** Error message if confirmation failed */
+  error?: string;
+}

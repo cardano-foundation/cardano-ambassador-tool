@@ -1,18 +1,26 @@
 'use client';
 
+import LocationSelector from '@/app/(onboarding)/sign-up/components/LocationSelector';
 import Copyable from '@/components/Copyable';
 import Button from '@/components/atoms/Button';
+import ForumUsernameInput from '@/components/atoms/ForumUsernameInput';
 import Input from '@/components/atoms/Input';
 import TextArea from '@/components/atoms/TextArea';
+import ErrorAccordion from '@/components/ErrorAccordion';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { fetchTransactionTimestamp, formatTimestamp } from '@/utils';
+import {
+  getFieldError,
+  validateIntentForm,
+  ValidationError,
+} from '@/utils/validation';
 import { ExtendedMemberData } from '@types';
 import { Edit, Save, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 interface EditableMemberDataComponentProps {
   membershipData: ExtendedMemberData | null;
-  onSave?: (updatedData: Partial<ExtendedMemberData>) => void;
+  onSave?: (updatedData: Partial<ExtendedMemberData>) => Promise<void>;
   readonly?: boolean;
 }
 
@@ -21,6 +29,8 @@ type EditedData = {
   displayName: string;
   emailAddress: string;
   bio: string;
+  country: string;
+  city: string;
 };
 
 const EditableField = ({
@@ -84,12 +94,22 @@ const MemberDataComponent = ({
   readonly = false,
 }: EditableMemberDataComponentProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [editedData, setEditedData] = useState<EditedData>({
     fullName: membershipData?.fullName ?? '',
     displayName: membershipData?.displayName ?? '',
     emailAddress: membershipData?.emailAddress ?? '',
     bio: membershipData?.bio ?? '',
+    country: membershipData?.country ?? '',
+    city: membershipData?.city ?? '',
   });
+
+  // Validation and error state
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
+  const [submitError, setSubmitError] = useState<{
+    message: string;
+    details?: string;
+  } | null>(null);
 
   const [submissionTimestamp, setSubmissionTimestamp] = useState<Date | null>(
     null,
@@ -108,28 +128,75 @@ const MemberDataComponent = ({
 
   const handleEdit = () => {
     setIsEditing(true);
+    setValidationErrors([]);
+    setSubmitError(null);
     setEditedData({
       fullName: membershipData?.fullName ?? '',
       displayName: membershipData?.displayName ?? '',
       emailAddress: membershipData?.emailAddress ?? '',
       bio: membershipData?.bio ?? '',
+      country: membershipData?.country ?? '',
+      city: membershipData?.city ?? '',
     });
   };
 
-  const handleSave = () => {
-    if (onSave) {
-      onSave(editedData);
+  const handleSave = async () => {
+    // Clear previous errors
+    setValidationErrors([]);
+    setSubmitError(null);
+
+    // Validate form data (excluding t_c since it's not needed for updates)
+    const validation = validateIntentForm({
+      fullName: editedData.fullName,
+      email: editedData.emailAddress,
+      forum_username: editedData.displayName, // Using displayName as forum username
+      country: editedData.country,
+      city: editedData.city,
+      bio: editedData.bio,
+      t_c: true, // Assume already accepted for updates
+    });
+
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      // Focus on the first error field
+      const firstError = validation.errors[0];
+      const errorElement = document.querySelector(
+        `[name="${firstError.field}"]`,
+      ) as HTMLElement;
+      if (errorElement) {
+        errorElement.focus();
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
     }
-    setIsEditing(false);
+
+    if (onSave) {
+      setIsSubmitting(true);
+      try {
+        await onSave(editedData);
+        setIsEditing(false);
+      } catch (error) {
+        setSubmitError({
+          message: error instanceof Error ? error.message : 'Update failed',
+          details: error instanceof Error ? error.stack : String(error),
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
   };
 
   const handleCancel = () => {
     setIsEditing(false);
+    setValidationErrors([]);
+    setSubmitError(null);
     setEditedData({
       fullName: membershipData?.fullName ?? '',
       displayName: membershipData?.displayName ?? '',
       emailAddress: membershipData?.emailAddress ?? '',
       bio: membershipData?.bio ?? '',
+      country: membershipData?.country ?? '',
+      city: membershipData?.city ?? '',
     });
   };
 
@@ -153,6 +220,16 @@ const MemberDataComponent = ({
   }, [membershipData]);
 
   return (
+    <div className="relative">
+      {/* Error Accordion - overlays other content */}
+      <ErrorAccordion
+        isVisible={!!submitError}
+        message={submitError?.message}
+        details={submitError?.details}
+        onDismiss={() => setSubmitError(null)}
+        overlay={true}
+      />
+      
     <div className="flex max-w-2xl flex-col gap-4">
       {/* Header with edit button */}
       {!readonly && (
@@ -182,10 +259,11 @@ const MemberDataComponent = ({
                   variant="primary"
                   size="sm"
                   onClick={handleSave}
+                  disabled={isSubmitting}
                   className="flex items-center gap-1"
                 >
                   <Save className="h-4 w-4" />
-                  Save
+                  {isSubmitting ? 'Saving...' : 'Save'}
                 </Button>
               </>
             ) : (
@@ -204,45 +282,132 @@ const MemberDataComponent = ({
       )}
 
       {/* Editable Fields */}
-      <EditableField
-        label="Full name"
-        value={membershipData?.fullName ?? ''}
-        editKey="fullName"
-        editedData={editedData}
-        isEditing={isEditing}
-        type="text"
-        onChange={handleFieldChange}
-      />
+      {isEditing ? (
+        <div className="w-full space-y-6">
+          <Input
+            label="Full Name"
+            placeholder="Lovelace"
+            type="text"
+            name="fullName"
+            value={editedData.fullName}
+            onChange={(e) => handleFieldChange('fullName', e.target.value)}
+            error={!!getFieldError(validationErrors, 'fullName')}
+            errorMessage={getFieldError(validationErrors, 'fullName')}
+          />
 
-      <EditableField
-        label="Display name"
-        value={membershipData?.displayName ?? ''}
-        editKey="displayName"
-        editedData={editedData}
-        isEditing={isEditing}
-        type="text"
-        onChange={handleFieldChange}
-      />
+          <Input
+            label="Email Address"
+            placeholder="john.doe@example.com"
+            type="email"
+            name="email"
+            value={editedData.emailAddress}
+            onChange={(e) => handleFieldChange('emailAddress', e.target.value)}
+            error={!!getFieldError(validationErrors, 'email')}
+            errorMessage={getFieldError(validationErrors, 'email')}
+          />
 
-      <EditableField
-        label="Email"
-        value={membershipData?.emailAddress ?? ''}
-        editKey="emailAddress"
-        editedData={editedData}
-        isEditing={isEditing}
-        type="email"
-        onChange={handleFieldChange}
-      />
+          <div className="space-y-1">
+            <ForumUsernameInput
+              value={editedData.displayName}
+              onChange={(displayName) => handleFieldChange('displayName', displayName)}
+            />
+            {getFieldError(validationErrors, 'forum_username') && (
+              <p className="text-primary-base mt-1 text-sm">
+                {getFieldError(validationErrors, 'forum_username')}
+              </p>
+            )}
+          </div>
 
-      <EditableField
-        label="Bio"
-        value={membershipData?.bio ?? ''}
-        editKey="bio"
-        editedData={editedData}
-        isEditing={isEditing}
-        type="bio"
-        onChange={handleFieldChange}
-      />
+          <div className="space-y-1">
+            <LocationSelector
+              countryCode={editedData.country}
+              city={editedData.city}
+              onCountryChange={(country) => {
+                handleFieldChange('country', country);
+                handleFieldChange('city', ''); // Reset city when country changes
+              }}
+              onCityChange={(city) => handleFieldChange('city', city)}
+            />
+            {(getFieldError(validationErrors, 'country') ||
+              getFieldError(validationErrors, 'city')) && (
+              <p className="text-primary-base mt-1 text-sm">
+                {getFieldError(validationErrors, 'country') ||
+                  getFieldError(validationErrors, 'city')}
+              </p>
+            )}
+          </div>
+
+          <TextArea
+            label="Bio"
+            rows={4}
+            name="bio"
+            value={editedData.bio}
+            onChange={(e) => handleFieldChange('bio', e.target.value)}
+            error={!!getFieldError(validationErrors, 'bio')}
+            errorMessage={getFieldError(validationErrors, 'bio')}
+          />
+        </div>
+      ) : (
+        <>
+          <EditableField
+            label="Full name"
+            value={membershipData?.fullName ?? ''}
+            editKey="fullName"
+            editedData={editedData}
+            isEditing={isEditing}
+            type="text"
+            onChange={handleFieldChange}
+          />
+
+          <EditableField
+            label="Display name"
+            value={membershipData?.displayName ?? ''}
+            editKey="displayName"
+            editedData={editedData}
+            isEditing={isEditing}
+            type="text"
+            onChange={handleFieldChange}
+          />
+
+          <EditableField
+            label="Email"
+            value={membershipData?.emailAddress ?? ''}
+            editKey="emailAddress"
+            editedData={editedData}
+            isEditing={isEditing}
+            type="email"
+            onChange={handleFieldChange}
+          />
+
+          <div className="flex items-start gap-4">
+            <span className="text-muted-foreground w-32 pt-2">Country:</span>
+            <div className="flex-1">
+              <span className="block pt-2">
+                {membershipData?.country ?? ''}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <span className="text-muted-foreground w-32 pt-2">City:</span>
+            <div className="flex-1">
+              <span className="block pt-2">
+                {membershipData?.city ?? ''}
+              </span>
+            </div>
+          </div>
+
+          <EditableField
+            label="Bio"
+            value={membershipData?.bio ?? ''}
+            editKey="bio"
+            editedData={editedData}
+            isEditing={isEditing}
+            type="bio"
+            onChange={handleFieldChange}
+          />
+        </>
+      )}
 
       {/* Non-editable fields */}
       <div className="flex gap-4">
@@ -251,6 +416,7 @@ const MemberDataComponent = ({
           {membershipData?.walletAddress && (
             <Copyable
               withKey={false}
+              link={`${getCurrentNetworkConfig().explorerUrl}/address/${membershipData.txHash}`}
               value={membershipData.walletAddress}
               keyLabel={''}
             />
@@ -271,6 +437,7 @@ const MemberDataComponent = ({
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 };

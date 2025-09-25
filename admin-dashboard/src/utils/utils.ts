@@ -127,14 +127,16 @@ export function parseMemberDatum(
     const assetName = datum.fields[0].list[1].bytes;
 
     const completion: Map<ProposalData, number> = new Map();
-    datum.fields[1].map.forEach((item: { k: { fields: { bytes: string; }[]; }; v: { int: any; }; }) => {
-      completion.set(
-        {
-          projectDetails: hexToString(item.k.fields[0].bytes),
-        },
-        Number(item.v.int)
-      );
-    });
+    datum.fields[1].map.forEach(
+      (item: { k: { fields: { bytes: string }[] }; v: { int: any } }) => {
+        completion.set(
+          {
+            projectDetails: hexToString(item.k.fields[0].bytes),
+          },
+          Number(item.v.int)
+        );
+      }
+    );
 
     const fundReceived = Number(datum.fields[2].int);
 
@@ -227,7 +229,7 @@ async function fetchAndValidateUtxos<T>(
  * Fetches membership intent UTxOs
  * @returns Array of valid membership intent UTxOs
  */
-export async function fetchMembershipIntentUtxos(): Promise<UTxO[]> {  
+export async function fetchMembershipIntentUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     parseMembershipIntentDatum,
@@ -418,13 +420,12 @@ export async function findTokenUtxoByMembershipIntentUtxo(
 ): Promise<UTxO | null> {
   try {
     if (!membershipIntentUtxo.output.plutusData) {
-      console.error("Member UTxO does not contain Plutus data");
-      return null;
+      throw "Member UTxO does not contain Plutus data";
     }
     const datum: MembershipIntentDatum = deserializeDatum(
       membershipIntentUtxo.output.plutusData
     );
-    
+
     const metadataPluts: MembershipMetadata = datum.fields[1];
     const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
     const policyId = datum.fields[0].list[0].bytes;
@@ -435,12 +436,11 @@ export async function findTokenUtxoByMembershipIntentUtxo(
       return utxo.output.amount.some((asset) => asset.unit === tokenUnit);
     });
     if (!tokenUtxo) {
-      console.log(`No token UTxO found for token: ${tokenUnit}`);
-      return null;
+      throw `No token UTxO found for token: ${tokenUnit}`;
     }
     return tokenUtxo;
   } catch (error) {
-    console.error("Error finding token UTxO:", error);
+    throw error;
     return null;
   }
 }

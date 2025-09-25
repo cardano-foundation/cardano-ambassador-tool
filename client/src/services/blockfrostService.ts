@@ -47,7 +47,8 @@ export class BlockfrostService {
       }
 
       const data = await response.json();
-      return data.utxos;
+      
+      return data;
     } catch (error) {
       console.error('Error fetching address UTxOs:', error);
       throw error;

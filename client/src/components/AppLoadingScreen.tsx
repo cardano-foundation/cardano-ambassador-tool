@@ -65,13 +65,6 @@ export function AppLoadingScreen({
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 transform">
-        <p className="text-muted-foreground text-xs">
-          Initializing application...
-        </p>
-      </div>
     </div>
   );
 }

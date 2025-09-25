@@ -72,10 +72,14 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
 
       if (!res.ok) {
         const errorText = await res.text();
-        console.error('API Error:', errorText);
-        throw new Error(
-          `Failed to fetch ambassador profile: ${res.status} - ${errorText}`,
-        );
+        // Handle different error types
+        if (res.status === 403) {
+          throw new Error('Forum API authentication failed');
+        } else if (res.status === 404) {
+          throw new Error('User not found on forum');
+        } else {
+          throw new Error('Failed to verify forum username');
+        }
       }
 
       const profile: AmbassadorProfile = await res.json();
@@ -91,12 +95,24 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
         },
       });
     } catch (error) {
-      setVerificationState({
-        isVerifying: false,
-        isValid: false,
-        error: 'Verification failed',
-        userInfo: null,
-      });
+      const errorMessage = error instanceof Error ? error.message : 'Verification failed';
+      
+      // If it's an API authentication error, treat as unverified but don't show error
+      if (errorMessage.includes('authentication failed') || errorMessage.includes('403')) {
+        setVerificationState({
+          isVerifying: false,
+          isValid: null, // Neutral state - not verified but not failed
+          error: null,
+          userInfo: null,
+        });
+      } else {
+        setVerificationState({
+          isVerifying: false,
+          isValid: false,
+          error: errorMessage,
+          userInfo: null,
+        });
+      }
     }
   }, []);
 
@@ -211,6 +227,25 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
                 </a>
               </div>
             </div>
+          </div>
+        )}
+
+        {verificationState.isValid === null && value.trim() && !verificationState.isVerifying && (
+          <div className="space-y-1">
+            <p className="text-muted-foreground text-sm">
+              Forum verification temporarily unavailable
+            </p>
+            <p className="text-muted-foreground text-xs">
+              Please ensure you have an active account on{' '}
+              <a
+                href="https://forum.cardano.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline hover:no-underline"
+              >
+                forum.cardano.org
+              </a>
+            </p>
           </div>
         )}
 

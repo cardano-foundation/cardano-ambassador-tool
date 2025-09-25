@@ -8,7 +8,7 @@ import { Theme, useThemeManager } from '@/hooks/useThemeManager';
 import { User, useUserAuth } from '@/hooks/useUserAuth';
 import { useWalletManager } from '@/hooks/useWalletManager';
 import { WalletContextValue } from '@/types/wallet';
-import { IWallet } from '@meshsdk/core';
+import { IWallet, UTxO } from '@meshsdk/core';
 import {
   Ambassador,
   NetworkConfig,
@@ -44,6 +44,7 @@ interface AppContextValue {
   syncAllData: () => void;
   query: <T = Record<string, unknown>>(sql: string, params?: any[]) => T[];
   getUtxosByContext: (contextName: string) => Utxo[];
+  findMembershipIntentUtxo: (address: string) => Promise<Utxo | null>
 
   // User state
   user: User;
@@ -112,6 +113,7 @@ const AppContext = createContext<AppContextValue>({
   syncAllData: () => {},
   query: () => [],
   getUtxosByContext: () => [],
+  findMembershipIntentUtxo: async () => null,
 
   // User defaults
   user: null,
@@ -184,6 +186,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     syncAllData,
     query,
     getUtxosByContext,
+    findMembershipIntentUtxo,
   } = useDatabase();
 
   const {
@@ -264,6 +267,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     syncAllData,
     query,
     getUtxosByContext,
+    findMembershipIntentUtxo,
 
     // User
     user,

@@ -6,6 +6,12 @@ import {
   onUtxoWorkerMessage,
   sendUtxoWorkerMessage,
 } from '@/lib/utxoWorkerClient';
+import { getProvider } from '@/utils';
+import { deserializeDatum, PubKeyAddress, ScriptAddress, serializeAddressObj, UTxO } from '@meshsdk/core';
+import {
+  MembershipIntentDatum,
+  MembershipMetadata,
+} from '@sidan-lab/cardano-ambassador-tool';
 import { Ambassador, Utxo } from '@types';
 import { useEffect, useState } from 'react';
 
@@ -19,6 +25,8 @@ const queryDb = <T = Record<string, unknown>>(
   return dbManager.query<T>(sql, params);
 };
 
+const blockfrostService = getProvider();
+
 const getUtxosByContext = (contextName: string): Utxo[] => {
   return dbManager.getUtxosByContext(contextName);
 };
@@ -26,7 +34,7 @@ const getUtxosByContext = (contextName: string): Utxo[] => {
 export function useDatabase() {
   // Database state
   const [dbLoading, setDbLoading] = useState(true);
-  const [isSyncing, setIsSyncing] = useState(false); 
+  const [isSyncing, setIsSyncing] = useState(false);
   const [membershipIntents, setMembershipIntents] = useState<Utxo[]>([]);
   const [proposalIntents, setProposalIntents] = useState<Utxo[]>([]);
   const [members, setMembers] = useState<Utxo[]>([]);
@@ -37,7 +45,6 @@ export function useDatabase() {
 
   // Database initialization and worker setup
   useEffect(() => {
-
     // Set a timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
       setDbLoading(false);
@@ -76,7 +83,6 @@ export function useDatabase() {
               setDbLoading(false);
             }
 
-
             setDbError(null);
           } catch (err) {
             clearTimeout(timeoutId);
@@ -103,7 +109,6 @@ export function useDatabase() {
       setDbLoading(false);
     }
   }, []);
-
 
   // Database operations
   function syncAllData() {
@@ -139,6 +144,46 @@ export function useDatabase() {
     });
   }
 
+  /**
+   * Finds a membership intent UTxO for a given address
+   * @param address The wallet address to search for
+   * @returns The matching UTxO or null if not found
+   */
+  async function findMembershipIntentUtxo(
+    address: string,
+  ): Promise<Utxo | null> {
+    try {
+
+      const utxosWithData = membershipIntents.filter(
+        (utxo) => utxo.plutusData,
+      );
+
+      const matchingUtxo = utxosWithData.find((utxo) => {
+        try {
+          if (!utxo.plutusData) return false;
+          const datum: MembershipIntentDatum = deserializeDatum(
+            utxo.plutusData,
+          );
+          const metadataPlutus: MembershipMetadata = datum.fields[1];
+          const walletAddress = serializeAddressObj(
+            metadataPlutus.fields[0] as unknown as
+              | PubKeyAddress
+              | ScriptAddress,
+          );
+          return walletAddress === address;
+        } catch (error) {
+          console.error('Error processing UTxO:', error);
+          return false;
+        }
+      });
+
+      return matchingUtxo || null;
+    } catch (error) {
+      console.error('Error fetching or processing UTxOs:', error);
+      return null;
+    }
+  }
+
   return {
     // State
     dbLoading: dbLoading,
@@ -155,5 +200,6 @@ export function useDatabase() {
     syncAllData,
     query: queryDb,
     getUtxosByContext,
+    findMembershipIntentUtxo,
   };
 }
