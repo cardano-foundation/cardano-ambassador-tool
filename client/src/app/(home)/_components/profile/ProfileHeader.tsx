@@ -82,7 +82,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
               <CardanoIcon size={20} color="currentColor" />
             </div>
           </div>
-          
+
           <div className="flex-1 flex items-start justify-between">
             <div className="space-y-2">
               <Title level="5" className="text-neutral text-2xl">
@@ -98,11 +98,11 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
                 </span>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4 mx-8">
               <StatCardsGrid stats={stats} />
             </div>
-            
+
             <Button variant="primary" size="md">
               Follow
             </Button>

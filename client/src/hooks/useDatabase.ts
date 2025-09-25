@@ -26,7 +26,7 @@ const getUtxosByContext = (contextName: string): Utxo[] => {
 export function useDatabase() {
   // Database state
   const [dbLoading, setDbLoading] = useState(true);
-  const [isSyncing, setIsSyncing] = useState(false); // For individual seed operations
+  const [isSyncing, setIsSyncing] = useState(false); 
   const [membershipIntents, setMembershipIntents] = useState<Utxo[]>([]);
   const [proposalIntents, setProposalIntents] = useState<Utxo[]>([]);
   const [members, setMembers] = useState<Utxo[]>([]);
@@ -37,15 +37,10 @@ export function useDatabase() {
 
   // Database initialization and worker setup
   useEffect(() => {
-    console.log('[DB] Starting database initialization...');
 
     // Set a timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
-      console.warn(
-        '[DB] Database loading timeout - proceeding without full data',
-      );
       setDbLoading(false);
-      setDbError('Database loading timed out');
     }, 10000); // 10 second timeout
 
     try {
@@ -62,26 +57,25 @@ export function useDatabase() {
             await dbManager.initializeDatabase(data.db);
 
             // Query the initialized database
-            const membershipIntents =
+            const memberships_intents =
               dbManager.getUtxosByContext('membership_intent');
-            const proposalIntents =
+            const proposals_intents =
               dbManager.getUtxosByContext('proposal_intent');
             const members = dbManager.getUtxosByContext('membership_intent');
             const proposals = dbManager.getUtxosByContext('proposal_intent');
             const ambassadors = dbManager.getAmbasaddors();
-
-            setMembershipIntents(membershipIntents);
-            setProposalIntents(proposalIntents);
+            setMembershipIntents(memberships_intents);
+            setProposalIntents(proposals_intents);
             setMembers(members);
             setProposals(proposals);
             setAmbassadors(ambassadors);
-
             // Set loading states based on operation type
             if (data.isSyncOperation) {
               setIsSyncing(false);
             } else {
               setDbLoading(false);
             }
+
 
             setDbError(null);
           } catch (err) {
@@ -106,10 +100,10 @@ export function useDatabase() {
       };
     } catch (error) {
       clearTimeout(timeoutId);
-      console.error('[DB] Error setting up database worker:', error);
       setDbLoading(false);
     }
   }, []);
+
 
   // Database operations
   function syncAllData() {
@@ -129,10 +123,18 @@ export function useDatabase() {
 
   function syncData(context: string) {
     setIsSyncing(true);
+    // Use same pattern as initial load - fetch all contexts fresh
     sendUtxoWorkerMessage({
-      action: 'seed',
+      action: 'seedAll',
       apiBaseUrl: window.location.origin,
-      context,
+      contexts: [
+        'member',
+        'membership_intent',
+        'proposal',
+        'proposal_intent',
+        'sign_of_approval',
+        'ambassadors',
+      ],
       isSyncOperation: true,
     });
   }

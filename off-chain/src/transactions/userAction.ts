@@ -113,6 +113,7 @@ export class UserActionTx extends Layer1Tx {
       return { txHex, txIndex: 0 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 

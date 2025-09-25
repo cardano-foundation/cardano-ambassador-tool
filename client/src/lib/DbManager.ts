@@ -31,9 +31,10 @@ export class DatabaseManager {
       return;
     }
 
+    // Allow re-initialization (for sync operations)
     if (this.db) {
-      // Database already initialized successfully
-      return;
+      this.db.close();
+      this.db = null;
     }
 
     this.isInitializing = true;
@@ -56,7 +57,6 @@ export class DatabaseManager {
       // Create database from exported data
       this.db = new this.SQL!.Database(uint8Array);
       this.lastSyncTime = new Date();
-      console.log('[DB] Database initialized from worker data');
     } catch (error) {
       this.initializationError =
         error instanceof Error
@@ -116,7 +116,6 @@ export class DatabaseManager {
       const result = this.query(`SELECT COUNT(*) as count FROM ${tableName}`);
       return result[0];
     } catch (error) {
-      console.warn(`Failed to get info for table ${tableName}:`, error);
       return null;
     }
   }

@@ -60,10 +60,10 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
   return (
     <div className="bg-background min-h-screen max-w-full">
       <ProfileHeader profile={profile} />
-      
+
       <div className="block lg:grid lg:grid-cols-[320px_1fr] lg:gap-6 p-4 lg:p-6 lg:items-start">
           <div className="lg:sticky lg:z-20 lg:top-0 w-full lg:w-auto">
-            <ProfileSidebar 
+            <ProfileSidebar
               profile={profile}
               formatDate={formatDate}
               cleanHtml={cleanHtml}

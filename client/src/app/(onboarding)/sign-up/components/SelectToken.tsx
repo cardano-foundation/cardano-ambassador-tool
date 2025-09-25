@@ -30,7 +30,7 @@ const SelectToken = ({
 
   return (
     <>
-      <div className="flex h-full w-full mb-8 flex-col items-center">
+      <div className="mb-8 flex h-full w-full flex-col items-center">
         <Title level="5">Wallet Connected ✅</Title>
         <div className="flex gap-2">
           <span className="base font-semibold">Address: </span>
@@ -85,11 +85,7 @@ const SelectToken = ({
         </div>
 
         <div className="mt-6 flex w-full justify-between gap-2">
-          <Button
-            variant="outline"
-            onClick={goBack}
-            className="flex-1 rounded-lg!"
-          >
+          <Button variant="outline" onClick={goBack} className="rounded-lg!">
             Back
           </Button>
 

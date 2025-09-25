@@ -40,6 +40,7 @@ export default function IntentSubmissionsPage() {
   const [proposalIntentUtxo, setProposalIntentUtxo] = useState<Utxo | null>(
     null,
   );
+  const [refreshAttempts, setRefreshAttempts] = useState(0);
   const {
     membershipIntents,
     proposalIntents,
@@ -49,10 +50,10 @@ export default function IntentSubmissionsPage() {
     isAuthenticated,
     userWallet,
     syncData,
-    wallet,
   } = useApp();
 
   useEffect(() => {
+
     if (dbLoading || !isAuthenticated) {
       return;
     }
@@ -63,13 +64,19 @@ export default function IntentSubmissionsPage() {
       return;
     }
 
+
     // Find membership intent UTXO that belongs to the current user
     const userMembershipIntent = membershipIntents.find((intent) => {
       if (!intent.plutusData) {
         return false;
       }
-      const parsed = parseMembershipIntentDatum(intent.plutusData);
-      return parsed?.metadata.walletAddress === userAddress;
+      
+      try {
+        const parsed = parseMembershipIntentDatum(intent.plutusData);
+        return parsed?.metadata.walletAddress === userAddress;
+      } catch (parseError) {
+        return false;
+      }
     });
 
     // Find proposal intent UTXO that belongs to the current user
@@ -77,9 +84,13 @@ export default function IntentSubmissionsPage() {
       if (!intent.plutusData) {
         return false;
       }
-      // TODO: Add proper proposal intent datum parser
-      const parsed = parseMembershipIntentDatum(intent.plutusData);
-      return parsed?.metadata.walletAddress === userAddress;
+      try {
+        // TODO: Add proper proposal intent datum parser
+        const parsed = parseMembershipIntentDatum(intent.plutusData);
+        return parsed?.metadata.walletAddress === userAddress;
+      } catch (parseError) {
+        return false;
+      }
     });
 
     setMembershipIntentUtxo(userMembershipIntent || null);
@@ -91,21 +102,20 @@ export default function IntentSubmissionsPage() {
     proposalIntents,
     dbLoading,
     isAuthenticated,
+    isSyncing,
+    refreshAttempts
   ]);
+  
 
   const handleRefresh = () => {
-    console.log('[Intent Submissions] Starting refresh...');
-    setError(null); // Clear any existing errors
-
-    // Sync membership intent data specifically
+    setError(null);
+    setRefreshAttempts(prev => prev + 1);
     syncData('membership_intent');
-
-    // Also sync proposal intents if needed
     syncData('proposal_intent');
   };
 
+
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
-    console.log({ userMetadata });
 
     // try {
     const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
@@ -125,7 +135,6 @@ export default function IntentSubmissionsPage() {
 
     if (!membershipIntentUtxo) {
       throw new Error('No token UTxO found for this membership intent');
-      return;
     }
 
     if (!tokenUtxo) {
@@ -153,13 +162,16 @@ export default function IntentSubmissionsPage() {
       getCatConstants(),
     );
 
-    const metadata = membershipMetadata(
-      stringToHex(userMetadata.walletAddress),
-      stringToHex(userMetadata.fullName || ''),
-      stringToHex(userMetadata.displayName || ''),
-      stringToHex(userMetadata.emailAddress || ''),
-      stringToHex(userMetadata.bio || ''),
-    );
+    const metadata = membershipMetadata({
+      walletAddress: userMetadata.walletAddress,
+      fullName: stringToHex(userMetadata.fullName || ''),
+      displayName: stringToHex(userMetadata.displayName || ''),
+      emailAddress: stringToHex(userMetadata.emailAddress || ''),
+      bio: stringToHex(userMetadata.bio || ''),
+      country: stringToHex(userMetadata.country || ''),
+      city: stringToHex(userMetadata.city || ''),
+    });
+
 
     const result = await userAction.updateMembershipIntentMetadata(
       oracleUtxo,
@@ -168,21 +180,7 @@ export default function IntentSubmissionsPage() {
       metadata,
     );
 
-    console.log({ result });
 
-    // if (result?.txHex.length) {
-    //   console.log({ result });
-    // }
-
-    // setResult(JSON.stringify(result, null, 2));
-    // } catch (error) {
-    //   console.error('Error updating metadata:', error);
-    //   setError(
-    //     error instanceof Error
-    //       ? error.message
-    //       : 'An unexpected error occurred while updating metadata'
-    //   );
-    // }
   };
 
   if (loading || dbLoading) {
