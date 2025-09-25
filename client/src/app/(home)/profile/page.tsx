@@ -124,7 +124,7 @@ const ProfilePage: React.FC = () => {
           
           <div className="space-y-6 max-w-full">
             <div className="flex items-start gap-3 lg:gap-3">
-              <div className="lg:w-6a0 text-sm text-muted-foreground/60 mt-3">Photo:</div>
+              <div className="lg:w-60 text-sm text-muted-foreground/60 mt-3">Photo:</div>
               <div className="w-15 h-15 rounded-full flex items-center justify-center overflow-hidden relative border border-primary-base">
                 <UserAvatar size="size-40" name={profile.name} />
               </div>
