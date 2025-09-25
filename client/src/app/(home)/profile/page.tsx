@@ -69,7 +69,7 @@ const ProfilePage: React.FC = () => {
             <Card className="mb-8">
             <CardContent className="">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="mb-6 flex items-start gap-4">
+            <div className="mb-2 flex items-start gap-4">
                 <div className="relative flex-shrink-0">
                     <UserAvatar size="size-30" name={profile.name} />
                     <div className="absolute right-0.5 bottom-0.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white  border border-white">
@@ -111,7 +111,7 @@ const ProfilePage: React.FC = () => {
         <CardContent className="p-6">
             <div className='border-b border-border'>
                 <div className="flex items-center justify-between mb-2">
-                    <Title level="5" className="text-neutral font-bold sm:text-base">
+                    <Title level="5" className="text-neutral">
                     Profile details
                     </Title>
                     <Link href="#">
@@ -124,29 +124,29 @@ const ProfilePage: React.FC = () => {
           
           <div className="space-y-6 max-w-full">
             <div className="flex items-start gap-3 lg:gap-3">
-              <div className="lg:w-32 text-sm text-muted-foreground/60 mt-2">Photo:</div>
+              <div className="lg:w-6a0 text-sm text-muted-foreground/60 mt-3">Photo:</div>
               <div className="w-15 h-15 rounded-full flex items-center justify-center overflow-hidden relative border border-primary-base">
                 <UserAvatar size="size-40" name={profile.name} />
               </div>
             </div>
 
             <div className="flex items-start gap-4 sm:gap-3">
-              <div className="lg:w-32 text-sm text-muted-foreground/60">Full name:</div>
+              <div className="lg:w-60 text-sm text-muted-foreground/60">Full name:</div>
               <div className="text-sm text-foreground">{profile.name}</div>
             </div>
 
             <div className="flex items-start gap-4 sm:gap-3">
-              <div className="lg:w-32 text-sm text-muted-foreground/60">Display name:</div>
+              <div className="lg:w-60 text-sm text-muted-foreground/60">Display name:</div>
               <div className="text-sm text-foreground">{profile.displayName}</div>
             </div>
 
             <div className="flex items-start gap-3 sm:gap-3">
-              <div className="lg:w-32 text-sm text-muted-foreground/60">Email:</div>
+              <div className="lg:w-60 text-sm text-muted-foreground/60">Email:</div>
               <div className="text-sm text-foreground">{profile.email}</div>
             </div>
 
             <div className="flex items-start gap-4 sm:gap-3">
-              <div className="lg:w-32 text-sm text-muted-foreground/60">Bio:</div>
+              <div className="lg:w-60 text-sm text-muted-foreground/60">Bio:</div>
               <div className="lg:max-w-md sm:flex-1">
                 <Paragraph className="text-sm text-foreground leading-relaxed">
                   {profile.bio || 'No bio'}
@@ -155,7 +155,7 @@ const ProfilePage: React.FC = () => {
             </div>
 
             <div className="flex items-start gap-4 sm:gap-3">
-              <div className="lg:w-32 text-sm text-muted-foreground/60">Country:</div>
+              <div className="lg:w-60 text-sm text-muted-foreground/60">Country:</div>
               <div className="flex items-center space-x-2">
                 <span className="rounded-full text-base">
                   {getCountryFlag(profile.country)}
@@ -166,7 +166,7 @@ const ProfilePage: React.FC = () => {
 
             {profile.wallet && (
               <div className="flex items-start gap-4 sm:gap-3">
-                <div className="lg:w-32 text-sm text-muted-foreground/60">Wallet:</div>
+                <div className="lg:w-60 text-sm text-muted-foreground/60">Wallet:</div>
                 <div className="flex items-center gap-2 sm:gap-3 flex">
                   <span className="text-sm text-foreground break-all">{profile.wallet}</span>
                     <CopyIcon />
@@ -184,7 +184,7 @@ const ProfilePage: React.FC = () => {
 
             {profile.ambassadorUrl && (
               <div className="flex items-start gap-4 sm:gap-3">
-                <div className="lg:w-32 text-sm text-muted-foreground/60">Ambassador URL:</div>
+                <div className="lg:w-60 text-sm text-muted-foreground/60">Ambassador URL:</div>
                 <div className="flex items-center gap-2 sm:gap-2 ">
                   <span className="text-sm text-foreground break-all">
                     {profile.ambassadorUrl}
@@ -203,7 +203,7 @@ const ProfilePage: React.FC = () => {
 
             {profile.spoId && (
               <div className="flex items-start gap-4 sm:gap-3">
-                <div className="lg:w-32 text-sm text-muted-foreground/60">SPO ID:</div>
+                <div className="lg:w-60 text-sm text-muted-foreground/60">SPO ID:</div>
                 <div className="flex items-center gap-2 sm:gap-3">
                   <span className="text-sm text-foreground font-mono break-all">{profile.spoId}</span>
                     <CopyIcon />
@@ -213,7 +213,7 @@ const ProfilePage: React.FC = () => {
 
             {profile.github && (
               <div className="flex items-start gap-4 sm:gap-3">
-                <div className="lg:w-32  text-sm text-muted-foreground/60">Github:</div>
+                <div className="lg:w-60  text-sm text-muted-foreground/60">Github:</div>
                 <div className="flex items-start gap-2 sm:gap-3">
                   <GithubIcon size={15}/>
                   <span className="text-sm text-foreground break-all">
@@ -233,7 +233,7 @@ const ProfilePage: React.FC = () => {
 
             {profile.twitter && (
               <div className="flex items-start gap-4 sm:gap-3">
-                <div className="lg:w-32  text-sm text-muted-foreground/60">X:</div>
+                <div className="lg:w-60  text-sm text-muted-foreground/60">X:</div>
                 <div className="flex items-center gap-2 sm:gap-3">
                   <XIcon size={15}/>
                   <span className="text-sm text-foreground break-all">
@@ -253,7 +253,7 @@ const ProfilePage: React.FC = () => {
 
             {profile.discord && (
               <div className="flex items-start gap-4 sm:gap-3">
-                <div className="lg:w-32 text-sm text-muted-foreground/60">Discord:</div>
+                <div className="lg:w-60 text-sm text-muted-foreground/60">Discord:</div>
                 <div className="flex items-center gap-2 sm:gap-1">
                   <DiscordIcon size={15}/>
                   <span className="text-sm text-foreground break-all">
