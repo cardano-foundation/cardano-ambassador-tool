@@ -60,26 +60,25 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
   return (
     <div className="bg-background min-h-screen max-w-full">
       <ProfileHeader profile={profile} />
-      
+
       <div className="block lg:grid lg:grid-cols-[320px_1fr] lg:gap-6 p-4 lg:p-6 lg:items-start">
           <div className="lg:sticky lg:z-20 lg:top-0 w-full lg:w-auto">
-            <ProfileSidebar 
+            <ProfileSidebar
               profile={profile}
               formatDate={formatDate}
               cleanHtml={cleanHtml}
             />
         </div>
         <div className="flex flex-col min-w-0 w-full lg:w-auto mt-6 lg:mt-0">
-                <div className="border-b border-border lg:sticky lg:top-0 lg:z-50 w-full mb-4 bg-background">
-                    <div className="px-0 w-full min-w-0">
-                        <TopNav
-                          tabs={tabs}
-                          activeTabId={activeTab}
-                          onTabChange={setActiveTab}
-                        />
-                  </div>
-                </div>
-
+          <div className="border-b border-border lg:sticky lg:top-0 lg:z-50 w-full mb-4 bg-background">
+              <div className="px-0 w-full min-w-0">
+                  <TopNav
+                    tabs={tabs}
+                    activeTabId={activeTab}
+                    onTabChange={setActiveTab}
+                  />
+            </div>
+          </div>
           <div className="flex-1 w-full max-w-full">
             {activeTab === 'summary' && (
               <div className="w-full space-y-6 lg:space-y-8">

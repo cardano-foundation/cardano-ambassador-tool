@@ -13,7 +13,8 @@ export interface Ambassador {
 
 async function fetchJson(url: string) {
   const apiKey = process.env.CARDANO_FORUM_API_KEY;
-  
+  const apiUser = process.env.CARDANO_FORUM_API_USERNAME ?? 'system';
+
   if (!apiKey) {
     throw new Error(
       'CARDANO_FORUM_API_KEY environment variable is not set. Please add it to your .env.local file.'
@@ -26,6 +27,7 @@ async function fetchJson(url: string) {
       family: 4,
       headers: {
         'Api-Key': apiKey,
+        'Api-Username': apiUser,
       },
     });
     return res.data;
