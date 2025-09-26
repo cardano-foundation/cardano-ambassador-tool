@@ -10,6 +10,8 @@ import Title from '@/components/atoms/Title';
 import { useApp } from '@/context';
 import {
   dbUtxoToMeshUtxo,
+  findMembershipIntentUtxo,
+  findTokenUtxoByMembershipIntentUtxo,
   getCatConstants,
   getProvider,
   parseMembershipIntentDatum,
@@ -56,7 +58,6 @@ export default function IntentSubmissionsPage() {
     isAuthenticated,
     userWallet,
     syncData,
-    findMembershipIntentUtxo,
   } = useApp();
 
   useEffect(() => {
@@ -119,19 +120,16 @@ export default function IntentSubmissionsPage() {
   };
 
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
-    // try {
     const userAddress = await userWallet!.getChangeAddress();
 
     const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
 
     if (!membershipIntentUtxo) {
       throw new Error('No membership intent UTxO found for this address');
-      return;
     }
+
     // Find token UTxO by membership intent UTxO
-    const tokenUtxo = await import('@/utils/utils').then((utils) =>
-      utils.findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo),
-    );
+    const tokenUtxo =  await findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo)
 
     if (!tokenUtxo) {
       throw new Error('No token UTxO found for this membership intent');
@@ -168,8 +166,8 @@ export default function IntentSubmissionsPage() {
 
     const result = await userAction.updateMembershipIntentMetadata(
       oracleUtxo,
-      tokenUtxo,
-      dbUtxoToMeshUtxo(membershipIntentUtxo),
+      tokenUtxo!,
+      membershipIntentUtxo!,
       metadata,
     );
 

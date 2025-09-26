@@ -23,7 +23,11 @@ import {
   ProposalMetadata,
   scripts,
 } from '@sidan-lab/cardano-ambassador-tool';
-import { Utxo, TransactionConfirmationOptions, TransactionConfirmationResult } from '@types';
+import {
+  TransactionConfirmationOptions,
+  TransactionConfirmationResult,
+  Utxo,
+} from '@types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -94,7 +98,7 @@ export function getProvider(network = 'preprod'): BlockfrostProvider {
  */
 export async function waitForTransactionConfirmation(
   txHash: string,
-  options: TransactionConfirmationOptions = {}
+  options: TransactionConfirmationOptions = {},
 ): Promise<TransactionConfirmationResult> {
   const {
     timeout = 300000, // 5 minutes default
@@ -119,7 +123,7 @@ export async function waitForTransactionConfirmation(
 
         // Check if transaction exists on-chain
         const transaction = await provider.fetchTxInfo(txHash);
-        
+
         if (transaction) {
           // Transaction found and confirmed
           resolve({
@@ -133,7 +137,10 @@ export async function waitForTransactionConfirmation(
       } catch (error) {
         // If error is 404, transaction not found yet - continue polling
         // If other error, still continue polling as it might be temporary
-        console.warn(`Poll attempt ${attempts} failed for tx ${txHash}:`, error);
+        console.warn(
+          `Poll attempt ${attempts} failed for tx ${txHash}:`,
+          error,
+        );
       }
 
       // Check if timeout reached
@@ -144,7 +151,8 @@ export async function waitForTransactionConfirmation(
           txHash,
           attempts,
           timeTaken: elapsed,
-          error: 'Timeout reached - transaction not confirmed within the specified time',
+          error:
+            'Timeout reached - transaction not confirmed within the specified time',
         });
         return;
       }
@@ -176,13 +184,16 @@ export async function isTransactionConfirmed(txHash: string): Promise<boolean> {
  */
 export async function waitForTransactionWithProgress(
   txHash: string,
-  onProgress?: (status: string, attempt: number) => void
+  onProgress?: (status: string, attempt: number) => void,
 ): Promise<TransactionConfirmationResult> {
   return waitForTransactionConfirmation(txHash, {
     timeout: 300000, // 5 minutes
     pollInterval: 10000, // 10 seconds
     onPoll: (attempt) => {
-      onProgress?.(`Checking transaction confirmation (attempt ${attempt})...`, attempt);
+      onProgress?.(
+        `Checking transaction confirmation (attempt ${attempt})...`,
+        attempt,
+      );
     },
     onTimeout: () => {
       onProgress?.('Transaction confirmation timeout reached', 0);
@@ -262,8 +273,6 @@ export function parseMembershipIntentDatum(
       country: safeExtractString(metadataPlutus.fields[5]),
       city: safeExtractString(metadataPlutus.fields[6]),
     };
-
-    console.log({ metadata });
 
     return { datum: datum as MembershipIntentDatum, metadata };
   } catch (error) {
@@ -475,31 +484,30 @@ export async function fetchMemberUtxos(): Promise<UTxO[]> {
  * @returns The matching UTxO or null if not found
  */
 export async function findMembershipIntentUtxo(
-  address: string,
+  address: string
 ): Promise<UTxO | null> {
   try {
-    const utxos = await fetchMembershipIntentUtxos();
-
+    const utxos = await blockfrostService.fetchAddressUTxOs(
+      SCRIPT_ADDRESSES.MEMBERSHIP_INTENT
+    );
     const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) => {
       try {
         if (!utxo.output.plutusData) return false;
         const datum: MembershipIntentDatum = deserializeDatum(
-          utxo.output.plutusData,
+          utxo.output.plutusData
         );
-        const metadataPlutus: MembershipMetadata = datum.fields[1];
-        const walletAddress = serializeAddressObj(
-          metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
-        );
+        const metadataPluts: MembershipMetadata = datum.fields[1];
+        const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
         return walletAddress === address;
       } catch (error) {
-        console.error('Error processing UTxO:', error);
+        console.error("Error processing UTxO:", error);
         return false;
       }
     });
     return matchingUtxo || null;
   } catch (error) {
-    console.error('Error fetching or processing UTxOs:', error);
+    console.error("Error fetching or processing UTxOs:", error);
     return null;
   }
 }
@@ -597,21 +605,19 @@ export async function findTokenUtxoByMemberUtxo(
 }
 
 /**
- * Finds a token UTxO associated with a membership intent UTxO (database version)
  * Finds a token UTxO associated with a membership intent UTxO
  * @param membershipIntentUtxo The membership intent UTxO to find the associated token for
  * @returns The matching token UTxO or null if not found
  */
 export async function findTokenUtxoByMembershipIntentUtxo(
-  membershipIntentUtxo: Utxo,
+  membershipIntentUtxo: UTxO
 ): Promise<UTxO | null> {
   try {
-    if (!membershipIntentUtxo.plutusData) {
-      throw 'Member UTxO does not contain Plutus data';
+    if (!membershipIntentUtxo.output.plutusData) {
+      throw "Member UTxO does not contain Plutus data";
     }
-
     const datum: MembershipIntentDatum = deserializeDatum(
-      membershipIntentUtxo.plutusData,
+      membershipIntentUtxo.output.plutusData
     );
 
     const metadataPluts: MembershipMetadata = datum.fields[1];
@@ -620,18 +626,16 @@ export async function findTokenUtxoByMembershipIntentUtxo(
     const assetName = datum.fields[0].list[1].bytes;
     const tokenUnit = policyId + assetName;
     const utxos = await blockfrostService.fetchAddressUTxOs(walletAddress);
-
     const tokenUtxo = utxos.find((utxo) => {
       return utxo.output.amount.some((asset) => asset.unit === tokenUnit);
     });
-
     if (!tokenUtxo) {
       throw `No token UTxO found for token: ${tokenUnit}`;
     }
-
     return tokenUtxo;
   } catch (error) {
     throw error;
+    return null;
   }
 }
 
