@@ -2,10 +2,17 @@
 
 import { TransactionConfirmationResult } from '@types';
 import { waitForTransactionConfirmation } from '@/utils/utils';
-import { CheckCircle, ExternalLink, Loader2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { CheckCircle, ExternalLink, Loader2 } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
 import Button from './atoms/Button';
 import { getCurrentNetworkConfig } from '@/config/cardano';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/Dialog';
 
 interface TransactionConfirmationOverlayProps {
   /** Whether the overlay is visible */
@@ -43,9 +50,17 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
     attempts: 0,
     timeTaken: 0,
   });
+  
+  // Ref to track if confirmation is already running
+  const confirmationRunning = useRef(false);
+  // Ref to store the current txHash to compare changes
+  const currentTxHash = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (!isVisible || !txHash) {
+      // Reset state when not visible or no txHash
+      confirmationRunning.current = false;
+      currentTxHash.current = undefined;
       setConfirmationState({
         status: 'waiting',
         attempts: 0,
@@ -53,6 +68,15 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
       });
       return;
     }
+
+    // If confirmation is already running for the same transaction, don't start again
+    if (confirmationRunning.current && currentTxHash.current === txHash) {
+      return;
+    }
+
+    // Update current transaction hash
+    currentTxHash.current = txHash;
+    confirmationRunning.current = true;
 
     const startConfirmation = async () => {
       setConfirmationState(prev => ({
@@ -73,6 +97,9 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
           },
         });
 
+        // Mark confirmation as completed
+        confirmationRunning.current = false;
+
         if (result.confirmed) {
           setConfirmationState({
             status: 'confirmed',
@@ -90,6 +117,7 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
           onTimeout?.(result);
         }
       } catch (error) {
+        confirmationRunning.current = false;
         setConfirmationState(prev => ({
           ...prev,
           status: 'timeout',
@@ -99,7 +127,7 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
     };
 
     startConfirmation();
-  }, [isVisible, txHash, onConfirmed, onTimeout]);
+  }, [isVisible, txHash]);
 
   if (!isVisible) {
     return null;
@@ -111,8 +139,7 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
         return (
           <div className="text-center">
             <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-            <h3 className="mt-4 text-lg font-semibold text-foreground">{title}</h3>
-            <p className="mt-2 text-muted-foreground">{description}</p>
+            <p className="mt-4 text-muted-foreground">Preparing transaction...</p>
           </div>
         );
 
@@ -182,7 +209,7 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
               )}
             </div>
             <div className="mt-6">
-              <Button onClick={onClose} className="px-8">
+              <Button onClick={onClose} className="w-full" variant="primary">
                 Continue
               </Button>
             </div>
@@ -192,7 +219,9 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
       case 'timeout':
         return (
           <div className="text-center">
-            <X className="mx-auto h-12 w-12 text-orange-500" />
+            <div className="mx-auto h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
+              <ExternalLink className="h-6 w-6 text-orange-500" />
+            </div>
             <h3 className="mt-4 text-lg font-semibold text-foreground">
               Confirmation Timeout
             </h3>
@@ -222,12 +251,14 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
                 </div>
               )}
             </div>
-            <div className="mt-6 flex justify-center gap-3">
-              <Button variant="outline" onClick={onClose}>
+            <div className="mt-6 flex flex-col gap-3 w-full">
+              <Button variant="primary" onClick={onClose} className="w-full">
                 Continue Anyway
               </Button>
               {txHash && (
                 <Button
+                  variant="outline"
+                  className="w-full"
                   onClick={() => {
                     setConfirmationState({
                       status: 'waiting',
@@ -249,26 +280,31 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop with blur */}
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-      
-      {/* Modal content */}
-      <div className="relative mx-4 max-w-lg rounded-lg border bg-card p-6 shadow-lg">
-        {/* Close button - only show if onClose is provided and not in polling state */}
-        {onClose && confirmationState.status !== 'polling' && (
-          <button
-            onClick={onClose}
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </button>
-        )}
+    <Dialog
+      open={isVisible}
+      onOpenChange={(open) => {
+        // Only allow closing when not polling
+        if (!open && confirmationState.status !== 'polling' && onClose) {
+          onClose();
+        }
+      }}
+    >
+      <DialogContent 
+        className="flex flex-col items-center sm:max-w-[500px]"
+        showCloseButton={confirmationState.status !== 'polling'}
+      >
+        <DialogHeader className='justify-center items-center'>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className='text-center'>
+            {description}
+          </DialogDescription>
+        </DialogHeader>
 
-        {getStatusContent()}
-      </div>
-    </div>
+        <div className="flex h-full w-full flex-col gap-6 p-6">
+          {getStatusContent()}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
