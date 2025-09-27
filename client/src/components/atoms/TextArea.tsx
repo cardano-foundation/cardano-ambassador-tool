@@ -27,7 +27,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           className={cn(
             'w-full rounded-md border px-3 py-3 transition-colors',
             'text-sm leading-none font-normal',
-            'bg-background dark:bg-card border-border placeholder:text-muted-foreground',
+            'bg-background dark:bg-card border-border placeholder:text-muted-foreground/60',
             'focus:border-primary-300 focus:ring-primary-300/20 focus:ring-1 focus:outline-none',
             'hover:border-primary-300',
             label && 'mt-[22px]',

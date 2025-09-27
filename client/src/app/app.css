@@ -5,7 +5,7 @@
 
 :root {
   --background: oklch(1 0 0);
-  --foreground: oklch(0.4631 0.0013 197.11);
+  --foreground: oklch(0.2739 0.0055 286.03);  
   --muted: oklch(0.9819 0.0029 264.54);
   --muted-foreground: oklch(0.556 0 0);
   --border: oklch(0.928 0.006 264.531);
@@ -18,6 +18,7 @@
   --neutral: oklch(0.2046 0 0);
   --color-text-default: oklch(0.18 0.0032 196.87);
   --color-text-light: oklch(0.5478 0.0012 197.12);
+  --color-text-secondary: var(--color-muted-foreground);
 }
 
 .dark {
@@ -31,6 +32,7 @@
   --input: oklch(0.3743 0.0014 197.1);
   --neutral: oklch(0.709 0.01 56.259);
   --color-text-default: oklch(1 0 0);
+  --color-text-secondary: var(--color-muted-foreground);
 }
 
 @theme {
@@ -55,7 +57,6 @@
   --color-white-400: oklch(0.928 0 0);
   --color-white: oklch(1 0 0);
 
-
   --color-neutral-900: oklch(0.2046 0 0);
 
   --color-text-default: var(--color-text-default);
@@ -79,53 +80,23 @@
 
 /*
 |--------------------------------------------------------------------------
-| Global Transitions
+| SINGLE TRANSITION AT ROOT LEVEL ONLY
 |--------------------------------------------------------------------------
-|
-| Applying transitions to CSS variables and specific properties for smooth
-| theme changes.
-|
+| Transition ONLY the CSS variables - this will make everything change
+| at the same speed since all elements use these variables
 */
-:root,
-.dark {
-  transition:
-    /* Transition all CSS variables that change between themes */
-    --background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --muted 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --muted-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --border 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --card 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --card-foreground 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --input 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --primary 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --accent 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --ring 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --neutral 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-text-default 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    --color-text-light 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+:root {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Apply specific property transitions to all elements by default for smoother UI */
-*,
-*::before,
-*::after {
-  transition:
-    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    outline-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.dark {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /*
 |--------------------------------------------------------------------------
-| Base HTML Element Styling
+| Base styles - NO INDIVIDUAL TRANSITIONS
 |--------------------------------------------------------------------------
-|
 */
 html,
 body {
@@ -137,12 +108,18 @@ body {
 
 /*
 |--------------------------------------------------------------------------
-| Form Element & Interactive Element Styling
+| Remove all individual element transitions
 |--------------------------------------------------------------------------
-|
 */
+*,
+*::before,
+*::after {
+  /* REMOVE all transitions from individual elements */
+  transition: none !important;
+}
+
 button,
-input:not([type='radio']),
+input,
 select,
 textarea,
 [role='button'],
@@ -153,12 +130,8 @@ textarea,
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  transition:
-    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  /* REMOVE transitions */
+  transition: none !important;
   color: var(--color-text-primary);
 }
 
@@ -167,33 +140,14 @@ button.primary {
   color: white;
 }
 
-/* Secondary button default (light mode) */
-button.secondary {
-  color: var(--color-text-primary);
-  /* Or any other default */
-}
-
-/* Dark mode styles for secondary */
-@media (prefers-color-scheme: dark) {
-  button.secondary {
-    color: var(--color-text-primary);
-  }
-}
-
 input:not([tabindex]):not([type='radio']),
 select:not([tabindex]),
 textarea:not([tabindex]) {
-  background-color: var(--color-muted);
+  background-color: var(--color-background);
   color: var(--color-text-primary);
   outline: none;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Base HTML Element Styling
-|--------------------------------------------------------------------------
-|
-*/
 label {
   color: var(--color-text-secondary);
 }
@@ -202,7 +156,6 @@ label {
 |--------------------------------------------------------------------------
 | Animation Overrides
 |--------------------------------------------------------------------------
-|
 */
 .animate-pulse,
 .animate-spin,
@@ -213,42 +166,25 @@ label {
 
 /*
 |--------------------------------------------------------------------------
-| Focus Visible
+| Focus states
 |--------------------------------------------------------------------------
-|
 */
 :focus-visible {
-  transition:
-    outline 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
 }
 
 /*
 |--------------------------------------------------------------------------
-| SVG/Icon Transitions
+| Remove transitions from specific elements
 |--------------------------------------------------------------------------
-|
 */
 svg,
 svg *,
-[class*='icon'] {
-  transition:
-    fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/*
-|--------------------------------------------------------------------------
-| Gradient Transitions
-|--------------------------------------------------------------------------
-|
-*/
+[class*='icon'],
 [class*='gradient'],
 [class*='bg-gradient'] {
-  transition:
-    background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.4s cubic(0.4, 0, 0.2, 1);
+  transition: none !important;
 }
 
 [role='tablist'] *::before {
@@ -258,16 +194,14 @@ svg *,
 
 /*
 |--------------------------------------------------------------------------
-| Responsive Adjustments
+| Mobile adjustments
 |--------------------------------------------------------------------------
-|
 */
 @media (max-width: 768px) {
   button {
     min-height: 44px;
   }
 }
-
 
 .leaflet-container {
   z-index: 1 !important;
