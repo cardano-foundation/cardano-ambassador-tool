@@ -5,7 +5,7 @@
 
 :root {
   --background: oklch(1 0 0);
-  --foreground: oklch(0.4631 0.0013 197.11);
+  --foreground: oklch(0.2739 0.0055 286.03);  
   --muted: oklch(0.9819 0.0029 264.54);
   --muted-foreground: oklch(0.556 0 0);
   --border: oklch(0.928 0.006 264.531);
@@ -18,6 +18,7 @@
   --neutral: oklch(0.2046 0 0);
   --color-text-default: oklch(0.18 0.0032 196.87);
   --color-text-light: oklch(0.5478 0.0012 197.12);
+  --color-text-secondary: var(--color-muted-foreground);
 }
 
 .dark {
@@ -31,6 +32,7 @@
   --input: oklch(0.3743 0.0014 197.1);
   --neutral: oklch(0.709 0.01 56.259);
   --color-text-default: oklch(1 0 0);
+  --color-text-secondary: var(--color-muted-foreground);
 }
 
 @theme {
@@ -183,7 +185,7 @@ button.secondary {
 input:not([tabindex]):not([type='radio']),
 select:not([tabindex]),
 textarea:not([tabindex]) {
-  background-color: var(--color-muted);
+  background-color: var(--color-background);
   color: var(--color-text-primary);
   outline: none;
 }

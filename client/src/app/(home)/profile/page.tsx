@@ -108,7 +108,7 @@ const ProfilePage: React.FC = () => {
       </Card>
 
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="px-6">
             <div className='border-b border-border'>
                 <div className="flex items-center justify-between mb-2">
                     <Title level="5" className="text-neutral">

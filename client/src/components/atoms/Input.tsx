@@ -27,7 +27,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             'absolute top-[22px] left-0 h-10 w-full rounded-md border px-3 py-3 transition-colors',
             'text-sm leading-none font-normal',
-            'bg-background dark:bg-card border-border placeholder:text-muted-foreground',
+            'bg-background dark:bg-card border-border placeholder:text-muted-foreground/60',
             'focus:!border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
             'hover:!border-primary-300',
             disabled && [
@@ -48,8 +48,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             className={cn(
-              'absolute top-[-1px] left-0 text-sm leading-none font-normal',
-              'text-muted-foreground',
+              'absolute top-[-1px] left-0 text-sm leading-none font-normal text-muted-foreground px-1 bg-background dark:bg-card transition-all',
+              'text-primary-base',
               disabled && 'opacity-50',
               error && 'text-primary-base',
             )}
