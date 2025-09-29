@@ -10,7 +10,7 @@ const RichTextDisplay = ({ content, className = '' }: RichTextDisplayProps) => {
 
   return (
     <div 
-      className={`prose prose-sm max-w-none break-words whitespace-normal
+      className={`prose prose-sm max-w-none break-words whitespace-normal text-sm font-normal text-foreground
         [overflow-wrap:anywhere] [word-break:break-word] ${className}`}
       dangerouslySetInnerHTML={{ __html: content }}
     />

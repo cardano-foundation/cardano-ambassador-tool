@@ -59,7 +59,7 @@ const actionData = {
   },
   specific_address_utxos: {
     errorContext: 'Address',
-    address: SCRIPT_ADDRESSES.PROPOSE_INTENT,
+    address: '',
   },
 } as const;
 
@@ -108,8 +108,7 @@ export async function POST(req: NextRequest): Promise<
 async function fetchAddressUTxOs(address: string): Promise<UTxO[]> {
   try {
     const utxos = await blockfrost.fetchAddressUTxOs(address);
-    console.log(Array.isArray(utxos));
-    // Ensure we always return an array
+
     return Array.isArray(utxos) ? utxos : [];
   } catch (error) {
     return [];

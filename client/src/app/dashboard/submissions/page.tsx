@@ -3,6 +3,7 @@
 import MembershipIntentTimeline from '@/components/MembershipIntentTimeline';
 import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import Button from '@/components/atoms/Button';
 import Empty from '@/components/atoms/Empty';
 import Paragraph from '@/components/atoms/Paragraph';
@@ -10,19 +11,22 @@ import Title from '@/components/atoms/Title';
 import { useApp } from '@/context';
 import {
   dbUtxoToMeshUtxo,
+  findMembershipIntentUtxo,
+  findTokenUtxoByMembershipIntentUtxo,
   getCatConstants,
   getProvider,
   parseMembershipIntentDatum,
 } from '@/utils';
+import { resolveTxHash } from '@meshsdk/core';
 import {
   MemberData,
   membershipMetadata,
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
-import { Utxo } from '@types';
+import { Utxo, TransactionConfirmationResult } from '@types';
 import { RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 export default function IntentSubmissionsPage() {
   const tabs = [
@@ -47,6 +51,10 @@ export default function IntentSubmissionsPage() {
     null,
   );
   const [refreshAttempts, setRefreshAttempts] = useState(0);
+  
+  // Transaction confirmation states
+  const [isTransactionPending, setIsTransactionPending] = useState(false);
+  const [transactionHash, setTransactionHash] = useState<string | null>(null);
   const {
     membershipIntents,
     proposalIntents,
@@ -56,7 +64,6 @@ export default function IntentSubmissionsPage() {
     isAuthenticated,
     userWallet,
     syncData,
-    findMembershipIntentUtxo,
   } = useApp();
 
   useEffect(() => {
@@ -119,62 +126,116 @@ export default function IntentSubmissionsPage() {
   };
 
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
-    // try {
-    const userAddress = await userWallet!.getChangeAddress();
+    try {
+      const userAddress = await userWallet!.getChangeAddress();
 
-    const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
+      const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
 
-    if (!membershipIntentUtxo) {
-      throw new Error('No membership intent UTxO found for this address');
-      return;
+      if (!membershipIntentUtxo) {
+        throw new Error('No membership intent UTxO found for this address');
+      }
+
+      // Find token UTxO by membership intent UTxO
+      const tokenUtxo = await findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo);
+
+      if (!tokenUtxo) {
+        throw new Error('No token UTxO found for this membership intent');
+      }
+
+      // Find oracle UTxO
+      const oracleUtxos = await blockfrost.fetchUTxOs(
+        ORACLE_TX_HASH,
+        ORACLE_OUTPUT_INDEX,
+      );
+
+      const oracleUtxo = oracleUtxos[0];
+
+      if (!oracleUtxo) {
+        throw new Error('Failed to fetch required oracle UTxO');
+      }
+
+      const userAction = new UserActionTx(
+        userAddress!,
+        userWallet!,
+        blockfrost,
+        getCatConstants(),
+      );
+
+      const metadata = membershipMetadata({
+        walletAddress: userMetadata.walletAddress,
+        fullName: userMetadata.fullName || '',
+        displayName: userMetadata.displayName || '',
+        emailAddress: userMetadata.emailAddress || '',
+        bio: userMetadata.bio || '',
+        country: userMetadata.country || '',
+        city: userMetadata.city || '',
+      });
+
+      const result = await userAction.updateMembershipIntentMetadata(
+        oracleUtxo,
+        tokenUtxo!,
+        membershipIntentUtxo!,
+        metadata,
+      );
+
+      if (result?.txHex) {
+        // Compute transaction hash from the transaction hex
+        const txHash = resolveTxHash(result.txHex);
+        
+        if (txHash) {
+          setTransactionHash(txHash);
+          setIsTransactionPending(true);
+          console.log('Transaction submitted:', { txHash, result });
+        } else {
+          console.error('Failed to compute transaction hash from txHex');
+          console.log('Transaction result:', result);
+        }
+      } else {
+        console.log('Transaction result (no txHex):', result);
+      }
+    } catch (error) {
+      console.error('Error updating membership intent metadata:', error);
+      // You might want to show an error toast or message here
+      throw error;
     }
-    // Find token UTxO by membership intent UTxO
-    const tokenUtxo = await import('@/utils/utils').then((utils) =>
-      utils.findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo),
-    );
-
-    if (!tokenUtxo) {
-      throw new Error('No token UTxO found for this membership intent');
-    }
-
-    // Find oracle UTxO
-    const oracleUtxos = await blockfrost.fetchUTxOs(
-      ORACLE_TX_HASH,
-      ORACLE_OUTPUT_INDEX,
-    );
-
-    const oracleUtxo = oracleUtxos[0];
-
-    if (!oracleUtxo) {
-      throw new Error('Failed to fetch required oracle UTxO');
-    }
-
-    const userAction = new UserActionTx(
-      userAddress!,
-      userWallet!,
-      blockfrost,
-      getCatConstants(),
-    );
-
-    const metadata = membershipMetadata({
-      walletAddress: userMetadata.walletAddress,
-      fullName: userMetadata.fullName || '',
-      displayName: userMetadata.displayName || '',
-      emailAddress: userMetadata.emailAddress || '',
-      bio: userMetadata.bio || '',
-      country: userMetadata.country || '',
-      city: userMetadata.city || '',
-    });
-
-    const result = await userAction.updateMembershipIntentMetadata(
-      oracleUtxo,
-      tokenUtxo,
-      dbUtxoToMeshUtxo(membershipIntentUtxo),
-      metadata,
-    );
-
-    console.log({ result });
   };
+
+  const handleTransactionConfirmed = useCallback((result: TransactionConfirmationResult) => {
+    console.log('Transaction confirmed:', result);
+    // Clear transaction state first to prevent re-triggering
+    setIsTransactionPending(false);
+    setTransactionHash(null);
+    
+    // Delay data refresh to allow state to settle
+    setTimeout(() => {
+      syncData('membership_intent');
+      handleRefresh();
+    }, 1000);
+  }, [syncData]);
+
+  const handleTransactionTimeout = useCallback((result: TransactionConfirmationResult) => {
+    console.log('Transaction confirmation timed out:', result);
+    // Clear transaction state first
+    setIsTransactionPending(false);
+    setTransactionHash(null);
+    
+    // Still refresh data as transaction might have gone through
+    setTimeout(() => {
+      syncData('membership_intent');
+      handleRefresh();
+    }, 1000);
+  }, [syncData]);
+
+  const handleCloseTransactionOverlay = useCallback(() => {
+    setIsTransactionPending(false);
+    setTransactionHash(null);
+    
+    // Refresh data when closing overlay
+    setTimeout(() => {
+      syncData('membership_intent');
+      handleRefresh();
+    }, 1000);
+  }, [syncData]);
 
   if (loading || dbLoading) {
     return <SimpleCardanoLoader />;
@@ -196,28 +257,30 @@ export default function IntentSubmissionsPage() {
   return (
     <div className="space-y-4 px-4 py-2 pb-8 sm:space-y-6 sm:px-6">
       <div className="border-border bg-card border-b">
-        <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between">
+        <div className="flex-1">
           <TopNav
             tabs={tabs}
             activeTabId={activeTab}
             onTabChange={setActiveTab}
           />
-          <div className="px-4 py-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isSyncing || dbLoading}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw
-                className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
-              />
-              {isSyncing ? 'Refreshing...' : 'Refresh'}
-            </Button>
-          </div>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={isSyncing || dbLoading}
+          className="flex items-center gap-2 mb-2 mr-4"
+        >
+          <RefreshCw
+            className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
+          />
+          <span className="hidden lg:inline  text-sm">
+            {isSyncing ? 'Refreshing...' : 'Refresh'}
+          </span>
+        </Button>
       </div>
+    </div>
 
       {activeTab === 'membership-intent' && (
         <div className="">
@@ -290,6 +353,17 @@ export default function IntentSubmissionsPage() {
           )}
         </div>
       )}
+      
+      {/* Transaction Confirmation Overlay */}
+      <TransactionConfirmationOverlay
+        isVisible={isTransactionPending}
+        txHash={transactionHash || undefined}
+        title="Updating Membership Intent"
+        description="Please wait while your membership intent metadata is being updated on the blockchain."
+        onClose={handleCloseTransactionOverlay}
+        onConfirmed={handleTransactionConfirmed}
+        onTimeout={handleTransactionTimeout}
+      />
     </div>
   );
 }
