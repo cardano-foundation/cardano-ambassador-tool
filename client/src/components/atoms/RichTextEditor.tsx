@@ -43,11 +43,15 @@ const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) =
     content: value,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
+      console.log(editor.getJSON());
+      console.log(editor.getHTML());
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none min-h-[100px] w-full',
-      },
+        class:
+          'prose prose-sm max-w-none focus:outline-none min-h-[100px] w-full ' +
+          'prose-ul:list-disc prose-ol:list-decimal prose-li:ml-6',
+        },
     },
     immediatelyRender: false,
   });

@@ -174,16 +174,27 @@ label {
   outline-offset: 2px;
 }
 
-.ProseMirror {
-  outline: none !important;
-  border: none !important;
-}
 
 .ProseMirror-focused {
   outline: none !important;
   border: none !important;
   box-shadow: none !important;
 }
+
+.ProseMirror ul {
+  list-style-type: disc;
+  margin-left: 1.5rem; /* indent */
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+}
+
+.ProseMirror li {
+  margin-left: 0.5rem;
+}
+
 
 
 /*
