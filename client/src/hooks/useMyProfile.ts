@@ -1,34 +1,5 @@
-// src/hooks/useMyProfile.ts - Mock version for development
 import { useEffect, useState } from 'react';
-
-interface MyProfileData {
-  id: string;
-  name: string;
-  displayName: string;
-  email: string;
-  bio: string;
-  country: string;
-  countryCode: string;
-  wallet: string;
-  ambassadorUrl: string;
-  spoId: string;
-  github: string;
-  twitter: string;
-  discord: string;
-  avatar: string;
-  stats: {
-    topicsCreated: number;
-    given: number;
-    received: number;
-    daysVisited: number;
-    postsCreated: number;
-  };
-  connectedWallet?: {
-    address: string;
-    balance: string;
-  };
-  isActiveAmbassador: boolean;
-}
+import { MyProfileData, ProfileStats, ConnectedWallet } from '@/types/Profile';
 
 interface UseMyProfileReturn {
   profile: MyProfileData | null;
@@ -52,7 +23,7 @@ const mockProfile: MyProfileData = {
   github: 'Benjamin Baani',
   twitter: 'Benjamin Baani', 
   discord: 'Benjamin Baani',
-  avatar: '', // Empty to test fallback
+  avatar: '',
   stats: {
     topicsCreated: 30,
     given: 45,

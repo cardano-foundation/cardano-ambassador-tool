@@ -29,12 +29,16 @@ export default function SubmitProposalPage() {
     fundsRequested: '',
     receiverWalletAddress: ''
   });
+  
 
   const tabs = [
     { id: 'details', label: 'Details' },
     { id: 'funds', label: 'Funds' },
     { id: 'review', label: 'Review' }
   ];
+  if (!isAuthenticated) {
+    return <SimpleCardanoLoader />;
+  }
 
   const handleInputChange = (field: keyof ProposalFormData, value: string) => {
     setFormData(prev => ({
