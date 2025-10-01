@@ -257,28 +257,30 @@ export default function IntentSubmissionsPage() {
   return (
     <div className="space-y-4 px-4 py-2 pb-8 sm:space-y-6 sm:px-6">
       <div className="border-border bg-card border-b">
-        <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between">
+        <div className="flex-1">
           <TopNav
             tabs={tabs}
             activeTabId={activeTab}
             onTabChange={setActiveTab}
           />
-          <div className="px-4 py-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isSyncing || dbLoading}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw
-                className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
-              />
-              {isSyncing ? 'Refreshing...' : 'Refresh'}
-            </Button>
-          </div>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={isSyncing || dbLoading}
+          className="flex items-center gap-2 mb-2 mr-4"
+        >
+          <RefreshCw
+            className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
+          />
+          <span className="hidden lg:inline  text-sm">
+            {isSyncing ? 'Refreshing...' : 'Refresh'}
+          </span>
+        </Button>
       </div>
+    </div>
 
       {activeTab === 'membership-intent' && (
         <div className="">

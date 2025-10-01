@@ -17,9 +17,14 @@ import { StatCard } from '../_components/profile/StartCard';
 import GithubIcon from '@/components/atoms/GithubIcon';
 import XIcon from '@/components/atoms/XIcon';
 import DiscordIcon from '@/components/atoms/DiscordIcon';
+import { useApp } from '@/context';
 
 const ProfilePage: React.FC = () => {
   const { profile, loading, error, refetch } = useMyProfile();
+  const { isAuthenticated } = useApp();
+    if (!isAuthenticated) {
+      return <SimpleCardanoLoader />;
+    }
 
   const copyToClipboard = async (text: string) => {
     try {

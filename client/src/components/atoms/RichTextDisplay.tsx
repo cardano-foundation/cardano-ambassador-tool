@@ -9,12 +9,19 @@ const RichTextDisplay = ({ content, className = '' }: RichTextDisplayProps) => {
   }
 
   return (
-    <div 
-      className={`prose prose-sm max-w-none break-words whitespace-normal
-        [overflow-wrap:anywhere] [word-break:break-word] ${className}`}
+    <div
+      className={`
+        prose prose-sm max-w-none break-words whitespace-normal text-sm font-normal text-foreground
+        [overflow-wrap:anywhere] [word-break:break-word]
+        [&_ul]:list-disc [&_ul]:ml-6
+        [&_ol]:list-decimal [&_ol]:ml-6
+        [&_li]:ml-2
+        ${className}
+      `}
       dangerouslySetInnerHTML={{ __html: content }}
     />
   );
 };
+
 
 export default RichTextDisplay;

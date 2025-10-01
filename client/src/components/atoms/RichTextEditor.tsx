@@ -43,11 +43,15 @@ const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) =
     content: value,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
+      console.log(editor.getJSON());
+      console.log(editor.getHTML());
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none min-h-[100px] w-full',
-      },
+        class:
+          'prose prose-sm max-w-none focus:outline-none min-h-[100px] w-full ' +
+          'prose-ul:list-disc prose-ol:list-decimal prose-li:ml-6',
+        },
     },
     immediatelyRender: false,
   });
@@ -62,7 +66,7 @@ const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) =
 
   if (!mounted) {
     return (
-      <div className="relative w-full rounded-md border px-3 py-3 transition-colors text-sm leading-none font-normal bg-background border-border pt-10">
+      <div className="relative w-full rounded-md border border-border bg-background transition-colors focus-within:border-primary-300 focus-within:ring-primary-300/20 focus-within:ring-1 focus-within:outline-none hover:border-primary-300">
         <div className="absolute top-2 left-2 right-2 z-10 bg-white border border-border/60 rounded-md shadow-sm p-1">
           <div className="flex flex-wrap items-center gap-1">
             {[...Array(13)].map((_, i) => (
@@ -224,7 +228,7 @@ const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) =
       
         <EditorContent 
           editor={editor} 
-          className="min-h-[120px] w-full p-3 focus:outline-none text-sm"
+          className="min-h-[120px] w-full p-3 focus:outline-none  border-0 outline-none text-sm"
         />
     </div>
   );
