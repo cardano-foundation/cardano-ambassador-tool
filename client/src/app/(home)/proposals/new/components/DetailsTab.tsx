@@ -83,17 +83,6 @@ export default function DetailsTab({ formData, handleInputChange }: Props) {
           placeholder="• Increase awareness and understanding of the Cardano ecosystem among both new and existing users."
         />
       </div>
-
-      <div className="space-y-2">
-        <Paragraph as="label" size="sm" className="text-muted-foreground">
-          Impact
-        </Paragraph>
-        <RichTextEditor
-          value={formData.impact}
-          onChange={(value) => handleInputChange('impact', value)}
-          placeholder="• Increase awareness and understanding of the Cardano ecosystem among both new and existing users."
-        />
-      </div>
       <div className="space-y-2">
         <Paragraph as="label" size="sm" className="text-muted-foreground">
           Budget Breakdown

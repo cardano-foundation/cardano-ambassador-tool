@@ -24,7 +24,6 @@ export default function SubmitProposalPage() {
     impactToEcosystem: '',
     objectives: '',
     milestones: '',
-    impact: '',
     budgetBreakdown: '',
     fundsRequested: '',
     receiverWalletAddress: ''
