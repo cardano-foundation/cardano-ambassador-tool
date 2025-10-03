@@ -35,8 +35,7 @@ const ProfilePage: React.FC = () => {
   };
 
   const handleWithdrawRole = async () => {
-    console.log('Withdraw role clicked');
-  };
+      };
 
   if (loading) {
     return (

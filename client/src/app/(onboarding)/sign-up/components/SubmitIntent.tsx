@@ -225,8 +225,7 @@ const SubmitIntent = ({
         metadata,
       );
     } catch (membershipError) {
-      console.log({ membershipError });
-      
+            
       return {
         success: false,
         message: 'Membership application failed',

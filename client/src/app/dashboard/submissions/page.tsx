@@ -185,13 +185,10 @@ export default function IntentSubmissionsPage() {
         if (txHash) {
           setTransactionHash(txHash);
           setIsTransactionPending(true);
-          console.log('Transaction submitted:', { txHash, result });
-        } else {
+                  } else {
           console.error('Failed to compute transaction hash from txHex');
-          console.log('Transaction result:', result);
-        }
+                  }
       } else {
-        console.log('Transaction result (no txHex):', result);
       }
     } catch (error) {
       console.error('Error updating membership intent metadata:', error);
@@ -202,8 +199,7 @@ export default function IntentSubmissionsPage() {
 
   const handleTransactionConfirmed = useCallback(
     (result: TransactionConfirmationResult) => {
-      console.log('Transaction confirmed:', result);
-      // Clear transaction state first to prevent re-triggering
+            // Clear transaction state first to prevent re-triggering
       setIsTransactionPending(false);
       setTransactionHash(null);
 
@@ -218,8 +214,7 @@ export default function IntentSubmissionsPage() {
 
   const handleTransactionTimeout = useCallback(
     (result: TransactionConfirmationResult) => {
-      console.log('Transaction confirmation timed out:', result);
-      // Clear transaction state first
+            // Clear transaction state first
       setIsTransactionPending(false);
       setTransactionHash(null);
 

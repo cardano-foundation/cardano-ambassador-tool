@@ -130,8 +130,7 @@ export function TableTestPage() {
   ];
 
   const handleCopy = (text: string, column: string) => {
-    console.log(`Copied "${text}" from ${column} column`);
-  };
+      };
 
   return (
     <div className="mx-auto max-w-7xl p-6">

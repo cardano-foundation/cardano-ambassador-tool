@@ -40,8 +40,7 @@ export async function resolveRoles(address: string): Promise<
     if (adminsPubKeyHashes.includes(userPubKeyHash)) {
       roles.push({ role: 'admin' });
     } else {
-      console.log('User is not admin');
-    }
+          }
   } catch (error) {
     console.error('Error resolving user roles:', error);
   }

@@ -55,11 +55,7 @@ export default function EditProfile() {
   };
 
   const handleSave = () => {
-    console.log('Name:', formData.name);
-    console.log('Email:', formData.email);
-    console.log('Country:', formData.country);
-    console.log('Bio length:', formData.bio.length);
-  };
+                  };
 
   return (
     <div className="min-h-screen bg-background">

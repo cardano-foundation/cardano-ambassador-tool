@@ -36,14 +36,11 @@ export default function PartiallySignedTxTest() {
       evaluator: provider,
     });
 
-    console.log('Wallet address:', wallet.address);
-    console.log('First UTXO:', utxos[0]);
-
+        
     // Use the UTXO's output address as the recipient (send back to same address)
     const recipientAddress =
       'addr_test1qpxqcrqd4pkjarqcpwm7pzp7w0py9lcnl5kv8zlwfnrwx7t4yqekvjk7w4996sqn5h4ua06m6rzqnx7u9ge3aupv863symwtvz';
-    console.log('Using recipient address:', recipientAddress);
-
+    
     const unsignedTxHex = await txBuilder
       .selectUtxosFrom(utxos)
       .changeAddress(wallet.address)
@@ -51,8 +48,7 @@ export default function PartiallySignedTxTest() {
       .complete();
 
     setUnsignedTx(unsignedTxHex);
-    console.log('✅ Unsigned transaction created:', unsignedTxHex);
-    // } catch (error) {
+        // } catch (error) {
     //   console.error('❌ Error creating unsigned transaction:', error);
     // }
   };
@@ -67,8 +63,7 @@ export default function PartiallySignedTxTest() {
     try {
       const signedTxHex = await wallet.wallet.signTx(unsignedTx, true);
       setPartiallySignedTx(signedTxHex);
-      console.log('✅ Transaction signed:', signedTxHex);
-
+      
       // Now extract witnesses
       extractWitnesses(signedTxHex);
     } catch (error) {
@@ -79,8 +74,7 @@ export default function PartiallySignedTxTest() {
   // Step 3: Extract witnesses from signed transaction
   const extractWitnesses = async (txHex: string) => {
     try {
-      console.log('🔍 Extracting witnesses from:', txHex);
-
+      
       const tx = deserializeTx(txHex);
       const witnessSet = tx.witness_set();
       const vkeyWitnesses = witnessSet.vkeys();
@@ -93,8 +87,7 @@ export default function PartiallySignedTxTest() {
           const vkey = witness.vkey();
           const pubKeyHash = vkey.public_key().hash().to_hex();
           witnessKeys.push(pubKeyHash);
-          console.log(`👤 Witness ${i + 1}: ${pubKeyHash}`);
-        }
+                  }
 
         setWitnesses(witnessKeys);
 
@@ -102,15 +95,11 @@ export default function PartiallySignedTxTest() {
         const oracleAdmins = await findAdminsFromOracle();
         if (oracleAdmins) {
           setAdminHashes(oracleAdmins);
-          console.log('🏛️ Oracle admins:', oracleAdmins);
-
+          
           // Show comparison
           oracleAdmins.forEach((adminHash) => {
             const hasSigned = witnessKeys.includes(adminHash);
-            console.log(
-              `${hasSigned ? '✅' : '❌'} Admin ${adminHash}: ${hasSigned ? 'SIGNED' : 'NOT SIGNED'}`,
-            );
-          });
+                      });
         }
       }
     } catch (error) {

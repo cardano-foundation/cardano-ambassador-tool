@@ -23,5 +23,4 @@ const RichTextDisplay = ({ content, className = '' }: RichTextDisplayProps) => {
   );
 };
 
-
 export default RichTextDisplay;

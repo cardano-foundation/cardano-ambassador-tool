@@ -64,8 +64,7 @@ const multiSignAndSubmit = async (
   const admin1SignedTx = await admin1.signTx(unsignedTx.txHex, true);
   const admin12SignedTx = await admin2.signTx(admin1SignedTx, true);
   const allSignedTx = await admin3.signTx(admin12SignedTx, true);
-  console.log(allSignedTx);
-
+  
   // Submit transaction
   return await admin2.submitTx(allSignedTx);
 };
@@ -175,7 +174,6 @@ export default async function handler(
         );
         return res.status(200).json({ result });
       }
-
 
       case 'approveSignOff': {
         const { proposalUtxo } = params;

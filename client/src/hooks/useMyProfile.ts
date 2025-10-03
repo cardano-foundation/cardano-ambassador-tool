@@ -53,8 +53,7 @@ export const useMyProfile = (): UseMyProfileReturn => {
       setTimeout(() => {
         setProfile(mockProfile);
         setLoading(false);
-        console.log('Mock profile loaded:', mockProfile.name);
-      }, 1000);
+              }, 1000);
       return;
     }
 
@@ -63,8 +62,7 @@ export const useMyProfile = (): UseMyProfileReturn => {
       setLoading(true);
       setError(null);
 
-      console.log('Fetching my profile...');
-      const response = await fetch('/api/profile/me');
+            const response = await fetch('/api/profile/me');
       
       if (!response.ok) {
         const errorText = await response.text();
@@ -84,8 +82,7 @@ export const useMyProfile = (): UseMyProfileReturn => {
   const updateProfile = async (updateData: Partial<MyProfileData>) => {
     if (USE_MOCK_DATA) {
       // Simulate update with mock data
-      console.log('Mock update:', updateData);
-      setProfile(prev => prev ? { ...prev, ...updateData } : null);
+            setProfile(prev => prev ? { ...prev, ...updateData } : null);
       return;
     }
 

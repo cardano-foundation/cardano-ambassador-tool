@@ -20,10 +20,8 @@ export const useAmbassadorProfile = (
       setLoading(true);
       setError(null);
 
-      console.log('Fetching profile for:', ambassadorUsername);
-      const response = await fetch(`/api/member/${ambassadorUsername}`);
-      console.log('Response status:', response.status);
-
+            const response = await fetch(`/api/member/${ambassadorUsername}`);
+      
       if (!response.ok) {
         const errorText = await response.text();
         console.error('API Error:', errorText);
@@ -33,8 +31,7 @@ export const useAmbassadorProfile = (
       }
 
       const data: AmbassadorProfile = await response.json();
-      console.log('Profile data loaded:', data.name);
-      setProfile(data);
+            setProfile(data);
     } catch (err) {
       console.error('Fetch error:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');

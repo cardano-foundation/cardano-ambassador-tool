@@ -103,8 +103,7 @@
 //         }
 //
 //         const data: AmbassadorProfile = await response.json();
-//         console.log('Profile data loaded:', data.name);
-//         setProfile(data);
+//         //         setProfile(data);
 //         setError(null);
 //       } catch (err) {
 //         console.error('Fetch error:', err);

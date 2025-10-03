@@ -55,8 +55,7 @@ export default function SubmitProposalPage() {
     setIsSubmitting(true);
     
     try {
-      console.log('Submitting proposal:', formData);
-      
+            
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       router.push('/dashboard/submissions?tab=proposal-intent');
