@@ -82,6 +82,7 @@ export default async function handler(
     const { action, ...params } = req.body;
 
     switch (action) {
+
       case 'approveMember': {
         const { membershipIntentUtxo, counterUtxoHash, counterUtxoIndex } =
           params;
@@ -118,6 +119,7 @@ export default async function handler(
         );
         return res.status(200).json({ result });
       }
+
       case 'approveProposal': {
         const { proposeIntentUtxo } = params;
         const { admin1, admin2, admin3, adminsPkh } =
@@ -145,6 +147,7 @@ export default async function handler(
         );
         return res.status(200).json({ result });
       }
+
       case 'rejectProposal': {
         const { proposeIntentUtxo } = params;
         const { admin1, admin2, admin3, adminsPkh } =
@@ -172,6 +175,8 @@ export default async function handler(
         );
         return res.status(200).json({ result });
       }
+
+
       case 'approveSignOff': {
         const { proposalUtxo } = params;
         const { admin1, admin2, admin3, adminsPkh } =
@@ -225,6 +230,7 @@ export default async function handler(
         );
         return res.status(200).json({ result });
       }
+      
       case 'removeMember': {
         const { memberUtxo } = params;
         const { admin1, admin2, admin3 } = await getAdminWalletsAndPkh();

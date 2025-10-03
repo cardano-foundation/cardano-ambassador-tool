@@ -5,7 +5,6 @@ export interface ProposalFormData {
   impactToEcosystem: string;
   objectives: string;
   milestones: string;
-  impact: string;
   budgetBreakdown: string;
   fundsRequested: string;
   receiverWalletAddress: string;

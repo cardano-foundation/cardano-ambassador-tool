@@ -1,6 +1,8 @@
 'use server';
 
-import { deserializeAddress } from '@meshsdk/core';
+import { findOracleUtxo } from '@/utils';
+import { deserializeAddress, deserializeDatum, serializeAddressObj } from '@meshsdk/core';
+import { OracleDatum, getOracleAdmins } from '@sidan-lab/cardano-ambassador-tool';
 
 function getAdminPubKeyHashes(): string[] {
   const adminList = Object.keys(process.env)
@@ -45,4 +47,19 @@ export async function resolveRoles(address: string): Promise<
   }
 
   return roles;
+}
+
+export async function findAdminsFromOracle(): Promise<string[] | null> {
+  try {
+    const oracleUtxo = await findOracleUtxo();
+  
+    // Use the existing helper function from the off-chain package
+    const adminPubKeyHashes = getOracleAdmins(oracleUtxo!);
+  
+    return adminPubKeyHashes.length > 0 ? adminPubKeyHashes : null;
+
+  } catch (error) {
+    console.error('Error finding admins from oracle:', error);
+    return null;
+  }
 }

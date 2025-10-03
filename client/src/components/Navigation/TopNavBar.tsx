@@ -2,24 +2,20 @@
 import ThemeToggle from '@/components/ThemeToggle';
 import Breadcrumb from '@/components/atoms/Breadcrumbs';
 import Button from '@/components/atoms/Button';
+import Card, { CardContent } from '@/components/atoms/Card';
+import CardanoIcon from '@/components/atoms/CardanoIcon';
+import HambugerIcon from '@/components/atoms/HumbugerIcon';
+import AppLogo from '@/components/atoms/Logo';
 import NotificationIcon from '@/components/atoms/NotificationIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
-import UserAvatar from '../atoms/UserAvatar';
-import HambugerIcon from '@/components/atoms/HumbugerIcon';
-import { shortenString } from '@/utils';
-import { X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useWallet } from '@meshsdk/react';
 import { useApp } from '@/context/AppContext';
-import Card, { CardContent } from '@/components/atoms/Card';
-import AppLogo from '@/components/atoms/Logo';
-import CardanoIcon from '@/components/atoms/CardanoIcon';
-import Title from '@/components/atoms/Title';
-import UsersIcon from '@/components/atoms/UsersIcon';
-import SettingsIcon from '@/components/atoms/SettingsIcon';
 import { useNavigation } from '@/hooks/UseNavigation';
+import { shortenString } from '@/utils';
+import { useWallet } from '@meshsdk/react';
+import { X } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+import UserAvatar from '../atoms/UserAvatar';
 
 export default function TopNavBar() {
   const { user, isAdmin } = useApp();
@@ -31,60 +27,63 @@ export default function TopNavBar() {
 
   return (
     <>
-    <div className="w-full bg-background">
-      <div className="mx-auto w-full p-4 lg:p-6">
-        <div className="lg:hidden">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex-shrink-0 text-primary-base">
-              <CardanoIcon  size={40} color="currentColor"/>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-background border-none p-2"
-              onClick={toggleMobileMenu}
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <HambugerIcon className="h-5 w-5" />
-              )}
-            </Button>
-          </div>
-          <div className="flex-shrink-0">
-            <Breadcrumb />
-          </div>
-        </div>
-        <div className="hidden lg:flex justify-between">
-          <div className="flex-shrink-0">
-            <Breadcrumb />
-          </div>
-
-          <div className="flex items-center gap-2 sm:gap-4">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <ThemeToggle />
+      <div className="bg-background w-full">
+        <div className="mx-auto w-full p-4 lg:p-6">
+          <div className="lg:hidden">
+            <div className="mb-2 flex items-center justify-between">
+              <div className="text-primary-base flex-shrink-0">
+                <CardanoIcon size={40} color="currentColor" />
+              </div>
               <Button
                 variant="outline"
                 size="sm"
                 className="bg-background border-none p-2"
+                onClick={toggleMobileMenu}
               >
-                <NotificationIcon />
+                {isMobileMenuOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <HambugerIcon className="h-5 w-5" />
+                )}
               </Button>
             </div>
-            {user && (
-              <div className="flex items-center gap-2">
-                {isAdmin && (
-                  <span className="bg-primary-base rounded-full px-2 py-1 text-xs text-white">
-                    Admin
-                  </span>
-                )}
-                <UserAvatar size="size-8" name={shortenString(user.address)} />
+            <div className="flex-shrink-0">
+              <Breadcrumb />
+            </div>
+          </div>
+          <div className="hidden justify-between lg:flex">
+            <div className="flex-shrink-0">
+              <Breadcrumb />
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-2 sm:gap-4">
+                <ThemeToggle />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-background border-none p-2"
+                >
+                  <NotificationIcon />
+                </Button>
               </div>
-            )}
+              {user && (
+                <div className="flex items-center gap-2">
+                  {isAdmin && (
+                    <span className="bg-primary-base rounded-full px-2 py-1 text-xs text-white">
+                      Admin
+                    </span>
+                  )}
+                  <UserAvatar
+                    size="size-8"
+                    name={shortenString(user.address)}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
@@ -108,7 +107,7 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
   const { user, isAdmin } = useApp();
 
   return (
-    <div className="bg-background h-screen w-full flex flex-col">
+    <div className="bg-background flex h-screen w-full flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-6">
         <AppLogo />
@@ -123,7 +122,7 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Navigation sections */}
-      <div className="flex-1 overflow-y-auto space-y-8">
+      <div className="flex-1 space-y-8 overflow-y-auto">
         {sections.map((section, i) => (
           <div key={i}>
             <nav className="space-y-1">
@@ -135,13 +134,13 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
                     key={item.id}
                     href={item.href}
                     className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
-                      isActive ? "bg-muted" : ""
+                      isActive ? 'bg-muted' : ''
                     }`}
                     onClick={onClose}
                   >
                     <div
                       className={`flex h-5 w-5 flex-shrink-0 items-center justify-center ${
-                        isActive ? "text-primary" : "text-muted-foreground"
+                        isActive ? 'text-primary' : 'text-muted-foreground'
                       }`}
                     >
                       <IconComponent className="h-5 w-5" />
@@ -149,8 +148,8 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
                     <span
                       className={`flex-1 text-left text-base ${
                         isActive
-                          ? "text-primary font-medium"
-                          : "text-neutral font-medium"
+                          ? 'text-primary font-medium'
+                          : 'text-neutral font-medium'
                       }`}
                     >
                       {item.label}

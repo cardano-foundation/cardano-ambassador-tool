@@ -1,7 +1,7 @@
 'use client';
 
 import { TransactionConfirmationResult } from '@types';
-import { waitForTransactionConfirmation } from '@/utils/utils';
+import { waitForTransactionConfirmation } from '@/utils';
 import { CheckCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import Button from './atoms/Button';

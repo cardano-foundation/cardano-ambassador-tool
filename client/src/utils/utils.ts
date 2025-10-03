@@ -23,11 +23,7 @@ import {
   ProposalMetadata,
   scripts,
 } from '@sidan-lab/cardano-ambassador-tool';
-import {
-  TransactionConfirmationOptions,
-  TransactionConfirmationResult,
-  Utxo,
-} from '@types';
+import { Utxo } from '@types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -84,121 +80,6 @@ export function getProvider(network = 'preprod'): BlockfrostProvider {
   const provider = new BlockfrostProvider(`/api/blockfrost/${network}/`);
   provider.setSubmitTxToBytes(false);
   return provider;
-}
-
-// ============================================================================
-// Transaction Confirmation Utilities
-// ============================================================================
-
-/**
- * Polls Blockfrost to check if a transaction is confirmed on-chain
- * @param txHash The transaction hash to check
- * @param options Configuration options for polling behavior
- * @returns Promise that resolves when transaction is confirmed or times out
- */
-export async function waitForTransactionConfirmation(
-  txHash: string,
-  options: TransactionConfirmationOptions = {},
-): Promise<TransactionConfirmationResult> {
-  const {
-    timeout = 300000, // 5 minutes default
-    pollInterval = 10000, // 10 seconds default
-    onPoll,
-    onTimeout,
-  } = options;
-
-  const startTime = Date.now();
-  let attempts = 0;
-  const provider = getProvider();
-
-  return new Promise((resolve) => {
-    const poll = async () => {
-      attempts++;
-      const currentTime = Date.now();
-      const elapsed = currentTime - startTime;
-
-      try {
-        // Call the onPoll callback if provided
-        onPoll?.(attempts, txHash);
-
-        // Check if transaction exists on-chain
-        const transaction = await provider.fetchTxInfo(txHash);
-
-        if (transaction) {
-          // Transaction found and confirmed
-          resolve({
-            confirmed: true,
-            txHash,
-            attempts,
-            timeTaken: elapsed,
-          });
-          return;
-        }
-      } catch (error) {
-        // If error is 404, transaction not found yet - continue polling
-        // If other error, still continue polling as it might be temporary
-        console.warn(
-          `Poll attempt ${attempts} failed for tx ${txHash}:`,
-          error,
-        );
-      }
-
-      // Check if timeout reached
-      if (elapsed >= timeout) {
-        onTimeout?.(txHash);
-        resolve({
-          confirmed: false,
-          txHash,
-          attempts,
-          timeTaken: elapsed,
-          error:
-            'Timeout reached - transaction not confirmed within the specified time',
-        });
-        return;
-      }
-
-      // Schedule next poll
-      setTimeout(poll, pollInterval);
-    };
-
-    // Start polling
-    poll();
-  });
-}
-
-/**
- * Simplified version that just waits for confirmation with default options
- * @param txHash The transaction hash to check
- * @returns Promise that resolves to true if confirmed, false if timeout
- */
-export async function isTransactionConfirmed(txHash: string): Promise<boolean> {
-  const result = await waitForTransactionConfirmation(txHash);
-  return result.confirmed;
-}
-
-/**
- * Waits for transaction confirmation with progress updates
- * @param txHash The transaction hash to check
- * @param onProgress Callback for progress updates
- * @returns Promise that resolves when confirmed or times out
- */
-export async function waitForTransactionWithProgress(
-  txHash: string,
-  onProgress?: (status: string, attempt: number) => void,
-): Promise<TransactionConfirmationResult> {
-  return waitForTransactionConfirmation(txHash, {
-    timeout: 300000, // 5 minutes
-    pollInterval: 10000, // 10 seconds
-    onPoll: (attempt) => {
-      onProgress?.(
-        `Checking transaction confirmation (attempt ${attempt})...`,
-        attempt,
-      );
-    },
-    onTimeout: () => {
-      onProgress?.('Transaction confirmation timeout reached', 0);
-    },
-  });
 }
 
 // ============================================================================
@@ -484,30 +365,30 @@ export async function fetchMemberUtxos(): Promise<UTxO[]> {
  * @returns The matching UTxO or null if not found
  */
 export async function findMembershipIntentUtxo(
-  address: string
+  address: string,
 ): Promise<UTxO | null> {
   try {
     const utxos = await blockfrostService.fetchAddressUTxOs(
-      SCRIPT_ADDRESSES.MEMBERSHIP_INTENT
+      SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     );
     const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) => {
       try {
         if (!utxo.output.plutusData) return false;
         const datum: MembershipIntentDatum = deserializeDatum(
-          utxo.output.plutusData
+          utxo.output.plutusData,
         );
         const metadataPluts: MembershipMetadata = datum.fields[1];
         const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
         return walletAddress === address;
       } catch (error) {
-        console.error("Error processing UTxO:", error);
+        console.error('Error processing UTxO:', error);
         return false;
       }
     });
     return matchingUtxo || null;
   } catch (error) {
-    console.error("Error fetching or processing UTxOs:", error);
+    console.error('Error fetching or processing UTxOs:', error);
     return null;
   }
 }
@@ -539,6 +420,29 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
       }
     });
     return matchingUtxo || null;
+  } catch (error) {
+    console.error('Error fetching or processing UTxOs:', error);
+    return null;
+  }
+}
+
+/**
+ * Finds a oracle UTxO
+ * @param address The wallet address to search for
+ * @returns The matching UTxO or null if not found
+ */
+export async function findOracleUtxo() {
+  try {
+    const utxo =
+      (await blockfrostService.fetchUtxo(
+        process.env.NEXT_PUBLIC_ORACLE_TX_HASH!,
+      )) ?? [];
+
+    if (!utxo.output.plutusData) {
+      return null;
+    }
+
+    return utxo || null;
   } catch (error) {
     console.error('Error fetching or processing UTxOs:', error);
     return null;
@@ -610,14 +514,14 @@ export async function findTokenUtxoByMemberUtxo(
  * @returns The matching token UTxO or null if not found
  */
 export async function findTokenUtxoByMembershipIntentUtxo(
-  membershipIntentUtxo: UTxO
+  membershipIntentUtxo: UTxO,
 ): Promise<UTxO | null> {
   try {
     if (!membershipIntentUtxo.output.plutusData) {
-      throw "Member UTxO does not contain Plutus data";
+      throw 'Member UTxO does not contain Plutus data';
     }
     const datum: MembershipIntentDatum = deserializeDatum(
-      membershipIntentUtxo.output.plutusData
+      membershipIntentUtxo.output.plutusData,
     );
 
     const metadataPluts: MembershipMetadata = datum.fields[1];
@@ -676,11 +580,6 @@ export async function findTokenUtxoByMembershipIntentUtxoMesh(
   }
 }
 
-/**
- * Finds a token UTxO associated with a membership intent UTxO
- * @param membershipIntentUtxo The membership intent UTxO to find the associated token for
- * @returns array of admins pubkHash or null
- */
 export function findAdmins(): string[] | null {
   const adminList = Object.keys(process.env)
     .filter((key) => key.startsWith('ADMIN_WALLET'))

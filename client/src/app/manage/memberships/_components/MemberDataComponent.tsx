@@ -252,7 +252,7 @@ const MemberDataComponent = ({
                     variant="outline"
                     size="sm"
                     onClick={handleCancel}
-                    className="flex items-center gap-1"
+                    className="text-primary-base! flex items-center gap-1"
                   >
                     <X className="h-4 w-4" />
                     Cancel
@@ -273,7 +273,7 @@ const MemberDataComponent = ({
                   variant="outline"
                   size="sm"
                   onClick={handleEdit}
-                  className="flex items-center gap-1"
+                  className="text-primary-base! flex items-center gap-1"
                 >
                   <Edit className="h-4 w-4" />
                   Edit

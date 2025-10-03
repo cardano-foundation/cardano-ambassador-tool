@@ -1,8 +1,8 @@
 'use client';
 
-import MembershipIntentTimeline from '@/components/MembershipIntentTimeline';
 import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import OwnerMembershipTimeline from '@/components/Timelines/OwnerMembershipTimeline';
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import Button from '@/components/atoms/Button';
 import Empty from '@/components/atoms/Empty';
@@ -10,7 +10,6 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import { useApp } from '@/context';
 import {
-  dbUtxoToMeshUtxo,
   findMembershipIntentUtxo,
   findTokenUtxoByMembershipIntentUtxo,
   getCatConstants,
@@ -23,10 +22,10 @@ import {
   membershipMetadata,
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
-import { Utxo, TransactionConfirmationResult } from '@types';
+import { TransactionConfirmationResult, Utxo } from '@types';
 import { RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function IntentSubmissionsPage() {
   const tabs = [
@@ -51,7 +50,7 @@ export default function IntentSubmissionsPage() {
     null,
   );
   const [refreshAttempts, setRefreshAttempts] = useState(0);
-  
+
   // Transaction confirmation states
   const [isTransactionPending, setIsTransactionPending] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
@@ -136,7 +135,8 @@ export default function IntentSubmissionsPage() {
       }
 
       // Find token UTxO by membership intent UTxO
-      const tokenUtxo = await findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo);
+      const tokenUtxo =
+        await findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo);
 
       if (!tokenUtxo) {
         throw new Error('No token UTxO found for this membership intent');
@@ -181,7 +181,7 @@ export default function IntentSubmissionsPage() {
       if (result?.txHex) {
         // Compute transaction hash from the transaction hex
         const txHash = resolveTxHash(result.txHex);
-        
+
         if (txHash) {
           setTransactionHash(txHash);
           setIsTransactionPending(true);
@@ -200,36 +200,42 @@ export default function IntentSubmissionsPage() {
     }
   };
 
-  const handleTransactionConfirmed = useCallback((result: TransactionConfirmationResult) => {
-    console.log('Transaction confirmed:', result);
-    // Clear transaction state first to prevent re-triggering
-    setIsTransactionPending(false);
-    setTransactionHash(null);
-    
-    // Delay data refresh to allow state to settle
-    setTimeout(() => {
-      syncData('membership_intent');
-      handleRefresh();
-    }, 1000);
-  }, [syncData]);
+  const handleTransactionConfirmed = useCallback(
+    (result: TransactionConfirmationResult) => {
+      console.log('Transaction confirmed:', result);
+      // Clear transaction state first to prevent re-triggering
+      setIsTransactionPending(false);
+      setTransactionHash(null);
 
-  const handleTransactionTimeout = useCallback((result: TransactionConfirmationResult) => {
-    console.log('Transaction confirmation timed out:', result);
-    // Clear transaction state first
-    setIsTransactionPending(false);
-    setTransactionHash(null);
-    
-    // Still refresh data as transaction might have gone through
-    setTimeout(() => {
-      syncData('membership_intent');
-      handleRefresh();
-    }, 1000);
-  }, [syncData]);
+      // Delay data refresh to allow state to settle
+      setTimeout(() => {
+        syncData('membership_intent');
+        handleRefresh();
+      }, 1000);
+    },
+    [syncData],
+  );
+
+  const handleTransactionTimeout = useCallback(
+    (result: TransactionConfirmationResult) => {
+      console.log('Transaction confirmation timed out:', result);
+      // Clear transaction state first
+      setIsTransactionPending(false);
+      setTransactionHash(null);
+
+      // Still refresh data as transaction might have gone through
+      setTimeout(() => {
+        syncData('membership_intent');
+        handleRefresh();
+      }, 1000);
+    },
+    [syncData],
+  );
 
   const handleCloseTransactionOverlay = useCallback(() => {
     setIsTransactionPending(false);
     setTransactionHash(null);
-    
+
     // Refresh data when closing overlay
     setTimeout(() => {
       syncData('membership_intent');
@@ -257,36 +263,35 @@ export default function IntentSubmissionsPage() {
   return (
     <div className="space-y-4 px-4 py-2 pb-8 sm:space-y-6 sm:px-6">
       <div className="border-border bg-card border-b">
-      <div className="flex items-end justify-between">
-        <div className="flex-1">
-          <TopNav
-            tabs={tabs}
-            activeTabId={activeTab}
-            onTabChange={setActiveTab}
-          />
+        <div className="flex items-end justify-between">
+          <div className="flex-1">
+            <TopNav
+              tabs={tabs}
+              activeTabId={activeTab}
+              onTabChange={setActiveTab}
+            />
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isSyncing || dbLoading}
+            className="text-primary-base! mr-4 mb-2 flex items-center gap-2"
+          >
+            <RefreshCw
+              className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
+            />
+            <span className="hidden text-sm lg:inline">
+              {isSyncing ? 'Refreshing...' : 'Refresh'}
+            </span>
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={isSyncing || dbLoading}
-          className="flex items-center gap-2 mb-2 mr-4"
-        >
-          <RefreshCw
-            className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
-          />
-          <span className="hidden lg:inline  text-sm">
-            {isSyncing ? 'Refreshing...' : 'Refresh'}
-          </span>
-        </Button>
       </div>
-    </div>
 
       {activeTab === 'membership-intent' && (
         <div className="">
           {membershipIntentUtxo ? (
-            <MembershipIntentTimeline
-              readonly={false}
+            <OwnerMembershipTimeline
               intentUtxo={membershipIntentUtxo}
               onSave={handleMetadataUpdate}
             />
@@ -345,7 +350,9 @@ export default function IntentSubmissionsPage() {
                     <Button variant="primary">Submit Proposal</Button>
                   </Link>
                   <Link href="/proposals">
-                    <Button variant="outline">Browse Proposals</Button>
+                    <Button variant="outline" className="text-primary-base!">
+                      Browse Proposals
+                    </Button>
                   </Link>
                 </div>
               </div>
@@ -353,7 +360,7 @@ export default function IntentSubmissionsPage() {
           )}
         </div>
       )}
-      
+
       {/* Transaction Confirmation Overlay */}
       <TransactionConfirmationOverlay
         isVisible={isTransactionPending}
