@@ -12,8 +12,8 @@ interface TabItem {
 
 interface TopNavigationTabsProps {
   tabs: TabItem[];
-  activeTabId: string; // Make this required
-  onTabChange: (tabId: string, tab: TabItem) => void; // Make this required
+  activeTabId: string;
+  onTabChange: (tabId: string, tab: TabItem) => void; 
   className?: string;
 }
 

@@ -119,7 +119,7 @@ const ProfilePage: React.FC = () => {
                     <Title level="5" className="text-neutral">
                     Profile details
                     </Title>
-                    <Link href="#">
+                    <Link href="/profile/edit">
                     <Button variant="primary" size="sm">
                         Edit Profile
                     </Button>

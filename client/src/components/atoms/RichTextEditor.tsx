@@ -4,6 +4,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
+import { Markdown } from 'tiptap-markdown';
 import { 
   Bold, 
   Italic, 
@@ -21,7 +22,8 @@ import {
   IndentIncrease,
   IndentDecrease
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react'; 
+import { useEffect, useState, forwardRef, useImperativeHandle, MouseEvent } from 'react';
 
 interface RichTextEditorProps {
   value: string;
@@ -29,8 +31,9 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
-const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) => {
+const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEditorProps, ref) => {
   const [mounted, setMounted] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -39,12 +42,18 @@ const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) =
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
+      Markdown.configure({
+        html: true, 
+        tightLists: true,
+        breaks: false,
+        transformPastedText: false,
+        transformCopiedText: false,
+      }),
     ],
     content: value,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
-      console.log(editor.getJSON());
-      console.log(editor.getHTML());
+      const html = editor.getHTML();
+      onChange(html);
     },
     editorProps: {
       attributes: {
@@ -56,13 +65,32 @@ const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) =
     immediatelyRender: false,
   });
 
-  const insertSmiley = () => {
-    editor?.commands.insertContent('😊');
+  const onEmojiClick = (emojiData: EmojiClickData) => {
+    editor?.commands.insertContent(emojiData.emoji);
+    setShowEmojiPicker(false);
   };
+  useImperativeHandle(ref, () => ({
+    getMarkdown: () => {
+      if (!editor) return '';
+      return (editor.storage as any).markdown.getMarkdown();
+    }
+  }));
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+    useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (showEmojiPicker && !target.closest('.emoji-picker-container')) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside as any);
+    return () => document.removeEventListener('mousedown', handleClickOutside as any);
+  }, [showEmojiPicker]);
 
   if (!mounted) {
     return (
@@ -126,41 +154,53 @@ const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) =
             <Strikethrough className="w-4 h-4" />
           </button>
 
-          <button
+          {/* <button
             type="button"
             className="p-2 rounded hover:bg-muted opacity-50"
             title="Text Color (Coming Soon)"
             disabled
           >
             <Droplet className="w-4 h-4" />
-          </button>
+          </button> */}
           
-          <button
+          {/* <button
             type="button"
             className="p-2 rounded hover:bg-muted opacity-50"
             title="Background Color (Coming Soon)"
             disabled
           >
             <Highlighter className="w-4 h-4" />
-          </button>
+          </button> */}
 
-          <button
-            type="button"
-            onClick={insertSmiley}
-            className="p-2 rounded hover:bg-muted"
-            title="Insert Smiley"
-          >
-            <Smile className="w-4 h-4" />
-          </button>
+          <div className="emoji-picker-container relative">
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className={`p-2 rounded hover:bg-muted ${showEmojiPicker ? 'bg-muted' : ''}`}
+              title="Insert Emoji"
+            >
+              <Smile className="w-4 h-4" />
+            </button>
 
-          <button
+            {showEmojiPicker && (
+              <div className="absolute top-full left-0 z-50 mt-1 bg-background">
+                <EmojiPicker 
+                  onEmojiClick={onEmojiClick}
+                  width={350}
+                  height={400}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* <button
             type="button"
             className="p-2 rounded hover:bg-muted opacity-50"
             title="Paragraph Format (Coming Soon)"
             disabled
           >
             <Pilcrow className="w-4 h-4" />
-          </button>
+          </button> */}
 
           <button
             type="button"
@@ -206,32 +246,14 @@ const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) =
           >
             <ListOrdered className="w-4 h-4" />
           </button>
-
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
-            className="p-2 rounded hover:bg-muted"
-            title="Indent"
-          >
-            <IndentIncrease className="w-4 h-4" />
-          </button>
-          
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().liftListItem('listItem').run()}
-            className="p-2 rounded hover:bg-muted"
-            title="Outdent"
-          >
-            <IndentDecrease className="w-4 h-4" />
-          </button>
         </div>
       
         <EditorContent 
-          editor={editor} 
-          className="min-h-[120px] w-full p-3 focus:outline-none  border-0 outline-none text-sm"
+          editor={editor}
+          className="min-h-[120px] w-full p-3 text-sm break-words whitespace-pre-wrap [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:overflow-x-auto focus:outline-none"
         />
     </div>
   );
-};
+});
 
 export default RichTextEditor;

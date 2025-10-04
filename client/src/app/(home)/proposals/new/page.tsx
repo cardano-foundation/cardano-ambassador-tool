@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/atoms/Button';
 import Title from '@/components/atoms/Title';
@@ -17,6 +17,13 @@ export default function SubmitProposalPage() {
   const { isAuthenticated, userWallet, userAddress } = useApp();
   const [activeTab, setActiveTab] = useState('details');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [markdownData, setMarkdownData] = useState<any>({});
+  const descriptionEditorRef = useRef<any>(null);
+  const impactEditorRef = useRef<any>(null);
+  const objectivesEditorRef = useRef<any>(null);
+  const milestonesEditorRef = useRef<any>(null);
+  const budgetBreakdownEditorRef = useRef<any>(null);
+  const impactOnEcosystemEditorRef = useRef<any>(null);
   const [formData, setFormData] = useState<ProposalFormData>({
     title: '',
     category: '',
@@ -56,11 +63,19 @@ export default function SubmitProposalPage() {
     setIsSubmitting(true);
     
     try {
-      console.log('Submitting proposal:', formData);
+      const submissionData = {
+      title: formData.title,
+      category: formData.category,
+      ...markdownData, 
+      fundsRequested: formData.fundsRequested,
+      receiverWalletAddress: formData.receiverWalletAddress
+    };
+
+    console.log('Submitting proposal as MARKDOWN:', submissionData);
+    
+    await new Promise(resolve => setTimeout(resolve, 2000));
       
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      router.push('/dashboard/submissions?tab=proposal-intent');
+      router.push('/dashboard/submissions');
     } catch (error) {
       console.error('Error submitting proposal:', error);
       alert('Failed to submit proposal. Please try again.');
@@ -70,11 +85,23 @@ export default function SubmitProposalPage() {
   };
 
   const handleNextTab = () => {
-    const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
-    if (currentIndex < tabs.length - 1) {
-      setActiveTab(tabs[currentIndex + 1].id);
-    }
-  };
+  if (activeTab === 'details') {
+    const capturedMarkdown = {
+      description: descriptionEditorRef.current?.getMarkdown() || '',
+      impactToEcosystem: impactOnEcosystemEditorRef.current?.getMarkdown() || '',
+      objectives: objectivesEditorRef.current?.getMarkdown() || '',
+      milestones: milestonesEditorRef.current?.getMarkdown() || '',
+      impact: impactEditorRef.current?.getMarkdown() || '',
+      budgetBreakdown: budgetBreakdownEditorRef.current?.getMarkdown() || '',
+    };
+    setMarkdownData(capturedMarkdown);
+  }
+
+  const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
+  if (currentIndex < tabs.length - 1) {
+    setActiveTab(tabs[currentIndex + 1].id);
+  }
+};
 
   const handlePreviousTab = () => {
     const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
@@ -105,15 +132,23 @@ export default function SubmitProposalPage() {
           </div>
         </div>
         
-        <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-lg border border-border bg-card p-6 shadow-sm ">
 
           <div className="mb-8">
             {activeTab === "details" && (
-              <DetailsTab formData={formData} handleInputChange={handleInputChange} />
+              <DetailsTab formData={formData} 
+              handleInputChange={handleInputChange}
+              descriptionEditorRef={descriptionEditorRef}
+              impactEditorRef={impactEditorRef}
+              objectivesEditorRef={objectivesEditorRef}
+              milestonesEditorRef={milestonesEditorRef}
+              impactOnEcosystemEditorRef={impactOnEcosystemEditorRef}
+              budgetBreakdownEditorRef={budgetBreakdownEditorRef} />
             )}
 
             {activeTab === "funds" && (
-              <FundsTab formData={formData} handleInputChange={handleInputChange} />
+              <FundsTab formData={formData} 
+              handleInputChange={handleInputChange} />
             )}
 
             {activeTab === "review" && (

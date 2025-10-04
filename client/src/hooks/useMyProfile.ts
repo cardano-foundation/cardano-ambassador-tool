@@ -16,6 +16,7 @@ const mockProfile: MyProfileData = {
   email: 'preston@odep.co.ke',
   bio: 'I am Benjamin Baani from Ghana. I am a Blockchain Enthusiast, Cardano Events Organizer and Speaker. In Project Catalyst, I have served as a Proposal Assessor, Veteran Proposal Assessor, Challenge Team Member from Fund 8 to Fund 9, Voter, Team Lead for Startups & Onboarding for Students Challenge Team in Fund 10, Group E Proof of Life (PoL) Verifiers Team Lead in Fund 11. I am an agent of scaling up Cardano adoption in Ghana.',
   country: 'Ghana',
+  city: 'Accra',
   countryCode: 'GH',
   wallet: 'Addr76crtw...fedc5c',
   ambassadorUrl: 'https://ambassadorexplorer.com/preston',

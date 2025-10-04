@@ -5,6 +5,7 @@ import Title from '@/components/atoms/Title';
 import { Mail } from 'lucide-react';
 import { useApp } from '@/context';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import LocationSelector from '@/app/(onboarding)/sign-up/components/LocationSelector';
 import Input from '@/components/atoms/Input';
 import TextArea from '@/components/atoms/TextArea';
 import Paragraph from '@/components/atoms/Paragraph';
@@ -20,6 +21,7 @@ export default function EditProfile() {
     email: 'benjamin.baani@baani.com',
     displayName: 'Pres',
     country: '',
+    city: '',
     claimUrl: 'baani',
     bio: 'I am Benjamin Baani from Ghana. I am a Blockchain Enthusiast, Cardano Events Organizer and Speaker. In Project Catalyst, I have served as a Proposal Assessor, Veteran Proposal Assessor, Challenge Team Member from Fund 8 to Fund 9, Voter, Team Lead for Startups & Onboarding for Students Challenge Team in Fund 10, Group E Proof of Life (PoL) Verifiers Team Lead in Fund 11. I am an agent of scaling up Cardano adoption in Ghana.',
     wallet: '',
@@ -87,7 +89,6 @@ export default function EditProfile() {
               icon={<Mail size={20} />}
             />
 
-            <div className="grid grid-cols-2 gap-4">
               <Input
                 label="Display name"
                 name="displayName"
@@ -95,16 +96,29 @@ export default function EditProfile() {
                 onChange={handleInputChange}
               />
 
-              <div>
-                <label className="text-foreground block text-sm font-medium">
-                  Select Country
-                </label>
-                <CountrySelector
-                  value={formData.country}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}
-                />
-              </div>
-            </div>
+            <TextArea
+              label="Bio"
+              name="bio"
+              value={formData.bio}
+              onChange={handleInputChange}
+              rows={6}
+              className="text-base font-normal"
+            />
+
+            {/* <div className="grid grid-cols-2 gap-4"> */}
+
+            <LocationSelector
+              countryCode={formData.country}
+              city={formData.city}
+              onCountryChange={(country) => {
+              setFormData((prev) => ({ ...prev, country, city: '' }));
+            }}
+            onCityChange={(city) => {
+              setFormData((prev) => ({ ...prev, city }));
+            }}
+              className="grid grid-cols-2 gap-4"
+            />
+            {/* </div> */}
 
             {/* Avatar Upload */}
             <div className="flex items-start gap-6">
@@ -131,8 +145,8 @@ export default function EditProfile() {
             </div>
 
             <div className="flex justify-end gap-3">
-              <Button variant="outline">Cancel</Button>
-              <Button variant="primary" onClick={handleSave}>
+              <Button variant="outline" size="sm">Cancel</Button>
+              <Button variant="primary" size="sm" onClick={handleSave}>
                 Save changes
               </Button>
             </div>
@@ -141,7 +155,7 @@ export default function EditProfile() {
         <div>
           <Title level="5" className="mb-2">Personal info</Title>
           <Paragraph size="sm" className="text-foreground mb-6">
-            Update your bio and social handles
+            Update your social handles
           </Paragraph>
 
           <div className="space-y-6 border border-border rounded-lg p-6">
@@ -152,23 +166,6 @@ export default function EditProfile() {
               onChange={handleInputChange}
               prefix="https://ambasadorsexplorer.com/"
               placeholder="baani"
-            />
-
-            <TextArea
-              label="Bio"
-              name="bio"
-              value={formData.bio}
-              onChange={handleInputChange}
-              rows={6}
-              className="text-base font-normal"
-            />
-
-            <Input
-              label="Wallet"
-              name="wallet"
-              placeholder="Wallet"
-              value={formData.wallet}
-              onChange={handleInputChange}
             />
 
             <Input
@@ -214,8 +211,8 @@ export default function EditProfile() {
             </div>
 
             <div className="flex justify-end gap-3 ">
-              <Button variant="outline" >Cancel</Button>
-              <Button variant="primary" onClick={handleSave}>
+              <Button variant="outline" size="sm" >Cancel</Button>
+              <Button variant="primary"  size="sm" onClick={handleSave}>
                 Save changes
               </Button>
             </div>

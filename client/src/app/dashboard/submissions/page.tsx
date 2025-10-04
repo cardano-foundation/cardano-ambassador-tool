@@ -263,6 +263,7 @@ export default function IntentSubmissionsPage() {
             tabs={tabs}
             activeTabId={activeTab}
             onTabChange={setActiveTab}
+            className="w-1/2"
           />
         </div>
         <Button
