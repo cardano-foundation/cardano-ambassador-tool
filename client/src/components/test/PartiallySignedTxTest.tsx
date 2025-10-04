@@ -94,10 +94,10 @@ export default function PartiallySignedTxTest() {
         // Also get oracle admins for comparison
         const oracleAdmins = await findAdminsFromOracle();
         if (oracleAdmins) {
-          setAdminHashes(oracleAdmins);
+          setAdminHashes(oracleAdmins.adminPubKeyHashes);
           
           // Show comparison
-          oracleAdmins.forEach((adminHash) => {
+          oracleAdmins.adminPubKeyHashes.forEach((adminHash) => {
             const hasSigned = witnessKeys.includes(adminHash);
                       });
         }
