@@ -26,9 +26,9 @@ export default function MultisigProgressTracker({
   useEffect(() => {
     const loadSigners = async () => {
       try {
-        const adminPubKeyHash = await findAdminsFromOracle();
+        const adminData = await findAdminsFromOracle();
 
-        const signersWithStatus: SignerStatus[] = adminPubKeyHash!.map(
+        const signersWithStatus: SignerStatus[] = adminData!.adminPubKeyHashes!.map(
           (pubKey) => {
             return {
               address: pubKey,
@@ -36,6 +36,9 @@ export default function MultisigProgressTracker({
             };
           },
         );
+
+        console.log({ adminData });
+        
 
         setSigners(signersWithStatus);
       } catch (error) {
@@ -64,7 +67,7 @@ export default function MultisigProgressTracker({
         {signers.map((signer) => (
           <div
             key={signer.address}
-            className="flex max-w-lg justify-between py-2"
+            className="flex w-full justify-between py-2"
           >
             <Copyable
               withKey={false}

@@ -1,6 +1,7 @@
 import { BlockfrostProvider, UTxO } from '@meshsdk/core';
 import { scripts } from '@sidan-lab/cardano-ambassador-tool';
 import { NextRequest, NextResponse } from 'next/server';
+import { unstable_cache, revalidateTag } from 'next/cache';
 
 // Validate required environment variables
 if (!process.env.BLOCKFROST_API_KEY_PREPROD) {
@@ -68,6 +69,7 @@ type ContextType = keyof typeof actionData;
 type HandlerRequestBody = {
   context: ContextType;
   address: string;
+  forceRefresh?: boolean; // Flag to bypass cache
 };
 
 export async function POST(req: NextRequest): Promise<
@@ -79,7 +81,7 @@ export async function POST(req: NextRequest): Promise<
   try {
     const body: HandlerRequestBody = await req.json();
 
-    const { context, address } = body;
+    const { context, address, forceRefresh } = body;
 
     const action = actionData[context];
 
@@ -88,6 +90,12 @@ export async function POST(req: NextRequest): Promise<
     }
 
     const userAddress = address ?? action.address;
+
+    // If forceRefresh is true, invalidate cache before fetching
+    if (forceRefresh) {
+      revalidateTag(`utxos-${userAddress}`);
+      revalidateTag('all-utxos');
+    }
 
     const utxos = await fetchAddressUTxOs(userAddress);
 
@@ -105,7 +113,8 @@ export async function POST(req: NextRequest): Promise<
   }
 }
 
-async function fetchAddressUTxOs(address: string): Promise<UTxO[]> {
+// Uncached version - does actual blockchain fetch
+async function fetchAddressUTxOsUncached(address: string): Promise<UTxO[]> {
   try {
     const utxos = await blockfrost.fetchAddressUTxOs(address);
 
@@ -114,3 +123,14 @@ async function fetchAddressUTxOs(address: string): Promise<UTxO[]> {
     return [];
   }
 }
+
+// Cached version with 1 hour revalidation
+const fetchAddressUTxOs = (address: string) =>
+  unstable_cache(
+    async () => fetchAddressUTxOsUncached(address),
+    ['address-utxos', address], // Unique cache key per address
+    {
+      revalidate: 3600, // Cache for 1 hour (in seconds)
+      tags: [`utxos-${address}`, 'all-utxos'], // Tags for invalidation
+    }
+  )();

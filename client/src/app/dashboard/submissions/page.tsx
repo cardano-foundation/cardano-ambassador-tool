@@ -4,6 +4,7 @@ import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import OwnerMembershipTimeline from '@/components/Timelines/OwnerMembershipTimeline';
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
+import GlobalRefreshButton from '@/components/GlobalRefreshButton';
 import Button from '@/components/atoms/Button';
 import Empty from '@/components/atoms/Empty';
 import Paragraph from '@/components/atoms/Paragraph';
@@ -23,7 +24,6 @@ import {
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
 import { TransactionConfirmationResult, Utxo } from '@types';
-import { RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -49,7 +49,6 @@ export default function IntentSubmissionsPage() {
   const [proposalIntentUtxo, setProposalIntentUtxo] = useState<Utxo | null>(
     null,
   );
-  const [refreshAttempts, setRefreshAttempts] = useState(0);
 
   // Transaction confirmation states
   const [isTransactionPending, setIsTransactionPending] = useState(false);
@@ -114,15 +113,8 @@ export default function IntentSubmissionsPage() {
     dbLoading,
     isAuthenticated,
     isSyncing,
-    refreshAttempts,
   ]);
 
-  const handleRefresh = () => {
-    setError(null);
-    setRefreshAttempts((prev) => prev + 1);
-    syncData('membership_intent');
-    syncData('proposal_intent');
-  };
 
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
     try {
@@ -198,44 +190,83 @@ export default function IntentSubmissionsPage() {
   };
 
   const handleTransactionConfirmed = useCallback(
-    (result: TransactionConfirmationResult) => {
-            // Clear transaction state first to prevent re-triggering
+    async (result: TransactionConfirmationResult) => {
+      // Clear transaction state first to prevent re-triggering
       setIsTransactionPending(false);
       setTransactionHash(null);
 
-      // Delay data refresh to allow state to settle
+      // Invalidate cache before syncing to ensure fresh data
+      try {
+        await fetch('/api/revalidate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            allUtxos: true,
+            oracleAdmins: true 
+          }),
+        });
+      } catch (error) {
+        console.error('Cache invalidation error:', error);
+      }
+
+      // Delay data refresh to allow blockchain to settle and cache to clear
       setTimeout(() => {
         syncData('membership_intent');
-        handleRefresh();
-      }, 1000);
+      }, 2000); // Increased delay for blockchain propagation
     },
     [syncData],
   );
 
   const handleTransactionTimeout = useCallback(
-    (result: TransactionConfirmationResult) => {
-            // Clear transaction state first
+    async (result: TransactionConfirmationResult) => {
+      // Clear transaction state first
       setIsTransactionPending(false);
       setTransactionHash(null);
+
+      // Invalidate cache before syncing (transaction might have gone through)
+      try {
+        await fetch('/api/revalidate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            allUtxos: true,
+            oracleAdmins: false 
+          }),
+        });
+      } catch (error) {
+        console.error('Cache invalidation error:', error);
+      }
 
       // Still refresh data as transaction might have gone through
       setTimeout(() => {
         syncData('membership_intent');
-        handleRefresh();
-      }, 1000);
+      }, 2000);
     },
     [syncData],
   );
 
-  const handleCloseTransactionOverlay = useCallback(() => {
+  const handleCloseTransactionOverlay = useCallback(async () => {
     setIsTransactionPending(false);
     setTransactionHash(null);
+
+    // Invalidate cache before syncing
+    try {
+      await fetch('/api/revalidate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          allUtxos: true,
+          oracleAdmins: true 
+        }),
+      });
+    } catch (error) {
+      console.error('Cache invalidation error:', error);
+    }
 
     // Refresh data when closing overlay
     setTimeout(() => {
       syncData('membership_intent');
-      handleRefresh();
-    }, 1000);
+    }, 2000);
   }, [syncData]);
 
   if (loading || dbLoading) {
@@ -266,20 +297,10 @@ export default function IntentSubmissionsPage() {
               onTabChange={setActiveTab}
             />
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isSyncing || dbLoading}
-            className="text-primary-base! mr-4 mb-2 flex items-center gap-2"
-          >
-            <RefreshCw
-              className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
-            />
-            <span className="hidden text-sm lg:inline">
-              {isSyncing ? 'Refreshing...' : 'Refresh'}
-            </span>
-          </Button>
+          <GlobalRefreshButton
+            showLabel
+            className="text-primary-base! mr-4 mb-2"
+          />
         </div>
       </div>
 
