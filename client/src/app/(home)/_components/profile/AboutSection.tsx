@@ -21,7 +21,6 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
   formatDate,
   cleanHtml,
 }) => {
-  console.log('Profile in AboutSection:', profile.country);
   return (
     <Card>
       <CardContent>
