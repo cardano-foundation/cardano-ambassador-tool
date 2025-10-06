@@ -12,7 +12,6 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Button from '@/components/atoms/Button';
 import ImageUpload from '@/components/atoms/ImageUpload';
 import ProfileImageEditor from '@/components/atoms/ProfileImageEditor';
-import CountrySelector from './CountrySelector';
 import { ProfileFormData } from '@/types/Profile';
 
 export default function EditProfile() {
@@ -57,10 +56,7 @@ export default function EditProfile() {
   };
 
   const handleSave = () => {
-    console.log('Name:', formData.name);
-    console.log('Email:', formData.email);
-    console.log('Country:', formData.country);
-    console.log('Bio length:', formData.bio.length);
+    console.log('Name:', formData);
   };
 
   return (
