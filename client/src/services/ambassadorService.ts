@@ -60,7 +60,7 @@ export async function getUserProfile(
     username,
     name: profileUser.name,
     bio_excerpt: profileUser.bio_excerpt,
-    country: ambassador.country,
+    country: profileUser.location || '',
     flag: ambassador.flag,
     avatar: profileUser.avatar_template,
     created_at: profileUser.created_at,
