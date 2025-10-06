@@ -325,10 +325,7 @@ export const memberDatum = (
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
   const completionItems: [ProposalMetadata, Integer][] = Array.from(
     completion.entries()
-  ).map(([key, value]) => [
-    proposalMetadata(key.projectDetails),
-    integer(value),
-  ]);
+  ).map(([key, value]) => [proposalMetadata(key), integer(value)]);
 
   const completionPluts: Pairs<ProposalMetadata, Integer> = pairs<
     ProposalMetadata,
@@ -352,12 +349,30 @@ export const memberUpdateMetadata: MemberUpdateMetadata = conStr2([]);
 
 export type ProposalMetadata = ConStr0<
   [
-    ByteString // project details
+    ByteString | List<ByteString>, // title
+    ByteString | List<ByteString>, // category
+    ByteString | List<ByteString>, // description
+    ByteString | List<ByteString>, // impactToEcosystem
+    ByteString | List<ByteString>, // objectives
+    ByteString | List<ByteString>, // milestones
+    ByteString | List<ByteString>, // budgetBreakdown
+    ByteString | List<ByteString>, // fundsRequested
+    ByteString | List<ByteString> // receiverWalletAddress
   ]
 >;
 
-export const proposalMetadata = (projectDetails: string): ProposalMetadata => {
-  return conStr0([byteString(projectDetails)]);
+export const proposalMetadata = (jsonData: ProposalData): ProposalMetadata => {
+  return conStr0([
+    addrBech32ToPlutusDataObj(jsonData.title || ""),
+    handleString(jsonData.category || ""),
+    handleString(jsonData.description || ""),
+    handleString(jsonData.impactToEcosystem || ""),
+    handleString(jsonData.objectives || ""),
+    handleString(jsonData.milestones || ""),
+    handleString(jsonData.budgetBreakdown || ""),
+    handleString(jsonData.fundsRequested || ""),
+    handleString(jsonData.receiverWalletAddress || ""),
+  ]);
 };
 
 export const proposeProject = (
@@ -471,7 +486,15 @@ export type Member = {
 };
 
 export type ProposalData = {
-  projectDetails: string;
+  title: string;
+  category: string;
+  description: string;
+  impactToEcosystem: string;
+  objectives: string;
+  milestones: string;
+  budgetBreakdown: string;
+  fundsRequested: string;
+  receiverWalletAddress: string;
 };
 
 export type Proposal = {

@@ -260,7 +260,15 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
   datum.fields[1].map.forEach((item) => {
     completion.set(
       {
-        projectDetails: hexToString(item.k.fields[0].bytes),
+        title: extractString(item.k.fields[0]),
+        category: extractString(item.k.fields[1]),
+        description: extractString(item.k.fields[2]),
+        impactToEcosystem: extractString(item.k.fields[3]),
+        objectives: extractString(item.k.fields[4]),
+        milestones: extractString(item.k.fields[5]),
+        budgetBreakdown: extractString(item.k.fields[6]),
+        fundsRequested: extractString(item.k.fields[7]),
+        receiverWalletAddress: extractString(item.k.fields[8]),
       },
       Number(item.v.int)
     );
@@ -285,17 +293,10 @@ export const updateMemberDatum = (
 
   const updatedCompletions: Map<ProposalData, number> = new Map();
   member.completion.forEach((v, k) => {
-    updatedCompletions.set(
-      {
-        projectDetails: stringToHex(k.projectDetails),
-      },
-      v
-    );
+    updatedCompletions.set(k, v);
   });
   updatedCompletions.set(
-    {
-      projectDetails: stringToHex(signOffApproval.metadata.projectDetails),
-    },
+    signOffApproval.metadata,
     signOffApproval.fundRequested
   );
 
@@ -332,7 +333,15 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
   const metadataPluts: ProposalMetadata = datum.fields[3];
 
   const metadata: ProposalData = {
-    projectDetails: hexToString(metadataPluts.fields[0].bytes),
+    title: extractString(metadataPluts.fields[0]),
+    category: extractString(metadataPluts.fields[1]),
+    description: extractString(metadataPluts.fields[2]),
+    impactToEcosystem: extractString(metadataPluts.fields[3]),
+    objectives: extractString(metadataPluts.fields[4]),
+    milestones: extractString(metadataPluts.fields[5]),
+    budgetBreakdown: extractString(metadataPluts.fields[6]),
+    fundsRequested: extractString(metadataPluts.fields[7]),
+    receiverWalletAddress: extractString(metadataPluts.fields[8]),
   };
   return {
     fundRequested: fundRequested,

@@ -58,7 +58,6 @@ export class AdminActionTx extends Layer1Tx {
     } catch (e) {
       console.error(e);
       throw e;
-      throw e;
     }
   };
 
@@ -68,7 +67,6 @@ export class AdminActionTx extends Layer1Tx {
       return tx;
     } catch (e) {
       console.error(e);
-      throw e;
       throw e;
     }
   };
