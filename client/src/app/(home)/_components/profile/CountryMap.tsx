@@ -1,60 +1,132 @@
 'use client';
+
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { GoogleMap, MarkerF, useJsApiLoader } from '@react-google-maps/api';
 import { MapsIcon } from '@/components/atoms/MapsIcon';
-import L from 'leaflet';
-import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { MapContainer, Marker, TileLayer } from 'react-leaflet';
-import countryCoordinates from '../../../../utils/CountryCoordinates';
 
 interface CountryMapProps {
-  country: string;
+  country?: string | null;
   className?: string;
 }
 
-export const CountryMap: React.FC<CountryMapProps> = ({
-  country,
-  className = '',
-}) => {
-  const coordinates = countryCoordinates[country];
+const defaultCenter = { lat: 0, lng: 0 };
 
-  if (!coordinates) {
-    return <div className={className}>Unknown country: {country}</div>;
-  }
+export const CountryMap: React.FC<CountryMapProps> = ({ country, className = '' }) => {
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const CardanoPin = () => (
-    <div className="group relative">
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    preventGoogleFontsLoading: true,
+  });
+
+  const iconDataUrl = useMemo(() => {
+  try {
+    const svgString = ReactDOMServer.renderToStaticMarkup(
       <MapsIcon
         size={66}
         pinColor="white"
         backgroundColor="#ef4444"
+        cardanoIconSize={33}
         cardanoIconColor="#ffffff"
-        cardanoIconSize={20}
       />
-    </div>
-  );
+    );
 
-  const cardanoIcon = L.divIcon({
-    html: ReactDOMServer.renderToString(<CardanoPin />),
-    className: '!bg-transparent !border-none',
-    iconSize: [32, 40],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
+    const cleanedSvg = svgString.replace(/#/g, '%23');
+    return `data:image/svg+xml;charset=utf-8,${cleanedSvg}`;
+  } catch (error) {
+    console.error('Error creating SVG icon:', error);
+    return '';
+  }
+}, []);
+
+
+  useEffect(() => {
+    return () => {
+      if (iconDataUrl) URL.revokeObjectURL(iconDataUrl);
+    };
+  }, [iconDataUrl]);
+
+  useEffect(() => {
+  if (!isLoaded || !country) return;
+
+  const geocoder = new google.maps.Geocoder();
+
+  geocoder.geocode({ address: country }, (results, status) => {
+    if (status === 'OK' && results && results.length > 0) {
+      const loc = results[0].geometry.location;
+      setCoordinates({ lat: loc.lat(), lng: loc.lng() });
+      setError(null);
+    } else {
+      console.error('Geocode error:', status, country);
+      setError(`Unknown location: ${country}`);
+      setCoordinates(null);
+    }
   });
+}, [isLoaded, country]);
+
+
+  const onLoad = useCallback((map: google.maps.Map) => setMap(map), []);
+  const onUnmount = useCallback(() => setMap(null), []);
+
+  if (loadError) {
+    return (
+      <div className={`flex items-center justify-center h-40 bg-gray-100 rounded-lg ${className}`}>
+        <div className="text-red-500">Error loading map</div>
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className={`flex items-center justify-center h-40 bg-gray-100 rounded-lg ${className}`}>
+      </div>
+    );
+  }
+
+  if (error || !coordinates) {
+    return (
+      <div className={`flex items-center justify-center h-40 bg-gray-100 rounded-lg ${className}`}>
+        <div>{error ?? `Unknown location: ${country ?? '—'}`}</div>
+      </div>
+    );
+  }
 
   return (
     <div className={`mt-6 rounded-lg border border-border/40 overflow-hidden z-0 ${className}`}>
-      <MapContainer
-        center={[coordinates.lat, coordinates.lng]}
-        zoom={4}
-        scrollWheelZoom={false}
-        className="h-40 w-full"
+      <GoogleMap
+        mapContainerClassName="h-40 w-full"
+        center={coordinates ?? defaultCenter}
+        zoom={5}
+        options={{
+          disableDefaultUI: true,
+          zoomControl: true,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+          styles: [
+            { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+          ],
+        }}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
       >
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
-        <Marker
-          position={[coordinates.lat, coordinates.lng]}
-          icon={cardanoIcon}
-        ></Marker>
-      </MapContainer>
+        <MarkerF
+          position={coordinates}
+          icon={
+            iconDataUrl
+              ? {
+                  url: iconDataUrl,
+                  scaledSize: new google.maps.Size(40, 40),
+                  anchor: new google.maps.Point(20, 40),
+                }
+              : undefined
+          }
+        />
+      </GoogleMap>
     </div>
   );
 };
