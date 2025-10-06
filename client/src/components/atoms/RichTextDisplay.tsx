@@ -5,7 +5,9 @@ interface RichTextDisplayProps {
 
 const RichTextDisplay = ({ content, className = '' }: RichTextDisplayProps) => {
   if (!content) {
-    return <div className={`text-muted-foreground ${className}`}>Not specified</div>;
+    return (
+      <div className={`text-muted-foreground ${className}`}>Not specified</div>
+    );
   }
 
   return (

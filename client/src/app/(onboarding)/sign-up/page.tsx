@@ -128,8 +128,7 @@ function SignUp() {
         })),
     );
 
-    console.log({ utxoAssets });
-    
+        
 
     // Enrich the wallet assets with matching UTXO info
     const enrichedAssets = assets.map((asset) => {

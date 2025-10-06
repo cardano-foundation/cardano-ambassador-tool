@@ -64,8 +64,7 @@ const multiSignAndSubmit = async (
   const admin1SignedTx = await admin1.signTx(unsignedTx.txHex, true);
   const admin12SignedTx = await admin2.signTx(admin1SignedTx, true);
   const allSignedTx = await admin3.signTx(admin12SignedTx, true);
-  console.log(allSignedTx);
-
+  
   // Submit transaction
   return await admin2.submitTx(allSignedTx);
 };
@@ -82,6 +81,7 @@ export default async function handler(
     const { action, ...params } = req.body;
 
     switch (action) {
+
       case 'approveMember': {
         const { membershipIntentUtxo, counterUtxoHash, counterUtxoIndex } =
           params;
@@ -118,6 +118,7 @@ export default async function handler(
         );
         return res.status(200).json({ result });
       }
+
       case 'approveProposal': {
         const { proposeIntentUtxo } = params;
         const { admin1, admin2, admin3, adminsPkh } =
@@ -145,6 +146,7 @@ export default async function handler(
         );
         return res.status(200).json({ result });
       }
+
       case 'rejectProposal': {
         const { proposeIntentUtxo } = params;
         const { admin1, admin2, admin3, adminsPkh } =
@@ -172,6 +174,7 @@ export default async function handler(
         );
         return res.status(200).json({ result });
       }
+
       case 'approveSignOff': {
         const { proposalUtxo } = params;
         const { admin1, admin2, admin3, adminsPkh } =
@@ -225,6 +228,7 @@ export default async function handler(
         );
         return res.status(200).json({ result });
       }
+      
       case 'removeMember': {
         const { memberUtxo } = params;
         const { admin1, admin2, admin3 } = await getAdminWalletsAndPkh();

@@ -9,6 +9,7 @@ import Copyable from '@/components/Copyable';
 import ErrorAccordion from '@/components/ErrorAccordion';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { fetchTransactionTimestamp, formatTimestamp } from '@/utils';
+import { getCountryByCode } from '@/utils/locationData';
 import {
   getFieldError,
   validateIntentForm,
@@ -103,6 +104,7 @@ const MemberDataComponent = ({
     country: membershipData?.country ?? '',
     city: membershipData?.city ?? '',
   });
+  const [hasChanges, setHasChanges] = useState(false);
 
   // Validation and error state
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
@@ -118,20 +120,39 @@ const MemberDataComponent = ({
   );
   const [isLoadingTimestamp, setIsLoadingTimestamp] = useState(false);
 
+  // Helper function to check if edited data differs from original
+  const checkForChanges = useCallback(
+    (data: EditedData) => {
+      if (!membershipData) return false;
+
+      return (
+        data.fullName !== (membershipData.fullName ?? '') ||
+        data.displayName !== (membershipData.displayName ?? '') ||
+        data.emailAddress !== (membershipData.emailAddress ?? '') ||
+        data.bio !== (membershipData.bio ?? '') ||
+        data.country !== (membershipData.country ?? '') ||
+        data.city !== (membershipData.city ?? '')
+      );
+    },
+    [membershipData],
+  );
+
   const handleFieldChange = useCallback(
     (key: keyof EditedData, value: string) => {
       setEditedData((prev) => {
         const newData = { ...prev, [key]: value };
+        setHasChanges(checkForChanges(newData));
         return newData;
       });
     },
-    [],
+    [checkForChanges],
   );
 
   const handleEdit = () => {
     setIsEditing(true);
     setValidationErrors([]);
     setSubmitError(null);
+    setHasChanges(false);
     setEditedData({
       fullName: membershipData?.fullName ?? '',
       displayName: membershipData?.displayName ?? '',
@@ -177,6 +198,7 @@ const MemberDataComponent = ({
       try {
         await onSave(editedData);
         setIsEditing(false);
+        setHasChanges(false);
       } catch (error) {
         setSubmitError({
           message: 'Update failed',
@@ -192,6 +214,7 @@ const MemberDataComponent = ({
     setIsEditing(false);
     setValidationErrors([]);
     setSubmitError(null);
+    setHasChanges(false);
     setEditedData({
       fullName: membershipData?.fullName ?? '',
       displayName: membershipData?.displayName ?? '',
@@ -252,7 +275,7 @@ const MemberDataComponent = ({
                     variant="outline"
                     size="sm"
                     onClick={handleCancel}
-                    className="flex items-center gap-1"
+                    className="text-primary-base! flex items-center gap-1"
                   >
                     <X className="h-4 w-4" />
                     Cancel
@@ -261,7 +284,7 @@ const MemberDataComponent = ({
                     variant="primary"
                     size="sm"
                     onClick={handleSave}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !hasChanges}
                     className="flex items-center gap-1"
                   >
                     <Save className="h-4 w-4" />
@@ -273,7 +296,7 @@ const MemberDataComponent = ({
                   variant="outline"
                   size="sm"
                   onClick={handleEdit}
-                  className="flex items-center gap-1"
+                  className="text-primary-base! flex items-center gap-1"
                 >
                   <Edit className="h-4 w-4" />
                   Edit
@@ -389,7 +412,10 @@ const MemberDataComponent = ({
               <span className="text-muted-foreground w-32 pt-2">Country:</span>
               <div className="flex-1">
                 <span className="block pt-2">
-                  {membershipData?.country ?? ''}
+                  {membershipData?.country
+                    ? getCountryByCode(membershipData.country)?.name ??
+                      membershipData.country
+                    : ''}
                 </span>
               </div>
             </div>

@@ -36,7 +36,7 @@ export default function SubmitProposalPage() {
     fundsRequested: '',
     receiverWalletAddress: ''
   });
-  
+
 
   const tabs = [
     { id: 'details', label: 'Details' },
@@ -66,13 +66,13 @@ export default function SubmitProposalPage() {
       const submissionData = {
       title: formData.title,
       category: formData.category,
-      ...markdownData, 
+      ...markdownData,
       fundsRequested: formData.fundsRequested,
       receiverWalletAddress: formData.receiverWalletAddress
     };
 
     console.log('Submitting proposal as MARKDOWN:', submissionData);
-    
+
     await new Promise(resolve => setTimeout(resolve, 2000));
       
       router.push('/dashboard/submissions');
@@ -136,7 +136,7 @@ export default function SubmitProposalPage() {
 
           <div className="mb-8">
             {activeTab === "details" && (
-              <DetailsTab formData={formData} 
+              <DetailsTab formData={formData}
               handleInputChange={handleInputChange}
               descriptionEditorRef={descriptionEditorRef}
               impactEditorRef={impactEditorRef}
@@ -147,7 +147,7 @@ export default function SubmitProposalPage() {
             )}
 
             {activeTab === "funds" && (
-              <FundsTab formData={formData} 
+              <FundsTab formData={formData}
               handleInputChange={handleInputChange} />
             )}
 

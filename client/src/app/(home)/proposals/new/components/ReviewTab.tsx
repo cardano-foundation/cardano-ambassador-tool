@@ -104,15 +104,7 @@ export default function ReviewTab({ formData, userAddress }: Props) {
             className="text-foreground"
           />
         </div>
-        <div className="space-y-2.5">
-          <Title level="6" className="text-foreground">
-            Impact
-          </Title>
-          <RichTextDisplay 
-            content={formData.impact} 
-            className="text-foreground"
-          />
-        </div>
+     
         <div className="space-y-2.5">
           <Title level="6" className="text-foreground">
             Budget breakdown

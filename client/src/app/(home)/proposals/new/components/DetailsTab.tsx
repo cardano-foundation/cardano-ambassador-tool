@@ -27,8 +27,8 @@ const PROPOSAL_CATEGORIES = [
   'Other'
 ];
 
-export default function DetailsTab({ 
-  formData, 
+export default function DetailsTab({
+  formData,
   handleInputChange,
   descriptionEditorRef,
   impactEditorRef,
@@ -73,7 +73,7 @@ export default function DetailsTab({
           Objectives
         </Paragraph>
         <RichTextEditor
-          ref={objectivesEditorRef} 
+          ref={objectivesEditorRef}
           value={formData.objectives}
           onChange={(value) => handleInputChange('objectives', value)}
           placeholder="• Increase awareness and understanding of the Cardano ecosystem among both new and existing users."

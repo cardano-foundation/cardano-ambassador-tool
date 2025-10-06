@@ -13,12 +13,12 @@ export default function Breadcrumbs() {
       <ol className="flex space-x-1">
         <Link
           href="/"
-          className="text-primary-base font-semibold hover:underline"
+          className="hover:text-primary-300 font-semibold hover:underline"
         >
           Home
         </Link>
         {pathNames.length > 0 && (
-          <ChevronRight className="text-muted-foreground mx-1 h-4 w-4" />
+          <ChevronRight className="text-muted-foreground mx-1 h-5 w-4" />
         )}
 
         {pathNames.map((link, index) => {
@@ -40,10 +40,19 @@ export default function Breadcrumbs() {
           return (
             <React.Fragment key={index}>
               <li className="">
-                <Link href={href}>{itemLink}</Link>
+                {pathNames.length !== index + 1 ? (
+                  <Link
+                    className="hover:text-primary-300 font-semibold hover:underline"
+                    href={href}
+                  >
+                    {itemLink}
+                  </Link>
+                ) : (
+                  <span>{itemLink}</span>
+                )}
               </li>
               {pathNames.length !== index + 1 && (
-                <ChevronRight className="text-muted-foreground mx-1 h-4 w-4" />
+                <ChevronRight className="text-muted-foreground mx-1 h-5 w-4" />
               )}
             </React.Fragment>
           );

@@ -1,7 +1,7 @@
 'use client';
 
 import { TransactionConfirmationResult } from '@types';
-import { waitForTransactionConfirmation } from '@/utils/utils';
+import { waitForTransactionConfirmation } from '@/utils';
 import { CheckCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import Button from './atoms/Button';
@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/Dialog';
+import Paragraph from './atoms/Paragraph';
 
 interface TransactionConfirmationOverlayProps {
   /** Whether the overlay is visible */
@@ -138,8 +139,8 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
       case 'waiting':
         return (
           <div className="text-center">
-            <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-            <p className="mt-4 text-muted-foreground">Preparing transaction...</p>
+            <Loader2 className="text-primary mx-auto h-12 w-12 animate-spin" />
+            <Paragraph size="sm">Preparing transaction...</Paragraph>
           </div>
         );
 
@@ -150,16 +151,14 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
             <h3 className="mt-4 text-lg font-semibold text-foreground">
               Waiting for Confirmation
             </h3>
-            <p className="mt-2 text-muted-foreground">
-              Checking blockchain for transaction confirmation...
-            </p>
+
             <div className="mt-4 space-y-2">
-              <p className="text-sm text-muted-foreground">
+              <Paragraph size='sm'>
                 Attempt: {confirmationState.attempts}
-              </p>
-              <p className="text-sm text-muted-foreground">
+              </Paragraph>
+              <Paragraph size='sm'>
                 Time elapsed: {Math.floor(confirmationState.timeTaken / 1000)}s
-              </p>
+              </Paragraph>
               {txHash && (
                 <div className="mt-4">
                   <a
@@ -188,12 +187,12 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
               Your membership intent has been successfully updated on the blockchain.
             </p>
             <div className="mt-4 space-y-2">
-              <p className="text-sm text-muted-foreground">
+              <Paragraph className="text-sm text-muted-foreground">
                 Confirmed in {confirmationState.attempts} attempts
-              </p>
-              <p className="text-sm text-muted-foreground">
+              </Paragraph>
+              <Paragraph size='sm'>
                 Time taken: {Math.floor(confirmationState.timeTaken / 1000)}s
-              </p>
+              </Paragraph>
               {txHash && (
                 <div className="mt-4">
                   <a
@@ -225,18 +224,18 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
             <h3 className="mt-4 text-lg font-semibold text-foreground">
               Confirmation Timeout
             </h3>
-            <p className="mt-2 text-muted-foreground">
+            <Paragraph size='sm' className="mt-2 text-muted-foreground">
               Transaction was submitted but confirmation timed out. It may still be processing.
-            </p>
+            </Paragraph>
             {confirmationState.error && (
               <p className="mt-2 text-sm text-red-600">
                 {confirmationState.error}
               </p>
             )}
             <div className="mt-4 space-y-2">
-              <p className="text-sm text-muted-foreground">
+              <Paragraph size='sm'>
                 Attempts made: {confirmationState.attempts}
-              </p>
+              </Paragraph>
               {txHash && (
                 <div className="mt-4">
                   <a

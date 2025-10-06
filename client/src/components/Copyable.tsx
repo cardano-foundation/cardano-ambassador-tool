@@ -1,3 +1,5 @@
+'use client';
+
 import { copyToClipboard, shortenString } from '@/utils';
 import { Copy, ExternalLink } from 'lucide-react';
 

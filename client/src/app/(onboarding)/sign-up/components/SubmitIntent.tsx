@@ -225,8 +225,7 @@ const SubmitIntent = ({
         metadata,
       );
     } catch (membershipError) {
-      console.log({ membershipError });
-      
+            
       return {
         success: false,
         message: 'Membership application failed',
@@ -363,7 +362,11 @@ const SubmitIntent = ({
         </div>
 
         <div className="mt-6 flex w-full justify-between gap-2">
-          <Button variant="outline" onClick={goBack} className="rounded-lg!">
+          <Button
+            variant="outline"
+            onClick={goBack}
+            className="text-primary-base! rounded-lg!"
+          >
             Back
           </Button>
           <Button

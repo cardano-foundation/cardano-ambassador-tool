@@ -3,8 +3,8 @@
 import Button from '@/components/atoms/Button';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
-import MembershipIntentTimeline from '@/components/MembershipIntentTimeline';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import AdminMembershipTimeline from '@/components/Timelines/AdminMembershipTimeline';
 import { useApp } from '@/context/AppContext';
 import { Utxo } from '@types';
 import Link from 'next/link';
@@ -79,7 +79,7 @@ const MembershipIntentPage = ({ params }: PageProps) => {
 
   return (
     <div className="space-y-6 px-4 py-2 pb-8 sm:px-6">
-      <MembershipIntentTimeline intentUtxo={membershipUtxo} />
+      <AdminMembershipTimeline intentUtxo={membershipUtxo} />
     </div>
   );
 };

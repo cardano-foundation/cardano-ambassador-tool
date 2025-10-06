@@ -634,6 +634,7 @@ export const citiesByCountry: Record<string, string[]> = {
     'Tianjin',
     'Guangzhou',
     'Shenzhen',
+    'Hong Kong',
     'Wuhan',
     'Dongguan',
     'Chengdu',
@@ -646,6 +647,10 @@ export const citiesByCountry: Record<string, string[]> = {
     'Hangzhou',
     'Suzhou',
     'Zhengzhou',
+    'Macau',
+    'Dalian',
+    'Xiamen',
+    'Kunming',
   ],
   CO: [
     'Bogotá',

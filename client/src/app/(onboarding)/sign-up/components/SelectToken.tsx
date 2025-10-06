@@ -85,7 +85,7 @@ const SelectToken = ({
         </div>
 
         <div className="mt-6 flex w-full justify-between gap-2">
-          <Button variant="outline" onClick={goBack} className="rounded-lg!">
+          <Button variant="outline" onClick={goBack} className="rounded-lg! text-primary-base!">
             Back
           </Button>
 

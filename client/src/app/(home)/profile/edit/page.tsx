@@ -34,7 +34,7 @@ export default function EditProfile() {
 
   const [avatar, setAvatar] = useState<string | null>(null);
   const { isAuthenticated } = useApp();
-  
+
   if (!isAuthenticated) {
     return <SimpleCardanoLoader />;
   }
