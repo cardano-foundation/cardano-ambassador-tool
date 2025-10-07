@@ -200,9 +200,9 @@ export default function IntentSubmissionsPage() {
         await fetch('/api/revalidate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             allUtxos: true,
-            oracleAdmins: true 
+            oracleAdmins: true
           }),
         });
       } catch (error) {
@@ -228,9 +228,9 @@ export default function IntentSubmissionsPage() {
         await fetch('/api/revalidate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             allUtxos: true,
-            oracleAdmins: false 
+            oracleAdmins: false
           }),
         });
       } catch (error) {
@@ -254,9 +254,9 @@ export default function IntentSubmissionsPage() {
       await fetch('/api/revalidate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           allUtxos: true,
-          oracleAdmins: true 
+          oracleAdmins: true
         }),
       });
     } catch (error) {
@@ -295,6 +295,7 @@ export default function IntentSubmissionsPage() {
               tabs={tabs}
               activeTabId={activeTab}
               onTabChange={setActiveTab}
+              className="w-1/2"
             />
           </div>
           <GlobalRefreshButton

@@ -22,9 +22,9 @@ import { StatCard } from '../_components/profile/StartCard';
 const ProfilePage: React.FC = () => {
   const { profile, loading, error, refetch } = useMyProfile();
   const { isAuthenticated } = useApp();
-  if (!isAuthenticated) {
-    return <SimpleCardanoLoader />;
-  }
+    if (!isAuthenticated) {
+      return <SimpleCardanoLoader />;
+    }
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -35,7 +35,8 @@ const ProfilePage: React.FC = () => {
   };
 
   const handleWithdrawRole = async () => {
-      };
+    console.log('Withdraw role clicked');
+  };
 
   if (loading) {
     return (
@@ -124,19 +125,19 @@ const ProfilePage: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="px-6">
-            <div className="border-border border-b">
-              <div className="mb-2 flex items-center justify-between">
-                <Title level="5" className="text-neutral">
-                  Profile details
-                </Title>
-                <Link href="#">
-                  <Button variant="primary" size="sm">
-                    Edit Profile
-                  </Button>
-                </Link>
-              </div>
+      <Card>
+        <CardContent className="px-6">
+            <div className='border-b border-border'>
+                <div className="flex items-center justify-between mb-2">
+                    <Title level="5" className="text-neutral">
+                    Profile details
+                    </Title>
+                    <Link href="/profile/edit">
+                    <Button variant="primary" size="sm">
+                        Edit Profile
+                    </Button>
+                    </Link>
+                </div>
             </div>
 
             <div className="max-w-full space-y-6">

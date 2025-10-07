@@ -88,8 +88,9 @@ export default function ImageUpload({
               >
                 <TextLink 
                   href="#" 
+                  variant='dotted'
                   onClick={(e) => e.preventDefault()}
-                  className="pb-[5px] border-b border-rose-500 no-underline hover:no-underline font-['Chivo']"
+                  // className="pb-[5px] border-b border-rose-500 no-underline hover:no-underline font-['Chivo']"
                   size="sm"
                 >
                   Disconnect

@@ -4,6 +4,7 @@ export interface BaseProfileData {
   email: string;
   bio: string;
   country: string;
+  city: string;
   wallet: string;
   github: string;
   twitter: string;
