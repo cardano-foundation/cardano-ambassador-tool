@@ -6,21 +6,22 @@ import { useWallet } from '@meshsdk/react';
 import { useApp } from '@/context/AppContext';
 // import { useUserAuth } from '@/hooks/useUserAuth';
 import { NavigationSection } from '@types';
-import { GridIcon } from 'lucide-react';
+import { BookOpenTextIcon, GridIcon, HomeIcon, SendIcon, UserIcon } from 'lucide-react';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import SettingsIcon from '@/components/atoms/SettingsIcon';
+import ProposalIcon from '@/components/atoms/ProposalIcon';
 
 const defaultNavigationSections: NavigationSection[] = [
   {
     items: [
-      { id: 'home', label: 'Home', href: '/', icon: GridIcon },
-      { id: 'learn', label: 'Learn', href: '/learn', icon: GridIcon },
+      { id: 'home', label: 'Home', href: '/', icon: HomeIcon },
+      { id: 'proposals', label: 'Proposals', href: '/proposals', icon: ProposalIcon },
       { id: 'about', label: 'About', href: '/about', icon: GridIcon },
       {
         id: 'ambassador',
         label: 'Become an Ambassador',
         href: '/sign-up',
-        icon: GridIcon,
+        icon: BookOpenTextIcon,
       },
     ],
   },
@@ -33,13 +34,13 @@ const memberToolsSection: NavigationSection = {
       id: 'submissions',
       label: 'Submissions',
       href: '/dashboard/submissions',
-      icon: UsersIcon,
+      icon: SendIcon,
     },
     {
       id: 'dashboard',
       label: 'Profile',
       href: '/dashboard',
-      icon: SettingsIcon,
+      icon: UserIcon,
     },
   ],
 };
@@ -63,7 +64,7 @@ const adminToolsSection: NavigationSection = {
       id: 'proposal-intent',
       label: 'Proposal intent',
       href: '/manage/proposals',
-      icon: SettingsIcon,
+      icon: ProposalIcon,
     },
   ],
 };
