@@ -2,10 +2,12 @@
 
 import { SingleRowStepper } from '@/components/atoms/Stepper';
 import { useApp } from '@/context/AppContext';
+import { findMembershipIntentUtxo } from '@/utils';
 import { MemberTokenDetail } from '@types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import ConnectWallet from './components/ConnectWallet';
+import IntentExists from './components/IntentExists';
 import SelectToken from './components/SelectToken';
 import SubmissionSuccess from './components/SubmissionSuccess';
 import SubmitIntent from './components/SubmitIntent';
@@ -27,6 +29,11 @@ function SignUp() {
     {
       name: 'Connect Wallet',
       component: <ConnectWallet goNext={() => goNext()} />,
+      showProgress: true,
+    },
+    {
+      name: 'Intent Exists',
+      component: <IntentExists goBack={() => goBack()} />,
       showProgress: true,
     },
     {
@@ -83,8 +90,21 @@ function SignUp() {
     }),
   };
 
-  const goNext = () => {
+  const goNext = async () => {
     setDirection(1);
+
+    if (currentStep === 0 && wallet) {
+      const userAddress = await wallet.getChangeAddress();
+      const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
+
+      if (membershipIntentUtxo) {
+        setCurrentStep(1);
+      } else {
+        setCurrentStep(2);
+      }
+      return;
+    }
+    
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
 
@@ -127,8 +147,6 @@ function SignUp() {
           outputIndex: utxo.input.outputIndex,
         })),
     );
-
-        
 
     // Enrich the wallet assets with matching UTXO info
     const enrichedAssets = assets.map((asset) => {

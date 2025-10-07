@@ -14,7 +14,7 @@ import { shortenString } from '@/utils';
 import { useWallet } from '@meshsdk/react';
 import { X } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UserAvatar from '../atoms/UserAvatar';
 
 export default function TopNavBar() {
@@ -102,9 +102,29 @@ export default function TopNavBar() {
 }
 
 function MobileSideNav({ onClose }: { onClose: () => void }) {
-  const { sections, currentActiveId } = useNavigation();
+  const {
+    currentActiveId,
+    defaultNavigationSections,
+    memberToolsSection,
+    adminToolsSection,
+  } = useNavigation();
   const { connected } = useWallet();
-  const { user, isAdmin } = useApp();
+  const { user, isAdmin, userRoles } = useApp();
+
+  const [sections, setSections] = useState(defaultNavigationSections);
+  useEffect(() => {
+    const updated = [...defaultNavigationSections];
+
+    if (isAdmin) {
+      updated.push(adminToolsSection);
+    }
+
+    if (user) {
+      updated.push(memberToolsSection);
+    }
+
+    setSections(updated);
+  }, [user, isAdmin, userRoles]);
 
   return (
     <div className="bg-background flex h-screen w-full flex-col">
