@@ -1,4 +1,3 @@
-// MapsIcon.tsx - Map pin with embedded Cardano icon (Leaflet compatible)
 import { CardanoIcon } from '@/components/atoms/CardanoIcon';
 import React from 'react';
 
@@ -7,8 +6,8 @@ export interface MapsIconProps {
   pinColor?: string;
   backgroundColor?: string;
   className?: string;
-  cardanoIconColor?: string;
   cardanoIconSize?: number;
+  cardanoIconColor?: string;
 }
 
 export const MapsIcon: React.FC<MapsIconProps> = ({
@@ -17,13 +16,16 @@ export const MapsIcon: React.FC<MapsIconProps> = ({
   backgroundColor = '#ef4444',
   className = '',
   cardanoIconSize = 30,
+  cardanoIconColor = "#ffffff",
 }) => {
   const height = Math.round(size * (76 / 66));
   const scale = size / 66;
 
-  const iconScale = (cardanoIconSize * scale) / 20;
-  const iconX = (33 - cardanoIconSize / 2) * scale;
-  const iconY = (29.9846 - cardanoIconSize / 2) * scale;
+  const circleCenterX = 33;
+  const circleCenterY = 33;
+
+  const iconX = circleCenterX - (cardanoIconSize / 2);
+  const iconY = circleCenterY - (cardanoIconSize / 2);
 
   return (
     <svg
@@ -48,24 +50,13 @@ export const MapsIcon: React.FC<MapsIconProps> = ({
           fill={pinColor}
         />
       </g>
-      <foreignObject
-        x={iconX}
-        y={iconY}
-        width={cardanoIconSize * scale}
-        height={cardanoIconSize * scale}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            height: '100%',
-          }}
-        >
-          <CardanoIcon size={40} color="#ffffff" />
-        </div>
-      </foreignObject>
+      
+      <g transform={`translate(${iconX}, ${iconY})`}>
+        <CardanoIcon 
+          size={cardanoIconSize} 
+          color={cardanoIconColor}
+        />
+      </g>
 
       <defs>
         <filter
