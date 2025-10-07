@@ -6,13 +6,7 @@ import { CheckCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import Button from './atoms/Button';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/Dialog';
+import Modal from './atoms/Modal';
 import Paragraph from './atoms/Paragraph';
 
 interface TransactionConfirmationOverlayProps {
@@ -279,31 +273,25 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
   };
 
   return (
-    <Dialog
-      open={isVisible}
-      onOpenChange={(open) => {
+    <Modal
+      isOpen={isVisible}
+      onClose={() => {
         // Only allow closing when not polling
-        if (!open && confirmationState.status !== 'polling' && onClose) {
+        if (confirmationState.status !== 'polling' && onClose) {
           onClose();
         }
       }}
+      title={title}
+      description={description}
+      size="lg"
+      showCloseButton={confirmationState.status !== 'polling'}
+      closable={confirmationState.status !== 'polling'}
+      className="text-center"
     >
-      <DialogContent 
-        className="flex flex-col items-center sm:max-w-[500px]"
-        showCloseButton={confirmationState.status !== 'polling'}
-      >
-        <DialogHeader className='justify-center items-center'>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className='text-center'>
-            {description}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex h-full w-full flex-col gap-6 p-6">
-          {getStatusContent()}
-        </div>
-      </DialogContent>
-    </Dialog>
+      <div className="py-4">
+        {getStatusContent()}
+      </div>
+    </Modal>
   );
 };
 

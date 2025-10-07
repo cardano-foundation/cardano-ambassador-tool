@@ -37,13 +37,6 @@ export default function ProgressTrackerLoading() {
         </div>
       </div>
 
-      {/* Transaction Hash Skeleton */}
-      <div className="max-w-lg border-t border-gray-200 pt-4">
-        <div className="animate-pulse space-y-2">
-          <div className="h-3 w-28 rounded bg-gray-200"></div>
-          <div className="h-4 w-full rounded bg-gray-200"></div>
-        </div>
-      </div>
     </div>
   );
 }

@@ -49,7 +49,7 @@ export default function Checkbox({
           'relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border-2 transition-all duration-200',
           checked
             ? 'bg-primary-base border-primary-base text-white'
-            : 'bg-white border-gray-300 hover:border-gray-400',
+            : ' border-gray-300 hover:border-gray-400',
           disabled && 'cursor-not-allowed opacity-50',
           className
         )}

@@ -70,15 +70,17 @@ const TimelineItem: React.FC<{
       </div>
 
       <div
-        className={`ml-4 pb-8 ${clickable ? 'cursor-pointer' : ''}`}
+        className={`ml-4 pb-8 flex-1 min-w-0 ${clickable ? 'cursor-pointer' : ''}`}
         onClick={clickable ? handleClick : undefined}
       >
         <div
-          className={`text-foreground text-base font-medium ${clickable ? 'group-hover:text-primary' : ''} `}
+          className={`text-foreground text-base font-medium mb-3 ${clickable ? 'group-hover:text-primary' : ''} `}
         >
           {step.title}
         </div>
-        {step.content}
+        <div className="w-full">
+          {step.content}
+        </div>
       </div>
     </div>
   );

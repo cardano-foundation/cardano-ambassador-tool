@@ -42,7 +42,7 @@ const actionData = {
     errorContext: 'sign off approval',
     address: SCRIPT_ADDRESSES.SIGN_OFF_APPROVAL,
   },
-  member: {
+  members: {
     errorContext: 'Member',
     address: SCRIPT_ADDRESSES.MEMBER_NFT,
   },
@@ -50,7 +50,7 @@ const actionData = {
     errorContext: 'Membership Intent',
     address: SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
   },
-  proposal: {
+  proposals: {
     errorContext: 'Proposal',
     address: SCRIPT_ADDRESSES.PROPOSAL,
   },

@@ -12,6 +12,7 @@ import {
   plutusBSArrayToString,
   serializeAddressObj,
 } from '@meshsdk/core';
+import { deserializeTx } from '@meshsdk/core-csl';
 import {
   Member,
   MemberData,
@@ -427,27 +428,11 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
 }
 
 /**
- * Finds a oracle UTxO
- * @param address The wallet address to search for
+ * Finds a oracle UTxO (with caching)
+ * This re-exports the cached version from roles.ts for convenience
  * @returns The matching UTxO or null if not found
  */
-export async function findOracleUtxo() {
-  try {
-    const utxo =
-      (await blockfrostService.fetchUtxo(
-        process.env.NEXT_PUBLIC_ORACLE_TX_HASH!,
-      )) ?? [];
-
-    if (!utxo.output.plutusData) {
-      return null;
-    }
-
-    return utxo || null;
-  } catch (error) {
-    console.error('Error fetching or processing UTxOs:', error);
-    return null;
-  }
-}
+export { findOracleUtxo } from '@/lib/auth/roles';
 
 /**
  * Finds a member UTxO by asset name
@@ -593,6 +578,29 @@ export function findAdmins(): string[] | null {
   return adminList;
 }
 
+export function extractWitnesses(txHex: string) {
+  try {
+    const tx = deserializeTx(txHex);
+    const witnessSet = tx.witness_set();
+    const vkeyWitnesses = witnessSet.vkeys();
+
+    if (vkeyWitnesses) {
+      const witnessKeys: string[] = [];
+
+      for (let i = 0; i < vkeyWitnesses.len(); i++) {
+        const witness = vkeyWitnesses.get(i);
+        const vkey = witness.vkey();
+        const pubKeyHash = vkey.public_key().hash().to_hex();
+        witnessKeys.push(pubKeyHash);
+      }
+
+      return witnessKeys;
+    }
+  } catch (error) {
+    throw new Error(String(error) || 'Failed to save counter UTxO');
+  }
+}
+
 export function shortenString(text: string, length = 8) {
   if (!text) return '';
   return `${text.substring(0, length)}...${text.substring(text.length - length)}`;
@@ -621,6 +629,70 @@ export function dbUtxoToMeshUtxo(dbUtxo: Utxo): UTxO {
   };
 }
 
+// ============================================================================
+// Counter UTxO Utilities
+// ============================================================================
+
+/**
+ * Retrieves the currently saved counter UTxO from storage via API.
+ *
+ * This function loads the persisted UTxO reference (transaction hash and output index)
+ * from server-side storage and fetches the full UTxO details from Blockfrost.
+ *
+ * @returns The full MeshJS UTxO object if found, otherwise `null`.
+ */
+export async function getCounterUtxo(): Promise<UTxO | null> {
+  try {
+    const response = await fetch('/api/counter-utxo', {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null; // Counter UTxO not found
+      }
+      throw new Error('Failed to fetch counter UTxO');
+    }
+
+    const counterUtxo = await response.json();
+    return counterUtxo;
+  } catch (error) {
+    console.error('Error fetching counter UTxO:', error);
+    return null;
+  }
+}
+
+/**
+ * Safely saves a new counter UTxO reference to storage via API.
+ *
+ * @param txHash - The transaction hash of the UTxO.
+ * @param outputIndex - The output index of the UTxO.
+ * @returns `true` if saved successfully, otherwise throws an error.
+ */
+export async function saveCounterUtxo(
+  txHash: string,
+  outputIndex: number,
+): Promise<boolean> {
+  try {
+    const response = await fetch('/api/counter-utxo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ txHash, outputIndex }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to save counter UTxO');
+    }
+
+    return true;
+  } catch (error) {
+    throw new Error(`Failed to save counter_utxo: ${String(error)}`);
+  }
+}
+
 export function formatTimestamp(timestamp: Date) {
   return timestamp.toLocaleString('en-US', {
     month: 'long', // Full month name (June)
@@ -639,7 +711,6 @@ export async function fetchTransactionTimestamp(txHash: string) {
     const blockDetails = await blockfrost.fetchBlockInfo(txDetails.block);
 
     if (blockDetails && blockDetails.time) {
-      // block_time is Unix timestamp
       const timestamp = new Date(blockDetails.time * 1000);
       return timestamp;
     }

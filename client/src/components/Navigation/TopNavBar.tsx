@@ -1,12 +1,11 @@
 'use client';
-import ThemeToggle from '@/components/ThemeToggle';
 import Breadcrumb from '@/components/atoms/Breadcrumbs';
 import Button from '@/components/atoms/Button';
 import Card, { CardContent } from '@/components/atoms/Card';
 import CardanoIcon from '@/components/atoms/CardanoIcon';
 import HambugerIcon from '@/components/atoms/HumbugerIcon';
 import AppLogo from '@/components/atoms/Logo';
-import NotificationIcon from '@/components/atoms/NotificationIcon';
+import ThemeToggle from '@/components/ThemeToggle';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { useApp } from '@/context/AppContext';
 import { useNavigation } from '@/hooks/UseNavigation';
@@ -16,6 +15,7 @@ import { X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import UserAvatar from '../atoms/UserAvatar';
+import GlobalRefreshButton from '../GlobalRefreshButton';
 
 export default function TopNavBar() {
   const { user, isAdmin } = useApp();
@@ -59,13 +59,7 @@ export default function TopNavBar() {
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-2 sm:gap-4">
                 <ThemeToggle />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="bg-background border-none p-2"
-                >
-                  <NotificationIcon />
-                </Button>
+                <GlobalRefreshButton className="text-primary-base! mr-4 mb-2" />
               </div>
               {user && (
                 <div className="flex items-center gap-2">

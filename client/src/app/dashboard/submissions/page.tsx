@@ -1,10 +1,10 @@
 'use client';
 
+import GlobalRefreshButton from '@/components/GlobalRefreshButton';
 import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import OwnerMembershipTimeline from '@/components/Timelines/OwnerMembershipTimeline';
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
-import GlobalRefreshButton from '@/components/GlobalRefreshButton';
 import Button from '@/components/atoms/Button';
 import Empty from '@/components/atoms/Empty';
 import Paragraph from '@/components/atoms/Paragraph';
@@ -115,7 +115,6 @@ export default function IntentSubmissionsPage() {
     isSyncing,
   ]);
 
-
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
     try {
       const userAddress = await userWallet!.getChangeAddress();
@@ -177,9 +176,9 @@ export default function IntentSubmissionsPage() {
         if (txHash) {
           setTransactionHash(txHash);
           setIsTransactionPending(true);
-                  } else {
+        } else {
           console.error('Failed to compute transaction hash from txHex');
-                  }
+        }
       } else {
       }
     } catch (error) {
@@ -200,9 +199,9 @@ export default function IntentSubmissionsPage() {
         await fetch('/api/revalidate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             allUtxos: true,
-            oracleAdmins: true 
+            oracleAdmins: true,
           }),
         });
       } catch (error) {
@@ -212,7 +211,7 @@ export default function IntentSubmissionsPage() {
       // Delay data refresh to allow blockchain to settle and cache to clear
       setTimeout(() => {
         syncData('membership_intent');
-      }, 2000); // Increased delay for blockchain propagation
+      }, 2000);
     },
     [syncData],
   );
@@ -228,9 +227,9 @@ export default function IntentSubmissionsPage() {
         await fetch('/api/revalidate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             allUtxos: true,
-            oracleAdmins: false 
+            oracleAdmins: false,
           }),
         });
       } catch (error) {
@@ -254,9 +253,9 @@ export default function IntentSubmissionsPage() {
       await fetch('/api/revalidate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           allUtxos: true,
-          oracleAdmins: true 
+          oracleAdmins: true,
         }),
       });
     } catch (error) {
@@ -297,10 +296,7 @@ export default function IntentSubmissionsPage() {
               onTabChange={setActiveTab}
             />
           </div>
-          <GlobalRefreshButton
-            showLabel
-            className="text-primary-base! mr-4 mb-2"
-          />
+       
         </div>
       </div>
 

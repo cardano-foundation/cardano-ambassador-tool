@@ -29,10 +29,6 @@ interface ErrorAccordionProps {
    * Variant for different error types
    */
   variant?: 'error' | 'warning';
-  /**
-   * Whether the component should overlay other content
-   */
-  overlay?: boolean;
 }
 
 const ErrorAccordion = ({
@@ -42,11 +38,14 @@ const ErrorAccordion = ({
   onDismiss,
   className,
   variant = 'error',
-  overlay = true,
 }: ErrorAccordionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return (
+      <div className="overflow-hidden transition-all duration-300 ease-out" style={{ maxHeight: 0, opacity: 0 }} />
+    );
+  }
 
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
@@ -56,18 +55,16 @@ const ErrorAccordion = ({
   const shouldShowToggle = hasDetails && details !== message;
 
   const baseClasses = cn(
-    'border rounded-lg p-4 shadow-md transition-all duration-300',
+    'w-full border rounded-lg p-4 shadow-md transition-all duration-300 ease-out',
+    'transform translate-y-0 opacity-100',
     variant === 'error'
       ? 'bg-red-50 border-red-200 text-red-800'
       : 'bg-yellow-50 border-yellow-200 text-yellow-800',
-    overlay && 'relative z-50',
     className,
   );
 
-  const overlayClasses = overlay ? 'absolute w-full  mx-auto' : '';
-
   return (
-    <div className={cn(overlayClasses)}>
+    <div className="w-full transition-all duration-300 ease-out overflow-hidden" style={{ maxHeight: '500px' }}>
       <div className={baseClasses}>
         <div className="flex items-start gap-3">
           {/* Error Icon */}

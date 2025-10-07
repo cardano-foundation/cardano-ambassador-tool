@@ -245,14 +245,13 @@ const MemberDataComponent = ({
   }, [membershipData]);
 
   return (
-    <div className="relative">
-      {/* Error Accordion - overlays other content */}
+    <div className="max-w-4xl mx-auto space-y-4">
+      {/* Error Accordion */}
       <ErrorAccordion
         isVisible={!!submitError}
         message={submitError?.message}
         details={submitError?.details}
         onDismiss={() => setSubmitError(null)}
-        overlay={true}
       />
 
       <div className="flex max-w-2xl flex-col gap-4">

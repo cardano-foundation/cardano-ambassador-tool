@@ -68,8 +68,8 @@ export function useDatabase() {
               dbManager.getUtxosByContext('membership_intent');
             const proposals_intents =
               dbManager.getUtxosByContext('proposal_intent');
-            const members = dbManager.getUtxosByContext('membership_intent');
-            const proposals = dbManager.getUtxosByContext('proposal_intent');
+            const members = dbManager.getUtxosByContext('members');
+            const proposals = dbManager.getUtxosByContext('proposals');
             const ambassadors = dbManager.getAmbasaddors();
             setMembershipIntents(memberships_intents);
             setProposalIntents(proposals_intents);
