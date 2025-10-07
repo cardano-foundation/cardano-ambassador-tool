@@ -1,4 +1,3 @@
-// CardanoIcon.tsx - Reusable Cardano Icon Component
 import React from 'react';
 
 export interface CardanoIconProps {
@@ -12,7 +11,7 @@ export const CardanoIcon: React.FC<CardanoIconProps> = ({
   color = '#888989',
   className = '',
 }) => {
-  const height = Math.round(size * 0.89); // Maintain 18:16 aspect ratio
+  const height = Math.round(size * 0.89);
 
   return (
     <svg

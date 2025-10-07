@@ -1,7 +1,6 @@
 'use client';
 
 import { AppProvider } from '@/context/AppContext';
-import 'leaflet/dist/leaflet.css';
 
 import './app.css';
 
