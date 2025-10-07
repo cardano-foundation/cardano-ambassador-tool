@@ -2,6 +2,7 @@
 
 import { countries, getCitiesForCountry } from '@/utils/locationData';
 import React from 'react';
+import { cn } from '@/utils/utils';
 import SearchableDropdown from '../../../../components/atoms/SearchableDropdown';
 
 interface LocationSelectorProps {
@@ -42,7 +43,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={cn("space-y-4", className)}>
       <div>
         <label className="text-foreground mb-2 block text-sm font-medium">
           Country

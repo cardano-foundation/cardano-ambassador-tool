@@ -111,7 +111,7 @@ export default function SearchableDropdown({
           if (!disabled) setIsOpen(!isOpen);
         }}
         className={cn(
-          'inline-flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-4 text-sm transition-colors focus-visible:outline-none',
+          'inline-flex w-full cursor-pointer items-center justify-between rounded-md border px-3 h-10 text-sm transition-colors focus-visible:outline-none',
           'bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-primary/20 focus:ring-2',
           disabled && 'hover:border-border cursor-not-allowed opacity-50',
           isOpen && 'border-primary ring-primary/20 ring-2',

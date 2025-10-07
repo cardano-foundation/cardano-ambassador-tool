@@ -76,6 +76,10 @@
   --color-neutral: var(--neutral);
 
   --font-family-sans: 'Chivo', ui-sans-serif, system-ui, sans-serif;
+
+  --breakpoint-lg: 74rem; 
+  --breakpoint-xl: 80rem; 
+  --breakpoint-2xl: 96rem;
 }
 
 /*
