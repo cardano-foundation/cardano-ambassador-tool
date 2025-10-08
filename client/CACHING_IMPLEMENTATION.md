@@ -6,14 +6,21 @@ The application now implements comprehensive caching for blockchain data to impr
 
 ## What's Cached
 
-### 1. Oracle Admin Data
+### 1. Oracle UTxO
+- **Function**: `findOracleUtxo()`
+- **Location**: `src/lib/auth/roles.ts`
+- **Cache Duration**: 24 hours (86,400 seconds)
+- **Cache Key**: `['oracle-utxo']`
+- **Cache Tags**: `['oracle-utxo', 'oracle-data']`
+
+### 2. Oracle Admin Data
 - **Function**: `findAdminsFromOracle()`
 - **Location**: `src/lib/auth/roles.ts`
 - **Cache Duration**: 24 hours (86,400 seconds)
 - **Cache Key**: `['oracle-admins']`
-- **Cache Tag**: `'oracle-admins'`
+- **Cache Tags**: `['oracle-admins', 'oracle-data']`
 
-### 2. UTxO Data
+### 3. UTxO Data
 - **API**: `/api/utxos`
 - **Location**: `src/app/api/utxos/route.ts`
 - **Cache Duration**: 1 hour (3,600 seconds)
@@ -58,6 +65,7 @@ The application now implements comprehensive caching for blockchain data to impr
 ## Cache Invalidation
 
 ### Automatic Revalidation
+- **Oracle UTxO**: Every 24 hours
 - **Oracle Admins**: Every 24 hours
 - **UTxOs**: Every 1 hour
 
@@ -68,7 +76,7 @@ Located on: `/dashboard/submissions` page
 
 The refresh button now:
 1. Invalidates all UTxO caches
-2. Invalidates oracle admin cache
+2. Invalidates all oracle data (UTxO + admins)
 3. Triggers worker sync for fresh data
 
 ```typescript
@@ -78,12 +86,22 @@ handleRefresh(); // Invalidates cache + syncs data
 
 #### Method 2: Direct API Call
 ```typescript
-// Invalidate all UTxOs and oracle admins
+// Invalidate all UTxOs and all oracle data
 await fetch('/api/revalidate', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ 
     allUtxos: true,
+    allOracle: true 
+  }),
+});
+
+// Or invalidate individually
+await fetch('/api/revalidate', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ 
+    oracleUtxo: true,  
     oracleAdmins: true 
   }),
 });
@@ -95,7 +113,7 @@ await fetch('/api/revalidate', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ 
-    tags: ['utxos-addr1xyz...', 'oracle-admins'] 
+    tags: ['utxos-addr1xyz...', 'oracle-admins', 'oracle-utxo'] 
   }),
 });
 ```

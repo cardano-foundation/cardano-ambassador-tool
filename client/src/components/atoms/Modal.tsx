@@ -1,7 +1,14 @@
 import { cn } from '@/utils/utils';
-import { X } from 'lucide-react';
 import React from 'react';
 import Button from './Button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/Dialog';
 
 interface ModalAction {
   label: string;
@@ -14,16 +21,22 @@ interface ModalAction {
     | 'success'
     | 'primary-light';
   onClick: () => void;
+  disabled?: boolean;
 }
 
 interface ModalProps {
   isOpen: boolean;
   onClose?: () => void;
-  title: string;
-  message: string;
+  title?: string;
+  description?: string;
+  message?: string; // Legacy support
+  children?: React.ReactNode;
   actions?: ModalAction[];
+  footer?: React.ReactNode;
   showCloseButton?: boolean;
   className?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  closable?: boolean;
 }
 
 export function useModal() {
@@ -43,74 +56,80 @@ export default function Modal({
   isOpen,
   onClose,
   title,
-  message,
+  description,
+  message, // Legacy support
+  children,
   actions = [],
+  footer,
   showCloseButton = true,
-  className,
+  className = '',
+  size = 'md',
+  closable = true,
 }: ModalProps) {
-  if (!isOpen) return null;
+  const sizeClasses = {
+    sm: 'sm:max-w-sm',
+    md: 'sm:max-w-md', 
+    lg: 'sm:max-w-lg',
+    xl: 'sm:max-w-xl',
+    '2xl': 'sm:max-w-2xl',
+  };
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && onClose) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open && closable && onClose) {
       onClose();
     }
   };
 
-  return (
-    <div
-      className="bg-opacity-70 fixed inset-0 z-50 flex items-center justify-center"
-      onClick={handleOverlayClick}
-    >
-      <div
-        className={cn(
-          'bg-background mx-4 inline-flex w-full max-w-sm flex-col items-end justify-start gap-5 overflow-hidden rounded-xl px-5 py-3.5 shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] outline outline-1 outline-offset-[-1px] outline-neutral-200',
-          className,
-        )}
-      >
-        {showCloseButton && (
-          <div className="inline-flex items-start justify-start gap-2.5 p-1">
-            <button
-              onClick={onClose}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600"
-              aria-label="close"
-            >
-              <X className="text-muted-foreground h-4 w-4" />
-            </button>
-          </div>
-        )}
-
-        <div className="flex flex-col items-start justify-start gap-3.5 self-stretch">
-          <div className="inline-flex w-full items-start justify-center gap-3.5">
-            <div className="inline-flex flex-1 flex-col items-center justify-center gap-[5px] self-stretch">
-              <div className="inline-flex w-full items-start justify-center">
-                <div className="justify-start text-xl leading-7 font-bold text-neutral-900">
-                  {title}
-                </div>
-              </div>
-
-              <div className="justify-start self-stretch text-center font-['Chivo'] text-base leading-normal font-normal text-neutral-700">
-                {message}
-              </div>
-            </div>
-          </div>
-
-          {actions.length > 0 && (
-            <div className="inline-flex items-start justify-center gap-3 self-stretch">
-              {actions.map((action, index) => (
-                <Button
-                  key={index}
-                  variant={action.variant || 'primary'}
-                  size="sm"
-                  className="h-9 flex-1"
-                  onClick={action.onClick}
-                >
-                  {action.label}
-                </Button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+  // Determine content - use children if provided, otherwise use legacy message
+  const content = children || (
+    <div className="text-center">
+      <p className="text-base text-foreground">
+        {message}
+      </p>
     </div>
+  );
+
+  // Determine footer - use custom footer or actions
+  const footerContent = footer || (actions.length > 0 && (
+    <div className="flex gap-3">
+      {actions.map((action, index) => (
+        <Button
+          key={index}
+          variant={action.variant || 'primary'}
+          size="md"
+          className="flex-1"
+          onClick={action.onClick}
+          disabled={action.disabled}
+        >
+          {action.label}
+        </Button>
+      ))}
+    </div>
+  ));
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className={cn(`${sizeClasses[size]} max-h-[90vh] overflow-hidden flex flex-col`, className)}
+        showCloseButton={showCloseButton && closable}
+      >
+        {(title || description) && (
+          <DialogHeader>
+            {title && <DialogTitle>{title}</DialogTitle>}
+            {description && <DialogDescription>{description}</DialogDescription>}
+          </DialogHeader>
+        )}
+
+        <div className="flex-1 overflow-y-auto px-1">
+          {content}
+        </div>
+
+        {footerContent && (
+          <DialogFooter className="pt-4">
+            {footerContent}
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

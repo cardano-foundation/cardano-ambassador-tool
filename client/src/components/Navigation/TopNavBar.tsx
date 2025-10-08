@@ -1,12 +1,11 @@
 'use client';
-import ThemeToggle from '@/components/ThemeToggle';
 import Breadcrumb from '@/components/atoms/Breadcrumbs';
 import Button from '@/components/atoms/Button';
 import Card, { CardContent } from '@/components/atoms/Card';
 import CardanoIcon from '@/components/atoms/CardanoIcon';
 import HambugerIcon from '@/components/atoms/HumbugerIcon';
 import AppLogo from '@/components/atoms/Logo';
-import NotificationIcon from '@/components/atoms/NotificationIcon';
+import ThemeToggle from '@/components/ThemeToggle';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { useApp } from '@/context/AppContext';
 import { useNavigation } from '@/hooks/UseNavigation';
@@ -14,8 +13,9 @@ import { shortenString } from '@/utils';
 import { useWallet } from '@meshsdk/react';
 import { X } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UserAvatar from '../atoms/UserAvatar';
+import GlobalRefreshButton from '../GlobalRefreshButton';
 
 export default function TopNavBar() {
   const { user, isAdmin } = useApp();
@@ -59,13 +59,7 @@ export default function TopNavBar() {
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-2 sm:gap-4">
                 <ThemeToggle />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="bg-background border-none p-2"
-                >
-                  <NotificationIcon />
-                </Button>
+                <GlobalRefreshButton className="text-primary-base! mr-4 mb-2" />
               </div>
               {user && (
                 <div className="flex items-center gap-2">
@@ -102,9 +96,29 @@ export default function TopNavBar() {
 }
 
 function MobileSideNav({ onClose }: { onClose: () => void }) {
-  const { sections, currentActiveId } = useNavigation();
+  const {
+    currentActiveId,
+    defaultNavigationSections,
+    memberToolsSection,
+    adminToolsSection,
+  } = useNavigation();
   const { connected } = useWallet();
-  const { user, isAdmin } = useApp();
+  const { user, isAdmin, userRoles } = useApp();
+
+  const [sections, setSections] = useState(defaultNavigationSections);
+  useEffect(() => {
+    const updated = [...defaultNavigationSections];
+
+    if (isAdmin) {
+      updated.push(adminToolsSection);
+    }
+
+    if (user) {
+      updated.push(memberToolsSection);
+    }
+
+    setSections(updated);
+  }, [user, isAdmin, userRoles]);
 
   return (
     <div className="bg-background flex h-screen w-full flex-col">

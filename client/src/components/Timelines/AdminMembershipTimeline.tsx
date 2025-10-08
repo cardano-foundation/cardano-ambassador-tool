@@ -4,11 +4,13 @@ import MemberDataComponent from '@/app/manage/memberships/_components/MemberData
 import Timeline from '@/components/atoms/Timeline';
 import { parseMembershipIntentDatum } from '@/utils';
 import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
-import { TimelineStep, Utxo } from '@types';
+import { AdminDecisionData, TimelineStep, Utxo } from '@types';
 import { useEffect, useState } from 'react';
-import Button from '../atoms/Button';
 import Title from '../atoms/Title';
+import ApproveReject from '../RejectApprove';
 import MultisigProgressTracker from '../SignatureProgress/MultisigProgressTracker';
+import ActivateMembership from '../ActivateMembership';
+
 
 // Extend MemberData to include txHash
 type ExtendedMemberData = MemberData & {
@@ -23,12 +25,16 @@ interface AdminMembershipTimelineProps {
 
 const AdminMembershipTimeline = ({
   intentUtxo,
-  onApprove,
-  onReject,
 }: AdminMembershipTimelineProps) => {
   const [membershipData, setMembershipData] =
     useState<ExtendedMemberData | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [adminDecisionData, setAdminDecisionData] =
+    useState<AdminDecisionData | null>(null);
+
+  // Handle admin decision updates
+  const handleAdminDecisionUpdate = (data: AdminDecisionData | null) => {
+    setAdminDecisionData(data);
+  };
 
   // Parse membership data when intentUtxo changes
   useEffect(() => {
@@ -51,41 +57,13 @@ const AdminMembershipTimeline = ({
     }
   }, [intentUtxo]);
 
-  const handleApprove = async () => {
-    if (!membershipData || !onApprove) return;
-    
-    setIsProcessing(true);
-    try {
-      await onApprove(membershipData);
-    } catch (error) {
-      console.error('Error approving membership:', error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleReject = async () => {
-    if (!membershipData || !onReject) return;
-    
-    setIsProcessing(true);
-    try {
-      await onReject(membershipData);
-    } catch (error) {
-      console.error('Error rejecting membership:', error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
 
   const applicationProgress: TimelineStep[] = [
     {
       id: 'intent-submitted',
       title: 'Intent Form Submitted',
       content: (
-        <MemberDataComponent
-          readonly={true} // Admin view is read-only
-          membershipData={membershipData}
-        />
+        <MemberDataComponent readonly={true} membershipData={membershipData} />
       ),
       status: 'completed',
     },
@@ -93,31 +71,11 @@ const AdminMembershipTimeline = ({
       id: 'admin-review',
       title: 'Admin Review',
       content: (
-        <div className="space-y-4">
-          <div className="text-muted-foreground text-base font-medium">
-            Review the membership application and make a decision:
-          </div>
-          <div className="flex w-full justify-between gap-3">
-            <Button
-              variant="outline"
-              onClick={handleReject}
-              disabled={isProcessing || !membershipData}
-              className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
-              size="sm"
-            >
-              {isProcessing ? 'Processing...' : 'Reject Application'}
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleApprove}
-              disabled={isProcessing || !membershipData}
-              className="flex-1"
-              size="sm"
-            >
-              {isProcessing ? 'Processing...' : 'Approve Application'}
-            </Button>
-          </div>
-        </div>
+        <ApproveReject
+          intentUtxo={intentUtxo}
+          context={'MembershipIntent'}
+          onDecisionUpdate={handleAdminDecisionUpdate}
+        />
       ),
       status: 'current',
     },
@@ -125,12 +83,10 @@ const AdminMembershipTimeline = ({
       id: 'multisig-approval',
       title: 'Multisig Approval',
       content: (
-        <div className="space-y-2">
-          <div className="text-muted-foreground text-sm">
-            Waiting for required admin signatures to process the application.
-          </div>
-          <MultisigProgressTracker txhash={intentUtxo?.txHash} />
-        </div>
+        <MultisigProgressTracker
+          txhash={intentUtxo?.txHash}
+          adminDecisionData={adminDecisionData}
+        />
       ),
       status: 'pending',
     },
@@ -138,24 +94,22 @@ const AdminMembershipTimeline = ({
       id: 'membership-activated',
       title: 'Membership Activated',
       content: (
-        <div className="text-muted-foreground text-base font-medium">
-          Welcome to Cardano! Membership has been successfully activated.
-        </div>
+        <ActivateMembership
+          txhash={intentUtxo?.txHash}
+          adminDecisionData={adminDecisionData}
+        />
       ),
       status: 'pending',
     },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl space-y-6">
       {membershipData && (
         <div className="space-y-2">
           <Title level="2" className="text-xl sm:text-2xl">
-            Admin Review: {membershipData.fullName || membershipData.displayName}
+            Reviewing: {membershipData.fullName || membershipData.displayName}
           </Title>
-          <p className="text-muted-foreground text-sm">
-            Reviewing membership application for {membershipData.walletAddress}
-          </p>
         </div>
       )}
       <Timeline steps={applicationProgress} />

@@ -4,7 +4,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Copyable from '@/components/Copyable';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
-import { Hourglass } from 'lucide-react';
+import { CheckCircleIcon, Hourglass } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ProgressTrackerLoading from './ProgressTrackerLoading';
 
@@ -12,35 +12,45 @@ interface SignerStatus {
   address: string;
   signed: boolean;
 }
-
 interface ProgressTrackerClientProps {
   txhash?: string;
+  adminDecisionData: any;
 }
-
 export default function MultisigProgressTracker({
   txhash,
+  adminDecisionData,
 }: ProgressTrackerClientProps) {
   const [signers, setSigners] = useState<SignerStatus[]>([]);
   const [loading, setLoading] = useState(true);
+  const [minRequiredSigners, setMinRequiredSigners] = useState<number>(0);
 
   useEffect(() => {
     const loadSigners = async () => {
       try {
         const adminData = await findAdminsFromOracle();
+        setMinRequiredSigners(Number(adminData!.minsigners));
 
-        const signersWithStatus: SignerStatus[] = adminData!.adminPubKeyHashes!.map(
-          (pubKey) => {
-            return {
-              address: pubKey,
-              signed: false,
-            };
-          },
-        );
-
-        console.log({ adminData });
-        
-
-        setSigners(signersWithStatus);
+        if (adminDecisionData) {
+          // Use actual signers from admin decision data
+          const signersWithStatus: SignerStatus[] =
+            adminData!.adminPubKeyHashes!.map((pubKey) => {
+              return {
+                address: pubKey,
+                signed: adminDecisionData.signers.includes(pubKey),
+              };
+            });
+          setSigners(signersWithStatus);
+        } else {
+          // Default state - no signatures yet
+          const signersWithStatus: SignerStatus[] =
+            adminData!.adminPubKeyHashes!.map((pubKey) => {
+              return {
+                address: pubKey,
+                signed: false,
+              };
+            });
+          setSigners(signersWithStatus);
+        }
       } catch (error) {
         console.error('Failed to load signers:', error);
         setSigners([]);
@@ -50,18 +60,22 @@ export default function MultisigProgressTracker({
     };
 
     loadSigners();
-  }, [txhash]);
+  }, [txhash, adminDecisionData]);
 
   if (loading) {
     return <ProgressTrackerLoading />;
   }
+
   const signedCount = signers.filter((signer) => signer.signed).length;
   const totalSigners = signers.length;
   const progressPercentage =
-    totalSigners > 0 ? (signedCount / totalSigners) * 100 : 0;
+    minRequiredSigners > 0 ? (signedCount / minRequiredSigners) * 100 : 0;
+  const isComplete = signedCount >= minRequiredSigners;
 
   return (
     <div className="space-y-6">
+      {/* Decision Status */}
+
       {/* Signers List */}
       <div className="space-y-1">
         {signers.map((signer) => (
@@ -76,10 +90,14 @@ export default function MultisigProgressTracker({
               keyLabel={''}
             />
             <div className="flex items-center gap-2">
-              <Hourglass
-                color="oklch(83.7% 0.128 66.29)"
-                className={`h-4 w-4 ${signer.signed ? 'text-green-500' : 'text-orange-300'}`}
-              />
+              {!signer.signed ? (
+                <Hourglass
+                  color="oklch(83.7% 0.128 66.29)"
+                  className="h-4 w-4 text-orange-300"
+                />
+              ) : (
+                <CheckCircleIcon className="h-4 w-4 text-green-500" />
+              )}
               <span className="text-sm">
                 {signer.signed ? 'Signed' : 'Pending Signature'}
               </span>
@@ -98,18 +116,41 @@ export default function MultisigProgressTracker({
         <div className="space-y-3">
           <div className="relative h-2 w-full rounded-full bg-gray-200">
             <div
-              className="relative h-2 rounded-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-500 ease-out"
-              style={{ width: `${progressPercentage}%` }}
+              className={`relative h-2 rounded-full transition-all duration-500 ease-out ${
+                isComplete
+                  ? 'bg-gradient-to-r from-green-400 to-green-500'
+                  : 'bg-gradient-to-r from-orange-400 to-orange-500'
+              }`}
+              style={{ width: `${Math.min(progressPercentage, 100)}%` }}
             >
-              {/* Red dot at the start */}
-              <div className="absolute top-1/2 left-0 -ml-1.5 h-3 w-3 -translate-y-1/2 transform rounded-full bg-red-500"></div>
+              {/* Status dot */}
+              <div
+                className={`absolute top-1/2 left-0 -ml-1.5 h-3 w-3 -translate-y-1/2 transform rounded-full ${
+                  isComplete ? 'bg-green-500' : 'bg-red-500'
+                }`}
+              ></div>
             </div>
           </div>
 
           {/* Progress Text */}
-          <Paragraph size="sm" className="">
-            {signedCount} of {totalSigners} signatures signed
-          </Paragraph>
+          <div className="flex justify-between text-sm">
+            <Paragraph size="sm" className="">
+              {signedCount} of {minRequiredSigners} required signatures
+            </Paragraph>
+            <span
+              className={`font-medium ${
+                isComplete ? 'text-green-600' : 'text-gray-600'
+              }`}
+            >
+              {Math.min(Math.round(progressPercentage), 100)}%
+            </span>
+          </div>
+
+          {totalSigners > minRequiredSigners && (
+            <Paragraph size="xs" className="text-gray-500">
+              ({totalSigners} total admin signers available)
+            </Paragraph>
+          )}
         </div>
       </div>
     </div>

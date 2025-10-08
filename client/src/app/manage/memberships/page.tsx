@@ -113,7 +113,9 @@ export default function MembershipIntentPage() {
       accessor: 'bio',
       sortable: true,
       cell: (value: string) => (
-        <span className="text-neutral font-medium">{value}</span>
+        <span className="text-neutral truncate font-medium text-ellipsis">
+          {value}
+        </span>
       ),
     },
     {

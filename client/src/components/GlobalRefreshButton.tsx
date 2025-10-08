@@ -2,13 +2,10 @@
 
 import { useApp } from '@/context';
 import { RefreshCw } from 'lucide-react';
-import { useState } from 'react';
-import Button from './atoms/Button';
+import { useState, useEffect, useCallback } from 'react';
 
 interface GlobalRefreshButtonProps {
-  size?: 'sm' | 'md' | 'lg';
-  showLabel?: boolean;
-  variant?: 'outline' | 'primary' | 'secondary';
+  size?: number;
   className?: string;
 }
 
@@ -19,15 +16,13 @@ interface GlobalRefreshButtonProps {
  * 3. Shows loading state during refresh
  */
 export default function GlobalRefreshButton({
-  size = 'sm',
-  showLabel = false,
-  variant = 'outline',
+  size = 20,
   className = '',
 }: GlobalRefreshButtonProps) {
   const { syncData, isSyncing } = useApp();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
 
     try {
@@ -37,7 +32,7 @@ export default function GlobalRefreshButton({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           allUtxos: true, // Refresh all UTxO caches
-          oracleAdmins: true, // Refresh oracle admin cache
+          allOracle: true,
         }),
       });
 
@@ -56,25 +51,44 @@ export default function GlobalRefreshButton({
     } finally {
       setIsRefreshing(false);
     }
-  };
+  }, [syncData]);
+
+  // Listen for global refresh events
+  useEffect(() => {
+    const handleGlobalRefresh = () => {
+      handleRefresh();
+    };
+
+    window.addEventListener('globalRefresh', handleGlobalRefresh);
+    
+    return () => {
+      window.removeEventListener('globalRefresh', handleGlobalRefresh);
+    };
+  }, [handleRefresh]);
 
   const isLoading = isRefreshing || isSyncing;
+  const tooltipText = isLoading ? 'Refreshing...' : 'Refresh data from blockchain';
 
   return (
-    <Button
-      variant={variant}
-      size={size}
-      onClick={handleRefresh}
-      disabled={isLoading}
-      className={`flex items-center gap-2 ${className}`}
-      title="Refresh data from blockchain"
-    >
-      <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-      {showLabel && (
-        <span className="text-sm">
-          {isLoading ? 'Refreshing...' : 'Refresh'}
-        </span>
-      )}
-    </Button>
+    <div className="group relative inline-block  ">
+      <button
+        onClick={handleRefresh}
+        disabled={isLoading}
+        className={`inline-flex items-center justify-center p-2 rounded-lg transition-colors duration-200 hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+        aria-label={tooltipText}
+      >
+        <RefreshCw 
+          size={size} 
+          className={`text-muted-foreground transition-transform duration-200 ${isLoading ? 'animate-spin' : 'group-hover:text-primary'} mx-auto`} 
+        />
+      </button>
+      
+      {/* Tooltip */}
+      <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 transform opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+        <div className=" outline-border rounded border px-2 py-1 text-xs whitespace-nowrap shadow-md">
+          {tooltipText}
+        </div>
+      </div>
+    </div>
   );
 }

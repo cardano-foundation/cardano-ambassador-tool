@@ -251,14 +251,13 @@ const SubmitIntent = ({
   };
 
   return (
-    <div className="relative">
-      {/* Error Accordion - overlays other content */}
+    <div className="space-y-6">
+      {/* Error Accordion */}
       <ErrorAccordion
         isVisible={!!submitError}
         message={submitError?.message}
         details={submitError?.details}
         onDismiss={() => setSubmitError(null)}
-        overlay={true}
       />
 
       <CardHeader

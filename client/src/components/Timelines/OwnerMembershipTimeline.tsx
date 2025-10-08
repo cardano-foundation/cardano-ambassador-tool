@@ -4,11 +4,12 @@ import MemberDataComponent from '@/app/manage/memberships/_components/MemberData
 import Timeline from '@/components/atoms/Timeline';
 import { parseMembershipIntentDatum } from '@/utils';
 import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
-import { TimelineStep, Utxo } from '@types';
+import { AdminDecisionData, TimelineStep, Utxo } from '@types';
 import { useEffect, useState } from 'react';
 import Button from '../atoms/Button';
 import Paragraph from '../atoms/Paragraph';
 import Title from '../atoms/Title';
+import ApproveReject from '../RejectApprove';
 import MultisigProgressTracker from '../SignatureProgress/MultisigProgressTracker';
 
 // Extend MemberData to include txHash
@@ -28,6 +29,13 @@ const OwnerMembershipTimeline = ({
   const [membershipData, setMembershipData] =
     useState<ExtendedMemberData | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [adminDecisionData, setAdminDecisionData] =
+    useState<AdminDecisionData | null>(null);
+
+  // Handle admin decision updates
+  const handleAdminDecisionUpdate = (data: AdminDecisionData | null) => {
+    setAdminDecisionData(data);
+  };
 
   // Parse membership data when intentUtxo changes
   useEffect(() => {
@@ -97,9 +105,30 @@ const OwnerMembershipTimeline = ({
     {
       id: 'multisig-approval',
       title: 'Final Approval',
-      content: <MultisigProgressTracker txhash={intentUtxo?.txHash} />,
+      content: (
+        <div className='hidden'>
+          <MultisigProgressTracker
+            txhash={intentUtxo?.txHash}
+            adminDecisionData={adminDecisionData}
+          />
+        </div>
+      ),
       status: 'current',
     },
+    // {
+    //   id: 'admin-review',
+    //   title: 'Admin Review',
+    //   content: (
+    //     <div className="hidden">
+    //       <ApproveReject
+    //         intentUtxo={intentUtxo}
+    //         context={'MembershipIntent'}
+    //         onDecisionUpdate={handleAdminDecisionUpdate}
+    //       />
+    //     </div>
+    //   ),
+    //   status: 'current',
+    // },
     {
       id: 'membership-activated',
       title: 'Welcome to Cardano!',
@@ -135,7 +164,7 @@ const OwnerMembershipTimeline = ({
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl  space-y-6">
       {membershipData && (
         <div className="space-y-2">
           <Title level="2" className="text-xl sm:text-2xl">

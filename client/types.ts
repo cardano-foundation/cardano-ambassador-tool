@@ -198,3 +198,22 @@ export interface TransactionConfirmationResult {
   /** Error message if confirmation failed */
   error?: string;
 }
+
+
+/**
+ * Interface for transaction confirmation result
+ */
+export interface AdminDecision {
+  decision: string;
+  counterUtxoTxIndex: number;
+  memberUtxoTxIndex: number;
+  context: string;
+  signedTx: string;
+}
+
+
+export type AdminDecisionData = AdminDecision & {
+  signers: string[];
+  minRequiredSigners: number;
+  totalSigners: number;
+}
