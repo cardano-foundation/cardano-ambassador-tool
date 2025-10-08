@@ -10,7 +10,7 @@ export default function Breadcrumbs() {
 
   return (
     <nav className="my-4 w-full text-sm">
-      <ol className="flex space-x-1">
+      <ol className="flex space-x-1 text-primary-base font-semibold">
         <Link
           href="/"
           className="hover:text-primary-300 font-semibold hover:underline"

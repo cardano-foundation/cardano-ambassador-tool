@@ -4,24 +4,9 @@ import Copyable from '@/components/Copyable';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import Button from '@/components/atoms/Button';
-
-export interface ProposalData {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  impact: string;
-  impactToEcosystem: string;
-  objectives: string;
-  milestones: string;
-  budgetBreakdown: string;
-  fundsRequested: string;
-  receiverWalletAddress: string;
-  submittedBy?: string;
-  submittedByAddress?: string;
-  status?: 'active' | 'pending' | 'completed' | 'rejected';
-  policyId?: string;
-}
+import Chip from '@/components/atoms/Chip';
+import { ProposalData, mockProposal } from '@/hooks/UseProposalData'; 
+import Link from 'next/link';
 
 interface Props {
   proposal: ProposalData;
@@ -29,42 +14,45 @@ interface Props {
   canEdit?: boolean;
 }
 
-export default function ProposalPage({ 
-  proposal, 
-  onEdit,
-  canEdit = true 
-}: Props) {
-  const getStatusStyles = () => {
-    switch (proposal.status) {
-      case 'active':
-        return 'bg-green-50 text-green-700 border-green-500';
-      case 'pending':
-        return 'bg-orange-50 text-amber-500 border-amber-500';
-      case 'completed':
-        return 'bg-blue-50 text-blue-700 border-blue-500';
-      case 'rejected':
-        return 'bg-red-50 text-red-700 border-red-500';
-      default:
-        return 'bg-gray-50 text-gray-700 border-gray-500';
-    }
-  };
+export default function Page() {
+  const proposal = mockProposal;
+  const getChipVariant = () => {
+  switch (proposal.status) {
+    case 'active':
+      return 'success';
+    case 'pending':
+      return 'warning';
+    case 'completed':
+      return 'default';
+    case 'rejected':
+      return 'error';
+    default:
+      return 'inactive';
+  }
+};
+
 
   return (
-    <div className="px-10 pb-7 space-y-7">
-      {/* Title and Status */}
+    <div className="bg-background">
+      <div className="container mx-auto px-4 ">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <Title level="3" className="text-foreground">
+        <Title level="5" className="text-foreground">
           {proposal.title}
         </Title>
         {proposal.status && (
-          <div className={`px-3.5 py-1.5 rounded-3xl shadow-sm border ${getStatusStyles()} capitalize text-xs font-normal`}>
+          <Chip
+            variant={getChipVariant()}
+            size="md"
+            className="capitalize"
+          >
             {proposal.status}
-          </div>
+          </Chip>
         )}
       </div>
 
-      {/* Header Info Grid */}
-      <div className="flex justify-between gap-10">
+
+      <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
         <div className="flex-1 space-y-7">
           <div className="space-y-1.5">
             <Paragraph size="xs" className="text-muted-foreground font-light">
@@ -74,6 +62,7 @@ export default function ProposalPage({
               {proposal.id}
             </Paragraph>
           </div>
+
           <div className="space-y-1.5">
             <Paragraph size="xs" className="text-muted-foreground font-light">
               Receiver wallet
@@ -91,6 +80,7 @@ export default function ProposalPage({
               </Paragraph>
             )}
           </div>
+
           {proposal.policyId && (
             <div className="space-y-1.5">
               <Paragraph size="xs" className="text-muted-foreground font-light">
@@ -110,7 +100,7 @@ export default function ProposalPage({
             <Paragraph size="xs" className="text-muted-foreground font-light">
               Submitted by
             </Paragraph>
-            <div className="flex items-start gap-1.5">
+            <div className="flex items-start flex-wrap gap-1.5">
               {proposal.submittedBy && (
                 <Paragraph size="sm" className="text-foreground">
                   {proposal.submittedBy}
@@ -132,6 +122,7 @@ export default function ProposalPage({
               )}
             </div>
           </div>
+
           <div className="space-y-1.5">
             <Paragraph size="xs" className="text-muted-foreground font-light">
               Funds Requested
@@ -142,26 +133,22 @@ export default function ProposalPage({
           </div>
         </div>
       </div>
-
-      {/* Overview Section with Edit Button */}
       <div className="flex justify-between items-center">
-        <Title level="3" className="text-foreground">
+        <Title level="5" className="text-foreground">
           Overview
         </Title>
-        {canEdit && onEdit && (
+        <Link href="/proposals/edit">
           <Button 
-            onClick={onEdit}
-            className="bg-rose-500 hover:bg-rose-600 text-white"
+            variant='primary'
+            className="text-white"
           >
             Edit Proposal
           </Button>
-        )}
+        </Link>
       </div>
-
-      {/* Content Sections */}
       <div className="space-y-5">
         <div className="space-y-2.5">
-          <Title level="6" className="text-foreground">
+          <Title level="6" className="text-base text-foreground">
             Title
           </Title>
           <RichTextDisplay 
@@ -221,5 +208,7 @@ export default function ProposalPage({
         </div>
       </div>
     </div>
+    </div>
+  </div>
   );
 }

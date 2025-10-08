@@ -12,15 +12,10 @@ import {
   ListOrdered,
   Underline as UnderlineIcon,
   Strikethrough,
-  Droplet,
-  Pilcrow,
-  Highlighter,
   Smile,
   AlignLeft,
   AlignCenter,
   AlignRight,
-  IndentIncrease,
-  IndentDecrease
 } from 'lucide-react';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { useEffect, useState, forwardRef, useImperativeHandle, MouseEvent } from 'react';
@@ -38,7 +33,6 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
