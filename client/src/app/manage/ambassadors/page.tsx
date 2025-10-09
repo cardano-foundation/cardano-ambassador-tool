@@ -62,7 +62,7 @@ export default function ManageAmbassadorsPage() {
         <div className="flex items-center gap-2">
           <UserAvatar size="size-10" name={value} />
           <p className="flex flex-col gap-1">
-            <span className="font-bold font-sm">{value}</span>
+            <span className="font-bold">{value}</span>
             <span className="text-neutral font-normal">{row?.displayName}</span>
           </p>
         </div>
