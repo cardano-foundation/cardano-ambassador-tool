@@ -3,12 +3,13 @@ import EditIcon from '@/components/atoms/EditIcon';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import React from 'react';
-import { CountryMap } from './CountryMap';
+import { LocationMap } from './CountryMap';
 
 interface AboutSectionProps {
   profile: {
     username: string;
     country: string;
+    city: string;
     bio_excerpt: string;
     created_at: string;
   };
@@ -42,14 +43,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             <span className="text-muted-foreground">{profile.country}</span>
           </div>
           <div>
-            <span className="text-neutral font-semibold">Username:</span>{' '}
-            <span className="text-muted-foreground">{profile.username}</span>
+            <span className="text-neutral font-semibold">City:</span>{' '}
+            <span className="text-muted-foreground">{profile.city}</span>
           </div>
           <div>
-            <span className="text-neutral font-semibold">Phone:</span>{' '}
-            <span className="text-muted-foreground">
-              {formatDate(profile.created_at)}
-            </span>
+            <span className="text-neutral font-semibold">Username:</span>{' '}
+            <span className="text-muted-foreground">{profile.username}</span>
           </div>
           <div>
             <span className="text-neutral font-semibold">Role:</span>{' '}
@@ -64,7 +63,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             <span className="text-muted-foreground"></span>
           </div>
         </div>
-        <CountryMap country={profile.country} />
+        <LocationMap city={profile.city} country={profile.country} />
       </CardContent>
     </Card>
   );

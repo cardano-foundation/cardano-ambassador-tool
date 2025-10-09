@@ -8,6 +8,7 @@ interface ProfileSidebarProps {
     name: string;
     username: string;
     country: string;
+    city: string;
     bio_excerpt: string;
     created_at: string;
   };

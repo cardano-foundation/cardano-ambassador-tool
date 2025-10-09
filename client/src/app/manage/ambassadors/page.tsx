@@ -39,9 +39,7 @@ export default function ManageAmbassadorsPage() {
       };
 
       if (utxo.plutusData) {
-        const {datum,member} = parseMemberDatum(utxo.plutusData)!;
-          // console.log({ parsed });
-        ;
+        const {member} = parseMemberDatum(utxo.plutusData)!;
 
         const memberMetadata = member.metadata;
 
