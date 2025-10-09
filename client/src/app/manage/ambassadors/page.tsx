@@ -7,7 +7,7 @@ import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context/AppContext';
-import { parseMembershipIntentDatum } from '@/utils';
+import { parseMemberDatum, parseMembershipIntentDatum } from '@/utils';
 import Link from 'next/link';
 
 export default function ManageAmbassadorsPage() {
@@ -39,14 +39,18 @@ export default function ManageAmbassadorsPage() {
       };
 
       if (utxo.plutusData) {
-        const parsed = parseMembershipIntentDatum(utxo.plutusData);
+        const {datum,member} = parseMemberDatum(utxo.plutusData)!;
+          // console.log({ parsed });
+        ;
 
-        if (parsed && parsed.metadata) {
-          decodedDatum['fullName'] = parsed.metadata.fullName!;
-          decodedDatum['displayName'] = parsed.metadata.displayName!;
-          decodedDatum['email'] = parsed.metadata.emailAddress!;
-          decodedDatum['address'] = parsed.metadata.walletAddress!;
-          decodedDatum['bio'] = parsed.metadata.bio!;
+        const memberMetadata = member.metadata;
+
+        if (member && memberMetadata) {
+          decodedDatum['fullName'] = memberMetadata.fullName!;
+          decodedDatum['displayName'] = memberMetadata.displayName!;
+          decodedDatum['email'] = memberMetadata.emailAddress!;
+          decodedDatum['address'] = memberMetadata.walletAddress!;
+          decodedDatum['bio'] = memberMetadata.bio!;
           decodedDatum['index'] = idx;
         }
       }
