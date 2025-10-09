@@ -57,7 +57,7 @@ export default function GlobalRefreshButton({
   }, [handleRefresh]);
 
   const isLoading = isRefreshing || isSyncing;
-  const tooltipText = isLoading ? 'Refreshing...' : 'Refresh data from blockchain';
+  const tooltipText = isLoading ? 'Refreshing...' : 'Refresh utxos';
 
   return (
     <div className="group relative inline-block  ">
