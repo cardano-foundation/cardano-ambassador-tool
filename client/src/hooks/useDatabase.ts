@@ -96,7 +96,6 @@ export function useDatabase() {
           }
         }
       });
-
       // Request worker to seed all data
       syncAllData();
 
@@ -116,7 +115,7 @@ export function useDatabase() {
       action: 'seedAll',
       apiBaseUrl: window.location.origin,
       contexts: [
-        'member',
+        'members',
         'membership_intent',
         'proposal',
         'proposal_intent',
@@ -133,7 +132,7 @@ export function useDatabase() {
       action: 'seedAll',
       apiBaseUrl: window.location.origin,
       contexts: [
-        'member',
+        'members',
         'membership_intent',
         'proposal',
         'proposal_intent',

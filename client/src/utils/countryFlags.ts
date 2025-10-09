@@ -1,45 +1,4 @@
-export const getCountryFlag = (country: string): string => {
-  const flags: { [key: string]: string } = {
-    Argentina: '🇦🇷',
-    Romania: '🇷🇴',
-    Indonesia: '🇮🇩',
-    Norway: '🇳🇴',
-    Ghana: '🇬🇭',
-    Germany: '🇩🇪',
-    DRC: '🇨🇩',
-    Scotland: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
-    'United States': '🇺🇸',
-    Kazakhstan: '🇰🇿',
-    Poland: '🇵🇱',
-    Venezuela: '🇻🇪',
-    Netherlands: '🇳🇱',
-    Italy: '🇮🇹',
-    Brazil: '🇧🇷',
-    UAE: '🇦🇪',
-    Singapore: '🇸🇬',
-    France: '🇫🇷',
-    Japan: '🇯🇵',
-    Ireland: '🇮🇪',
-    Spain: '🇪🇸',
-    Nigeria: '🇳🇬',
-    'United Kingdom': '🇬🇧',
-    India: '🇮🇳',
-    Sweden: '🇸🇪',
-    'Czech Republic': '🇨🇿',
-    Mexico: '🇲🇽',
-    Russia: '🇷🇺',
-    Canada: '🇨🇦',
-    Morocco: '🇲🇦',
-    'South Korea': '🇰🇷',
-    Ukraine: '🇺🇦',
-    Austria: '🇦🇹',
-    Slovakia: '🇸🇰',
-    China: '🇨🇳',
-    Colombia: '🇨🇴',
-    Egypt: '🇪🇬',
-    'New Zealand': '🇳🇿',
-    Tunisia: '🇹🇳',
-    Australia: '🇦🇺',
-  };
-  return flags[country] || '🌍';
+export const getCountryFlag = (code: string): string => {
+  if (!code) return 'https://flagcdn.com/ua.svg';
+  return `https://flagcdn.com/${code.toLowerCase()}.svg`;
 };
