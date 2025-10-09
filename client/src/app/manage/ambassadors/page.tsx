@@ -7,7 +7,7 @@ import UserAvatar from '@/components/atoms/UserAvatar';
 import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
 import { useApp } from '@/context/AppContext';
-import { getCountryFlag, parseMemberDatum } from '@/utils';
+import { parseMemberDatum } from '@/utils';
 import Link from 'next/link';
 
 export default function ManageAmbassadorsPage() {
@@ -36,22 +36,25 @@ export default function ManageAmbassadorsPage() {
       };
 
       if (utxo.plutusData) {
-        const {member} = parseMemberDatum(utxo.plutusData)!;
+        const { member } = parseMemberDatum(utxo.plutusData)!;
 
         const memberMetadata = member.metadata;
 
         if (member && memberMetadata) {
           decodedDatum['fullName'] = memberMetadata.fullName!;
           decodedDatum['displayName'] = memberMetadata.displayName!;
-          decodedDatum['email'] = memberMetadata.emailAddress!;
-          decodedDatum['address'] = memberMetadata.walletAddress!;
-          decodedDatum['bio'] = memberMetadata.bio!;
-          decodedDatum['index'] = idx;
+          decodedDatum['country'] = memberMetadata.country!;
+          decodedDatum['utxoHash'] = utxo?.txHash!;
         }
       }
       return { ...utxo, ...decodedDatum };
     })
     .filter((utxo) => utxo.address && utxo.address.trim() !== '');
+
+  const getCountryFlag = (code: string): string => {
+    if (!code) return 'https://flagcdn.com/w40/un.png';
+    return `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
+  };
 
   const ambassadorId = (name: string) => {
     return name.toLowerCase().replace(/\s+/g, '');
@@ -66,7 +69,7 @@ export default function ManageAmbassadorsPage() {
         <div className="flex items-center gap-2">
           <UserAvatar size="size-10" name={value} />
           <p className="flex flex-col gap-1">
-            <span className="font-bold font-sm">{value}</span>
+            <span className="font-sm font-bold">{value}</span>
             <span className="text-neutral font-normal">{row?.displayName}</span>
           </p>
         </div>
