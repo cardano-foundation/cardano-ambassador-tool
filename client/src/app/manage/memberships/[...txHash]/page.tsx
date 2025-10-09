@@ -66,9 +66,6 @@ const MembershipIntentPage = ({ params }: PageProps) => {
           <Title level="3" className="text-foreground mb-2">
             Membership Intent Not Found
           </Title>
-          <Paragraph className="text-muted-foreground mb-4">
-            {error || 'The requested membership intent could not be loaded.'}
-          </Paragraph>
           <Link href="/manage/memberships">
             <Button variant="primary">Back to Memberships</Button>
           </Link>

@@ -1,4 +1,5 @@
 import { toast } from '@/components/toast/toast-manager';
+import { getCurrentNetworkConfig } from '@/config/cardano';
 import { BlockfrostService } from '@/services/blockfrostService';
 import {
   BlockfrostProvider,
@@ -10,6 +11,7 @@ import {
   deserializeDatum,
   hexToString,
   plutusBSArrayToString,
+  pubKeyAddress,
   serializeAddressObj,
 } from '@meshsdk/core';
 import { deserializeTx } from '@meshsdk/core-csl';
@@ -601,6 +603,50 @@ export function extractWitnesses(txHex: string) {
   }
 }
 
+export function extractRequiredSigners(txHex: string) {
+  try {
+    const tx = deserializeTx(txHex);
+    const txBody = tx.body();
+    const requiredSigners = txBody.required_signers();
+
+    if (requiredSigners) {
+      const requiredSignerKeys: string[] = [];
+
+      for (let i = 0; i < requiredSigners.len(); i++) {
+        const pubKeyHash = requiredSigners.get(i).to_hex();
+        requiredSignerKeys.push(pubKeyHash);
+      }
+
+      return requiredSignerKeys;
+    }
+
+    return [];
+  } catch (error) {
+    console.error('Failed to extract required signers:', error);
+    return [];
+  }
+}
+
+/**
+ * Convert a public key hash to a Bech32 address
+ * @param pubKeyHashHex The public key hash in hex format
+ * @param networkId Network ID (0 for testnet, 1 for mainnet)
+ * @returns The Bech32 address string
+ */
+export function pubKeyHashToAddress(
+  pubKeyHashHex: string,
+  networkId: number = getCurrentNetworkConfig().networkId,
+): string {
+  try {
+    const pubKeyAddr = pubKeyAddress(pubKeyHashHex);
+    const address = serializeAddressObj(pubKeyAddr, networkId);
+    return address;
+  } catch (error) {
+    console.error('Failed to convert pubkey hash to address:', error);
+    return pubKeyHashHex;
+  }
+}
+
 export function shortenString(text: string, length = 8) {
   if (!text) return '';
   return `${text.substring(0, length)}...${text.substring(text.length - length)}`;
@@ -720,3 +766,6 @@ export async function fetchTransactionTimestamp(txHash: string) {
     throw new Error('Error fetching transaction timestamp:' + error);
   }
 }
+
+
+

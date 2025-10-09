@@ -2,6 +2,7 @@ import { useApp } from '@/context';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
 import {
   dbUtxoToMeshUtxo,
+  extractRequiredSigners,
   extractWitnesses,
   findOracleUtxo,
   getCatConstants,
@@ -53,14 +54,8 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
       const wallet = await walletState.wallet;
       const currentAddress = await wallet!.getChangeAddress();
-
-      // Get current wallet's pub key hash
       const currentPubKeyHash = deserializeAddress(currentAddress).pubKeyHash;
-
-      // Extract signers from the transaction
       const signers = extractWitnesses(adminDecision.signedTx);
-
-      // Check if current wallet's pub key hash is in the signers list
       const hasSigned = signers?.includes(currentPubKeyHash) || false;
       setCurrentWalletHasSigned(hasSigned);
     } catch (error) {
@@ -69,12 +64,11 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
     }
   };
 
-  // Function to extract decision data and send to parent
   const extractAndSendDecisionData = async (adminDecision: AdminDecision) => {
     try {
       const signers = extractWitnesses(adminDecision.signedTx);
+      const selectedAdmins = extractRequiredSigners(adminDecision.signedTx);
 
-      // Get min required signers from oracle
       const adminData = await findAdminsFromOracle();
 
       if (!adminData) {
@@ -85,14 +79,13 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       const decisionData: AdminDecisionData = {
         ...adminDecision,
         signers: signers || [],
+        selectedAdmins: selectedAdmins || [],
         minRequiredSigners: Number(adminData.minsigners),
         totalSigners: (signers || []).length,
       };
 
-      // Send data to parent component
       onDecisionUpdate?.(decisionData);
 
-      // Also check if current wallet has signed
       await checkCurrentWalletSigned(adminDecision);
     } catch (error) {
       console.error('Error extracting decision data:', error);
@@ -106,7 +99,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       setIsProcessing(true);
       secondDecision();
     } else {
-      // Show admin selector modal for initial decision
+      // Show  modal for initial decision
       setPendingDecision(decision as 'approve' | 'reject');
       setShowAdminSelector(true);
     }
@@ -286,9 +279,10 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
     return (
       <div className="space-y-6">
         <div className="space-y-2">
-          <div className="h-4 w-24 animate-pulse rounded bg-gray-200"></div>
-          <div className="flex justify-center">
-            <div className="h-12 w-40 animate-pulse rounded-lg bg-gray-200"></div>
+          <div className="h-4 w-40 animate-pulse rounded bg-gray-200"></div>
+          <div className="flex justify-between">
+            <div className="h-12 w-30 animate-pulse rounded-lg bg-gray-200 lg:w-60"></div>
+            <div className="h-12 w-30 animate-pulse rounded-lg bg-gray-200 lg:w-60"></div>
           </div>
         </div>
       </div>
@@ -350,7 +344,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         {/* Show message if current wallet has already signed */}
         {currentWalletHasSigned && (
           <div className="">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm">
               ✓ You have already signed this {adminDecision.decision}
             </span>
           </div>
