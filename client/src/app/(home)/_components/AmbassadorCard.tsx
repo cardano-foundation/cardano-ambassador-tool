@@ -15,51 +15,8 @@ export default function AmbassadorCard({
 }) {
   const ambassadorId =
     ambassador.username || ambassador.name.toLowerCase().replace(/\s+/g, '');
-  const getCountryFlag = (country: string) => {
-    const flags: { [key: string]: string } = {
-      Argentina: '🇦🇷',
-      Romania: '🇷🇴',
-      Indonesia: '🇮🇩',
-      Norway: '🇳🇴',
-      Ghana: '🇬🇭',
-      Germany: '🇩🇪',
-      DRC: '🇨🇩',
-      Scotland: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
-      'United States': '🇺🇸',
-      Kazakhstan: '🇰🇿',
-      Poland: '🇵🇱',
-      Venezuela: '🇻🇪',
-      Netherlands: '🇳🇱',
-      Italy: '🇮🇹',
-      Brazil: '🇧🇷',
-      UAE: '🇦🇪',
-      Singapore: '🇸🇬',
-      France: '🇫🇷',
-      Japan: '🇯🇵',
-      Ireland: '🇮🇪',
-      Spain: '🇪🇸',
-      Nigeria: '🇳🇬',
-      'United Kingdom': '🇬🇧',
-      India: '🇮🇳',
-      Sweden: '🇸🇪',
-      'Czech Republic': '🇨🇿',
-      Mexico: '🇲🇽',
-      Russia: '🇷🇺',
-      Canada: '🇨🇦',
-      Morocco: '🇲🇦',
-      'South Korea': '🇰🇷',
-      Ukraine: '🇺🇦',
-      Austria: '🇦🇹',
-      Slovakia: '🇸🇰',
-      China: '🇨🇳',
-      Colombia: '🇨🇴',
-      Egypt: '🇪🇬',
-      'New Zealand': '🇳🇿',
-      Tunisia: '🇹🇳',
-      Australia: '🇦🇺',
-    };
-    return flags[country] || '🌍';
-  };
+    
+  const displayFlag = ambassador.flag || '🌍';
 
   if (isListView) {
     return (
@@ -75,7 +32,7 @@ export default function AmbassadorCard({
             </Title>
             <div className="mt-1 flex items-center gap-2">
               <span className="text-xs sm:text-sm">
-                {getCountryFlag(ambassador.country)}
+                {displayFlag}
               </span>
               <Paragraph size="sm" className="text-muted-foreground truncate">
                 {ambassador.country}
@@ -111,7 +68,7 @@ export default function AmbassadorCard({
         </Title>
         <div className="flex items-center justify-center gap-2">
           <span className="text-base sm:text-lg">
-            {getCountryFlag(ambassador.country)}
+            {displayFlag}
           </span>
           <Paragraph size="sm" className="text-muted-foreground">
             {ambassador.country}

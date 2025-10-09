@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useApp } from '@/context';
+import { findAdminsFromOracle } from '@/lib/auth/roles';
+import { shortenString } from '@/utils';
+import { deserializeAddress } from '@meshsdk/core';
 import { User } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import Button from './atoms/Button';
 import Checkbox from './atoms/Checkbox';
 import Modal from './atoms/Modal';
-import { findAdminsFromOracle } from '@/lib/auth/roles';
-import { shortenString } from '@/utils';
-import { useApp } from '@/context';
-import { deserializeAddress } from '@meshsdk/core';
+import Copyable from './Copyable';
 
 interface AdminInfo {
   pubKeyHash: string;
@@ -40,9 +41,9 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
       try {
         setLoading(true);
         setError(null);
-        
+
         const adminData = await findAdminsFromOracle();
-        
+
         if (!adminData || !adminData.adminPubKeyHashes) {
           throw new Error('Failed to load admin data from oracle');
         }
@@ -53,26 +54,28 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
           try {
             const wallet = await walletState.wallet;
             const currentAddress = await wallet.getChangeAddress();
-            currentUserPubKeyHash = deserializeAddress(currentAddress).pubKeyHash;
+            currentUserPubKeyHash =
+              deserializeAddress(currentAddress).pubKeyHash;
           } catch (err) {
             console.warn('Could not get current user pub key hash:', err);
           }
         }
 
-        const adminList: AdminInfo[] = adminData.adminPubKeyHashes.map((pubKeyHash) => {
-          const isCurrentUser = pubKeyHash === currentUserPubKeyHash;
-          return {
-            pubKeyHash,
-            displayName: shortenString(pubKeyHash, 6),
-            isSelected: isCurrentUser, // Current user is pre-selected
-            isCurrentUser,
-            disabled: isCurrentUser, // Current user cannot be deselected
-          };
-        });
+        const adminList: AdminInfo[] = adminData.adminPubKeyHashes.map(
+          (pubKeyHash) => {
+            const isCurrentUser = pubKeyHash === currentUserPubKeyHash;
+            return {
+              pubKeyHash,
+              displayName: shortenString(pubKeyHash, 6),
+              isSelected: isCurrentUser,
+              isCurrentUser,
+              disabled: isCurrentUser,
+            };
+          },
+        );
 
         setAdmins(adminList);
         setMinRequiredSigners(Number(adminData.minsigners));
-        
       } catch (err) {
         console.error('Error loading admins:', err);
         setError(err instanceof Error ? err.message : 'Failed to load admins');
@@ -87,47 +90,51 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
   }, [isVisible, walletState]);
 
   const toggleAdminSelection = (pubKeyHash: string) => {
-    setAdmins(prev => 
-      prev.map(admin => 
+    setAdmins((prev) =>
+      prev.map((admin) =>
         admin.pubKeyHash === pubKeyHash && !admin.disabled
           ? { ...admin, isSelected: !admin.isSelected }
-          : admin
-      )
+          : admin,
+      ),
     );
   };
 
-  const selectedCount = admins.filter(admin => admin.isSelected).length;
+  const selectedCount = admins.filter((admin) => admin.isSelected).length;
   const canConfirm = selectedCount >= minRequiredSigners;
 
   const handleConfirm = () => {
     const selectedAdmins = admins
-      .filter(admin => admin.isSelected)
-      .map(admin => admin.pubKeyHash);
-    
+      .filter((admin) => admin.isSelected)
+      .map((admin) => admin.pubKeyHash);
+
     onConfirm(selectedAdmins);
   };
 
   const handleSelectAll = () => {
-    setAdmins(prev => prev.map(admin => ({ 
-      ...admin, 
-      isSelected: true 
-    })));
+    setAdmins((prev) =>
+      prev.map((admin) => ({
+        ...admin,
+        isSelected: true,
+      })),
+    );
   };
 
   const handleSelectMinimum = () => {
-    setAdmins(prev => {
+    setAdmins((prev) => {
       const updated = [...prev];
       let selectedSoFar = 0;
-      
-      // First, count already selected (disabled/current user)
-      updated.forEach(admin => {
+
+      updated.forEach((admin) => {
         if (admin.disabled && admin.isSelected) {
           selectedSoFar++;
         }
       });
-      
-      // Then select others to reach minimum
-      for (let i = 0; i < updated.length && selectedSoFar < minRequiredSigners; i++) {
+
+      for (
+        let i = 0;
+        i < updated.length && selectedSoFar < minRequiredSigners;
+        i++
+      ) {
         if (!updated[i].disabled) {
           if (selectedSoFar < minRequiredSigners) {
             updated[i].isSelected = true;
@@ -137,27 +144,29 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
           }
         }
       }
-      
+
       return updated;
     });
   };
 
   const handleClearSelectable = () => {
-    setAdmins(prev => prev.map(admin => ({ 
-      ...admin, 
-      isSelected: admin.disabled ? admin.isSelected : false // Keep disabled ones selected
-    })));
+    setAdmins((prev) =>
+      prev.map((admin) => ({
+        ...admin,
+        isSelected: admin.disabled ? admin.isSelected : false,
+      })),
+    );
   };
 
   const modalContent = loading ? (
     <div className="py-8 text-center">
       <div className="border-primary-base mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
-      <p className="mt-2 text-gray-600">Loading admins...</p>
+      <p className="mt-2 ">Loading admins...</p>
     </div>
   ) : error ? (
     <div className="py-8 text-center">
       <div className="text-primary-base mb-2">⚠️ Error</div>
-      <p className="text-gray-600">{error}</p>
+      <p className="">{error}</p>
     </div>
   ) : (
     <div className="space-y-4">
@@ -247,7 +256,12 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
                   )}
                 </div>
                 <div className="text-muted-foreground truncate font-mono text-xs">
-                  {admin.pubKeyHash}
+                  <Copyable
+                    withKey={false}
+                    value={admin.pubKeyHash}
+                    keyLabel={''}
+                  />
+                  {}
                 </div>
               </div>
             </button>
@@ -272,11 +286,11 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
   );
 
   const modalFooter = !loading && !error && (
-    <div className="flex gap-3 w-full">
+    <div className="flex w-full gap-3">
       <Button
         variant="outline"
         onClick={onCancel}
-        className="flex-1 text-primary-base!"
+        className="text-primary-base! flex-1"
       >
         Cancel
       </Button>
@@ -286,7 +300,7 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
         disabled={!canConfirm}
         className="flex-1"
       >
-        {decision === 'approve' ? 'Create Approval' : 'Create Rejection'} 
+        {decision === 'approve' ? 'Create Approval' : 'Create Rejection'}
         <span className="ml-1">({selectedCount})</span>
       </Button>
     </div>

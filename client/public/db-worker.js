@@ -107,10 +107,7 @@ self.onmessage = async function (e) {
 
   // Fetch and store UTxOs
   async function fetchAndStoreContext(contextName) {
-    if (contextName === 'ambassadors') {
-      await fetchAndStoreAmbassadors();
-      return;
-    }
+
 
     const res = await fetch(`${apiBaseUrl}/api/utxos`, {
       method: 'POST',
@@ -122,16 +119,6 @@ self.onmessage = async function (e) {
 
     if (Array.isArray(utxos)) {
       utxos.forEach((utxo) => insertUtxo(utxo, contextName));
-    }
-  }
-
-  // Fetch and store Ambassadors
-  async function fetchAndStoreAmbassadors() {
-    const res = await fetch(`${apiBaseUrl}/api/ambassadors`);
-    const ambassadors = await res.json();
-
-    if (Array.isArray(ambassadors)) {
-      ambassadors.forEach((amb) => insertAmbassador(amb));
     }
   }
 

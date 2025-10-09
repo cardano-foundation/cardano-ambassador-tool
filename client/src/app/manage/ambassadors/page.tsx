@@ -36,13 +36,17 @@ export default function ManageAmbassadorsPage() {
       };
 
       if (utxo.plutusData) {
-        const parsed = parseMemberDatum(utxo.plutusData);
+        const {member} = parseMemberDatum(utxo.plutusData)!;
 
-        if (parsed && parsed.member.metadata) {
-          decodedDatum['fullName'] = parsed?.member.metadata.fullName!;
-          decodedDatum['displayName'] = parsed?.member.metadata.displayName!;
-          decodedDatum['country'] = parsed?.member.metadata.country!;
-          decodedDatum['utxoHash'] = utxo?.txHash;
+        const memberMetadata = member.metadata;
+
+        if (member && memberMetadata) {
+          decodedDatum['fullName'] = memberMetadata.fullName!;
+          decodedDatum['displayName'] = memberMetadata.displayName!;
+          decodedDatum['email'] = memberMetadata.emailAddress!;
+          decodedDatum['address'] = memberMetadata.walletAddress!;
+          decodedDatum['bio'] = memberMetadata.bio!;
+          decodedDatum['index'] = idx;
         }
       }
       return { ...utxo, ...decodedDatum };

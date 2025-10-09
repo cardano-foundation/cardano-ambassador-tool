@@ -8,26 +8,18 @@ import AdminMembershipTimeline from '@/components/Timelines/AdminMembershipTimel
 import { useApp } from '@/context/AppContext';
 import { Utxo } from '@types';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 interface PageProps {
-  params: Promise<{ txHash: string[] }>;
+  params: Promise<{ txHash: string }>;
 }
 
 const MembershipIntentPage = ({ params }: PageProps) => {
   const [loading, setLoading] = useState(true);
-  const [txHash, setTxHash] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [membershipUtxo, setMembershipUtxo] = useState<Utxo | null>(null);
   const { membershipIntents, dbLoading } = useApp();
-
-  useEffect(() => {
-    const loadParams = async () => {
-      const resolvedParams = await params;
-      setTxHash(resolvedParams.txHash[0]);
-    };
-    loadParams();
-  }, [params]);
+  const { txHash } = use(params);
 
   useEffect(() => {
     if (!txHash || dbLoading) {
@@ -66,9 +58,6 @@ const MembershipIntentPage = ({ params }: PageProps) => {
           <Title level="3" className="text-foreground mb-2">
             Membership Intent Not Found
           </Title>
-          <Paragraph className="text-muted-foreground mb-4">
-            {error || 'The requested membership intent could not be loaded.'}
-          </Paragraph>
           <Link href="/manage/memberships">
             <Button variant="primary">Back to Memberships</Button>
           </Link>

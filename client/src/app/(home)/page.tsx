@@ -4,8 +4,10 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import { Pagination } from '@/components/Pagination';
 import { useApp } from '@/context';
+import { parseMemberDatum } from '@/utils';
+import { getCountryByCode } from '@/utils/locationData';
+import { Ambassador } from '@types';
 import React, { useMemo, useState } from 'react';
-import Link from 'next/link';
 import AmbassadorCard from './_components/AmbassadorCard';
 
 export default function HomePage() {
@@ -14,14 +16,73 @@ export default function HomePage() {
   const [currentView, setCurrentView] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const { ambassadors } = useApp();
+  const { members } = useApp();
 
-  const uniqueCountries = [
-    ...new Set(ambassadors.map((a) => a.country)),
-  ].sort();
+  const parsedMembers = useMemo(() => {
+    return members
+      .map((utxo) => {
+        if (!utxo.plutusData) return null;
+
+        try {
+          const parsed = parseMemberDatum(utxo.plutusData);
+          if (!parsed || !parsed.member) return null;
+
+          const { member } = parsed;
+          const memberMetadata = member.metadata;
+
+          if (!memberMetadata) return null;
+
+          // Convert country code to full country name and get flag
+          const countryData = memberMetadata.country
+            ? getCountryByCode(memberMetadata.country)
+            : null;
+          const countryName = countryData?.name || memberMetadata.country || '';
+          const countryFlag = countryData?.flag || '';
+
+          // Convert member data to Ambassador format
+          const ambassador: Ambassador = {
+            href: `/members/${utxo.txHash}`,
+            username: memberMetadata.displayName || '',
+            name: memberMetadata.fullName || memberMetadata.displayName || '',
+            bio_excerpt: memberMetadata.bio || null,
+            country: countryName,
+            flag: countryFlag,
+            avatar: '',
+            created_at: '',
+            summary: {
+              stats: {
+                topics_entered: 0,
+                posts_read_count: 0,
+                days_visited: 0,
+                likes_given: 0,
+                likes_received: 0,
+                topics_created: 0,
+                replies_created: 0,
+                time_read: 0,
+                recent_time_read: 0,
+              },
+              top_replies: [],
+              top_topics: [],
+            },
+            activities: [],
+            badges: [],
+          };
+
+          return ambassador;
+        } catch (error) {
+          console.error('Error parsing member datum:', error);
+          return null;
+        }
+      })
+      .filter((member): member is Ambassador => member !== null);
+  }, [members]);
+
+  const uniqueCountries = [...new Set(parsedMembers.map((a) => a.country))]
+    .filter((country) => country && country.trim() !== '')
+    .sort();
 
   const filteredAmbassadors = useMemo(() => {
-    return ambassadors.filter((ambassador) => {
+    return parsedMembers.filter((ambassador) => {
       const matchesSearch =
         ambassador.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ambassador.country.toLowerCase().includes(searchTerm.toLowerCase());
@@ -29,7 +90,7 @@ export default function HomePage() {
         selectedRegion === 'all' || ambassador.country === selectedRegion;
       return matchesSearch && matchesRegion;
     });
-  }, [searchTerm, selectedRegion, ambassadors]);
+  }, [searchTerm, selectedRegion, parsedMembers]);
 
   // Calculate pagination values
   const totalItems = filteredAmbassadors.length;
@@ -94,12 +155,12 @@ export default function HomePage() {
             : 'space-y-3 sm:space-y-4'
         }
       >
-        {displayedAmbassadors.map((ambassador) => (
-            <AmbassadorCard
-              key={ambassador.username}
-              ambassador={ambassador}
-              isListView={currentView === 'list'}
-            />
+        {displayedAmbassadors.map((member) => (
+          <AmbassadorCard
+            key={member.username || member.name}
+            ambassador={member}
+            isListView={currentView === 'list'}
+          />
         ))}
       </div>
 
@@ -132,7 +193,7 @@ export default function HomePage() {
                 setSearchTerm('');
                 setSelectedRegion('all');
               }}
-              className="mt-4 text-primary underline"
+              className="text-primary mt-4 underline"
             >
               Clear filters
             </button>

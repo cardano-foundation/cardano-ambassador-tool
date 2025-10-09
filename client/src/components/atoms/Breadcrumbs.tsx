@@ -13,7 +13,7 @@ export default function Breadcrumbs() {
       <ol className="flex space-x-1">
         <Link
           href="/"
-          className="hover:text-primary-300 font-semibold hover:underline"
+          className="hover:text-primary-300 text-primary-base font-semibold hover:underline"
         >
           Home
         </Link>
@@ -42,7 +42,7 @@ export default function Breadcrumbs() {
               <li className="">
                 {pathNames.length !== index + 1 ? (
                   <Link
-                    className="hover:text-primary-300 font-semibold hover:underline"
+                    className="hover:text-primary-300 text-primary-base hover:underline"
                     href={href}
                   >
                     {itemLink}

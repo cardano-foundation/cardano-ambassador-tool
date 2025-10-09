@@ -3,6 +3,7 @@ import { CardanoIcon } from '@/components/atoms/CardanoIcon';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import UserAvatar from '@/components/atoms/UserAvatar';
+import { StatCardPulse } from '@/components/PulseLoader';
 import { getCountryFlag } from '@/utils/countryFlags';
 import React from 'react';
 import { StatCard } from './StartCard';
@@ -18,22 +19,37 @@ interface ProfileHeaderProps {
         likes_received: number;
         days_visited: number;
         replies_created: number;
-      };
+      } | null;
     };
   };
+  isLoading?: boolean;
 }
 
-const StatCardsGrid: React.FC<{ stats: ProfileHeaderProps['profile']['summary']['stats'] }> = ({ stats }) => (
-  <>
-    <StatCard label="Topics Created" value={stats.topics_created} />
-    <StatCard label="Given" value={stats.likes_given} showHeart />
-    <StatCard label="Received" value={stats.likes_received} showHeart />
-    <StatCard label="Days Visited" value={stats.days_visited} />
-    <StatCard label="Posts Created" value={stats.replies_created} />
-  </>
-);
+const StatCardsGrid: React.FC<{ stats: ProfileHeaderProps['profile']['summary']['stats'] }> = ({ stats }) => {
+  if (!stats) {
+    return (
+      <>
+        <StatCardPulse />
+        <StatCardPulse />
+        <StatCardPulse />
+        <StatCardPulse />
+        <StatCardPulse />
+      </>
+    );
+  }
+  
+  return (
+    <>
+      <StatCard label="Topics Created" value={stats.topics_created} />
+      <StatCard label="Given" value={stats.likes_given} showHeart />
+      <StatCard label="Received" value={stats.likes_received} showHeart />
+      <StatCard label="Days Visited" value={stats.days_visited} />
+      <StatCard label="Posts Created" value={stats.replies_created} />
+    </>
+  );
+};
 
-export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
+export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, isLoading }) => {
   const { name, country, summary: { stats } } = profile;
 
   return (
@@ -49,7 +65,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
           </div>
 
           <div className="min-w-0 flex-1">
-            <Title level="5" className="text-neutral text-xl font-bold truncate">
+            <Title level="5" className="text-neutral text-xl font-bold truncate capitalize">
               {name}
             </Title>
             <Paragraph className="text-muted-foreground text-sm">

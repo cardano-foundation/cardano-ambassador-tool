@@ -11,8 +11,6 @@ import ApproveReject from '../RejectApprove';
 import MultisigProgressTracker from '../SignatureProgress/MultisigProgressTracker';
 import ActivateMembership from '../ActivateMembership';
 
-
-// Extend MemberData to include txHash
 type ExtendedMemberData = MemberData & {
   txHash?: string;
 };
@@ -30,13 +28,12 @@ const AdminMembershipTimeline = ({
     useState<ExtendedMemberData | null>(null);
   const [adminDecisionData, setAdminDecisionData] =
     useState<AdminDecisionData | null>(null);
+  const [isActivated, setIsActivated] = useState(false);
 
-  // Handle admin decision updates
   const handleAdminDecisionUpdate = (data: AdminDecisionData | null) => {
     setAdminDecisionData(data);
   };
 
-  // Parse membership data when intentUtxo changes
   useEffect(() => {
     if (intentUtxo?.plutusData) {
       const parsed = parseMembershipIntentDatum(intentUtxo.plutusData);
@@ -58,6 +55,48 @@ const AdminMembershipTimeline = ({
   }, [intentUtxo]);
 
 
+  const getSignedCount = () => {
+    if (!adminDecisionData?.selectedAdmins || !adminDecisionData?.signers) return 0;
+    return adminDecisionData.selectedAdmins.filter(admin => 
+      adminDecisionData.signers.includes(admin)
+    ).length;
+  };
+
+  const signatureRequirementsMet = () => {
+    if (!adminDecisionData) return false;
+    const signedCount = getSignedCount();
+    return signedCount >= adminDecisionData.selectedAdmins.length;
+  };
+
+  const isMembershipActivated = () => {
+    return isActivated;
+  };
+
+  const handleActivationComplete = () => {
+    setIsActivated(true);
+  };
+
+  const getIntentSubmittedStatus = () => {
+    return membershipData ? 'completed' : 'pending';
+  };
+
+  const getAdminReviewStatus = () => {
+    if (!membershipData) return 'pending';
+    if (!adminDecisionData?.decision) return 'current';
+    return 'completed';
+  };
+
+  const getMultisigApprovalStatus = () => {
+    if (!adminDecisionData?.decision) return 'pending';
+    if (signatureRequirementsMet()) return 'completed';
+    return 'current';
+  };
+
+  const getMembershipActivatedStatus = () => {
+    if (signatureRequirementsMet()) return 'current';
+    return 'pending';
+  };
+
   const applicationProgress: TimelineStep[] = [
     {
       id: 'intent-submitted',
@@ -65,7 +104,7 @@ const AdminMembershipTimeline = ({
       content: (
         <MemberDataComponent readonly={true} membershipData={membershipData} />
       ),
-      status: 'completed',
+      status: getIntentSubmittedStatus(),
     },
     {
       id: 'admin-review',
@@ -77,7 +116,7 @@ const AdminMembershipTimeline = ({
           onDecisionUpdate={handleAdminDecisionUpdate}
         />
       ),
-      status: 'current',
+      status: getAdminReviewStatus(),
     },
     {
       id: 'multisig-approval',
@@ -88,7 +127,7 @@ const AdminMembershipTimeline = ({
           adminDecisionData={adminDecisionData}
         />
       ),
-      status: 'pending',
+      status: getMultisigApprovalStatus(),
     },
     {
       id: 'membership-activated',
@@ -97,9 +136,10 @@ const AdminMembershipTimeline = ({
         <ActivateMembership
           txhash={intentUtxo?.txHash}
           adminDecisionData={adminDecisionData}
+          onActivationComplete={handleActivationComplete}
         />
       ),
-      status: 'pending',
+      status: getMembershipActivatedStatus(),
     },
   ];
 

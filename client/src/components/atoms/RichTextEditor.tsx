@@ -6,21 +6,16 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from 'tiptap-markdown';
 import {
-  Bold, 
-  Italic, 
+  Bold,
+  Italic,
   List,
   ListOrdered,
   Underline as UnderlineIcon,
   Strikethrough,
-  Droplet,
-  Pilcrow,
-  Highlighter,
   Smile,
   AlignLeft,
   AlignCenter,
   AlignRight,
-  IndentIncrease,
-  IndentDecrease
 } from 'lucide-react';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { useEffect, useState, forwardRef, useImperativeHandle, MouseEvent } from 'react';
@@ -38,7 +33,6 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
@@ -210,7 +204,7 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
           >
             <AlignLeft className="w-4 h-4" />
           </button>
-          
+
           <button
             type="button"
             onClick={() => editor.chain().focus().setTextAlign('center').run()}
@@ -219,7 +213,7 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
           >
             <AlignCenter className="w-4 h-4" />
           </button>
-          
+
           <button
             type="button"
             onClick={() => editor.chain().focus().setTextAlign('right').run()}
@@ -237,7 +231,7 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
           >
             <List className="w-4 h-4" />
           </button>
-          
+
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
