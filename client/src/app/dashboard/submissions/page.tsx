@@ -297,7 +297,7 @@ export default function IntentSubmissionsPage() {
               className="w-1/2"
             />
           </div>
-       
+
         </div>
       </div>
 

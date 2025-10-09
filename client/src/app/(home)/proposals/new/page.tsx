@@ -169,11 +169,11 @@ export default function SubmitProposalPage() {
           ) : (
             <div className="flex items-center justify-between pt-6 gap-4">
               {activeTab !== 'details' && (
-                <div className="w-1/4">
+                <div className="w-1/4 text-primary-base">
                   <Button 
                     variant="outline" 
                     onClick={handlePreviousTab}
-                    className="w-full text-primary-base"
+                    className="w-full"
                   >
                     Back
                   </Button>
