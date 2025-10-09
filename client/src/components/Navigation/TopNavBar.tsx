@@ -56,13 +56,11 @@ export default function TopNavBar() {
               <Breadcrumb />
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2 sm:gap-4">
-                <ThemeToggle />
-                <GlobalRefreshButton className="text-primary-base! mr-4 mb-2" />
-              </div>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <GlobalRefreshButton />
               {user && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {isAdmin && (
                     <span className="bg-primary-base rounded-full px-2 py-1 text-xs text-white">
                       Admin
