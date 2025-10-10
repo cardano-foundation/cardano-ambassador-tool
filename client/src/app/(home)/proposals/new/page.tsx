@@ -71,7 +71,7 @@ export default function SubmitProposalPage() {
       receiverWalletAddress: formData.receiverWalletAddress
     };
 
-    console.log('Submitting proposal as MARKDOWN:', submissionData);
+    console.log('Submitting proposal:', submissionData);
 
     await new Promise(resolve => setTimeout(resolve, 2000));
       
@@ -180,7 +180,6 @@ export default function SubmitProposalPage() {
                 </div>
               )}
               
-              {/* Next/Submit Button */}
               <div className={activeTab === 'details' ? "w-full" : "w-3/4"}>
                 {activeTab !== 'review' ? (
                   <Button

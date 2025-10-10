@@ -1,4 +1,4 @@
-import Input from '@/components/atoms/Input';
+import FormFunds from '../../components/FormFunds';
 import { ProposalFormData } from '@/types/ProposalFormData';
 
 interface Props {
@@ -9,19 +9,11 @@ interface Props {
 
 export default function FundsTab({ formData, handleInputChange, userAddress }: Props) {
   return (
-    <div className="space-y-6">
-      <Input
-        label="Funds requested"
-        value={formData.fundsRequested}
-        onChange={(e) => handleInputChange('fundsRequested', e.target.value)}
-        placeholder="₳5,000"
-      />
-      <Input
-        label="Addresses"
-        value={formData.receiverWalletAddress ||''}
-        onChange={(e) => handleInputChange('receiverWalletAddress', e.target.value)}
-        placeholder="addr1q...xyz"
-      />
-    </div>
+    <FormFunds
+      mode="create"
+      formData={formData}
+      handleInputChange={handleInputChange}
+      userAddress={userAddress}
+    />
   );
 }
