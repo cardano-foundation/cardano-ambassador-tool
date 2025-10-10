@@ -27,12 +27,14 @@ export default function ManageAmbassadorsPage() {
         fullName: string;
         displayName: string;
         country: string;
+        address: string;
         utxoHash: any;
       } = {
         fullName: '',
         displayName: '',
         country: '',
         utxoHash: '',
+        address: '',
       };
 
       if (utxo.plutusData) {
@@ -44,8 +46,12 @@ export default function ManageAmbassadorsPage() {
           decodedDatum['fullName'] = memberMetadata.fullName!;
           decodedDatum['displayName'] = memberMetadata.displayName!;
           decodedDatum['country'] = memberMetadata.country!;
+          decodedDatum['address'] = memberMetadata.walletAddress!;
           decodedDatum['utxoHash'] = utxo?.txHash!;
         }
+
+        console.log(memberMetadata.walletAddress);
+        
       }
       return { ...utxo, ...decodedDatum };
     })

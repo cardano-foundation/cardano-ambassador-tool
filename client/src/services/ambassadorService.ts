@@ -1,5 +1,5 @@
 import { NormalizedUser } from '@types';
-import { unstable_cache } from 'next/cache';
+import { unstable_cache, revalidateTag } from 'next/cache';
 import axios from 'axios';
 
 const SUMMARY_URL = 'https://forum.cardano.org/u/{username}/summary.json';
@@ -187,6 +187,5 @@ export const getUserProfile = (ambassador: Ambassador) =>
 export { getUserProfileUncached };
 
 export async function invalidateUserProfileCache(username: string) {
-  const { revalidateTag } = await import('next/cache');
   revalidateTag(`forum-${username}`);
 }

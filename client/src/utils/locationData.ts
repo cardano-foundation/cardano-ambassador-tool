@@ -2618,3 +2618,7 @@ export const getCitiesForCountry = (countryCode: string): City[] => {
 export const getCountryByCode = (code: string): Country | undefined => {
   return countries.find((country) => country.code === code);
 };
+
+export const getCountryByName = (name: string): Country | undefined => {
+  return countries.find((country) => country.name === name);
+};
