@@ -93,7 +93,6 @@ export function useDatabase() {
           }
         }
       });
-
       // Request worker to seed all data
       syncAllData();
 
