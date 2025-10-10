@@ -5,7 +5,8 @@ interface UseAmbassadorProfileReturn {
   profile: AmbassadorProfile | null;
   loading: boolean;
   error: string | null;
-  refetch: () => void;
+  refetch: (forceRefresh?: boolean) => void;
+  hardRefresh: () => void;
 }
 
 export const useAmbassadorProfile = (
@@ -15,12 +16,17 @@ export const useAmbassadorProfile = (
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAmbassadorProfile = async () => {
+  const fetchAmbassadorProfile = async (forceRefresh = false) => {
     try {
       setLoading(true);
       setError(null);
 
-            const response = await fetch(`/api/member/${ambassadorUsername}`);
+      const url = new URL(`/api/member/${ambassadorUsername}`, window.location.origin);
+      if (forceRefresh) {
+        url.searchParams.set('forceRefresh', 'true');
+      }
+      
+      const response = await fetch(url.toString());
       
       if (!response.ok) {
         const errorText = await response.text();
@@ -31,12 +37,29 @@ export const useAmbassadorProfile = (
       }
 
       const data: AmbassadorProfile = await response.json();
-            setProfile(data);
+      setProfile(data);
     } catch (err) {
       console.error('Fetch error:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const hardRefresh = async () => {
+    try {
+      await fetch('/api/revalidate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          forumProfile: ambassadorUsername 
+        }),
+      });
+      
+      await fetchAmbassadorProfile(true);
+    } catch (err) {
+      console.error('Hard refresh error:', err);
+      await fetchAmbassadorProfile(true);
     }
   };
 
@@ -51,5 +74,6 @@ export const useAmbassadorProfile = (
     loading,
     error,
     refetch: fetchAmbassadorProfile,
+    hardRefresh,
   };
 };

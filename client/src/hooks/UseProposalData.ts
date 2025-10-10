@@ -20,7 +20,7 @@ export const mockProposal: ProposalData = {
   id: "proposal-001",
   title: "Cardano Education Podcast",
   category: "Education",
-  description: `A proposal to launch a series of **educational podcasts** 
+  description: `A proposal to launch a series of **educational podcasts**
 to increase Cardano awareness and adoption. 
 Each episode will feature _industry experts_ and community members.`,
 impactToEcosystem: `A proposal to launch a series of **educational podcasts** 

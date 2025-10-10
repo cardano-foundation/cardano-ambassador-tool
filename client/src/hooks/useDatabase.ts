@@ -40,7 +40,6 @@ export function useDatabase() {
   const [members, setMembers] = useState<Utxo[]>([]);
   const [proposals, setProposals] = useState<Utxo[]>([]);
 
-  const [ambassadors, setAmbassadors] = useState<Ambassador[]>([]);
   const [dbError, setDbError] = useState<string | null>(null);
 
   // Database initialization and worker setup
@@ -70,12 +69,10 @@ export function useDatabase() {
               dbManager.getUtxosByContext('proposal_intent');
             const members = dbManager.getUtxosByContext('members');
             const proposals = dbManager.getUtxosByContext('proposals');
-            const ambassadors = dbManager.getAmbasaddors();
             setMembershipIntents(memberships_intents);
             setProposalIntents(proposals_intents);
             setMembers(members);
             setProposals(proposals);
-            setAmbassadors(ambassadors);
             // Set loading states based on operation type
             if (data.isSyncOperation) {
               setIsSyncing(false);
@@ -96,7 +93,6 @@ export function useDatabase() {
           }
         }
       });
-
       // Request worker to seed all data
       syncAllData();
 
@@ -116,12 +112,11 @@ export function useDatabase() {
       action: 'seedAll',
       apiBaseUrl: window.location.origin,
       contexts: [
-        'member',
+        'members',
         'membership_intent',
         'proposal',
         'proposal_intent',
         'sign_of_approval',
-        'ambassadors',
       ],
     });
   }
@@ -133,12 +128,11 @@ export function useDatabase() {
       action: 'seedAll',
       apiBaseUrl: window.location.origin,
       contexts: [
-        'member',
+        'members',
         'membership_intent',
         'proposal',
         'proposal_intent',
         'sign_of_approval',
-        'ambassadors',
       ],
       isSyncOperation: true,
     });
@@ -192,8 +186,6 @@ export function useDatabase() {
     proposalIntents,
     members,
     proposals,
-
-    ambassadors,
 
     // Operations
     syncData,

@@ -47,7 +47,7 @@ export const TopicsSection: React.FC<TopicsSectionProps> = ({
 
   return (
     <Card>
-      <CardContent className="p-2">
+      <CardContent className="">
         <div className="border-border/60 mb-4 flex items-center justify-between border-b pb-4">
           <Title level="6" className="text-neutral text-lg">
             Top Topics

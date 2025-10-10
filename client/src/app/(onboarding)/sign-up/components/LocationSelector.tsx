@@ -3,7 +3,7 @@
 import { countries, getCitiesForCountry } from '@/utils/locationData';
 import React from 'react';
 import { cn } from '@/utils/utils';
-import SearchableDropdown from '../../../../components/atoms/SearchableDropdown';
+import SearchableDropdown from '@/components/atoms/SearchableDropdown';
 
 interface LocationSelectorProps {
   countryCode?: string;
@@ -27,8 +27,8 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 
   const cityOptions = countryCode
     ? getCitiesForCountry(countryCode).map((cityName) => ({
-        value: cityName,
-        label: cityName,
+        value: cityName.name,
+        label: cityName.name,
       }))
     : [];
 

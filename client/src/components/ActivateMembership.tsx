@@ -1,21 +1,24 @@
-import { AdminDecisionData, TransactionConfirmationResult } from '@types';
-import { useMemo, useState, useCallback } from 'react';
 import { useApp } from '@/context';
-import { emitGlobalRefreshWithDelay } from '@/utils';
+import { emitGlobalRefreshWithDelay, saveCounterUtxo } from '@/utils';
+import { storageApiClient } from '@/utils/storageApiClient';
+import { AdminDecisionData, TransactionConfirmationResult } from '@types';
 import { Loader2 } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
 import Button from './atoms/Button';
 import Paragraph from './atoms/Paragraph';
-import TransactionConfirmationOverlay from './TransactionConfirmationOverlay';
 import ErrorAccordion from './ErrorAccordion';
+import TransactionConfirmationOverlay from './TransactionConfirmationOverlay';
 
 interface ActivateMembershipProps {
   txhash?: string;
   adminDecisionData?: AdminDecisionData | null;
+  onActivationComplete?: () => void;
 }
 
 const ActivateMembership: React.FC<ActivateMembershipProps> = ({
   txhash,
   adminDecisionData,
+  onActivationComplete,
 }) => {
   const { wallet: walletState } = useApp();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,7 +26,17 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
     message: string;
     details?: string;
   } | null>(null);
-  
+
+  // Helper function to calculate signed count from selected signers
+  const getSignedCount = useCallback(() => {
+    if (!adminDecisionData?.selectedAdmins || !adminDecisionData?.signers)
+      return 0;
+
+    return adminDecisionData.selectedAdmins.filter((admin) =>
+      adminDecisionData.signers.includes(admin),
+    ).length;
+  }, [adminDecisionData]);
+
   // Transaction confirmation overlay state
   const [showConfirmationOverlay, setShowConfirmationOverlay] = useState(false);
   const [confirmedTxHash, setConfirmedTxHash] = useState<string | null>(null);
@@ -32,76 +45,88 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
   // Calculate if minimum signature requirements are met
   const signatureRequirementsMet = useMemo(() => {
     if (!adminDecisionData) return false;
-    return adminDecisionData.totalSigners >= adminDecisionData.minRequiredSigners;
-  }, [adminDecisionData]);
+    const signedCount = getSignedCount();
+    return signedCount >= adminDecisionData.selectedAdmins.length;
+  }, [adminDecisionData, getSignedCount]);
 
   // Calculate if there's an admin decision at all
   const hasAdminDecision = useMemo(() => {
     return adminDecisionData && adminDecisionData.decision;
   }, [adminDecisionData]);
 
-  // Check wallet connection status
-  const isWalletConnected = useMemo(() => {
-    return walletState && walletState.wallet;
-  }, [walletState]);
-
-
   const handleActivation = async () => {
-    if (!isWalletConnected || !adminDecisionData || !signatureRequirementsMet) {
+    if (!adminDecisionData || !signatureRequirementsMet) {
       return;
     }
 
     setIsSubmitting(true);
-    setSubmitError(null); // Clear any previous errors
+    setSubmitError(null);
 
     try {
       const wallet = await walletState!.wallet;
-      
+
       if (!adminDecisionData.signedTx) {
         throw new Error('No signed transaction found in admin decision data');
       }
-      
-      // Submit the pre-signed transaction to the network
+
       const txHash = await wallet!.submitTx(adminDecisionData.signedTx);
-            
-      // Show transaction confirmation overlay
+
+      try {
+        await saveCounterUtxo(
+          txHash,
+          adminDecisionData.counterUtxoTxIndex || 0,
+        );
+        console.log(
+          'Counter UTxO updated successfully with new transaction:',
+          txHash,
+        );
+      } catch (error) {
+        console.error('Failed to update counter UTxO:', error);
+      }
+
       setConfirmedTxHash(txHash);
       setShowConfirmationOverlay(true);
-      
     } catch (error) {
       console.error('Failed to submit transaction:', error);
       setSubmitError({
         message: 'Failed to submit transaction',
-        details: error instanceof Error ? error.message : String(error)
+        details: error instanceof Error ? error.message : String(error),
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Handle successful transaction confirmation
-  const handleTransactionConfirmed = useCallback((result: TransactionConfirmationResult) => {
-    setIsActivated(true);
-    
-    // Trigger global refresh after successful membership activation
-    // Use delay to allow UI updates to complete first
-    emitGlobalRefreshWithDelay(2000);
-  }, []);
+  const handleTransactionConfirmed = useCallback(
+    async (result: TransactionConfirmationResult) => {
+      setIsActivated(true);
+      onActivationComplete?.();
 
-  // Handle transaction confirmation timeout
-  const handleTransactionTimeout = (result: TransactionConfirmationResult) => {
-    // Keep overlay open so user can check status manually
-  };
+      if (txhash) {
+        try {
+          await storageApiClient.delete(txhash, 'submissions');
+          console.log('Admin decision data cleaned up successfully');
+        } catch (error) {
+          console.error('Failed to clean up admin decision data:', error);
+        }
+      }
 
-  // Handle closing the confirmation overlay
+      emitGlobalRefreshWithDelay(2000);
+    },
+    [onActivationComplete, txhash],
+  );
+
+  const handleTransactionTimeout = (
+    result: TransactionConfirmationResult,
+  ) => {};
+
   const handleCloseConfirmationOverlay = useCallback(() => {
     setShowConfirmationOverlay(false);
     setConfirmedTxHash(null);
   }, []);
 
-
   return (
-    <div className="space-y-4 ">
+    <div className="space-y-4">
       {/* Error Accordion */}
       <ErrorAccordion
         isVisible={!!submitError}
@@ -110,26 +135,31 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
         onDismiss={() => setSubmitError(null)}
       />
 
-      {/* Activation Button */}
+      {/* Action Button */}
       <Button
-        variant={'primary'}
+        variant={
+          adminDecisionData?.decision === 'approve' ? 'primary' : 'outline'
+        }
         onClick={handleActivation}
         disabled={!signatureRequirementsMet}
-        className="w-full"
+        className={`w-full ${adminDecisionData?.decision === 'reject' ? 'text-primary-base!' : ''}`}
       >
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Activate Member
+        {adminDecisionData?.decision === 'approve'
+          ? 'Activate Membership'
+          : adminDecisionData?.decision === 'reject'
+            ? 'Execute Rejection'
+            : 'Process Decision'}
       </Button>
 
-
-      {!hasAdminDecision && isWalletConnected && (
+      {!hasAdminDecision && (
         <Paragraph size="sm" className="text-center text-gray-500">
           An admin needs to approve or reject this application first.
         </Paragraph>
       )}
 
       {adminDecisionData?.decision === 'reject' && (
-        <Paragraph size="sm" className="text-center text-red-600">
+        <Paragraph size="sm" className="text-primary-base text-center">
           This membership application has been rejected by an admin.
         </Paragraph>
       )}
@@ -137,20 +167,31 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
       {hasAdminDecision &&
         adminDecisionData?.decision === 'approve' &&
         !signatureRequirementsMet && (
-          <Paragraph size="sm" className="text-center text-gray-500">
-            Waiting for{' '}
-            {adminDecisionData.minRequiredSigners -
-              adminDecisionData.totalSigners}{' '}
-            more signature(s) before activation.
-          </Paragraph>
+          <div className="space-y-1 text-center">
+            <Paragraph size="sm" className="text-gray-500">
+              Waiting for{' '}
+              {adminDecisionData.selectedAdmins.length - getSignedCount()} more
+              signature(s) before activation.
+            </Paragraph>
+            <Paragraph size="xs" className="text-gray-400">
+              ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
+              required signatures)
+            </Paragraph>
+          </div>
         )}
 
       {signatureRequirementsMet &&
         adminDecisionData?.decision === 'approve' &&
         !isActivated && (
-          <Paragraph size="sm" className="text-center text-green-600">
-            ✓ All requirements met! Ready to activate membership.
-          </Paragraph>
+          <div className="space-y-1 text-center">
+            <Paragraph size="sm" className="text-green-600">
+              ✓ All requirements met! Ready to activate membership.
+            </Paragraph>
+            <Paragraph size="xs" className="text-green-500">
+              ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
+              required signatures complete)
+            </Paragraph>
+          </div>
         )}
 
       {isActivated && (

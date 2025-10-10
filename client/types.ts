@@ -214,6 +214,7 @@ export interface AdminDecision {
 
 export type AdminDecisionData = AdminDecision & {
   signers: string[];
+  selectedAdmins: string[];
   minRequiredSigners: number;
   totalSigners: number;
 }

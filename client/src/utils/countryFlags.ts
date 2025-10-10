@@ -1,5 +1,28 @@
-export const getCountryFlag = (country: string): string => {
-  const flags: { [key: string]: string } = {
+import { countries, getCountryByCode } from './locationData';
+
+export const getCountryFlag = (countryInput: string): string => {
+  if (!countryInput?.trim()) return '🌍';
+
+  const input = countryInput.trim();
+  
+  const countryByCode = getCountryByCode(input);
+  if (countryByCode) return countryByCode.flag;
+  
+  const countryByName = countries.find(
+    country => country.name.toLowerCase() === input.toLowerCase()
+  );
+  if (countryByName) return countryByName.flag;
+  
+  const partialMatch = countries.find(
+    country => {
+      const countryName = country.name.toLowerCase();
+      const inputLower = input.toLowerCase();
+      return countryName.includes(inputLower) || inputLower.includes(countryName);
+    }
+  );
+  if (partialMatch) return partialMatch.flag;
+  
+  const specialCases: { [key: string]: string } = {
     Argentina: '🇦🇷',
     Romania: '🇷🇴',
     Indonesia: '🇮🇩',
@@ -41,5 +64,6 @@ export const getCountryFlag = (country: string): string => {
     Tunisia: '🇹🇳',
     Australia: '🇦🇺',
   };
-  return flags[country] || '🌍';
+  
+  return specialCases[input.toLowerCase()] || '🌍';
 };

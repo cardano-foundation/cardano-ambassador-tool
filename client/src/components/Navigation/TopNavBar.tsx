@@ -32,7 +32,8 @@ export default function TopNavBar() {
           <div className="lg:hidden">
             <div className="mb-2 flex items-center justify-between">
               <div className="text-primary-base flex-shrink-0">
-                <CardanoIcon size={40} color="currentColor" />
+                {/* <CardanoIcon size={40} color="currentColor" /> */}
+                <AppLogo />
               </div>
               <Button
                 variant="outline"
@@ -56,13 +57,11 @@ export default function TopNavBar() {
               <Breadcrumb />
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2 sm:gap-4">
-                <ThemeToggle />
-                <GlobalRefreshButton className="text-primary-base! mr-4 mb-2" />
-              </div>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <GlobalRefreshButton />
               {user && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {isAdmin && (
                     <span className="bg-primary-base rounded-full px-2 py-1 text-xs text-white">
                       Admin
@@ -123,7 +122,7 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
   return (
     <div className="bg-background flex h-screen w-full flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-6">
+      <div className="flex items-center justify-between lg:p-6 p-4">
         <AppLogo />
         <Button
           variant="outline"

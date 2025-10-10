@@ -8,6 +8,7 @@ interface ProfileSidebarProps {
     name: string;
     username: string;
     country: string;
+    city: string;
     bio_excerpt: string;
     created_at: string;
   };
@@ -21,7 +22,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   cleanHtml,
 }) => {
   return (
-    <div className="w-full space-y-6 p-2">
+    <div className="w-full space-y-6">
       <AboutSection
         profile={profile}
         formatDate={formatDate}

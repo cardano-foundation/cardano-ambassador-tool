@@ -72,7 +72,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="bg-background flex h-10 w-10 items-center justify-center rounded-full transition-colors"
+      className="bg-background flex  items-center justify-center rounded-full transition-colors"
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
       {theme === 'dark' ? <MoonIcon /> : <SunIcon />}

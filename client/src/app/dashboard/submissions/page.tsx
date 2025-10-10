@@ -125,7 +125,6 @@ export default function IntentSubmissionsPage() {
         throw new Error('No membership intent UTxO found for this address');
       }
 
-      // Find token UTxO by membership intent UTxO
       const tokenUtxo =
         await findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo);
 
@@ -133,7 +132,6 @@ export default function IntentSubmissionsPage() {
         throw new Error('No token UTxO found for this membership intent');
       }
 
-      // Find oracle UTxO
       const oracleUtxos = await blockfrost.fetchUTxOs(
         ORACLE_TX_HASH,
         ORACLE_OUTPUT_INDEX,
@@ -170,7 +168,6 @@ export default function IntentSubmissionsPage() {
       );
 
       if (result?.txHex) {
-        // Compute transaction hash from the transaction hex
         const txHash = resolveTxHash(result.txHex);
 
         if (txHash) {
@@ -183,18 +180,15 @@ export default function IntentSubmissionsPage() {
       }
     } catch (error) {
       console.error('Error updating membership intent metadata:', error);
-      // You might want to show an error toast or message here
       throw error;
     }
   };
 
   const handleTransactionConfirmed = useCallback(
     async (result: TransactionConfirmationResult) => {
-      // Clear transaction state first to prevent re-triggering
       setIsTransactionPending(false);
       setTransactionHash(null);
 
-      // Invalidate cache before syncing to ensure fresh data
       try {
         await fetch('/api/revalidate', {
           method: 'POST',
@@ -208,7 +202,6 @@ export default function IntentSubmissionsPage() {
         console.error('Cache invalidation error:', error);
       }
 
-      // Delay data refresh to allow blockchain to settle and cache to clear
       setTimeout(() => {
         syncData('membership_intent');
       }, 2000);
@@ -218,11 +211,9 @@ export default function IntentSubmissionsPage() {
 
   const handleTransactionTimeout = useCallback(
     async (result: TransactionConfirmationResult) => {
-      // Clear transaction state first
       setIsTransactionPending(false);
       setTransactionHash(null);
 
-      // Invalidate cache before syncing (transaction might have gone through)
       try {
         await fetch('/api/revalidate', {
           method: 'POST',
@@ -236,7 +227,6 @@ export default function IntentSubmissionsPage() {
         console.error('Cache invalidation error:', error);
       }
 
-      // Still refresh data as transaction might have gone through
       setTimeout(() => {
         syncData('membership_intent');
       }, 2000);
@@ -320,7 +310,7 @@ export default function IntentSubmissionsPage() {
                   journey to become a Cardano Ambassador by submitting your
                   application.
                 </Paragraph>
-                <Paragraph className="text-muted-foreground mb-6 text-sm">
+                <Paragraph className="text-muted-foreground mb-6 ">
                   Just submitted an application? Click the refresh button above
                   to check for your latest submission.
                 </Paragraph>

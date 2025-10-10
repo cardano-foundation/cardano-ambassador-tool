@@ -29,7 +29,11 @@ const Copyable = ({
             className={`${link.length ? 'hover:cursor-pointer' : 'hover:cursor-not-allowed'}`}
             rel="noreferrer"
           >
-            <ExternalLink className="text-neutral size-4" />
+            {
+              link && (
+                <ExternalLink className="text-neutral size-4" />
+              )
+            }
           </a>
         </span>
       </div>

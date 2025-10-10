@@ -2,17 +2,20 @@
 
 import MemberDataComponent from '@/app/manage/memberships/_components/MemberDataComponent';
 import Timeline from '@/components/atoms/Timeline';
-import { parseMembershipIntentDatum } from '@/utils';
+import { findAdminsFromOracle } from '@/lib/auth/roles';
+import {
+  extractRequiredSigners,
+  extractWitnesses,
+  parseMembershipIntentDatum,
+  storageApiClient,
+} from '@/utils';
 import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
-import { AdminDecisionData, TimelineStep, Utxo } from '@types';
+import { AdminDecision, AdminDecisionData, TimelineStep, Utxo } from '@types';
 import { useEffect, useState } from 'react';
-import Button from '../atoms/Button';
 import Paragraph from '../atoms/Paragraph';
 import Title from '../atoms/Title';
-import ApproveReject from '../RejectApprove';
 import MultisigProgressTracker from '../SignatureProgress/MultisigProgressTracker';
 
-// Extend MemberData to include txHash
 type ExtendedMemberData = MemberData & {
   txHash?: string;
 };
@@ -31,13 +34,8 @@ const OwnerMembershipTimeline = ({
   const [isSaving, setIsSaving] = useState(false);
   const [adminDecisionData, setAdminDecisionData] =
     useState<AdminDecisionData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Handle admin decision updates
-  const handleAdminDecisionUpdate = (data: AdminDecisionData | null) => {
-    setAdminDecisionData(data);
-  };
-
-  // Parse membership data when intentUtxo changes
   useEffect(() => {
     if (intentUtxo?.plutusData) {
       const parsed = parseMembershipIntentDatum(intentUtxo.plutusData);
@@ -77,13 +75,87 @@ const OwnerMembershipTimeline = ({
 
       await onSave(memberData);
 
-      // Update local state with saved data
       setMembershipData((prev) => (prev ? { ...prev, ...updatedData } : null));
     } catch (error) {
       console.error('Error saving member data:', error);
     } finally {
       setIsSaving(false);
     }
+  };
+
+  useEffect(() => {
+    async function loadAdminDecision() {
+      setLoading(true);
+      try {
+        const decision = await storageApiClient.get<AdminDecision>(
+          intentUtxo!.txHash,
+          'submissions',
+        );
+
+        if (!decision) {
+          throw new Error('Could not fetch admin decision.');
+        }
+
+        const signers = extractWitnesses(decision.signedTx);
+        const selectedAdmins = extractRequiredSigners(decision.signedTx);
+
+        const adminData = await findAdminsFromOracle();
+
+        if (!adminData) {
+          console.error('Could not fetch admin data from oracle');
+          return;
+        }
+
+        const adminDecision: AdminDecisionData = {
+          ...decision,
+          signers: signers || [],
+          selectedAdmins: selectedAdmins || [],
+          minRequiredSigners: Number(adminData.minsigners),
+          totalSigners: (signers || []).length,
+        };
+
+        setAdminDecisionData(adminDecision);
+      } catch (error) {
+        console.error('Failed to load admin decision:', error);
+        setAdminDecisionData(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (intentUtxo?.txHash) {
+      loadAdminDecision();
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const getSignedCount = () => {
+    if (!adminDecisionData?.selectedAdmins || !adminDecisionData?.signers) return 0;
+    return adminDecisionData.selectedAdmins.filter(admin => 
+      adminDecisionData.signers.includes(admin)
+    ).length;
+  };
+
+  const signatureRequirementsMet = () => {
+    if (!adminDecisionData) return false;
+    const signedCount = getSignedCount();
+    return signedCount >= adminDecisionData.selectedAdmins.length;
+  };
+
+  const getEditApplicationStatus = () => {
+    return membershipData ? 'completed' : 'pending';
+  };
+
+  const getMultisigApprovalStatus = () => {
+    if (!adminDecisionData?.decision) return 'pending';
+    if (signatureRequirementsMet()) return 'completed';
+    return 'current';
+  };
+
+  const getMembershipActivatedStatus = () => {
+    if (signatureRequirementsMet()) return 'current';
+    return 'pending';
   };
 
   const applicationProgress: TimelineStep[] = [
@@ -96,75 +168,32 @@ const OwnerMembershipTimeline = ({
             readonly={false}
             membershipData={membershipData}
             onSave={handleMemberDataSave}
-            // isLoading={isSaving}
           />
         </div>
       ),
-      status: 'completed',
+      status: getEditApplicationStatus(),
     },
     {
       id: 'multisig-approval',
-      title: 'Final Approval',
+      title: 'Multisig Approval',
       content: (
-        <div className='hidden'>
-          <MultisigProgressTracker
-            txhash={intentUtxo?.txHash}
-            adminDecisionData={adminDecisionData}
-          />
-        </div>
+        <MultisigProgressTracker
+          txhash={intentUtxo?.txHash}
+          adminDecisionData={adminDecisionData}
+        />
       ),
-      status: 'current',
+      status: getMultisigApprovalStatus(),
     },
-    // {
-    //   id: 'admin-review',
-    //   title: 'Admin Review',
-    //   content: (
-    //     <div className="hidden">
-    //       <ApproveReject
-    //         intentUtxo={intentUtxo}
-    //         context={'MembershipIntent'}
-    //         onDecisionUpdate={handleAdminDecisionUpdate}
-    //       />
-    //     </div>
-    //   ),
-    //   status: 'current',
-    // },
     {
       id: 'membership-activated',
-      title: 'Welcome to Cardano!',
-      content: (
-        <Paragraph size="base" className="">
-          🎉 Your membership has been activated! Welcome to the Cardano
-          Ambassador community.
-        </Paragraph>
-      ),
-      status: 'pending',
-    },
-    {
-      id: 'what-next',
-      title: "What's Next?",
-      content: (
-        <div className="space-y-3">
-          <Paragraph size="base" className="">
-            Update your profile so you are discoverable.
-          </Paragraph>
-          <Button
-            variant="primary"
-            onClick={() => {}}
-            disabled={true}
-            className="flex-1"
-            size="sm"
-          >
-            View profile
-          </Button>
-        </div>
-      ),
-      status: 'pending',
+      title: 'Membership Activated',
+      content: <div></div>,
+      status: getMembershipActivatedStatus(),
     },
   ];
 
   return (
-    <div className="max-w-4xl  space-y-6">
+    <div className="max-w-4xl space-y-6">
       {membershipData && (
         <div className="space-y-2">
           <Title level="2" className="text-xl sm:text-2xl">

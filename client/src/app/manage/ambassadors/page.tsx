@@ -3,133 +3,120 @@
 import Button from '@/components/atoms/Button';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
+import UserAvatar from '@/components/atoms/UserAvatar';
 import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
-import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context/AppContext';
-import { parseMembershipIntentDatum } from '@/utils';
+import { parseMemberDatum } from '@/utils';
 import Link from 'next/link';
 
 export default function ManageAmbassadorsPage() {
   const { members, dbLoading } = useApp();
 
   if (dbLoading) {
-    return <div className="p-4">Loading membership intents...</div>;
+    return <div className="p-4">Loading ambassadors...</div>;
   }
 
-  if (!members.length) {
-    return <div className="p-4">No membership intents found.</div>;
+  if (!members || members.length === 0) {
+    return <div className="p-4">No Ambassadors Found</div>;
   }
 
   const decodedUtxos = members
-    .map((utxo, idx) => {
+    ?.map((utxo: any) => {
       const decodedDatum: {
         fullName: string;
         displayName: string;
-        email: string;
+        country: string;
         address: string;
-        bio: string;
-        index?: number;
+        utxoHash: any;
       } = {
         fullName: '',
         displayName: '',
-        email: '',
+        country: '',
+        utxoHash: '',
         address: '',
-        bio: '',
       };
 
       if (utxo.plutusData) {
-        const parsed = parseMembershipIntentDatum(utxo.plutusData);
+        const { member } = parseMemberDatum(utxo.plutusData)!;
 
-        if (parsed && parsed.metadata) {
-          decodedDatum['fullName'] = parsed.metadata.fullName!;
-          decodedDatum['displayName'] = parsed.metadata.displayName!;
-          decodedDatum['email'] = parsed.metadata.emailAddress!;
-          decodedDatum['address'] = parsed.metadata.walletAddress!;
-          decodedDatum['bio'] = parsed.metadata.bio!;
-          decodedDatum['index'] = idx;
+        const memberMetadata = member.metadata;
+
+        if (member && memberMetadata) {
+          decodedDatum['fullName'] = memberMetadata.fullName!;
+          decodedDatum['displayName'] = memberMetadata.displayName!;
+          decodedDatum['country'] = memberMetadata.country!;
+          decodedDatum['address'] = memberMetadata.walletAddress!;
+          decodedDatum['utxoHash'] = utxo?.txHash!;
         }
-      }
 
+        console.log(memberMetadata.walletAddress);
+        
+      }
       return { ...utxo, ...decodedDatum };
     })
     .filter((utxo) => utxo.address && utxo.address.trim() !== '');
 
+  const getCountryFlag = (code: string): string => {
+    if (!code) return 'https://flagcdn.com/w40/un.png';
+    return `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
+  };
+
+  const ambassadorId = (name: string) => {
+    return name.toLowerCase().replace(/\s+/g, '');
+  };
+
   const columns: ColumnDef<(typeof decodedUtxos)[number]>[] = [
     {
-      header: '#',
-      accessor: 'index',
-      sortable: true,
-      cell: (value: string) => (
-        <span className="text-neutral font-normal">{value}</span>
-      ),
-    },
-    {
-      header: 'Tx Hash',
-      accessor: 'txHash',
-      sortable: false,
-      // copyable: true,
-      cell: (value: string) => (
-        <Copyable
-          withKey={false}
-          link={`${getCurrentNetworkConfig().explorerUrl}/transaction/${value}`}
-          value={value}
-          keyLabel={''}
-        />
-      ),
-    },
-    {
-      header: 'Address',
-      accessor: 'address',
-      sortable: false,
-      // copyable: true,
-      cell: (value: string) => (
-        <Copyable
-          withKey={false}
-          link={`${getCurrentNetworkConfig().explorerUrl}/address/${value}`}
-          value={value}
-          keyLabel={''}
-        />
-      ),
-    },
-    {
-      header: 'Full Name',
+      header: 'Ambassador',
       accessor: 'fullName',
       sortable: true,
-      cell: (value: string) => (
-        <span className="text-neutral font-normal">{value}</span>
+      cell: (value: string, row: any) => (
+        <div className="flex items-center gap-2">
+          <UserAvatar size="size-10" name={value} />
+          <p className="flex flex-col gap-1">
+            <span className="font-sm font-bold">{value}</span>
+            <span className="text-neutral font-normal">{row?.displayName}</span>
+          </p>
+        </div>
       ),
     },
     {
-      header: 'Email',
-      accessor: 'email',
+      header: 'Country',
+      accessor: 'country',
       sortable: true,
       cell: (value: string) => (
-        <span className="text-neutral font-normal">{value}</span>
+        <div>
+          <img
+            src={getCountryFlag(value)}
+            alt={value}
+            className="mr-2 inline size-6 rounded-full"
+          />
+          <span className="text-neutral font-normal">{value}</span>
+        </div>
       ),
     },
     {
-      header: 'Bio',
-      accessor: 'bio',
-      sortable: true,
+      header: 'Utxo Hash',
+      accessor: 'utxoHash',
+      sortable: false,
       cell: (value: string) => (
-        <span className="text-neutral truncate font-medium text-ellipsis">
-          {value}
-        </span>
+        <Copyable withKey={false} value={value} keyLabel={''} />
       ),
     },
     {
       header: 'Action',
-      sortable: true,
-      copyable: true,
-      accessor: 'txHash',
-      cell: (value: string) => (
-        <Link href={`/manage/memberships/${value}`}>
-          <Button variant={'primary'} size="sm" className="text-nowrap">
-            {'View intent'}
-          </Button>
-        </Link>
-      ),
+      accessor: 'fullName',
+      cell: (value: string, row: any) => {
+        const name = row.displayName || value;
+        return (
+          <Link href={`/ambassadors/${ambassadorId(name)}`}>
+            <Button variant="primary" size="sm" className="text-nowrap">
+              View Ambassador
+            </Button>
+          </Link>
+        );
+      },
     },
   ];
 
@@ -137,24 +124,22 @@ export default function ManageAmbassadorsPage() {
     <div className="space-y-4 px-4 py-2 pb-8 sm:space-y-6 sm:px-6">
       <div className="space-y-3 sm:space-y-4">
         <Title level="2" className="text-xl sm:text-2xl">
-          Membership intent
+          Manage Ambassadors
         </Title>
         <Paragraph
           size="base"
           className="text-muted-foreground max-w-4xl text-sm sm:text-base"
         >
-          Review and manage Membership intent requests submitted by users who
-          wish to become recognized ambassadors.
+          Review and manage Cardano ambassadors.
         </Paragraph>
       </div>
-      {/* Scrollable container */}
       <section className="w-full overflow-x-auto">
         <Table
           data={decodedUtxos}
           columns={columns}
           pageSize={10}
           searchable={true}
-          context="membership intents"
+          context="ambassadors"
         />
       </section>
     </div>

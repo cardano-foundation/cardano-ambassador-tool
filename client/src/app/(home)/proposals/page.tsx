@@ -17,7 +17,7 @@ export default function Page() {
   const proposal = mockProposal;
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
-  
+
   const descriptionEditorRef = useRef<any>(null);
   const impactEditorRef = useRef<any>(null);
   const objectivesEditorRef = useRef<any>(null);
@@ -161,7 +161,7 @@ export default function Page() {
               <div className="w-full border-b border-border">
                 <TopNav tabs={tabs} activeTabId={activeTab} onTabChange={setActiveTab} />
               </div>
-              
+
               <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
                 {activeTab === "details" && (
                   <FormDetails
@@ -202,7 +202,7 @@ export default function Page() {
                       </Button>
                     </div>
                   )}
-                  
+
                   <div className={activeTab === 'details' ? "w-full" : "w-3/4"}>
                     {activeTab !== 'review' ? (
                       <Button variant="primary"  onClick={() => handleTabNavigation('next')} className="w-full">

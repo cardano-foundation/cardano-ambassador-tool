@@ -3,16 +3,18 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { GoogleMap, MarkerF, useJsApiLoader } from '@react-google-maps/api';
 import { MapsIcon } from '@/components/atoms/MapsIcon';
+import { countries, getCityCoordinates } from '@/utils/locationData';
 import ReactDOMServer from 'react-dom/server';
 
-interface CountryMapProps {
+interface LocationMapProps {
+  city?: string | null;
   country?: string | null;
   className?: string;
 }
 
 const defaultCenter = { lat: 0, lng: 0 };
 
-export const CountryMap: React.FC<CountryMapProps> = ({ country, className = '' }) => {
+export const LocationMap: React.FC<LocationMapProps> = ({ city, country, className = '' }) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -51,22 +53,41 @@ export const CountryMap: React.FC<CountryMapProps> = ({ country, className = '' 
   }, [iconDataUrl]);
 
   useEffect(() => {
-  if (!isLoaded || !country) return;
+    if (city) {
+      const cityCoordinates = getCityCoordinates(city);
+      if (cityCoordinates) {
+        setCoordinates(cityCoordinates);
+        setError(null);
+        return;
+      }
+    }
 
-  const geocoder = new google.maps.Geocoder();
+    if (country) {
+      const cityCoordinates = getCityCoordinates(country);
+      if (cityCoordinates) {
+        setCoordinates(cityCoordinates);
+        setError(null);
+        return;
+      }
 
-  geocoder.geocode({ address: country }, (results, status) => {
-    if (status === 'OK' && results && results.length > 0) {
-      const loc = results[0].geometry.location;
-      setCoordinates({ lat: loc.lat(), lng: loc.lng() });
-      setError(null);
-    } else {
-      console.error('Geocode error:', status, country);
-      setError(`Unknown location: ${country}`);
+      const countryData = countries.find(
+        c => c.name.toLowerCase() === country.toLowerCase() ||
+             c.code.toLowerCase() === country.toLowerCase()
+      );
+
+      if (countryData) {
+        setCoordinates(countryData.coordinates);
+        setError(null);
+        return;
+      }
+    }
+
+    const locationName = city || country;
+    if (locationName) {
+      setError(`Unknown location: ${locationName}`);
       setCoordinates(null);
     }
-  });
-}, [isLoaded, country]);
+  }, [city, country]);
 
 
   const onLoad = useCallback((map: google.maps.Map) => setMap(map), []);
@@ -74,29 +95,29 @@ export const CountryMap: React.FC<CountryMapProps> = ({ country, className = '' 
 
   if (loadError) {
     return (
-      <div className={`flex items-center justify-center h-40 bg-gray-100 rounded-lg ${className}`}>
-        <div className="text-red-500">Error loading map</div>
+      <div className={`flex items-center justify-center h-40 bg-muted rounded-lg ${className}`}>
+        <div className="text-destructive">Error loading map</div>
       </div>
     );
   }
 
   if (!isLoaded) {
     return (
-      <div className={`flex items-center justify-center h-40 bg-gray-100 rounded-lg ${className}`}>
+      <div className={`flex items-center justify-center h-40 bg-muted rounded-lg ${className}`}>
       </div>
     );
   }
 
   if (error || !coordinates) {
     return (
-      <div className={`flex items-center justify-center h-40 bg-gray-100 rounded-lg ${className}`}>
-        <div>{error ?? `Unknown location: ${country ?? '—'}`}</div>
+      <div className={`flex items-center justify-center h-40 bg-muted rounded-lg ${className}`}>
+        <div className="text-muted-foreground">{error ?? `Unknown location: ${city || country || '—'}`}</div>
       </div>
     );
   }
 
   return (
-    <div className={`mt-6 rounded-lg border border-border/40 overflow-hidden z-0 ${className}`}>
+    <div className={`mt-6 rounded-lg border border-border overflow-hidden z-0 ${className}`}>
       <GoogleMap
         mapContainerClassName="h-40 w-full"
         center={coordinates ?? defaultCenter}

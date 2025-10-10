@@ -30,7 +30,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
 }) => {
   return (
     <Card>
-      <CardContent className="p-3 sm:p-4 lg:p-4">
+      <CardContent className="">
         <div className="border-border/60 block border-b pb-3 sm:hidden">
           <Title level="6" className="text-neutral mb-2 text-base">
             Recent Activities

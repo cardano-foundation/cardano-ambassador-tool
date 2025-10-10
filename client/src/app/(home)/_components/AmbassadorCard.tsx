@@ -3,6 +3,7 @@ import Card, { CardContent } from '@/components/atoms/Card';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import UserAvatar from '@/components/atoms/UserAvatar';
+import { getCountryFlag } from '@/utils';
 import { Ambassador } from '@types';
 import Link from 'next/link';
 
@@ -15,51 +16,8 @@ export default function AmbassadorCard({
 }) {
   const ambassadorId =
     ambassador.username || ambassador.name.toLowerCase().replace(/\s+/g, '');
-  const getCountryFlag = (country: string) => {
-    const flags: { [key: string]: string } = {
-      Argentina: '🇦🇷',
-      Romania: '🇷🇴',
-      Indonesia: '🇮🇩',
-      Norway: '🇳🇴',
-      Ghana: '🇬🇭',
-      Germany: '🇩🇪',
-      DRC: '🇨🇩',
-      Scotland: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
-      'United States': '🇺🇸',
-      Kazakhstan: '🇰🇿',
-      Poland: '🇵🇱',
-      Venezuela: '🇻🇪',
-      Netherlands: '🇳🇱',
-      Italy: '🇮🇹',
-      Brazil: '🇧🇷',
-      UAE: '🇦🇪',
-      Singapore: '🇸🇬',
-      France: '🇫🇷',
-      Japan: '🇯🇵',
-      Ireland: '🇮🇪',
-      Spain: '🇪🇸',
-      Nigeria: '🇳🇬',
-      'United Kingdom': '🇬🇧',
-      India: '🇮🇳',
-      Sweden: '🇸🇪',
-      'Czech Republic': '🇨🇿',
-      Mexico: '🇲🇽',
-      Russia: '🇷🇺',
-      Canada: '🇨🇦',
-      Morocco: '🇲🇦',
-      'South Korea': '🇰🇷',
-      Ukraine: '🇺🇦',
-      Austria: '🇦🇹',
-      Slovakia: '🇸🇰',
-      China: '🇨🇳',
-      Colombia: '🇨🇴',
-      Egypt: '🇪🇬',
-      'New Zealand': '🇳🇿',
-      Tunisia: '🇹🇳',
-      Australia: '🇦🇺',
-    };
-    return flags[country] || '🌍';
-  };
+
+  const displayFlag = getCountryFlag(ambassador.country);
 
   if (isListView) {
     return (
@@ -74,9 +32,7 @@ export default function AmbassadorCard({
               {ambassador.name}
             </Title>
             <div className="mt-1 flex items-center gap-2">
-              <span className="text-xs sm:text-sm">
-                {getCountryFlag(ambassador.country)}
-              </span>
+              <span className="text-xs sm:text-sm">{displayFlag}</span>
               <Paragraph size="sm" className="text-muted-foreground truncate">
                 {ambassador.country}
               </Paragraph>
@@ -110,9 +66,7 @@ export default function AmbassadorCard({
           {ambassador.name}
         </Title>
         <div className="flex items-center justify-center gap-2">
-          <span className="text-base sm:text-lg">
-            {getCountryFlag(ambassador.country)}
-          </span>
+          <span className="text-base sm:text-lg">{displayFlag}</span>
           <Paragraph size="sm" className="text-muted-foreground">
             {ambassador.country}
           </Paragraph>
