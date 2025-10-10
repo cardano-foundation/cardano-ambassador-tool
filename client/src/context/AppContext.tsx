@@ -107,7 +107,6 @@ const AppContext = createContext<AppContextValue>({
   proposalIntents: [],
   members: [],
   proposals: [],
-  ambassadors: [],
   syncData: () => {},
   syncAllData: () => {},
   query: () => [],
