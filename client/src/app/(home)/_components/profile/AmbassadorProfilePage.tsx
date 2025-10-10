@@ -123,7 +123,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
     <div className="bg-background min-h-screen max-w-full">
       <ProfileHeader profile={displayProfile} isLoading={forumLoading} />
 
-      <div className="block p-4 lg:grid lg:grid-cols-[320px_1fr] lg:items-start lg:gap-6 lg:p-6">
+      <div className="block p-6 lg:grid lg:grid-cols-[320px_1fr] lg:items-start lg:gap-6 ">
         <div className="w-full lg:sticky lg:top-0 lg:z-20 lg:w-auto">
           <ProfileSidebar
             profile={{

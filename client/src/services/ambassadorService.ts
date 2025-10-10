@@ -1,5 +1,5 @@
-// forumService.ts
 import { NormalizedUser } from '@types';
+import { unstable_cache } from 'next/cache';
 import axios from 'axios';
 
 const SUMMARY_URL = 'https://forum.cardano.org/u/{username}/summary.json';
@@ -36,7 +36,7 @@ async function fetchJson(url: string) {
   }
 }
 
-export async function getUserProfile(
+async function getUserProfileUncached(
   ambassador: Ambassador,
 ): Promise<NormalizedUser> {
   const username = ambassador.username;
@@ -83,7 +83,6 @@ export async function getUserProfile(
     badges: [],
   };
 
-  // --- top topics ---
   const sortedTopics = [...topicsRaw]
     .sort(
       (a, b) =>
@@ -99,7 +98,6 @@ export async function getUserProfile(
     created_at: t.created_at,
   }));
 
-  // --- top replies ---
   const topicLookup: Record<string, any> = {};
   topicsRaw.forEach((t: any) => (topicLookup[t.id] = t));
   const sortedReplies = [...repliesRaw]
@@ -116,7 +114,6 @@ export async function getUserProfile(
     created_at: r.created_at,
   }));
 
-  // --- activities mashup ---
   const activities: any[] = [];
   for (const r of repliesRaw) {
     const topic = topicLookup[r.topic_id] || {};
@@ -158,7 +155,6 @@ export async function getUserProfile(
     .sort((a, b) => (b.created_at ?? '').localeCompare(a.created_at ?? ''))
     .slice(0, 5);
 
-  // --- badges ---
   const badgeLookup: Record<string, any> = {};
   badgesRaw.forEach((b: any) => (badgeLookup[b.id] = b));
   profile.badges = userBadgesRaw
@@ -176,4 +172,21 @@ export async function getUserProfile(
     .filter(Boolean);
 
   return profile;
+}
+
+export const getUserProfile = (ambassador: Ambassador) =>
+  unstable_cache(
+    async () => getUserProfileUncached(ambassador),
+    ['forum-profile', ambassador.username],
+    {
+      revalidate: 1800,
+      tags: [`forum-${ambassador.username}`, 'all-forum-profiles'],
+    }
+  )();
+
+export { getUserProfileUncached };
+
+export async function invalidateUserProfileCache(username: string) {
+  const { revalidateTag } = await import('next/cache');
+  revalidateTag(`forum-${username}`);
 }

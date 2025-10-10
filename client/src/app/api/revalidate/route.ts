@@ -2,32 +2,25 @@ import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 type RevalidateRequestBody = {
-  tags?: string[]; // Specific tags to revalidate
-  allUtxos?: boolean; // Revalidate all UTxOs
-  oracleAdmins?: boolean; // Revalidate oracle admins
-  oracleUtxo?: boolean; // Revalidate oracle UTxO
-  allOracle?: boolean; // Revalidate all oracle data (UTxO + admins)
+  tags?: string[];
+  allUtxos?: boolean;
+  oracleAdmins?: boolean;
+  oracleUtxo?: boolean;
+  allOracle?: boolean;
+  allForumProfiles?: boolean;
+  forumProfile?: string;
 };
 
-/**
- * POST /api/revalidate
- * 
+/** 
  * Manual cache invalidation endpoint
- * 
- * Examples:
- * - Invalidate all UTxOs: { "allUtxos": true }
- * - Invalidate oracle admins: { "oracleAdmins": true }
- * - Invalidate oracle UTxO: { "oracleUtxo": true }
- * - Invalidate all oracle data: { "allOracle": true }
- * - Invalidate specific tags: { "tags": ["utxos-addr1...", "oracle-admins"] }
+ *
  */
 export async function POST(req: NextRequest) {
   try {
     const body: RevalidateRequestBody = await req.json();
 
-    const { tags, allUtxos, oracleAdmins, oracleUtxo, allOracle } = body;
+    const { tags, allUtxos, oracleAdmins, oracleUtxo, allOracle, allForumProfiles, forumProfile } = body;
 
-    // Track what was revalidated
     const revalidated: string[] = [];
 
     // Revalidate specific tags
@@ -63,6 +56,18 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Revalidate all forum profiles
+    if (allForumProfiles) {
+      revalidateTag('all-forum-profiles');
+      revalidated.push('all-forum-profiles');
+    }
+
+    // Revalidate specific forum profile
+    if (forumProfile) {
+      revalidateTag(`forum-${forumProfile}`);
+      revalidated.push(`forum-${forumProfile}`);
+    }
+
     return NextResponse.json(
       {
         success: true,
@@ -70,7 +75,7 @@ export async function POST(req: NextRequest) {
         revalidated,
         timestamp: new Date().toISOString(),
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error('Revalidation error:', error);
@@ -79,7 +84,7 @@ export async function POST(req: NextRequest) {
         success: false,
         error: 'Failed to revalidate cache',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

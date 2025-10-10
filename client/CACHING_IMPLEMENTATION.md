@@ -27,6 +27,14 @@ The application now implements comprehensive caching for blockchain data to impr
 - **Cache Keys**: `['address-utxos', <address>]` (unique per address)
 - **Cache Tags**: `['utxos-<address>', 'all-utxos']`
 
+### 4. Forum Profile Data
+- **Function**: `getUserProfile()`
+- **Location**: `src/services/ambassadorService.ts`
+- **API**: `/api/member/[username]`
+- **Cache Duration**: 30 minutes (1,800 seconds)
+- **Cache Keys**: `['forum-profile', <username>]` (unique per username)
+- **Cache Tags**: `['forum-<username>', 'all-forum-profiles']`
+
 ## Architecture
 
 ```
@@ -68,6 +76,7 @@ The application now implements comprehensive caching for blockchain data to impr
 - **Oracle UTxO**: Every 24 hours
 - **Oracle Admins**: Every 24 hours
 - **UTxOs**: Every 1 hour
+- **Forum Profiles**: Every 30 minutes
 
 ### Manual Revalidation (Hard Refresh)
 
@@ -77,7 +86,8 @@ Located on: `/dashboard/submissions` page
 The refresh button now:
 1. Invalidates all UTxO caches
 2. Invalidates all oracle data (UTxO + admins)
-3. Triggers worker sync for fresh data
+3. Invalidates forum profile caches
+4. Triggers worker sync for fresh data
 
 ```typescript
 // Automatically handled when user clicks refresh button
@@ -86,13 +96,14 @@ handleRefresh(); // Invalidates cache + syncs data
 
 #### Method 2: Direct API Call
 ```typescript
-// Invalidate all UTxOs and all oracle data
+// Invalidate all UTxOs, oracle data, and forum profiles
 await fetch('/api/revalidate', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ 
     allUtxos: true,
-    allOracle: true 
+    allOracle: true,
+    allForumProfiles: true 
   }),
 });
 
@@ -102,7 +113,8 @@ await fetch('/api/revalidate', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ 
     oracleUtxo: true,  
-    oracleAdmins: true 
+    oracleAdmins: true,
+    forumProfile: 'username' 
   }),
 });
 ```
@@ -113,7 +125,7 @@ await fetch('/api/revalidate', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ 
-    tags: ['utxos-addr1xyz...', 'oracle-admins', 'oracle-utxo'] 
+    tags: ['utxos-addr1xyz...', 'oracle-admins', 'forum-username', 'all-forum-profiles'] 
   }),
 });
 ```
@@ -137,15 +149,56 @@ Fetches UTxOs for a given context with caching support.
 UTxO[] // Array of UTxO objects
 ```
 
-### 2. `/api/revalidate` (POST)
+### 3. `/api/member/[username]` (GET)
+Fetches forum profile data for a specific user with caching support.
+
+**Query Parameters:**
+- `forceRefresh=true` - Bypass cache and fetch fresh data
+
+**Response:**
+```typescript
+{
+  href: string;
+  username: string;
+  name: string;
+  bio_excerpt: string;
+  country: string;
+  flag: string;
+  avatar: string;
+  created_at: string;
+  summary: {
+    stats: {
+      topics_entered: number;
+      posts_read_count: number;
+      days_visited: number;
+      likes_given: number;
+      likes_received: number;
+      topics_created: number;
+      replies_created: number;
+      time_read: number;
+      recent_time_read: number;
+    };
+    top_replies: Array<{...}>;
+    top_topics: Array<{...}>;
+  };
+  activities: Array<{...}>;
+  badges: Array<{...}>;
+}
+```
+
+### 4. `/api/revalidate` (POST)
 Manually invalidates cache tags.
 
 **Request Body:**
 ```typescript
 {
-  allUtxos?: boolean,       // Revalidate all UTxO caches
-  oracleAdmins?: boolean,   // Revalidate oracle admin cache
-  tags?: string[]           // Specific cache tags to revalidate
+  allUtxos?: boolean,           // Revalidate all UTxO caches
+  allOracle?: boolean,          // Revalidate all oracle data
+  oracleAdmins?: boolean,       // Revalidate oracle admin cache
+  oracleUtxo?: boolean,         // Revalidate oracle UTxO cache
+  allForumProfiles?: boolean,   // Revalidate all forum profile caches
+  forumProfile?: string,        // Revalidate specific forum profile (username)
+  tags?: string[]               // Specific cache tags to revalidate
 }
 ```
 
@@ -164,12 +217,14 @@ Manually invalidates cache tags.
 ### Before Caching
 - **Oracle Admin Fetch**: ~500ms - 2s per request
 - **UTxO Fetch**: ~300ms - 1.5s per address
-- **Cost**: Every request hits Blockfrost API
+- **Forum Profile Fetch**: ~800ms - 3s per profile
+- **Cost**: Every request hits external APIs (Blockfrost + Forum)
 - **User Experience**: Slower page loads, waiting spinners
 
 ### After Caching
 - **Oracle Admin Fetch (cached)**: <10ms
 - **UTxO Fetch (cached)**: <10ms
+- **Forum Profile Fetch (cached)**: <10ms
 - **Cost**: Minimal API calls (only on cache miss/expiry)
 - **User Experience**: Instant page loads, no waiting
 
@@ -230,6 +285,31 @@ const fetchAddressUTxOs = (address: string) =>
   )();
 ```
 
+### Forum Profile Caching
+
+```typescript
+// src/services/ambassadorService.ts
+
+// Internal uncached version
+async function getUserProfileUncached(ambassador: Ambassador): Promise<NormalizedUser> {
+  // Fetch from Cardano Forum API
+  const summaryRaw = await fetchJson(SUMMARY_URL.replace('{username}', ambassador.username));
+  const profileRaw = await fetchJson(PROFILE_URL.replace('{username}', ambassador.username));
+  // ... process and return profile data
+}
+
+// Cached version (default export)
+export const getUserProfile = (ambassador: Ambassador) =>
+  unstable_cache(
+    async () => getUserProfileUncached(ambassador),
+    ['forum-profile', ambassador.username],
+    {
+      revalidate: 1800, // 30 minutes
+      tags: [`forum-${ambassador.username}`, 'all-forum-profiles'],
+    }
+  )();
+```
+
 ## Usage Examples
 
 ### Fetching Cached Oracle Admins
@@ -265,6 +345,27 @@ const freshResponse = await fetch('/api/utxos', {
 });
 ```
 
+### Fetching Cached Forum Profiles
+
+```typescript
+// Normal fetch (uses cache)
+const response = await fetch('/api/member/username');
+const profile = await response.json();
+
+// Force fresh fetch (bypasses cache)
+const freshResponse = await fetch('/api/member/username?forceRefresh=true');
+const freshProfile = await freshResponse.json();
+
+// Using the hook
+const { profile, loading, error, refetch, hardRefresh } = useAmbassadorProfile('username');
+
+// Soft refresh (with cache)
+refetch();
+
+// Hard refresh (invalidates cache + fetches fresh)
+hardRefresh();
+```
+
 ### Manual Cache Refresh
 
 ```typescript
@@ -275,12 +376,26 @@ const handleHardRefresh = async () => {
     method: 'POST',
     body: JSON.stringify({ 
       allUtxos: true, 
-      oracleAdmins: true 
+      allOracle: true,
+      allForumProfiles: true 
     }),
   });
   
   // Then fetch fresh data
   syncData('membership_intent');
+};
+
+// For specific forum profile
+const handleForumRefresh = async (username: string) => {
+  await fetch('/api/revalidate', {
+    method: 'POST',
+    body: JSON.stringify({ 
+      forumProfile: username 
+    }),
+  });
+  
+  // Refetch the profile
+  refetch(true);
 };
 ```
 
@@ -306,6 +421,17 @@ const handleHardRefresh = async () => {
   revalidate: 3600,   // Current: 1 hour
   // revalidate: 1800,    // 30 minutes
   // revalidate: 7200,    // 2 hours
+  // revalidate: false,   // Never expire (manual only)
+}
+```
+
+**Forum Profiles:**
+```typescript
+// src/services/ambassadorService.ts
+{
+  revalidate: 1800,   // Current: 30 minutes
+  // revalidate: 900,     // 15 minutes
+  // revalidate: 3600,    // 1 hour
   // revalidate: false,   // Never expire (manual only)
 }
 ```
@@ -387,6 +513,9 @@ Potential improvements:
 
 - `src/lib/auth/roles.ts` - Oracle admin caching
 - `src/app/api/utxos/route.ts` - UTxO caching
+- `src/services/ambassadorService.ts` - Forum profile caching
+- `src/app/api/member/[username]/route.ts` - Forum profile API with caching
+- `src/hooks/useAmbassadorProfile.ts` - Forum profile hook with cache refresh
 - `src/app/api/revalidate/route.ts` - Cache invalidation API
 - `src/app/dashboard/submissions/page.tsx` - Refresh button implementation
 - `public/db-worker.js` - Worker that fetches cached data

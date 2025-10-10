@@ -32,7 +32,8 @@ export default function TopNavBar() {
           <div className="lg:hidden">
             <div className="mb-2 flex items-center justify-between">
               <div className="text-primary-base flex-shrink-0">
-                <CardanoIcon size={40} color="currentColor" />
+                {/* <CardanoIcon size={40} color="currentColor" /> */}
+                <AppLogo />
               </div>
               <Button
                 variant="outline"
@@ -121,7 +122,7 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
   return (
     <div className="bg-background flex h-screen w-full flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-6">
+      <div className="flex items-center justify-between lg:p-6 p-4">
         <AppLogo />
         <Button
           variant="outline"
