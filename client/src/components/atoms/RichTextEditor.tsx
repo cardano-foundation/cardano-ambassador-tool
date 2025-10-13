@@ -384,7 +384,7 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
           </button>
 
           {showLinkInput && (
-            <div className="absolute top-full left-0 z-50 mt-1 bg-background border border-gray-300 rounded-lg shadow-lg p-3 min-w-64">
+            <div className="absolute top-full left-0 z-50 mt-1 bg-background border border-border rounded-lg shadow-lg p-3 min-w-64">
               <div className="flex items-center gap-2 mb-2">
                 <input
                   type="url"
@@ -422,7 +422,7 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
           />
           <label
             htmlFor="image-upload"
-            className="p-2 rounded hover:bg-muted cursor-pointer"
+            className="p-2 rounded hover:bg-muted cursor-pointer text-neutral"
             title="Upload Image"
           >
             <ImageIcon className="w-4 h-4" />

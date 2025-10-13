@@ -45,8 +45,6 @@ export default function FormReview({ mode, formData, userAddress, proposalId = "
               )}
             </div>
           </div>
-
-          {/* Right column */}
           <div className="flex-1 space-y-7">
             <div className="space-y-1.5">
               <Paragraph size="xs" className="text-muted-foreground font-light">
