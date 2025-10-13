@@ -4,11 +4,11 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 interface RichTextDisplayProps {
-  content: string;
+  content?: string;
   className?: string;
 }
 
-const RichTextDisplay = ({ content, className = '' }: RichTextDisplayProps) => {
+const RichTextDisplay = ({ content='', className = '' }: RichTextDisplayProps) => {
   if (!content) {
     return <div className={`text-muted-foreground ${className}`}>Not specified</div>;
   }

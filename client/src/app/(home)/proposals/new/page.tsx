@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import Button from '@/components/atoms/Button';
 import Title from '@/components/atoms/Title';
 import TopNav from '@/components/Navigation/TabNav';
-import { useApp } from '@/context';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import { useApp } from '@/context';
+import { ProposalFormData } from '@/types/ProposalFormData';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
 import DetailsTab from './components/DetailsTab';
 import FundsTab from './components/FundsTab';
 import ReviewTab from './components/ReviewTab';
-import { ProposalFormData } from '@/types/ProposalFormData';
 
 export default function SubmitProposalPage() {
   const router = useRouter();
@@ -25,32 +25,29 @@ export default function SubmitProposalPage() {
   const budgetBreakdownEditorRef = useRef<any>(null);
   const impactOnEcosystemEditorRef = useRef<any>(null);
   const [formData, setFormData] = useState<ProposalFormData>({
+    id: '',
     title: '',
-    category: '',
     description: '',
-    impactToEcosystem: '',
-    objectives: '',
-    milestones: '',
-    impact: '',
-    budgetBreakdown: '',
     fundsRequested: '',
-    receiverWalletAddress: ''
+    receiverWalletAddress: '',
+    submittedBy: '',
+    submittedByAddress: '',
+    policyId: '',
   });
-
 
   const tabs = [
     { id: 'details', label: 'Details' },
     { id: 'funds', label: 'Funds' },
-    { id: 'review', label: 'Review' }
+    { id: 'review', label: 'Review' },
   ];
   if (!isAuthenticated) {
     return <SimpleCardanoLoader />;
   }
 
   const handleInputChange = (field: keyof ProposalFormData, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -61,20 +58,19 @@ export default function SubmitProposalPage() {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const submissionData = {
-      title: formData.title,
-      category: formData.category,
-      ...markdownData,
-      fundsRequested: formData.fundsRequested,
-      receiverWalletAddress: formData.receiverWalletAddress
-    };
+        title: formData.title,
+        ...markdownData,
+        fundsRequested: formData.fundsRequested,
+        receiverWalletAddress: formData.receiverWalletAddress,
+      };
 
-    console.log('Submitting proposal:', submissionData);
+      console.log('Submitting proposal:', submissionData);
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       router.push('/dashboard/submissions');
     } catch (error) {
       console.error('Error submitting proposal:', error);
@@ -85,26 +81,27 @@ export default function SubmitProposalPage() {
   };
 
   const handleNextTab = () => {
-  if (activeTab === 'details') {
-    const capturedMarkdown = {
-      description: descriptionEditorRef.current?.getMarkdown() || '',
-      impactToEcosystem: impactOnEcosystemEditorRef.current?.getMarkdown() || '',
-      objectives: objectivesEditorRef.current?.getMarkdown() || '',
-      milestones: milestonesEditorRef.current?.getMarkdown() || '',
-      impact: impactEditorRef.current?.getMarkdown() || '',
-      budgetBreakdown: budgetBreakdownEditorRef.current?.getMarkdown() || '',
-    };
-    setMarkdownData(capturedMarkdown);
-  }
+    if (activeTab === 'details') {
+      const capturedMarkdown = {
+        description: descriptionEditorRef.current?.getMarkdown() || '',
+        impactToEcosystem:
+          impactOnEcosystemEditorRef.current?.getMarkdown() || '',
+        objectives: objectivesEditorRef.current?.getMarkdown() || '',
+        milestones: milestonesEditorRef.current?.getMarkdown() || '',
+        impact: impactEditorRef.current?.getMarkdown() || '',
+        budgetBreakdown: budgetBreakdownEditorRef.current?.getMarkdown() || '',
+      };
+      setMarkdownData(capturedMarkdown);
+    }
 
-  const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
-  if (currentIndex < tabs.length - 1) {
-    setActiveTab(tabs[currentIndex + 1].id);
-  }
-};
+    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
+    if (currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1].id);
+    }
+  };
 
   const handlePreviousTab = () => {
-    const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
+    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
     if (currentIndex > 0) {
       setActiveTab(tabs[currentIndex - 1].id);
     }
@@ -115,7 +112,7 @@ export default function SubmitProposalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <div className="mb-8 text-center">
           <Title level="5" className="text-foreground">
@@ -123,7 +120,7 @@ export default function SubmitProposalPage() {
           </Title>
         </div>
         <div className="mb-8">
-          <div className="w-full border-b border-border">
+          <div className="border-border w-full border-b">
             <TopNav
               tabs={tabs}
               activeTabId={activeTab}
@@ -131,33 +128,29 @@ export default function SubmitProposalPage() {
             />
           </div>
         </div>
-        
-        <div className="rounded-lg border border-border bg-card p-6 shadow-sm ">
 
+        <div className="border-border bg-card rounded-lg border p-6 shadow-sm">
           <div className="mb-8">
-            {activeTab === "details" && (
-              <DetailsTab formData={formData}
-              handleInputChange={handleInputChange}
-              descriptionEditorRef={descriptionEditorRef}
-              impactEditorRef={impactEditorRef}
-              objectivesEditorRef={objectivesEditorRef}
-              milestonesEditorRef={milestonesEditorRef}
-              impactOnEcosystemEditorRef={impactOnEcosystemEditorRef}
-              budgetBreakdownEditorRef={budgetBreakdownEditorRef} />
+            {activeTab === 'details' && (
+              <DetailsTab
+                formData={formData}
+                handleInputChange={handleInputChange}
+                descriptionEditorRef={descriptionEditorRef}
+              />
             )}
 
-            {activeTab === "funds" && (
-              <FundsTab formData={formData}
-              handleInputChange={handleInputChange} />
+            {activeTab === 'funds' && (
+              <FundsTab
+                formData={formData}
+                handleInputChange={handleInputChange}
+              />
             )}
 
-            {activeTab === "review" && (
-              <ReviewTab formData={formData} />
-            )}
+            {activeTab === 'review' && <ReviewTab formData={formData} />}
           </div>
 
           {activeTab === 'details' ? (
-            <div className=" pt-6">
+            <div className="pt-6">
               <Button
                 variant="primary"
                 onClick={handleNextTab}
@@ -167,11 +160,11 @@ export default function SubmitProposalPage() {
               </Button>
             </div>
           ) : (
-            <div className="flex items-center justify-between pt-6 gap-4">
+            <div className="flex items-center justify-between gap-4 pt-6">
               {activeTab !== 'details' && (
-                <div className="w-1/4 text-primary-base">
-                  <Button 
-                    variant="outline" 
+                <div className="text-primary-base w-1/4">
+                  <Button
+                    variant="outline"
                     onClick={handlePreviousTab}
                     className="w-full"
                   >
@@ -179,8 +172,8 @@ export default function SubmitProposalPage() {
                   </Button>
                 </div>
               )}
-              
-              <div className={activeTab === 'details' ? "w-full" : "w-3/4"}>
+
+              <div className={activeTab === 'details' ? 'w-full' : 'w-3/4'}>
                 {activeTab !== 'review' ? (
                   <Button
                     variant="primary"

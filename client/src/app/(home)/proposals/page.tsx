@@ -19,11 +19,6 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState('details');
 
   const descriptionEditorRef = useRef<any>(null);
-  const impactEditorRef = useRef<any>(null);
-  const objectivesEditorRef = useRef<any>(null);
-  const milestonesEditorRef = useRef<any>(null);
-  const budgetBreakdownEditorRef = useRef<any>(null);
-  const impactOnEcosystemEditorRef = useRef<any>(null);
 
   const [formData, setFormData] = useState<ProposalData>(proposal);
 
@@ -68,7 +63,7 @@ export default function Page() {
   };
 
   return (
-    <div className="bg-background">
+    <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4">
         <div className="space-y-6">
           <div className="flex justify-between items-center">
@@ -139,18 +134,20 @@ export default function Page() {
 
           <div className="flex justify-between items-center">
             <Title level="5" className="text-foreground">Overview</Title>
-            <div className="flex gap-3">
+            <div className="flex gap-3 sm:gap-4">
               {isEditing ? (
                 <>
-                  <Button variant="outline" className='text-primary-base' size='sm' onClick={handleDiscardChanges}>
-                    Discard changes
-                  </Button>
+                  <div className="text-primary-base">
+                    <Button variant="outline"  onClick={handleDiscardChanges}>
+                      Discard Changes
+                    </Button>
+                  </div>
                   <Button variant="primary" size='sm' onClick={handleSaveChanges}>
                     Save proposal
                   </Button>
                 </>
               ) : (
-                <Button variant="primary" onClick={() => setIsEditing(true)}>
+                <Button variant="primary" size='sm' onClick={() => setIsEditing(true)}>
                   Edit Proposal
                 </Button>
               )}
@@ -169,11 +166,6 @@ export default function Page() {
                     formData={formData}
                     handleInputChange={handleInputChange}
                     descriptionEditorRef={descriptionEditorRef}
-                    impactEditorRef={impactEditorRef}
-                    objectivesEditorRef={objectivesEditorRef}
-                    milestonesEditorRef={milestonesEditorRef}
-                    impactOnEcosystemEditorRef={impactOnEcosystemEditorRef}
-                    budgetBreakdownEditorRef={budgetBreakdownEditorRef}
                   />
                 )}
 
@@ -223,25 +215,9 @@ export default function Page() {
                 <Title level="6" className="text-base text-foreground">Title</Title>
                 <RichTextDisplay content={proposal.title} className="text-foreground" />
               </div>
-              <div className="space-y-2.5">
+              <div className="space-y-6">
                 <Title level="6" className="text-foreground">Description</Title>
                 <RichTextDisplay content={proposal.description} className="text-foreground" />
-              </div>
-              <div className="space-y-2.5">
-                <Title level="6" className="text-foreground">Objectives</Title>
-                <RichTextDisplay content={proposal.objectives} className="text-foreground" />
-              </div>
-              <div className="space-y-2.5">
-                <Title level="6" className="text-foreground">Milestones</Title>
-                <RichTextDisplay content={proposal.milestones} className="text-foreground" />
-              </div>
-              <div className="space-y-2.5">
-                <Title level="6" className="text-foreground">Impact</Title>
-                <RichTextDisplay content={proposal.impact} className="text-foreground" />
-              </div>
-              <div className="space-y-2.5">
-                <Title level="6" className="text-foreground">Budget breakdown</Title>
-                <RichTextDisplay content={proposal.budgetBreakdown} className="text-foreground" />
               </div>
             </div>
           )}

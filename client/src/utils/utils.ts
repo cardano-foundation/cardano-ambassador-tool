@@ -201,11 +201,19 @@ export function parseMemberDatum(
     const completion: Map<ProposalData, number> = new Map();
     datum.fields[1].map.forEach(
       (item: { k: { fields: { bytes: string }[] }; v: { int: number } }) => {
-        completion.set(
+        return completion.set(
           {
-            projectDetails: hexToString(item.k.fields[0].bytes),
+            description: hexToString(item.k.fields[0].bytes),
+            title: '',
+            category: '',
+            impactToEcosystem: '',
+            objectives: '',
+            milestones: '',
+            budgetBreakdown: '',
+            fundsRequested: '',
+            receiverWalletAddress: ''
           },
-          Number(item.v.int),
+          Number(item.v.int)
         );
       },
     );
@@ -248,9 +256,15 @@ export function parseProposalDatum(
     }
     const metadataPlutus: ProposalMetadata = datum.fields[3];
     const metadata: ProposalData = {
-      projectDetails: hexToString(
-        (metadataPlutus.fields[0] as ByteString).bytes,
-      ),
+      description: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
+      title: '',
+      category: '',
+      impactToEcosystem: '',
+      objectives: '',
+      milestones: '',
+      budgetBreakdown: '',
+      fundsRequested: '',
+      receiverWalletAddress: ''
     };
     return { datum: datum as ProposalDatum, metadata };
   } catch (error) {

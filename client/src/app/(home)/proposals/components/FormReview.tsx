@@ -91,51 +91,6 @@ export default function FormReview({ mode, formData, userAddress, proposalId = "
               className="text-foreground"
             />
           </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Objectives
-            </Title>
-            <RichTextDisplay 
-              content={formData.objectives} 
-              className="text-foreground"
-            />
-          </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Impact to eco-system
-            </Title>
-            <RichTextDisplay 
-              content={formData.impactToEcosystem} 
-              className="text-foreground"
-            />
-          </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Milestones
-            </Title>
-            <RichTextDisplay 
-              content={formData.milestones} 
-              className="text-foreground"
-            />
-          </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Impact
-            </Title>
-            <RichTextDisplay 
-              content={formData.impact} 
-              className="text-foreground"
-            />
-          </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Budget breakdown
-            </Title>
-            <RichTextDisplay 
-              content={formData.budgetBreakdown} 
-              className="text-foreground"
-            />
-          </div>
         </div>
       </div>
     </div>
