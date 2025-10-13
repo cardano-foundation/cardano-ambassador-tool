@@ -46,7 +46,7 @@ export default function DetailsTab({
         placeholder="Cardano Podcast Series"
       />
 
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <Paragraph as="label" size="sm" className="text-muted-foreground">
           Proposal category
         </Paragraph>
@@ -56,7 +56,7 @@ export default function DetailsTab({
           options={PROPOSAL_CATEGORIES.map(cat => ({ label: cat, value: cat }))}
           placeholder="Category"
         />
-      </div>
+      </div> */}
       <div className="space-y-2">
         <Paragraph as="label" size="sm" className="text-muted-foreground">
           Description
@@ -68,7 +68,7 @@ export default function DetailsTab({
           placeholder="A proposal to launch a series of educational podcasts to increase Cardano awareness and adoption..."
         />
       </div>
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <Paragraph as="label" size="sm" className="text-muted-foreground">
           Objectives
         </Paragraph>
@@ -78,9 +78,9 @@ export default function DetailsTab({
           onChange={(value) => handleInputChange('objectives', value)}
           placeholder="• Increase awareness and understanding of the Cardano ecosystem among both new and existing users."
         />
-      </div>
+      </div> */}
 
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <Paragraph as="label" size="sm" className="text-muted-foreground">
           Impact to eco-system
         </Paragraph>
@@ -90,9 +90,9 @@ export default function DetailsTab({
           onChange={(value) => handleInputChange('impactToEcosystem', value)}
           placeholder="Describe the impact this proposal will have on the Cardano ecosystem..."
         />
-      </div>
+      </div> */}
 
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <Paragraph as="label" size="sm" className="text-muted-foreground">
           Milestones
         </Paragraph>
@@ -102,8 +102,8 @@ export default function DetailsTab({
           onChange={(value) => handleInputChange('milestones', value)}
           placeholder="• Increase awareness and understanding of the Cardano ecosystem among both new and existing users."
         />
-      </div>
-
+      </div> */}
+{/* 
       <div className="space-y-2">
         <Paragraph as="label" size="sm" className="text-muted-foreground">
           Impact
@@ -114,8 +114,8 @@ export default function DetailsTab({
           onChange={(value) => handleInputChange('impact', value)}
           placeholder="• Increase awareness and understanding of the Cardano ecosystem among both new and existing users."
         />
-      </div>
-      <div className="space-y-2">
+      </div> */}
+      {/* <div className="space-y-2">
         <Paragraph as="label" size="sm" className="text-muted-foreground">
           Budget Breakdown
         </Paragraph>
@@ -125,7 +125,7 @@ export default function DetailsTab({
           onChange={(value) => handleInputChange('budgetBreakdown', value)}
           placeholder="• Increase awareness and understanding of the Cardano ecosystem among both new and existing users."
         />
-      </div>
+      </div> */}
     </div>
   );
 }
