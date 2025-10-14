@@ -53,7 +53,7 @@ export default function Button({
         },
 
         {
-          'bg-primary-base hover:bg-primary-400 primary text-white':
+          'bg-primary-base hover:bg-primary-400 primary border-primary-base border-2 text-white':
             variant === 'primary',
           'bg-primary-50 text-primary-base border-primary-base secondary border-2':
             variant === 'secondary',

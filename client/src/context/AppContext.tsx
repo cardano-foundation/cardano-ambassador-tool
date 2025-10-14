@@ -7,15 +7,12 @@ import { useDatabase } from '@/hooks/useDatabase';
 import { Theme, useThemeManager } from '@/hooks/useThemeManager';
 import { User, useUserAuth } from '@/hooks/useUserAuth';
 import { useWalletManager } from '@/hooks/useWalletManager';
+import { parseMemberDatum, getCountryByCode } from '@/utils';
 import { WalletContextValue } from '@/types/wallet';
-import { IWallet, UTxO } from '@meshsdk/core';
-import {
-  Ambassador,
-  NetworkConfig,
-  NetworkValidationResult,
-  Utxo,
-} from '@types';
-import { createContext, useContext, useEffect } from 'react';
+import { IWallet } from '@meshsdk/core';
+import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
+import { NetworkConfig, NetworkValidationResult, Utxo } from '@types';
+import { createContext, useContext, useEffect, useMemo } from 'react';
 
 // ---------- Types ----------
 interface AppContextValue {
@@ -28,9 +25,13 @@ interface AppContextValue {
     authLoading: boolean,
   ) => null | undefined;
   shouldShowLoading: boolean;
-
-  // Wallet state (centralized)
   wallet: WalletContextValue;
+
+  // Member validation state
+  isMember: boolean;
+  memberValidationLoading: boolean;
+  memberUtxo: Utxo | null;
+  memberData: MemberData | null;
 
   // Database state
   dbLoading: boolean;
@@ -43,7 +44,7 @@ interface AppContextValue {
   syncAllData: () => void;
   query: <T = Record<string, unknown>>(sql: string, params?: any[]) => T[];
   getUtxosByContext: (contextName: string) => Utxo[];
-  findMembershipIntentUtxo: (address: string) => Promise<Utxo | null>
+  findMembershipIntentUtxo: (address: string) => Promise<Utxo | null>;
 
   // User state
   user: User;
@@ -99,6 +100,12 @@ const AppContext = createContext<AppContextValue>({
     clearError: () => {},
     refreshWalletList: async () => {},
   },
+
+  // Member validation defaults
+  isMember: false,
+  memberValidationLoading: true,
+  memberUtxo: null,
+  memberData: null,
 
   // Database defaults
   dbLoading: true,
@@ -162,23 +169,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     isAppLoading,
     isInitialLoad,
     updateLoadingState,
-    // Helper values
     shouldShowLoading,
   } = useAppLoading();
 
-  // Centralized wallet management
   const wallet = useWalletManager();
 
   const {
-    // State
     dbLoading,
     isSyncing,
     membershipIntents,
     proposalIntents,
     members,
     proposals,
-
-    // Operations
     syncData,
     syncAllData,
     query,
@@ -206,7 +208,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setTheme,
     toggleTheme,
     isThemeInitialized,
-    // Helper computed values
     isDark,
     isLight,
   } = useThemeManager();
@@ -218,7 +219,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     validateCurrentWallet,
     validateBeforeConnection,
     dismissNetworkError,
-    // Helper computed values
     isNetworkValid,
     hasNetworkError,
     networkErrorMessage,
@@ -227,6 +227,79 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     wallet: wallet.wallet,
     isConnected: wallet.isConnected,
   });
+
+  // Member validation logic
+  const memberValidation = useMemo(() => {
+    if (dbLoading || !wallet.address) {
+      return {
+        isMember: false,
+        memberValidationLoading: true,
+        memberUtxo: null,
+        memberData: null,
+      };
+    }
+
+    // Find member UTXO that belongs to the current user
+    const userMember = members.find((utxo) => {
+      if (!utxo.plutusData) return false;
+      try {
+        const parsed = parseMemberDatum(utxo.plutusData);
+        if (!parsed?.member?.metadata) return false;
+        return parsed.member.metadata.walletAddress === wallet.address;
+      } catch {
+        return false;
+      }
+    });
+
+    if (!userMember?.plutusData) {
+      return {
+        isMember: false,
+        memberValidationLoading: false,
+        memberUtxo: null,
+        memberData: null,
+      };
+    }
+
+    try {
+      const parsed = parseMemberDatum(userMember.plutusData);
+      if (!parsed?.member?.metadata) {
+        return {
+          isMember: false,
+          memberValidationLoading: false,
+          memberUtxo: null,
+          memberData: null,
+        };
+      }
+
+      const memberMetadata = parsed.member.metadata;
+      const countryData = memberMetadata.country
+        ? getCountryByCode(memberMetadata.country)
+        : null;
+      
+      return {
+        isMember: true,
+        memberValidationLoading: false,
+        memberUtxo: userMember,
+        memberData: {
+          walletAddress: memberMetadata.walletAddress,
+          fullName: memberMetadata.fullName || memberMetadata.displayName,
+          displayName: memberMetadata.displayName,
+          emailAddress: memberMetadata.emailAddress,
+          country: countryData?.name || memberMetadata.country || '',
+          city: memberMetadata.city || '',
+          bio: memberMetadata.bio || '',
+        } as MemberData,
+      };
+    } catch (error) {
+      console.error('Error parsing member data:', error);
+      return {
+        isMember: false,
+        memberValidationLoading: false,
+        memberUtxo: null,
+        memberData: null,
+      };
+    }
+  }, [members, wallet.address, dbLoading]);
 
   // Coordinate app loading state
   useEffect(() => {
@@ -245,12 +318,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Create the context value
   const contextValue: AppContextValue = {
-    // App loading
     isAppLoading: isAppLoading,
     isInitialLoad: isInitialLoad,
-
-    // Wallet
     wallet,
+
+    // Member validation
+    isMember: memberValidation.isMember,
+    memberValidationLoading: memberValidation.memberValidationLoading,
+    memberUtxo: memberValidation.memberUtxo,
+    memberData: memberValidation.memberData,
 
     // Database
     dbLoading,
@@ -274,7 +350,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     userAddress,
     userRoles,
     userWallet,
-    // Theme
     theme,
     setTheme,
     toggleTheme,

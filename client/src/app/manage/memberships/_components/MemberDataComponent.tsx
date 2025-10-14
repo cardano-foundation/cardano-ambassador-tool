@@ -1,6 +1,6 @@
 'use client';
 
-import LocationSelector from '@/app/(onboarding)/sign-up/components/LocationSelector';
+import LocationSelector from '@/app/(onboarding)/sign-up/_components/LocationSelector';
 import Button from '@/components/atoms/Button';
 import ForumUsernameInput from '@/components/atoms/ForumUsernameInput';
 import Input from '@/components/atoms/Input';
@@ -245,7 +245,7 @@ const MemberDataComponent = ({
   }, [membershipData]);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
+    <div className="mx-auto max-w-4xl space-y-4">
       {/* Error Accordion */}
       <ErrorAccordion
         isVisible={!!submitError}
@@ -412,8 +412,8 @@ const MemberDataComponent = ({
               <div className="flex-1">
                 <span className="block pt-2">
                   {membershipData?.country
-                    ? getCountryByCode(membershipData.country)?.name ??
-                      membershipData.country
+                    ? (getCountryByCode(membershipData.country)?.name ??
+                      membershipData.country)
                     : ''}
                 </span>
               </div>

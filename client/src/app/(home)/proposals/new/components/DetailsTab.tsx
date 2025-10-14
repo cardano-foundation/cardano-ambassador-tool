@@ -1,19 +1,16 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import FormDetails from '../../components/FormDetails';
 import { ProposalFormData } from '@/types/ProposalFormData';
+import FormDetails from '../../components/FormDetails';
 
 export default function DetailsTab({
   formData,
   handleInputChange,
   descriptionEditorRef,
-
 }: {
   formData: ProposalFormData;
   handleInputChange: (field: keyof ProposalFormData, value: string) => void;
   descriptionEditorRef: any;
-
 }) {
   return (
     <FormDetails
@@ -21,7 +18,6 @@ export default function DetailsTab({
       formData={formData}
       handleInputChange={handleInputChange}
       descriptionEditorRef={descriptionEditorRef}
-      
     />
   );
 }

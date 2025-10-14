@@ -2,16 +2,18 @@
 
 import { SingleRowStepper } from '@/components/atoms/Stepper';
 import { useApp } from '@/context/AppContext';
+import { useMemberValidation } from '@/hooks/useMemberValidation';
 import { findMembershipIntentUtxo } from '@/utils';
+import { UTxO } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import ConnectWallet from './components/ConnectWallet';
-import IntentExists from './components/IntentExists';
-import SelectToken from './components/SelectToken';
-import SubmissionSuccess from './components/SubmissionSuccess';
-import SubmitIntent from './components/SubmitIntent';
-import TokenNotFound from './components/TokenNotFound';
+import ConnectWallet from './_components/ConnectWallet';
+import IntentExists from './_components/IntentExists';
+import SelectToken from './_components/SelectToken';
+import SubmissionSuccess from './_components/SubmissionSuccess';
+import SubmitIntent from './_components/SubmitIntent';
+import TokenNotFound from './_components/TokenNotFound';
 
 function SignUp() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -24,21 +26,17 @@ function SignUp() {
   const [selectedAssetName, setSelectedAssetName] = useState<string | null>(
     null,
   );
+  const { memberData } = useMemberValidation();
 
-  const steps = [
-    {
-      name: 'Connect Wallet',
-      component: <ConnectWallet goNext={() => goNext()} />,
-      showProgress: true,
-    },
-    {
-      name: 'Intent Exists',
-      component: <IntentExists goBack={() => goBack()} />,
-      showProgress: true,
-    },
-    {
-      name: 'Pick Token',
-      component: walletAssets.length ? (
+  const [membershipIntent, setMembershipIntent] = useState<UTxO | null>(null);
+
+  const resolveStep2 = () => {
+    if (membershipIntent || memberData) {
+      return <IntentExists goBack={() => goBack()} />;
+    } else {
+      console.log({ walletAssets });
+      
+      return walletAssets.length ? (
         <SelectToken
           goNext={() => goNext()}
           goBack={() => goBack()}
@@ -49,7 +47,20 @@ function SignUp() {
         />
       ) : (
         <TokenNotFound />
-      ),
+      );
+    }
+  };
+
+  const steps = [
+    {
+      name: 'Connect Wallet',
+      component: <ConnectWallet goNext={() => goNext()} />,
+      showProgress: true,
+    },
+
+    {
+      name: 'Pick Token',
+      component: resolveStep2(),
       showProgress: !walletAssets.length,
     },
     {
@@ -93,18 +104,6 @@ function SignUp() {
   const goNext = async () => {
     setDirection(1);
 
-    if (currentStep === 0 && wallet) {
-      const userAddress = await wallet.getChangeAddress();
-      const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
-
-      if (membershipIntentUtxo) {
-        setCurrentStep(1);
-      } else {
-        setCurrentStep(2);
-      }
-      return;
-    }
-    
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
 
@@ -122,14 +121,22 @@ function SignUp() {
 
   useEffect(() => {
     const fetchAssets = async () => {
-      if (wallet && currentStep == 1) {
+      if (wallet) {
         const assets = await getAssetsDetails();
-
         setWalletAssets(assets);
       }
     };
 
+    const fetchMembership = async () => {
+      if (!wallet) return;
+      const userAddress = await wallet!.getChangeAddress();
+      if (!userAddress) return;
+      const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
+      setMembershipIntent(membershipIntentUtxo);
+    };
+
     fetchAssets();
+    fetchMembership();
   }, [address, wallet, currentStep]);
 
   async function getAssetsDetails() {

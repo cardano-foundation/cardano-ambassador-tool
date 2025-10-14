@@ -3,12 +3,17 @@
 import Card, { CardContent } from '@/components/atoms/Card';
 import AppLogo from '@/components/atoms/Logo';
 import SettingsIcon from '@/components/atoms/SettingsIcon';
-import Title from '@/components/atoms/Title';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { useApp } from '@/context';
 import { NavigationSection } from '@types';
-import { BookOpenTextIcon, GridIcon, HomeIcon, InfoIcon, SendIcon } from 'lucide-react';
+import {
+  BookOpenTextIcon,
+  GridIcon,
+  HomeIcon,
+  InfoIcon,
+  SendIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -19,7 +24,12 @@ const defaultNavigationSections: NavigationSection[] = [
   {
     items: [
       { id: 'home', label: 'Home', href: '/', icon: HomeIcon },
-      { id: 'proposals', label: 'Proposals', href: '/proposals', icon: ProposalIcon },
+      {
+        id: 'proposals',
+        label: 'Proposals',
+        href: '/proposals',
+        icon: ProposalIcon,
+      },
       { id: 'about', label: 'About', href: '/about', icon: InfoIcon },
       {
         id: 'ambassador',
@@ -124,12 +134,9 @@ const SideNav = () => {
           <div key={i}>
             {section.title && (
               <div className="mb-3 px-6">
-                <Title
-                  level="3"
-                  className="text-neutral text-base leading-normal font-normal tracking-wide"
-                >
+                <span className="text-neutral text-base leading-normal font-normal tracking-wide">
                   {section.title}
-                </Title>
+                </span>
               </div>
             )}
             <nav className="space-y-1">

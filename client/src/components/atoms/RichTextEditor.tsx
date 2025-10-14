@@ -52,7 +52,7 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm max-w-none focus:outline-none min-h-[100px] w-full ' +
+          'prose prose-sm max-w-none focus:outline-none min-h-[300px] w-full ' +
           'prose-ul:list-disc prose-ol:list-decimal prose-li:ml-6',
         },
     },
@@ -96,7 +96,7 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
             ))}
           </div>
         </div>
-        <div className="min-h-[100px] w-full">
+        <div className="min-h-[300px] w-full">
           <div className="mb-2 h-4 w-full animate-pulse rounded bg-gray-200"></div>
           <div className="mb-2 h-4 w-full animate-pulse rounded bg-gray-200"></div>
           <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
@@ -244,7 +244,7 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
 
         <EditorContent
           editor={editor}
-          className="min-h-[120px] w-full p-3 text-sm break-words whitespace-pre-wrap [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:overflow-x-auto focus:outline-none"
+          className="min-h-[300px] w-full p-3 text-sm break-words whitespace-pre-wrap [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:overflow-x-auto focus:outline-none"
         />
     </div>
   );
