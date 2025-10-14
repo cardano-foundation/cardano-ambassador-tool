@@ -180,7 +180,7 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
           placeholder={placeholder}
           disabled={disabled}
           className={cn(
-            'bg-background w-full rounded-md border px-3 py-4 pr-10 text-sm transition-colors',
+            'bg-background w-full h-10 rounded-md border px-3 py-2 pr-10 text-sm transition-colors',
             'focus:ring-opacity-20 focus:ring-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50',
             getStatusColor(),

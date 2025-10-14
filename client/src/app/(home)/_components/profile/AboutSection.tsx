@@ -31,10 +31,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
           <Title level="6" className="text-neutral text-lg">
             About
           </Title>
-          <div className="text-muted-foreground flex items-center gap-2">
+          {/* <div className="text-muted-foreground flex items-center gap-2">
             <EditIcon className="h-4 w-4" />
             <span>Edit</span>
-          </div>
+          </div> */}
         </div>
         <Paragraph className="text-foreground mb-6 text-sm leading-snug font-normal break-all">
           {cleanHtml(profile.bio_excerpt)}

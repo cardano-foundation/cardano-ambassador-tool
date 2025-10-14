@@ -1,6 +1,6 @@
 'use client';
 
-import LocationSelector from '@/app/(onboarding)/sign-up/components/LocationSelector';
+import LocationSelector from '@/app/(onboarding)/sign-up/_components/LocationSelector';
 import Button from '@/components/atoms/Button';
 import { CardHeader } from '@/components/atoms/Card';
 import Checkbox from '@/components/atoms/Checkbox';
@@ -11,7 +11,8 @@ import TextArea from '@/components/atoms/TextArea';
 import ErrorAccordion from '@/components/ErrorAccordion';
 import { toast } from '@/components/toast/toast-manager';
 import { useApp } from '@/context/AppContext';
-import { getCatConstants, getProvider } from '@/utils';
+import { useMemberValidation } from '@/hooks/useMemberValidation';
+import { findMembershipIntentUtxo, getCatConstants, getProvider } from '@/utils';
 import {
   getFieldError,
   validateIntentForm,
@@ -37,6 +38,7 @@ const SubmitIntent = ({
 }) => {
   const { wallet: walletState } = useApp();
   const { address, wallet } = walletState;
+  const { isMember, memberData } = useMemberValidation();
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
     process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
@@ -77,6 +79,35 @@ const SubmitIntent = ({
     // Clear previous errors
     setValidationErrors([]);
     setSubmitError(null);
+
+    // Check for prior submissions - prevent duplicate intents
+    if (isMember && memberData) {
+      setSubmitError({
+        message: 'You are already a Cardano Ambassador member',
+        details: 'Members cannot submit new membership intents. You can view your profile at /dashboard.',
+      });
+      return;
+    }
+
+    // Check for existing membership intent
+    try {
+      const userAddress = await wallet!.getChangeAddress();
+      const existingIntent = await findMembershipIntentUtxo(userAddress);
+      if (existingIntent) {
+        setSubmitError({
+          message: 'You already have a pending membership intent',
+          details: 'You can only have one membership intent at a time. Check your submission status at /dashboard/submissions.',
+        });
+        return;
+      }
+    } catch (error) {
+      console.error('Error checking existing intent:', error);
+      setSubmitError({
+        message: 'Unable to verify submission eligibility',
+        details: 'Please try again or contact support if the issue persists.',
+      });
+      return;
+    }
 
     // Validate form data
     const validation = validateIntentForm({
@@ -145,7 +176,7 @@ const SubmitIntent = ({
         message: result?.message || 'Submission failed',
         details: result?.error || JSON.stringify(result, null, 2),
       });
-       setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -214,7 +245,7 @@ const SubmitIntent = ({
       city: userMetadata.city || '',
     });
 
-    // Apply membership 
+    // Apply membership
     let result;
     try {
       result = await userAction.applyMembership(
@@ -225,7 +256,6 @@ const SubmitIntent = ({
         metadata,
       );
     } catch (membershipError) {
-            
       return {
         success: false,
         message: 'Membership application failed',

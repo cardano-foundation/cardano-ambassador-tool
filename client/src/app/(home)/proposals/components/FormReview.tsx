@@ -45,8 +45,6 @@ export default function FormReview({ mode, formData, userAddress, proposalId = "
               )}
             </div>
           </div>
-
-          {/* Right column */}
           <div className="flex-1 space-y-7">
             <div className="space-y-1.5">
               <Paragraph size="xs" className="text-muted-foreground font-light">
@@ -88,51 +86,6 @@ export default function FormReview({ mode, formData, userAddress, proposalId = "
             </Title>
             <RichTextDisplay 
               content={formData.description} 
-              className="text-foreground"
-            />
-          </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Objectives
-            </Title>
-            <RichTextDisplay 
-              content={formData.objectives} 
-              className="text-foreground"
-            />
-          </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Impact to eco-system
-            </Title>
-            <RichTextDisplay 
-              content={formData.impactToEcosystem} 
-              className="text-foreground"
-            />
-          </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Milestones
-            </Title>
-            <RichTextDisplay 
-              content={formData.milestones} 
-              className="text-foreground"
-            />
-          </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Impact
-            </Title>
-            <RichTextDisplay 
-              content={formData.impact} 
-              className="text-foreground"
-            />
-          </div>
-          <div className="space-y-2.5">
-            <Title level="6" className="text-foreground">
-              Budget breakdown
-            </Title>
-            <RichTextDisplay 
-              content={formData.budgetBreakdown} 
               className="text-foreground"
             />
           </div>

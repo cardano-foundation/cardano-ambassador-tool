@@ -2,6 +2,8 @@
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import { useApp } from '@/context';
 import { useAmbassadorProfile } from '@/hooks/useAmbassadorProfile';
+import { useMemberValidation } from '@/hooks/useMemberValidation';
+import MemberOnlyAccessCard from './_component/MemberOnlyAccessCard';
 import {
   findMemberUtxo,
   findTokenUtxoByMemberUtxo,
@@ -31,7 +33,8 @@ export default function ProfilesPage() {
   );
 
   const blockfrost = getProvider();
-  const { members, wallet, userWallet, syncData } = useApp();
+  const { userWallet, syncData, wallet } = useApp();
+  const { isMember, isLoading: memberLoading, memberData } = useMemberValidation();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Transaction confirmation states
@@ -39,51 +42,28 @@ export default function ProfilesPage() {
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
   const profileData = useMemo(() => {
-    const defaultData = {
-      name: '',
-      username: '',
-      country: '',
-      city: '',
-      bio_excerpt: '',
-      created_at: '',
-      email: '',
-    };
-
-    const member = members.find((utxo) => {
-      if (!utxo.plutusData) return false;
-      try {
-        const parsed = parseMemberDatum(utxo.plutusData);
-        if (!parsed?.member?.metadata) return false;
-        return parsed.member.metadata.walletAddress === wallet.address;
-      } catch {
-        return false;
-      }
-    });
-
-    if (!member?.plutusData) return defaultData;
-
-    try {
-      const parsed = parseMemberDatum(member.plutusData);
-      if (!parsed?.member?.metadata) return defaultData;
-
-      const memberMetadata = parsed.member.metadata;
-      const countryData = memberMetadata.country
-        ? getCountryByCode(memberMetadata.country)
-        : null;
-
+    if (!memberData) {
       return {
-        name: memberMetadata.fullName || memberMetadata.displayName,
-        username: memberMetadata.displayName,
-        email: memberMetadata.emailAddress,
-        country: countryData?.name || memberMetadata.country || '',
-        city: memberMetadata.city || '',
-        bio_excerpt: memberMetadata.bio || '',
+        name: '',
+        username: '',
+        country: '',
+        city: '',
+        bio_excerpt: '',
         created_at: '',
+        email: '',
       };
-    } catch {
-      return defaultData;
     }
-  }, [members]);
+
+    return {
+      name: memberData.name,
+      username: memberData.username,
+      email: memberData.email,
+      country: memberData.country,
+      city: memberData.city,
+      bio_excerpt: memberData.bio,
+      created_at: '',
+    };
+  }, [memberData]);
 
   const { profile, loading: forumLoading } = useAmbassadorProfile(
     profileData.username,
@@ -268,8 +248,20 @@ export default function ProfilesPage() {
     }, 2000);
   }, [syncData]);
 
-  if (!profileData.name) {
-    return <EmptyProfileState />;
+  // Show loading state
+  if (memberLoading) {
+    return <EmptyProfileState />; // You could create a loading component instead
+  }
+
+  // Show member-only access if user is not a member
+  if (!isMember) {
+    return (
+      <MemberOnlyAccessCard
+        title="Members Only"
+        description="Access to the profile dashboard is restricted to approved Cardano Ambassadors. Join our ambassador program to create and manage your profile."
+        feature="access your profile dashboard"
+      />
+    );
   }
 
   return (

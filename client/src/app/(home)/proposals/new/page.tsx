@@ -5,7 +5,9 @@ import Title from '@/components/atoms/Title';
 import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { useApp } from '@/context';
+import { useMemberValidation } from '@/hooks/useMemberValidation';
 import { ProposalFormData } from '@/types/ProposalFormData';
+import MemberOnlyAccessCard from '@/app/dashboard/_component/MemberOnlyAccessCard';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import DetailsTab from './components/DetailsTab';
@@ -15,6 +17,7 @@ import ReviewTab from './components/ReviewTab';
 export default function SubmitProposalPage() {
   const router = useRouter();
   const { isAuthenticated, userWallet, userAddress } = useApp();
+  const { isMember, isLoading: memberLoading } = useMemberValidation();
   const [activeTab, setActiveTab] = useState('details');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [markdownData, setMarkdownData] = useState<any>({});
@@ -25,16 +28,14 @@ export default function SubmitProposalPage() {
   const budgetBreakdownEditorRef = useRef<any>(null);
   const impactOnEcosystemEditorRef = useRef<any>(null);
   const [formData, setFormData] = useState<ProposalFormData>({
+    id: '',
     title: '',
-    category: '',
     description: '',
-    impactToEcosystem: '',
-    objectives: '',
-    milestones: '',
-    impact: '',
-    budgetBreakdown: '',
     fundsRequested: '',
     receiverWalletAddress: '',
+    submittedBy: '',
+    submittedByAddress: '',
+    policyId: '',
   });
 
   const tabs = [
@@ -42,8 +43,19 @@ export default function SubmitProposalPage() {
     { id: 'funds', label: 'Funds' },
     { id: 'review', label: 'Review' },
   ];
-  if (!isAuthenticated) {
+  if (!isAuthenticated || memberLoading) {
     return <SimpleCardanoLoader />;
+  }
+
+  // Show member-only access screen if user is not a member
+  if (!isMember) {
+    return (
+      <MemberOnlyAccessCard
+        title="Members Only: Submit Proposals"
+        description="Only approved Cardano Ambassadors can submit proposals to the community. Join our ambassador program to contribute your ideas and help shape the Cardano ecosystem."
+        feature="submit proposals"
+      />
+    );
   }
 
   const handleInputChange = (field: keyof ProposalFormData, value: string) => {
@@ -64,7 +76,6 @@ export default function SubmitProposalPage() {
     try {
       const submissionData = {
         title: formData.title,
-        category: formData.category,
         ...markdownData,
         fundsRequested: formData.fundsRequested,
         receiverWalletAddress: formData.receiverWalletAddress,

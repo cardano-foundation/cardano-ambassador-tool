@@ -50,7 +50,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               </div>
             </div>
             <div className={cn(
-              "flex-1 h-10 px-3 py-3 rounded-tr-md rounded-br-md outline outline-1 outline-offset-[-1px] flex justify-start items-center gap-2.5",
+              "flex-1 h-10 px-3 py-3 rounded-tr-md rounded-br-md  outline-1 outline-offset-[-1px] flex justify-start items-center gap-2.5",
               error ? 'outline-primary-base' : 'outline-border',
               disabled && "opacity-50 bg-gray-100 cursor-not-allowed",
               icon && "pl-10"
@@ -81,53 +81,52 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       );
     }
     return (
-      <div className="relative h-16 w-full">
-        {icon && (
-          <div className="absolute top-[22px] left-3 h-10 flex items-center z-10 text-muted-foreground pointer-events-none">
-            {icon}
-          </div>
-        )}
-        
-        <input
-          ref={ref}
-          disabled={disabled}
-          className={cn(
-            'absolute top-[22px] left-0 h-10 w-full rounded-md border px-3 py-3 transition-colors',
-            'text-sm leading-none font-normal',
-            'bg-background dark:bg-card border-border placeholder:text-muted-foreground/60',
-            'focus:!border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
-            'hover:!border-primary-300',
-            icon && 'pl-10',
-            disabled && [
-              'cursor-not-allowed opacity-30',
-              'hover:!border-border focus:!border-border',
-            ],
-            error && [
-              '!border-primary-500',
-              'focus:!border-primary-500 focus:ring-primary-500/20',
-            ],
-            className,
-          )}
-          {...props}
-        />
-
+      <div className="w-full space-y-2">
         {label && (
-          <label
-            className={cn(
-              'absolute top-[-1px] left-0 text-sm leading-none font-normal text-muted-foreground px-1 bg-background dark:bg-card transition-all',
-              'text-primary-base',
-              disabled && 'opacity-50',
-              error && 'text-primary-base',
-            )}
-          >
+          <label className={cn(
+            'block text-sm font-medium',
+            error ? 'text-primary-base' : 'text-foreground',
+            disabled && 'opacity-50'
+          )}>
             {label}
           </label>
         )}
+        
+        <div className="relative">
+          {icon && (
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
+              {icon}
+            </div>
+          )}
+          
+          <input
+            ref={ref}
+            disabled={disabled}
+            className={cn(
+              'w-full h-10 px-3 py-2 rounded-md border transition-colors',
+              'text-sm font-normal',
+              'bg-background border-border placeholder:text-muted-foreground',
+              'focus:border-primary-300 focus:ring-2 focus:ring-primary-300/20 focus:outline-none',
+              'hover:border-primary-300',
+              icon && 'pl-10',
+              disabled && [
+                'cursor-not-allowed opacity-50',
+                'hover:border-border focus:border-border',
+              ],
+              error && [
+                'border-primary-500',
+                'focus:border-primary-500 focus:ring-primary-500/20',
+              ],
+              className,
+            )}
+            {...props}
+          />
+        </div>
 
         {error && errorMessage && (
-          <div className="text-primary-base absolute top-[60px] left-0 text-xs font-normal mt-2">
+          <p className="text-primary-base text-xs font-normal">
             {errorMessage}
-          </div>
+          </p>
         )}
       </div>
     );

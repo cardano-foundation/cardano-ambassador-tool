@@ -1,4 +1,5 @@
 'use client';
+import LocationSelector from '@/app/(onboarding)/sign-up/_components/LocationSelector';
 import Button from '@/components/atoms/Button';
 import ForumUsernameInput from '@/components/atoms/ForumUsernameInput';
 import Input from '@/components/atoms/Input';
@@ -7,7 +8,6 @@ import TextArea from '@/components/atoms/TextArea';
 import Title from '@/components/atoms/Title';
 import UserAvatar from '@/components/atoms/UserAvatar';
 import ErrorAccordion from '@/components/ErrorAccordion';
-import LocationSelector from '@/app/(onboarding)/sign-up/components/LocationSelector';
 import { getCountryByCode, getCountryByName } from '@/utils/locationData';
 import {
   getFieldError,
@@ -43,9 +43,11 @@ export default function ProfileEditModal({
   const [formData, setFormData] = useState(profile);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [countryCode, setCountryCode] = useState('');
-  
+
   // Validation and error state
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
+    [],
+  );
   const [submitError, setSubmitError] = useState<{
     message: string;
     details?: string;
@@ -57,13 +59,13 @@ export default function ProfileEditModal({
       setValidationErrors([]);
       setSubmitError(null);
       setIsSubmitting(false);
-      
+
       if (profile.country) {
         let foundCountry = getCountryByCode(profile.country);
         if (!foundCountry) {
           foundCountry = getCountryByName(profile.country);
         }
-        
+
         if (foundCountry) {
           setCountryCode(foundCountry.code);
         } else {
@@ -83,35 +85,35 @@ export default function ProfileEditModal({
   }, [formData]);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleCountryChange = (newCountryCode: string) => {
     setCountryCode(newCountryCode);
     const country = getCountryByCode(newCountryCode);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       country: country?.name || '',
-      city: prev.country !== country?.name ? '' : prev.city
+      city: prev.country !== country?.name ? '' : prev.city,
     }));
   };
 
   const handleCityChange = (newCity: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      city: newCity
+      city: newCity,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     setValidationErrors([]);
     setSubmitError(null);
-    
+
     const validation = validateProfileForm({
       name: formData.name,
       username: formData.username,
@@ -124,7 +126,7 @@ export default function ProfileEditModal({
       discord: formData.discord,
       spoId: formData.spoId,
     });
-    
+
     if (!validation.isValid) {
       setValidationErrors(validation.errors);
       const firstError = validation.errors[0];
@@ -137,16 +139,17 @@ export default function ProfileEditModal({
       }
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       await onSave(formData);
     } catch (error: any) {
       console.error('Failed to save profile:', error);
       setSubmitError({
-        message: error?.message || 'Failed to update profile. Please try again.',
-        details: error?.stack || JSON.stringify(error, null, 2)
+        message:
+          error?.message || 'Failed to update profile. Please try again.',
+        details: error?.stack || JSON.stringify(error, null, 2),
       });
     } finally {
       setIsSubmitting(false);
@@ -182,7 +185,8 @@ export default function ProfileEditModal({
               type="button"
               variant="outline"
               size="sm"
-              className="text-primary-base!">
+              className="text-primary-base!"
+            >
               Change Photo
             </Button>
           </div>

@@ -1,15 +1,13 @@
 'use client';
 
-import GlobalRefreshButton from '@/components/GlobalRefreshButton';
 import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import OwnerMembershipTimeline from '@/components/Timelines/OwnerMembershipTimeline';
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
-import Button from '@/components/atoms/Button';
-import Empty from '@/components/atoms/Empty';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import { useApp } from '@/context';
+import { useMemberValidation } from '@/hooks/useMemberValidation';
 import {
   findMembershipIntentUtxo,
   findTokenUtxoByMembershipIntentUtxo,
@@ -24,8 +22,10 @@ import {
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
 import { TransactionConfirmationResult, Utxo } from '@types';
-import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import EmptyMembershipState from '../_component/membership-intents/EmptyMembershipState';
+import MemberStatusCard from '../_component/membership-intents/MemberStatusCard';
+import EmptyProposalIntentState from '../_component/proposal-intents/EmptyProposalIntentState';
 
 export default function IntentSubmissionsPage() {
   const tabs = [
@@ -63,6 +63,7 @@ export default function IntentSubmissionsPage() {
     userWallet,
     syncData,
   } = useApp();
+  const { memberUtxo, memberData } = useMemberValidation();
 
   useEffect(() => {
     if (dbLoading || !isAuthenticated) {
@@ -287,40 +288,23 @@ export default function IntentSubmissionsPage() {
               className="w-1/2"
             />
           </div>
-
         </div>
       </div>
 
       {activeTab === 'membership-intent' && (
-        <div className="">
+        <div className="space-y-6">
+          {/* Show member status if user is already a member */}
+          {memberUtxo && memberData && <MemberStatusCard />}
+
+          {/* Show membership intent timeline if exists */}
           {membershipIntentUtxo ? (
             <OwnerMembershipTimeline
               intentUtxo={membershipIntentUtxo}
               onSave={handleMetadataUpdate}
             />
           ) : (
-            <div className="flex min-h-[400px] flex-col items-center justify-center">
-              <Empty />
-              <div className="mt-6 max-w-md text-center">
-                <Title level="6" className="text-foreground mb-3">
-                  No Membership Intent Submission
-                </Title>
-                <Paragraph className="text-muted-foreground mb-4">
-                  You haven't submitted a membership intent yet. Start your
-                  journey to become a Cardano Ambassador by submitting your
-                  application.
-                </Paragraph>
-                <Paragraph className="text-muted-foreground mb-6 ">
-                  Just submitted an application? Click the refresh button above
-                  to check for your latest submission.
-                </Paragraph>
-                <Link href="/sign-up">
-                  <Button variant="primary" size="lg">
-                    Become an Ambassador
-                  </Button>
-                </Link>
-              </div>
-            </div>
+            // Only show empty state if user is not a member
+            !memberUtxo && <EmptyMembershipState />
           )}
         </div>
       )}
@@ -338,28 +322,7 @@ export default function IntentSubmissionsPage() {
               {/* TODO: Add ProposalTimeline component similar to MembershipIntentTimeline */}
             </div>
           ) : (
-            <div className="flex min-h-[400px] flex-col items-center justify-center">
-              <Empty />
-              <div className="mt-6 max-w-md text-center">
-                <Title level="6" className="text-foreground mb-3">
-                  No Proposal Intent Submissions
-                </Title>
-                <Paragraph className="text-muted-foreground mb-6">
-                  You haven't submitted any proposals yet. Share your ideas and
-                  contribute to the Cardano ecosystem by submitting a proposal.
-                </Paragraph>
-                <div className="flex flex-col justify-center gap-3 sm:flex-row">
-                  <Link href="/proposals/new">
-                    <Button variant="primary">Submit Proposal</Button>
-                  </Link>
-                  <Link href="/proposals">
-                    <Button variant="outline" className="text-primary-base!">
-                      Browse Proposals
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <EmptyProposalIntentState />
           )}
         </div>
       )}

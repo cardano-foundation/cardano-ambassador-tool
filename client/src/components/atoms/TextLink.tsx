@@ -22,8 +22,8 @@ export default function TextLink({
     <Link
       href={href}
       className={cn(
-        'font-medium text-rose-500 underline underline-offset-4 transition-colors duration-200',
-        'hover:text-rose-600 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none',
+        'font-medium text-primary-base underline underline-offset-4 transition-colors duration-200',
+        'hover:text-primary-base focus-visible:ring-2 focus-visible:ring-primary-base focus-visible:outline-none',
 
         {
           'decoration-solid': variant === 'solid',
