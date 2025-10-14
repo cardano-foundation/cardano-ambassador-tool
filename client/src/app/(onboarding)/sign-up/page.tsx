@@ -34,7 +34,6 @@ function SignUp() {
     if (membershipIntent || memberData) {
       return <IntentExists goBack={() => goBack()} />;
     } else {
-      console.log({ walletAssets });
       
       return walletAssets.length ? (
         <SelectToken

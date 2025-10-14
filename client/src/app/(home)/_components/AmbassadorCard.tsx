@@ -26,7 +26,7 @@ export default function AmbassadorCard({
           <UserAvatar size="size-12" name={ambassador.name} />
           <div className="min-w-0 flex-1">
             <Title
-              level="7"
+              level="6"
               className="text-card-foreground truncate text-sm font-semibold sm:text-base"
             >
               {ambassador.name}

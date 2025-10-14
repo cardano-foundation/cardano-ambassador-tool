@@ -18,6 +18,7 @@ export default function DetailsTab({
       formData={formData}
       handleInputChange={handleInputChange}
       descriptionEditorRef={descriptionEditorRef}
+
     />
   );
 }

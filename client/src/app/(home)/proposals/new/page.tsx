@@ -28,16 +28,14 @@ export default function SubmitProposalPage() {
   const budgetBreakdownEditorRef = useRef<any>(null);
   const impactOnEcosystemEditorRef = useRef<any>(null);
   const [formData, setFormData] = useState<ProposalFormData>({
+    id: '',
     title: '',
-    category: '',
     description: '',
-    impactToEcosystem: '',
-    objectives: '',
-    milestones: '',
-    impact: '',
-    budgetBreakdown: '',
     fundsRequested: '',
     receiverWalletAddress: '',
+    submittedBy: '',
+    submittedByAddress: '',
+    policyId: '',
   });
 
   const tabs = [
@@ -78,7 +76,6 @@ export default function SubmitProposalPage() {
     try {
       const submissionData = {
         title: formData.title,
-        category: formData.category,
         ...markdownData,
         fundsRequested: formData.fundsRequested,
         receiverWalletAddress: formData.receiverWalletAddress,
