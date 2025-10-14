@@ -9,12 +9,12 @@ export async function GET(
     const { username } = await context.params;
     const url = new URL(req.url);
     const forceRefresh = url.searchParams.get('forceRefresh') === 'true';
+    const decodedUsername = decodeURIComponent(username);
     
     const data = forceRefresh 
-      ? await getUserProfileUncached({ username })
-      : await getUserProfile({ username });
-      
-    return NextResponse.json(data, {
+      ? await getUserProfileUncached({ username: decodedUsername })
+      : await getUserProfile({ username: decodedUsername });
+    return NextResponse.json(data, { 
       headers: {
         'Cache-Control': forceRefresh 
           ? 'no-cache, no-store, must-revalidate'

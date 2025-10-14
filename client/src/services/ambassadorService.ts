@@ -35,19 +35,64 @@ async function fetchJson(url: string) {
     throw error;
   }
 }
+async function tryMultipleUsernameFormats(username: string): Promise<NormalizedUser | null> {
+  const usernameVariations = [
+    username,
+    username.replace(/\s+/g, '_'), // "Eligendi_est_quod_ob"
+    username.replace(/\s+/g, '-'), // "Eligendi-est-quod-ob"
+    username.split(' ')[0], // "Eligendi" (first word only)
+  ];
+
+  for (const variation of usernameVariations) {
+    try {
+      const summaryUrl = SUMMARY_URL.replace('{username}', variation);
+      await fetchJson(summaryUrl); // Test if this variation works
+      const result = await getUserProfileUncached({ username: variation });
+      if (result) {
+        return result; // Return the valid result
+      }
+    } catch (error) {
+      console.log(`Username variation "${variation}" failed, trying next...`);
+      continue;
+    }
+  }
+  
+  return null; // Return null instead of throwing an error
+}
 
 async function getUserProfileUncached(
   ambassador: Ambassador,
-): Promise<NormalizedUser> {
+): Promise<NormalizedUser | null> {
   const username = ambassador.username;
 
-  const summaryRaw = await fetchJson(
-    SUMMARY_URL.replace('{username}', username),
-  );
-  const profileRaw = await fetchJson(
-    PROFILE_URL.replace('{username}', username),
-  );
+  // Encode the username for the URL
+  const encodedUsername = encodeURIComponent(username);
+  
+  try {
+    const summaryUrl = SUMMARY_URL.replace('{username}', encodedUsername);
+    const profileUrl = PROFILE_URL.replace('{username}', encodedUsername);
+    
+    const summaryRaw = await fetchJson(summaryUrl);
+    const profileRaw = await fetchJson(profileUrl);
 
+    return processUserData(username, summaryRaw, profileRaw, ambassador);
+  } catch (error: any) {
+    // If it's a 404, try different username formats
+    if (error.response?.status === 404) {
+      console.log(`User "${username}" not found, trying variations...`);
+      return tryMultipleUsernameFormats(username);
+    }
+    // Re-throw other errors (network issues, auth problems, etc.)
+    throw error;
+  }
+}
+
+function processUserData(
+  username: string, 
+  summaryRaw: any, 
+  profileRaw: any, 
+  ambassador: Ambassador
+): NormalizedUser {
   const userSummary = summaryRaw?.user_summary ?? {};
   const topicsRaw = summaryRaw?.topics ?? [];
   const repliesRaw = userSummary?.replies ?? [];
@@ -176,7 +221,10 @@ async function getUserProfileUncached(
 
 export const getUserProfile = (ambassador: Ambassador) =>
   unstable_cache(
-    async () => getUserProfileUncached(ambassador),
+    async () => {
+      const result = await getUserProfileUncached(ambassador);
+      return result;
+    },
     ['forum-profile', ambassador.username],
     {
       revalidate: 1800,
