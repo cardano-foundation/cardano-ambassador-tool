@@ -350,28 +350,22 @@ export const memberUpdateMetadata: MemberUpdateMetadata = conStr2([]);
 export type ProposalMetadata = ConStr0<
   [
     ByteString | List<ByteString>, // title
-    ByteString | List<ByteString>, // category
     ByteString | List<ByteString>, // description
-    ByteString | List<ByteString>, // impactToEcosystem
-    ByteString | List<ByteString>, // objectives
-    ByteString | List<ByteString>, // milestones
-    ByteString | List<ByteString>, // budgetBreakdown
     ByteString | List<ByteString>, // fundsRequested
-    ByteString | List<ByteString> // receiverWalletAddress
+    ByteString | List<ByteString>, // receiverWalletAddress
+    ByteString | List<ByteString>, // submittedByAddress
+    ByteString | List<ByteString> // status
   ]
 >;
 
 export const proposalMetadata = (jsonData: ProposalData): ProposalMetadata => {
   return conStr0([
-    addrBech32ToPlutusDataObj(jsonData.title || ""),
-    handleString(jsonData.category || ""),
+    handleString(jsonData.title || ""),
     handleString(jsonData.description || ""),
-    handleString(jsonData.impactToEcosystem || ""),
-    handleString(jsonData.objectives || ""),
-    handleString(jsonData.milestones || ""),
-    handleString(jsonData.budgetBreakdown || ""),
     handleString(jsonData.fundsRequested || ""),
     handleString(jsonData.receiverWalletAddress || ""),
+    handleString(jsonData.submittedByAddress || ""),
+    handleString(jsonData.status || ""),
   ]);
 };
 
@@ -487,14 +481,11 @@ export type Member = {
 
 export type ProposalData = {
   title: string;
-  category: string;
   description: string;
-  impactToEcosystem: string;
-  objectives: string;
-  milestones: string;
-  budgetBreakdown: string;
   fundsRequested: string;
   receiverWalletAddress: string;
+  submittedByAddress: string;
+  status: string;
 };
 
 export type Proposal = {

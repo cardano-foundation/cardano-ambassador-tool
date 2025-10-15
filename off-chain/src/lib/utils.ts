@@ -261,14 +261,11 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
     completion.set(
       {
         title: extractString(item.k.fields[0]),
-        category: extractString(item.k.fields[1]),
-        description: extractString(item.k.fields[2]),
-        impactToEcosystem: extractString(item.k.fields[3]),
-        objectives: extractString(item.k.fields[4]),
-        milestones: extractString(item.k.fields[5]),
-        budgetBreakdown: extractString(item.k.fields[6]),
-        fundsRequested: extractString(item.k.fields[7]),
-        receiverWalletAddress: extractString(item.k.fields[8]),
+        description: extractString(item.k.fields[1]),
+        fundsRequested: extractString(item.k.fields[2]),
+        receiverWalletAddress: extractString(item.k.fields[3]),
+        submittedByAddress: extractString(item.k.fields[4]),
+        status: extractString(item.k.fields[5]),
       },
       Number(item.v.int)
     );
@@ -334,14 +331,11 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
 
   const metadata: ProposalData = {
     title: extractString(metadataPluts.fields[0]),
-    category: extractString(metadataPluts.fields[1]),
-    description: extractString(metadataPluts.fields[2]),
-    impactToEcosystem: extractString(metadataPluts.fields[3]),
-    objectives: extractString(metadataPluts.fields[4]),
-    milestones: extractString(metadataPluts.fields[5]),
-    budgetBreakdown: extractString(metadataPluts.fields[6]),
-    fundsRequested: extractString(metadataPluts.fields[7]),
-    receiverWalletAddress: extractString(metadataPluts.fields[8]),
+    description: extractString(metadataPluts.fields[1]),
+    fundsRequested: extractString(metadataPluts.fields[2]),
+    receiverWalletAddress: extractString(metadataPluts.fields[3]),
+    submittedByAddress: extractString(metadataPluts.fields[4]),
+    status: extractString(metadataPluts.fields[5]),
   };
   return {
     fundRequested: fundRequested,
