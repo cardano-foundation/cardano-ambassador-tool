@@ -79,7 +79,7 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     sortable: true,
     cell: (value: string) => (
       <div className="flex items-center gap-2">
-        <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
+        <code className="text-xs">
           {value ? `${value.slice(0, 8)}...${value.slice(-6)}` : 'Unknown'}
         </code>
         {value && (
@@ -88,7 +88,7 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
               e.stopPropagation();
               await copyToClipboard(value);
             }}
-            className="p-1 rounded hover:bg-gray-200 transition-colors"
+            className="p-1 rounded  transition-colors"
             title="Copy address"
           >
             <CopyIcon />
