@@ -69,7 +69,7 @@ type ContextType = keyof typeof actionData;
 type HandlerRequestBody = {
   context: ContextType;
   address: string;
-  forceRefresh?: boolean; // Flag to bypass cache
+  forceRefresh?: boolean; 
 };
 
 export async function POST(req: NextRequest): Promise<
@@ -91,13 +91,15 @@ export async function POST(req: NextRequest): Promise<
 
     const userAddress = address ?? action.address;
 
-    // If forceRefresh is true, invalidate cache before fetching
     if (forceRefresh) {
       revalidateTag(`utxos-${userAddress}`);
       revalidateTag('all-utxos');
     }
 
     const utxos = await fetchAddressUTxOs(userAddress);
+
+    console.log({context, address,utxos});
+    
 
     const validUtxos =
       context == 'specific_address_utxos'
@@ -128,9 +130,9 @@ async function fetchAddressUTxOsUncached(address: string): Promise<UTxO[]> {
 const fetchAddressUTxOs = (address: string) =>
   unstable_cache(
     async () => fetchAddressUTxOsUncached(address),
-    ['address-utxos', address], // Unique cache key per address
+    ['address-utxos', address], 
     {
-      revalidate: 3600, // Cache for 1 hour (in seconds)
-      tags: [`utxos-${address}`, 'all-utxos'], // Tags for invalidation
+      revalidate: 3600, // Cache for 1 hour 
+      tags: [`utxos-${address}`, 'all-utxos'], 
     }
   )();

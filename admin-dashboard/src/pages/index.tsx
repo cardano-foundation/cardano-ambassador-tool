@@ -373,6 +373,7 @@ export default function Home() {
             getCatConstants()
           );
           const metadata = proposalMetadata(stringToHex(params.projectUrl));
+          
           const result = await userAction.proposeProject(
             oracleUtxo,
             tokenUtxo,

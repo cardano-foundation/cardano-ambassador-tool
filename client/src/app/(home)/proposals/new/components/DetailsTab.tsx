@@ -1,6 +1,6 @@
 'use client';
 
-import { ProposalFormData } from '@/types/ProposalFormData';
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import FormDetails from '../../components/FormDetails';
 
 export default function DetailsTab({
@@ -8,8 +8,8 @@ export default function DetailsTab({
   handleInputChange,
   descriptionEditorRef,
 }: {
-  formData: ProposalFormData;
-  handleInputChange: (field: keyof ProposalFormData, value: string) => void;
+  formData: ProposalData;
+  handleInputChange: (field: keyof ProposalData, value: string) => void;
   descriptionEditorRef: any;
 }) {
   return (

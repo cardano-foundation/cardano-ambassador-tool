@@ -3,11 +3,11 @@
 import { SingleRowStepper } from '@/components/atoms/Stepper';
 import { useApp } from '@/context/AppContext';
 import { useMemberValidation } from '@/hooks/useMemberValidation';
-import { findMembershipIntentUtxo } from '@/utils';
+import { findMembershipIntentUtxo, smoothScrollToElement } from '@/utils';
 import { UTxO } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ConnectWallet from './_components/ConnectWallet';
 import IntentExists from './_components/IntentExists';
 import SelectToken from './_components/SelectToken';
@@ -29,6 +29,7 @@ function SignUp() {
   const { memberData } = useMemberValidation();
 
   const [membershipIntent, setMembershipIntent] = useState<UTxO | null>(null);
+  const scrollTargetRef = useRef<HTMLDivElement>(null);
 
   const resolveStep2 = () => {
     if (membershipIntent || memberData) {
@@ -104,11 +105,17 @@ function SignUp() {
     setDirection(1);
 
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    
+    // Smooth scroll to top of stepper
+    smoothScrollToElement(scrollTargetRef);
   };
 
   const goBack = () => {
     setDirection(-1);
     setCurrentStep((prev) => Math.max(prev - 1, 0));
+    
+    // Smooth scroll to top of stepper
+    smoothScrollToElement(scrollTargetRef);
   };
 
   const handleStepClick = (stepIndex: number) => {
@@ -171,7 +178,7 @@ function SignUp() {
 
   return (
     <div className="h-full w-full gap-8 p-6 lg:p-24">
-      <div className="mb-6 flex justify-center">
+      <div ref={scrollTargetRef} className="mb-6 flex justify-center">
         <SingleRowStepper
           currentStep={currentStep}
           totalSteps={steps.length}

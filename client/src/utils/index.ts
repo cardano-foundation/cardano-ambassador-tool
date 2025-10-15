@@ -7,3 +7,4 @@ export * from './utils';
 export * from './validation';
 export * from './wallet';
 export * from './storageApiClient';
+export * from './smoothScroll';

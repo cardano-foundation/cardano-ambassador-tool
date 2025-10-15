@@ -114,7 +114,7 @@ export function useDatabase() {
       contexts: [
         'members',
         'membership_intent',
-        'proposal',
+        'proposals',
         'proposal_intent',
         'sign_of_approval',
       ],
@@ -130,7 +130,7 @@ export function useDatabase() {
       contexts: [
         'members',
         'membership_intent',
-        'proposal',
+        'proposals',
         'proposal_intent',
         'sign_of_approval',
       ],

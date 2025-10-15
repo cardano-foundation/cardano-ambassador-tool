@@ -1,9 +1,9 @@
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import FormFunds from '../../components/FormFunds';
-import { ProposalFormData } from '@/types/ProposalFormData';
 
 interface Props {
-  formData: ProposalFormData;
-  handleInputChange: (field: keyof ProposalFormData, value: string) => void;
+  formData: ProposalData;
+  handleInputChange: (field: keyof ProposalData, value: string) => void;
   userAddress?: string;
 }
 

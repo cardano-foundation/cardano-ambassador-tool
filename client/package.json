@@ -35,7 +35,7 @@
     "@multiavatar/multiavatar": "github:multiavatar/multiavatar",
     "@radix-ui/react-tabs": "^1.1.12",
     "@react-google-maps/api": "^2.20.7",
-    "@sidan-lab/cardano-ambassador-tool": "0.0.10",
+    "@sidan-lab/cardano-ambassador-tool": "0.0.11",
     "@tiptap/extension-image": "^3.6.6",
     "@tiptap/extension-text-align": "^3.6.1",
     "@tiptap/extension-underline": "^3.6.1",

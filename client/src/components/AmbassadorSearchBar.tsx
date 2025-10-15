@@ -118,7 +118,7 @@ export default function AmbassadorSearch({
   return (
     <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-end sm:gap-4">
       <div className="relative flex-1">
-        <div className="pointer-events-none absolute top-[34px] left-3 z-10">
+        <div className="pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2">
           <SearchIcon className="text-muted-foreground" />
         </div>
         <Input

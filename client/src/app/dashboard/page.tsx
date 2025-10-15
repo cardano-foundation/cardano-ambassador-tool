@@ -2,15 +2,11 @@
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import { useApp } from '@/context';
 import { useAmbassadorProfile } from '@/hooks/useAmbassadorProfile';
-import { useMemberValidation } from '@/hooks/useMemberValidation';
-import MemberOnlyAccessCard from './_component/MemberOnlyAccessCard';
 import {
   findMemberUtxo,
   findTokenUtxoByMemberUtxo,
   getCatConstants,
-  getCountryByCode,
   getProvider,
-  parseMemberDatum,
 } from '@/utils';
 import { resolveTxHash } from '@meshsdk/core';
 import {
@@ -21,7 +17,7 @@ import {
 import { TransactionConfirmationResult } from '@types';
 import { useCallback, useMemo, useState } from 'react';
 import DashboardHeader from './_component/DashboardHeader';
-import EmptyProfileState from './_component/EmptyProfileState';
+import MemberOnlyAccessCard from './_component/MemberOnlyAccessCard';
 import ProfileDetails from './_component/ProfileDetails';
 import ProfileEditModal from './_component/ProfileEditModal';
 import ProfileHeader from './_component/ProfileHeader';
@@ -33,8 +29,7 @@ export default function ProfilesPage() {
   );
 
   const blockfrost = getProvider();
-  const { userWallet, syncData, wallet } = useApp();
-  const { isMember, isLoading: memberLoading, memberData } = useMemberValidation();
+  const { userWallet, syncData, wallet, memberData, isMember } = useApp();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Transaction confirmation states
@@ -55,9 +50,9 @@ export default function ProfilesPage() {
     }
 
     return {
-      name: memberData.name,
-      username: memberData.username,
-      email: memberData.email,
+      name: memberData.fullName,
+      username: memberData.displayName,
+      email: memberData.emailAddress,
       country: memberData.country,
       city: memberData.city,
       bio_excerpt: memberData.bio,
@@ -247,11 +242,6 @@ export default function ProfilesPage() {
       syncData('membership_intent');
     }, 2000);
   }, [syncData]);
-
-  // Show loading state
-  if (memberLoading) {
-    return <EmptyProfileState />; // You could create a loading component instead
-  }
 
   // Show member-only access if user is not a member
   if (!isMember) {

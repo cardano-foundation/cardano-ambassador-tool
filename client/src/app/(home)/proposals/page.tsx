@@ -8,10 +8,11 @@ import { getCurrentNetworkConfig } from '@/config/cardano';
 import Button from '@/components/atoms/Button';
 import Chip from '@/components/atoms/Chip';
 import TopNav from '@/components/Navigation/TabNav';
-import { ProposalData, mockProposal } from '@/hooks/UseProposalData';
+import { mockProposal } from '@/hooks/UseProposalData';
 import FormDetails from './components/FormDetails';
 import FormFunds from './components/FormFunds';
 import FormReview from './components/FormReview';
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 
 export default function Page() {
   const proposal = mockProposal;
@@ -66,7 +67,7 @@ export default function Page() {
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4">
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <Title level="5" className="text-foreground">
               {proposal.title}
             </Title>
@@ -77,11 +78,21 @@ export default function Page() {
           <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
             <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
-                <Paragraph size="xs" className="text-muted-foreground font-light">Proposal ID</Paragraph>
-                <Paragraph size="sm" className="text-foreground">{proposal.id}</Paragraph>
+                <Paragraph
+                  size="xs"
+                  className="text-muted-foreground font-light"
+                >
+                  Proposal ID
+                </Paragraph>
+                {/* <Paragraph size="sm" className="text-foreground">{proposal.id}</Paragraph> */}
               </div>
               <div className="space-y-1.5">
-                <Paragraph size="xs" className="text-muted-foreground font-light">Receiver wallet</Paragraph>
+                <Paragraph
+                  size="xs"
+                  className="text-muted-foreground font-light"
+                >
+                  Receiver wallet
+                </Paragraph>
                 {proposal.receiverWalletAddress ? (
                   <Copyable
                     withKey={false}
@@ -90,10 +101,12 @@ export default function Page() {
                     keyLabel={''}
                   />
                 ) : (
-                  <Paragraph size="sm" className="text-foreground">Not specified</Paragraph>
+                  <Paragraph size="sm" className="text-foreground">
+                    Not specified
+                  </Paragraph>
                 )}
               </div>
-              {proposal.policyId && (
+              {/* {proposal.policyId && (
                 <div className="space-y-1.5">
                   <Paragraph size="xs" className="text-muted-foreground font-light">Policy ID</Paragraph>
                   <Copyable
@@ -103,15 +116,22 @@ export default function Page() {
                     keyLabel={''}
                   />
                 </div>
-              )}
+              )} */}
             </div>
 
             <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
-                <Paragraph size="xs" className="text-muted-foreground font-light">Submitted by</Paragraph>
-                <div className="flex items-start flex-wrap gap-1.5">
-                  {proposal.submittedBy && (
-                    <Paragraph size="sm" className="text-foreground">{proposal.submittedBy}</Paragraph>
+                <Paragraph
+                  size="xs"
+                  className="text-muted-foreground font-light"
+                >
+                  Submitted by
+                </Paragraph>
+                <div className="flex flex-wrap items-start gap-1.5">
+                  {proposal.submittedByAddress && (
+                    <Paragraph size="sm" className="text-foreground">
+                      {proposal.submittedByAddress}
+                    </Paragraph>
                   )}
                   {proposal.submittedByAddress ? (
                     <Copyable
@@ -121,33 +141,54 @@ export default function Page() {
                       keyLabel={''}
                     />
                   ) : (
-                    !proposal.submittedBy && <Paragraph size="sm" className="text-foreground">Not specified</Paragraph>
+                    !proposal.submittedByAddress && (
+                      <Paragraph size="sm" className="text-foreground">
+                        Not specified
+                      </Paragraph>
+                    )
                   )}
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Paragraph size="xs" className="text-muted-foreground font-light">Funds Requested</Paragraph>
-                <Paragraph size="sm" className="text-foreground">{proposal.fundsRequested}</Paragraph>
+                <Paragraph
+                  size="xs"
+                  className="text-muted-foreground font-light"
+                >
+                  Funds Requested
+                </Paragraph>
+                <Paragraph size="sm" className="text-foreground">
+                  {proposal.fundsRequested}
+                </Paragraph>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-between items-center">
-            <Title level="5" className="text-foreground">Overview</Title>
+          <div className="flex items-center justify-between">
+            <Title level="5" className="text-foreground">
+              Overview
+            </Title>
             <div className="flex gap-3 sm:gap-4">
               {isEditing ? (
                 <>
                   <div className="text-primary-base">
-                    <Button variant="outline"  onClick={handleDiscardChanges}>
+                    <Button variant="outline" onClick={handleDiscardChanges}>
                       Discard Changes
                     </Button>
                   </div>
-                  <Button variant="primary" size='sm' onClick={handleSaveChanges}>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={handleSaveChanges}
+                  >
                     Save proposal
                   </Button>
                 </>
               ) : (
-                <Button variant="primary" size='sm' onClick={() => setIsEditing(true)}>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                >
                   Edit Proposal
                 </Button>
               )}
@@ -155,12 +196,16 @@ export default function Page() {
           </div>
           {isEditing ? (
             <>
-              <div className="w-full border-b border-border">
-                <TopNav tabs={tabs} activeTabId={activeTab} onTabChange={setActiveTab} />
+              <div className="border-border w-full border-b">
+                <TopNav
+                  tabs={tabs}
+                  activeTabId={activeTab}
+                  onTabChange={setActiveTab}
+                />
               </div>
 
-              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-                {activeTab === "details" && (
+              <div className="border-border bg-card rounded-lg border p-6 shadow-sm">
+                {activeTab === 'details' && (
                   <FormDetails
                     mode="edit"
                     formData={formData}
@@ -169,7 +214,7 @@ export default function Page() {
                   />
                 )}
 
-                {activeTab === "funds" && (
+                {activeTab === 'funds' && (
                   <FormFunds
                     mode="edit"
                     formData={formData}
@@ -177,31 +222,43 @@ export default function Page() {
                   />
                 )}
 
-                {activeTab === "review" && (
+                {activeTab === 'review' && (
                   <FormReview
                     mode="edit"
                     formData={formData}
                     userAddress={proposal.submittedByAddress}
-                    proposalId={proposal.id}
+                    // proposalId={proposal}
                   />
                 )}
 
-                <div className="flex items-center justify-between pt-6 gap-4">
+                <div className="flex items-center justify-between gap-4 pt-6">
                   {activeTab !== 'details' && (
-                    <div className="w-1/4 text-primary-base">
-                      <Button variant="outline" onClick={() => handleTabNavigation('prev')} className="w-full">
+                    <div className="text-primary-base w-1/4">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleTabNavigation('prev')}
+                        className="w-full"
+                      >
                         Back
                       </Button>
                     </div>
                   )}
 
-                  <div className={activeTab === 'details' ? "w-full" : "w-3/4"}>
+                  <div className={activeTab === 'details' ? 'w-full' : 'w-3/4'}>
                     {activeTab !== 'review' ? (
-                      <Button variant="primary"  onClick={() => handleTabNavigation('next')} className="w-full">
+                      <Button
+                        variant="primary"
+                        onClick={() => handleTabNavigation('next')}
+                        className="w-full"
+                      >
                         Next
                       </Button>
                     ) : (
-                      <Button variant="primary" onClick={handleSaveChanges} className="w-full">
+                      <Button
+                        variant="primary"
+                        onClick={handleSaveChanges}
+                        className="w-full"
+                      >
                         Save Proposal
                       </Button>
                     )}
@@ -212,12 +269,22 @@ export default function Page() {
           ) : (
             <div className="space-y-5">
               <div className="space-y-2.5">
-                <Title level="6" className="text-base text-foreground">Title</Title>
-                <RichTextDisplay content={proposal.title} className="text-foreground" />
+                <Title level="6" className="text-foreground text-base">
+                  Title
+                </Title>
+                <RichTextDisplay
+                  content={proposal.title}
+                  className="text-foreground"
+                />
               </div>
               <div className="space-y-6">
-                <Title level="6" className="text-foreground">Description</Title>
-                <RichTextDisplay content={proposal.description} className="text-foreground" />
+                <Title level="6" className="text-foreground">
+                  Description
+                </Title>
+                <RichTextDisplay
+                  content={proposal.description}
+                  className="text-foreground"
+                />
               </div>
             </div>
           )}

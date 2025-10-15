@@ -1,14 +1,13 @@
 import Input from '@/components/atoms/Input';
-import Dropdown from '@/components/atoms/Dropdown';
 import Paragraph from '@/components/atoms/Paragraph';
 import RichTextEditor from '@/components/atoms/RichTextEditor';
-import { ProposalFormData } from '@/types/ProposalFormData';
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { RefObject } from 'react';
 
 interface Props {
   mode: 'create' | 'edit';
-  formData: ProposalFormData;
-  handleInputChange: (field: keyof ProposalFormData, value: string) => void;
+  formData: ProposalData;
+  handleInputChange: (field: keyof ProposalData, value: string) => void;
   descriptionEditorRef: RefObject<any>;
 }
 export default function FormDetails({

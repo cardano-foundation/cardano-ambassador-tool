@@ -203,17 +203,14 @@ export function parseMemberDatum(
       (item: { k: { fields: { bytes: string }[] }; v: { int: number } }) => {
         return completion.set(
           {
-            description: hexToString(item.k.fields[0].bytes),
-            title: '',
-            category: '',
-            impactToEcosystem: '',
-            objectives: '',
-            milestones: '',
-            budgetBreakdown: '',
-            fundsRequested: '',
-            receiverWalletAddress: ''
+            title: hexToString(item.k.fields[0].bytes),
+            description: hexToString(item.k.fields[1].bytes),
+            fundsRequested: hexToString(item.k.fields[2].bytes),
+            receiverWalletAddress: hexToString(item.k.fields[3].bytes),
+            submittedByAddress: hexToString(item.k.fields[4].bytes),
+            status: hexToString(item.k.fields[5].bytes),
           },
-          Number(item.v.int)
+          Number(item.v.int),
         );
       },
     );
@@ -256,15 +253,18 @@ export function parseProposalDatum(
     }
     const metadataPlutus: ProposalMetadata = datum.fields[3];
     const metadata: ProposalData = {
-      description: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
-      title: '',
-      category: '',
-      impactToEcosystem: '',
-      objectives: '',
-      milestones: '',
-      budgetBreakdown: '',
-      fundsRequested: '',
-      receiverWalletAddress: ''
+      title: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
+      description: hexToString((metadataPlutus.fields[1] as ByteString).bytes),
+      fundsRequested: hexToString(
+        (metadataPlutus.fields[2] as ByteString).bytes,
+      ),
+      receiverWalletAddress: hexToString(
+        (metadataPlutus.fields[3] as ByteString).bytes,
+      ),
+      submittedByAddress: hexToString(
+        (metadataPlutus.fields[4] as ByteString).bytes,
+      ),
+      status: hexToString((metadataPlutus.fields[5] as ByteString).bytes),
     };
     return { datum: datum as ProposalDatum, metadata };
   } catch (error) {
@@ -780,6 +780,3 @@ export async function fetchTransactionTimestamp(txHash: string) {
     throw new Error('Error fetching transaction timestamp:' + error);
   }
 }
-
-
-

@@ -1,8 +1,7 @@
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import FormReview from '../../components/FormReview';
-import { ProposalFormData } from '@/types/ProposalFormData';
-
 interface Props {
-  formData: ProposalFormData;
+  formData: ProposalData;
   userAddress?: string;
 }
 

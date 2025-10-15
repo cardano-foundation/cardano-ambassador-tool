@@ -1,18 +1,7 @@
-export interface ProposalData {
-  id: string;
-  title: string;
-  description: string;
-  fundsRequested: string;
-  receiverWalletAddress: string;
-  submittedBy?: string;
-  submittedByAddress?: string;
-  status?: 'active' | 'pending' | 'completed' | 'rejected';
-  policyId?: string;
-}
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 
 export const mockProposal: ProposalData = {
-  id: "proposal-001",
-  title: "Cardano Education Podcast",
+  title: 'Cardano Education Podcast',
   description: `# Cardano Education Podcast
 
 ## Overview
@@ -45,10 +34,9 @@ This initiative will help onboard new users and strengthen community understandi
 - Contingency: 5,000 ADA
 
 **Total: 107,800 ADA**`,
-  fundsRequested: "107,800 ADA",
-  receiverWalletAddress: "addr1qxyz123abc456def789ghi012jkl345mno678pqr901stu234vwx567yza890",
-  submittedBy: "Cardano Education Foundation",
-  submittedByAddress: "addr1qdef789ghi012jkl345mno678pqr901stu234vwx567yza890bcd123efg456",
-  status: "pending",
-  policyId: "policy1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  fundsRequested: '107,800 ADA',
+  receiverWalletAddress:
+    'addr1qxyz123abc456def789ghi012jkl345mno678pqr901stu234vwx567yza890',
+  submittedByAddress: 'Cardano Education Foundation',
+  status: 'pending',
 };

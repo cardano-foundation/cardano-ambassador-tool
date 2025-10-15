@@ -1,10 +1,10 @@
 import Input from '@/components/atoms/Input';
-import { ProposalFormData } from '@/types/ProposalFormData';
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 
 interface Props {
   mode: 'create' | 'edit';
-  formData: ProposalFormData;
-  handleInputChange: (field: keyof ProposalFormData, value: string) => void;
+  formData: ProposalData;
+  handleInputChange: (field: keyof ProposalData, value: string) => void;
   userAddress?: string;
 }
 

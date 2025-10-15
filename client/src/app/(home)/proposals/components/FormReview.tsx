@@ -1,18 +1,22 @@
-import Title from '@/components/atoms/Title';
 import Paragraph from '@/components/atoms/Paragraph';
-import Copyable from '@/components/Copyable';
-import { ProposalFormData } from '@/types/ProposalFormData';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
+import Title from '@/components/atoms/Title';
+import Copyable from '@/components/Copyable';
 import { getCurrentNetworkConfig } from '@/config/cardano';
+import { useApp } from '@/context';
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 
 interface Props {
   mode: 'create' | 'edit';
-  formData: ProposalFormData;
+  formData: ProposalData;
   userAddress?: string;
-  proposalId?: string; 
+  proposalId?: string;
 }
 
-export default function FormReview({ mode, formData, userAddress, proposalId = "#A1B2C3D4" }: Props) {
+export default function FormReview({
+  formData,
+}: Props) {
+  const { userAddress } = useApp();
   return (
     <div className="sm:px-6">
       <div className="space-y-6">
@@ -22,9 +26,9 @@ export default function FormReview({ mode, formData, userAddress, proposalId = "
               <Paragraph size="xs" className="text-muted-foreground font-light">
                 Proposal ID
               </Paragraph>
-              <Paragraph size="sm" className="text-foreground">
+              {/* <Paragraph size="sm" className="text-foreground">
                 {proposalId}
-              </Paragraph>
+              </Paragraph> */}
             </div>
 
             <div className="space-y-1.5">
@@ -56,7 +60,7 @@ export default function FormReview({ mode, formData, userAddress, proposalId = "
                     <Copyable
                       withKey={false}
                       link={`${getCurrentNetworkConfig().explorerUrl}/address/${userAddress}`}
-                      value={userAddress}
+                      value={formData.submittedByAddress}
                       keyLabel={''}
                     />
                   ) : (
@@ -79,13 +83,13 @@ export default function FormReview({ mode, formData, userAddress, proposalId = "
           </div>
         </div>
 
-        <div className="px-7 py-6 rounded-[10px] border border-dashed border-border space-y-5">
+        <div className="border-border space-y-5 rounded-[10px] border border-dashed px-7 py-6">
           <div className="space-y-2.5">
             <Title level="6" className="text-foreground">
               Description
             </Title>
-            <RichTextDisplay 
-              content={formData.description} 
+            <RichTextDisplay
+              content={formData.description}
               className="text-foreground"
             />
           </div>

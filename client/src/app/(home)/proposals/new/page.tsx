@@ -1,41 +1,63 @@
 'use client';
 
+import MemberOnlyAccessCard from '@/app/dashboard/_component/MemberOnlyAccessCard';
 import Button from '@/components/atoms/Button';
+import Modal from '@/components/atoms/Modal';
 import Title from '@/components/atoms/Title';
 import TopNav from '@/components/Navigation/TabNav';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
+import CardanoLoaderSVG from '@/components/ui/CardanoLoaderSVG';
 import { useApp } from '@/context';
 import { useMemberValidation } from '@/hooks/useMemberValidation';
-import { ProposalFormData } from '@/types/ProposalFormData';
-import MemberOnlyAccessCard from '@/app/dashboard/_component/MemberOnlyAccessCard';
-import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import {
+  dbUtxoToMeshUtxo,
+  findTokenUtxoByMemberUtxo,
+  getCatConstants,
+  getProvider,
+  smoothScrollToElement,
+} from '@/utils';
+import {
+  ProposalData,
+  proposalMetadata,
+  UserActionTx,
+} from '@sidan-lab/cardano-ambassador-tool';
+import { useEffect, useRef, useState } from 'react';
 import DetailsTab from './components/DetailsTab';
 import FundsTab from './components/FundsTab';
 import ReviewTab from './components/ReviewTab';
+import { resolveTxHash } from '@meshsdk/core';
 
 export default function SubmitProposalPage() {
-  const router = useRouter();
-  const { isAuthenticated, userWallet, userAddress } = useApp();
+  const { isAuthenticated, userWallet, memberUtxo, userAddress } = useApp();
   const { isMember, isLoading: memberLoading } = useMemberValidation();
   const [activeTab, setActiveTab] = useState('details');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [markdownData, setMarkdownData] = useState<any>({});
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showTxConfirmation, setShowTxConfirmation] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [txHash, setTxHash] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const descriptionEditorRef = useRef<any>(null);
   const impactEditorRef = useRef<any>(null);
   const objectivesEditorRef = useRef<any>(null);
   const milestonesEditorRef = useRef<any>(null);
   const budgetBreakdownEditorRef = useRef<any>(null);
   const impactOnEcosystemEditorRef = useRef<any>(null);
-  const [formData, setFormData] = useState<ProposalFormData>({
-    id: '',
+  const scrollTargetRef = useRef<HTMLDivElement>(null);
+  const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
+  const ORACLE_OUTPUT_INDEX = parseInt(
+    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
+  );
+
+  const blockfrost = getProvider();
+  const [formData, setFormData] = useState<ProposalData>({
     title: '',
     description: '',
     fundsRequested: '',
     receiverWalletAddress: '',
-    submittedBy: '',
-    submittedByAddress: '',
-    policyId: '',
+    submittedByAddress: userAddress || '',
+    status: 'pending',
   });
 
   const tabs = [
@@ -43,11 +65,19 @@ export default function SubmitProposalPage() {
     { id: 'funds', label: 'Funds' },
     { id: 'review', label: 'Review' },
   ];
-  if (!isAuthenticated || memberLoading) {
-    return <SimpleCardanoLoader />;
-  }
 
-  // Show member-only access screen if user is not a member
+  useEffect(() => {
+    if (
+      userAddress &&
+      (!formData.submittedByAddress || formData.submittedByAddress === '')
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        submittedByAddress: userAddress,
+      }));
+    }
+  }, [userAddress]);
+
   if (!isMember) {
     return (
       <MemberOnlyAccessCard
@@ -58,7 +88,7 @@ export default function SubmitProposalPage() {
     );
   }
 
-  const handleInputChange = (field: keyof ProposalFormData, value: string) => {
+  const handleInputChange = (field: keyof ProposalData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -66,32 +96,64 @@ export default function SubmitProposalPage() {
   };
 
   const handleSubmit = async () => {
-    if (!isAuthenticated || !userWallet || !userAddress) {
-      alert('Please connect your wallet first');
-      return;
-    }
-
-    setIsSubmitting(true);
-
     try {
-      const submissionData = {
-        title: formData.title,
-        ...markdownData,
-        fundsRequested: formData.fundsRequested,
-        receiverWalletAddress: formData.receiverWalletAddress,
-      };
+      setIsSubmitting(true);
 
-      console.log('Submitting proposal:', submissionData);
+      if (!memberUtxo) {
+        throw new Error('No membership intent UTxO found for this address');
+      }
+      const mbrUtxo = dbUtxoToMeshUtxo(memberUtxo);
+      const tokenUtxo = await findTokenUtxoByMemberUtxo(mbrUtxo);
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (!tokenUtxo) {
+        throw new Error('No token UTxO found for this membership intent');
+      }
 
-      router.push('/dashboard/submissions');
+      const oracleUtxos = await blockfrost.fetchUTxOs(
+        ORACLE_TX_HASH,
+        ORACLE_OUTPUT_INDEX,
+      );
+
+      const oracleUtxo = oracleUtxos[0];
+
+      if (!oracleUtxo) {
+        throw new Error('Failed to fetch required oracle UTxO');
+      }
+
+      const userAction = new UserActionTx(
+        userAddress!,
+        userWallet!,
+        blockfrost,
+        getCatConstants(),
+      );
+
+      const metadata = proposalMetadata(formData);
+
+      const result = await userAction.proposeProject(
+        oracleUtxo,
+        tokenUtxo,
+        mbrUtxo,
+        Number(formData.fundsRequested),
+        formData.receiverWalletAddress,
+        metadata,
+      );
+
+      console.log('Transaction submitted:', result);
+       const txHash = resolveTxHash(result.txHex);
+
+      setTxHash(txHash);
+      setShowTxConfirmation(true);
     } catch (error) {
       console.error('Error submitting proposal:', error);
-      alert('Failed to submit proposal. Please try again.');
+      setError(error.message || 'Failed to submit proposal. Please try again.');
+      setShowError(true);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const scrollUp = () => {
+    smoothScrollToElement(scrollTargetRef);
   };
 
   const handleNextTab = () => {
@@ -111,6 +173,7 @@ export default function SubmitProposalPage() {
     const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
     if (currentIndex < tabs.length - 1) {
       setActiveTab(tabs[currentIndex + 1].id);
+      scrollUp();
     }
   };
 
@@ -118,17 +181,14 @@ export default function SubmitProposalPage() {
     const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
     if (currentIndex > 0) {
       setActiveTab(tabs[currentIndex - 1].id);
+      scrollUp();
     }
   };
-
-  if (isSubmitting) {
-    return <SimpleCardanoLoader />;
-  }
 
   return (
     <div className="bg-background min-h-screen">
       <div className="container mx-auto max-w-4xl px-4 py-8">
-        <div className="mb-8 text-center">
+        <div ref={scrollTargetRef} className="mb-8 text-center">
           <Title level="5" className="text-foreground">
             Submit a proposal
           </Title>
@@ -211,6 +271,102 @@ export default function SubmitProposalPage() {
           )}
         </div>
       </div>
+
+      {/* Transaction Confirmation Overlay */}
+      <TransactionConfirmationOverlay
+        isVisible={showTxConfirmation}
+        txHash={txHash}
+        title="Proposal Submitted"
+        description="Your proposal has been submitted. Please wait for blockchain confirmation."
+        onClose={() => setShowTxConfirmation(false)}
+        onConfirmed={() => {
+          setShowTxConfirmation(false);
+          setShowConfirmation(true);
+        }}
+        onTimeout={() => {
+          setShowTxConfirmation(false);
+          setError(
+            'Transaction confirmation timed out. Your proposal may still be processed.',
+          );
+          setShowError(true);
+        }}
+      />
+
+      {/* Success Modal - shown after transaction confirmation */}
+      <Modal
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        title="Proposal Confirmed!"
+        description="Your proposal has been confirmed on the blockchain"
+        size="lg"
+        actions={[
+          {
+            label: 'View My Submissions',
+            variant: 'primary',
+            onClick: () => {
+              setShowConfirmation(false);
+              window.location.href = '/dashboard?tab=submissions';
+            },
+          },
+          {
+            label: 'Close',
+            variant: 'outline',
+            onClick: () => setShowConfirmation(false),
+          },
+        ]}
+      >
+        <div className="py-4 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+            <svg
+              className="h-6 w-6 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <p className="text-foreground mb-4">
+            Your proposal "{formData.title}" has been successfully confirmed on
+            the blockchain and is now pending review.
+          </p>
+        </div>
+      </Modal>
+
+      {/* Error Modal */}
+      <Modal
+        isOpen={showError}
+        onClose={() => setShowError(false)}
+        title="Submission Error"
+        description="There was an issue submitting your proposal"
+        actions={[
+          {
+            label: 'Try Again',
+            variant: 'primary',
+            onClick: () => setShowError(false),
+          },
+        ]}
+      >
+        <div className="py-4 text-center">
+          <p className="text-foreground">{error}</p>
+        </div>
+      </Modal>
+
+      {/* Loading Overlay */}
+      <Modal
+        isOpen={isSubmitting}
+        onClose={() => {}}
+        title="Submitting Proposal"
+        description=" Please hold on as we do some magic"
+        actions={[]}
+      >
+          <CardanoLoaderSVG size={64} />
+F      </Modal>
     </div>
   );
 }
