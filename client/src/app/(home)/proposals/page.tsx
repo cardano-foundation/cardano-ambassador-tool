@@ -13,7 +13,7 @@ type Proposal = {
   title: string;
   details: string;
   address: string;
-  status: 'pending' | 'active' | 'completed' | 'rejected';
+  status: 'pending' | 'active' | 'Approved' | 'rejected';
 };
 
 const proposalsData: Proposal[] = [
@@ -43,7 +43,7 @@ const proposalsData: Proposal[] = [
     title: 'Tokenomics Revision',
     details: 'Proposal to revise the token emission schedule and staking rewards to ensure long-term sustainability and better align incentives for network participants.',
     address: '0x142d35Cc6634C0532925a3b8D4b5b1a4E2b5b3e5',
-    status: 'completed'
+    status: 'Approved'
   },
 ];
 
@@ -51,7 +51,7 @@ const getChipVariant = (status: Proposal['status']) => {
   switch (status) {
     case 'active': return 'success';
       case 'pending': return 'warning';
-      case 'completed': return 'default';
+      case 'Approved': return 'default';
       case 'rejected': return 'error';
       default: return 'inactive';
   }
@@ -89,7 +89,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     accessor: 'id',
     sortable: true,
     cell: (value) => (
-      <span className="text-sm">#{value}</span>
+      <span className="text-sm text-muted-foreground">{value}</span>
     ),
   },
   {
@@ -97,7 +97,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     accessor: 'title',
     sortable: true,
     cell: (value) => (
-      <span className="text-sm">{value}</span>
+      <span className="text-sm text-muted-foreground">{value}</span>
     ),
   },
   {
@@ -105,7 +105,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     accessor: 'details',
     sortable: false,
     cell: (value) => (
-      <span className="text-sm max-w-[400px]">{truncateToWords(value, 8)}</span>
+      <span className="text-sm text-muted-foreground max-w-[400px]">{truncateToWords(value, 8)}</span>
     ),
   },
   {
@@ -113,7 +113,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     accessor: 'address',
     sortable: false,
     cell: (value: string) => (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center text-muted-foreground gap-2">
         <code className="text-xs">
           {value.slice(0, 8)}...{value.slice(-6)}
         </code>
