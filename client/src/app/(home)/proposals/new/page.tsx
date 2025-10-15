@@ -143,7 +143,7 @@ export default function SubmitProposalPage() {
 
       setTxHash(txHash);
       setShowTxConfirmation(true);
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error submitting proposal:', error);
       setError(error.message || 'Failed to submit proposal. Please try again.');
       setShowError(true);

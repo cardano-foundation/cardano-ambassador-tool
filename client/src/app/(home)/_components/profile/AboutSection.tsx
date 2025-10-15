@@ -22,6 +22,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
   formatDate,
   cleanHtml,
 }) => {
+  const hasLocation = profile.city || profile.country;
+
   return (
     <Card>
       <CardContent>
@@ -40,11 +42,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
         <div className="space-y-3 text-sm">
           <div>
             <span className="text-neutral font-semibold">Country:</span>{' '}
-            <span className="text-muted-foreground">{profile.country}</span>
+            <span className="text-muted-foreground">{profile.country || '—'}</span>
           </div>
           <div>
             <span className="text-neutral font-semibold">City:</span>{' '}
-            <span className="text-muted-foreground">{profile.city}</span>
+            <span className="text-muted-foreground">{profile.city || '—'}</span>
           </div>
           <div>
             <span className="text-neutral font-semibold">Username:</span>{' '}
@@ -63,7 +65,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             <span className="text-muted-foreground"></span>
           </div>
         </div>
-        <LocationMap city={profile.city} country={profile.country} />
+        {hasLocation && (
+          <LocationMap city={profile.city} country={profile.country} />
+        )}
       </CardContent>
     </Card>
   );

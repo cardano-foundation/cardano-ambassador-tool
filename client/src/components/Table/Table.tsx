@@ -1,3 +1,4 @@
+'use client';
 import { SortDownIcon, SortUpIcon } from '@/components/atoms/SortIcons';
 import { Pagination } from '@/components/Pagination';
 import { useMemo, useRef, useState } from 'react';
