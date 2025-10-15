@@ -1,64 +1,174 @@
-'use client';
-import { useState, useRef } from 'react';
-import Title from '@/components/atoms/Title';
-import Paragraph from '@/components/atoms/Paragraph';
-import Copyable from '@/components/Copyable';
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
-import { getCurrentNetworkConfig } from '@/config/cardano';
+"use client";
+
+import { Table, ColumnDef } from '@/components/Table/Table';
+import { CopyIcon } from '@/components/atoms/CopyIcon';
 import Button from '@/components/atoms/Button';
 import Chip from '@/components/atoms/Chip';
-import TopNav from '@/components/Navigation/TabNav';
-import { ProposalData, mockProposal } from '@/hooks/UseProposalData';
-import FormDetails from './components/FormDetails';
-import FormFunds from './components/FormFunds';
-import FormReview from './components/FormReview';
+import Title from '@/components/atoms/Title';
+import { useState } from 'react';
 
-export default function Page() {
-  const proposal = mockProposal;
-  const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState('details');
+type Proposal = {
+  id: number;
+  title: string;
+  details: string;
+  address: string;
+  status: 'pending' | 'active' | 'completed' | 'rejected';
+};
 
-  const descriptionEditorRef = useRef<any>(null);
+const proposalsData: Proposal[] = [
+  {
+    id: 1,
+    title: 'Increase Community Fund Allocation',
+    details: 'This proposal aims to increase the community fund allocation from 10% to 15% of the total treasury to support more community-driven initiatives and projects that benefit the ecosystem.',
+    address: '0x742d35Cc6634C0532925a3b8D4b5b1a4E2b5b3e2',
+    status: 'active'
+  },
+  {
+    id: 2,
+    title: 'Protocol Upgrade v2.1',
+    details: 'Implementation of new security features and performance improvements including gas optimization, enhanced validator rewards, and cross-chain compatibility.',
+    address: '0x962d35Cc6634C0532925a3b8D4b5b1a4E2b5b3e4',
+    status: 'pending'
+  },
+  {
+    id: 3,
+    title: 'Tokenomics Revision',
+    details: 'Proposal to revise the token emission schedule and staking rewards to ensure long-term sustainability and better align incentives for network participants.',
+    address: '0x142d35Cc6634C0532925a3b8D4b5b1a4E2b5b3e5',
+    status: 'rejected'
+  },
+  {
+    id: 4,
+    title: 'Tokenomics Revision',
+    details: 'Proposal to revise the token emission schedule and staking rewards to ensure long-term sustainability and better align incentives for network participants.',
+    address: '0x142d35Cc6634C0532925a3b8D4b5b1a4E2b5b3e5',
+    status: 'completed'
+  },
+];
 
-  const [formData, setFormData] = useState<ProposalData>(proposal);
-
-  const tabs = [
-    { id: 'details', label: 'Details' },
-    { id: 'funds', label: 'Funds' },
-    { id: 'review', label: 'Review' }
-  ];
-
-  const getChipVariant = () => {
-    switch (proposal.status) {
-      case 'active': return 'success';
+const getChipVariant = (status: Proposal['status']) => {
+  switch (status) {
+    case 'active': return 'success';
       case 'pending': return 'warning';
       case 'completed': return 'default';
       case 'rejected': return 'error';
       default: return 'inactive';
+  }
+};
+
+const truncateToWords = (text: string, wordCount: number = 8) => {
+  const words = text.split(' ');
+  if (words.length <= wordCount) return text;
+  return words.slice(0, wordCount).join(' ') + '...';
+};
+
+const copyToClipboard = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (err) {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return true;
+    } catch (fallbackErr) {
+      console.error('Failed to copy text: ', fallbackErr);
+      return false;
     }
+  }
+};
+
+const proposalColumns: ColumnDef<Proposal>[] = [
+  {
+    header: '#',
+    accessor: 'id',
+    sortable: true,
+    cell: (value) => (
+      <span className="text-sm">#{value}</span>
+    ),
+  },
+  {
+    header: 'Proposal title',
+    accessor: 'title',
+    sortable: true,
+    cell: (value) => (
+      <span className="text-sm">{value}</span>
+    ),
+  },
+  {
+    header: 'Proposal details',
+    accessor: 'details',
+    sortable: false,
+    cell: (value) => (
+      <span className="text-sm max-w-[400px]">{truncateToWords(value, 8)}</span>
+    ),
+  },
+  {
+    header: 'Receiver address',
+    accessor: 'address',
+    sortable: false,
+    cell: (value: string) => (
+      <div className="flex items-center gap-2">
+        <code className="text-xs">
+          {value.slice(0, 8)}...{value.slice(-6)}
+        </code>
+        <button
+          onClick={async (e) => {
+            e.stopPropagation();
+            await copyToClipboard(value);
+          }}
+          className="p-1 rounded"
+          title="copy"
+        >
+          <CopyIcon />
+        </button>
+      </div>
+    ),
+    getCopyText: (value: string) => value,
+  },
+  {
+    header: 'Status',
+    accessor: 'status',
+    sortable: true,
+    cell: (value) => (
+      <Chip variant={getChipVariant(value)}>
+        {value.charAt(0).toUpperCase() + value.slice(1)}
+      </Chip>
+    ),
+  },
+  {
+    header: 'Action',
+    sortable: false,
+    cell: (value, row) => (
+      <Button
+        variant="primary"
+        size="sm"
+      >
+        View
+      </Button>
+    ),
+  },
+];
+
+export default function ProposalsPage() {
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+  const handleViewProposal = (proposalId: number) => {
+    console.log('View proposal:', proposalId);
   };
 
-  const handleInputChange = (field: keyof ProposalData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSaveChanges = async () => {
-    console.log('Saving edited proposal...', formData);
-    setIsEditing(false);
-  };
-
-  const handleDiscardChanges = () => {
-    setFormData(proposal);
-    setIsEditing(false);
-    setActiveTab('details');
-  };
-
-  const handleTabNavigation = (direction: 'next' | 'prev') => {
-    const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
-    if (direction === 'next' && currentIndex < tabs.length - 1) {
-      setActiveTab(tabs[currentIndex + 1].id);
-    } else if (direction === 'prev' && currentIndex > 0) {
-      setActiveTab(tabs[currentIndex - 1].id);
+  const handleCopyAddress = async (text: string) => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      setCopiedAddress(text);
+      
+      setTimeout(() => {
+        setCopiedAddress(null);
+      }, 2000);
     }
   };
 
@@ -66,161 +176,25 @@ export default function Page() {
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4">
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <Title level="5" className="text-foreground">
-              {proposal.title}
-            </Title>
-            <Chip variant={getChipVariant()} size="md" className="capitalize">
-              {proposal.status}
-            </Chip>
+          <div className="flex items-center justify-between">
+            <Title level="5" className="text-foreground">Proposals</Title>
+            {copiedAddress && (
+              <div className="text-sm text-green-600 bg-green-100 px-3 py-1 rounded">
+                Address copied to clipboard!
+              </div>
+            )}
           </div>
-          <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
-            <div className="flex-1 space-y-7">
-              <div className="space-y-1.5">
-                <Paragraph size="xs" className="text-muted-foreground font-light">Proposal ID</Paragraph>
-                <Paragraph size="sm" className="text-foreground">{proposal.id}</Paragraph>
-              </div>
-              <div className="space-y-1.5">
-                <Paragraph size="xs" className="text-muted-foreground font-light">Receiver wallet</Paragraph>
-                {proposal.receiverWalletAddress ? (
-                  <Copyable
-                    withKey={false}
-                    link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.receiverWalletAddress}`}
-                    value={proposal.receiverWalletAddress}
-                    keyLabel={''}
-                  />
-                ) : (
-                  <Paragraph size="sm" className="text-foreground">Not specified</Paragraph>
-                )}
-              </div>
-              {proposal.policyId && (
-                <div className="space-y-1.5">
-                  <Paragraph size="xs" className="text-muted-foreground font-light">Policy ID</Paragraph>
-                  <Copyable
-                    withKey={false}
-                    link={`${getCurrentNetworkConfig().explorerUrl}/policy/${proposal.policyId}`}
-                    value={proposal.policyId}
-                    keyLabel={''}
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="flex-1 space-y-7">
-              <div className="space-y-1.5">
-                <Paragraph size="xs" className="text-muted-foreground font-light">Submitted by</Paragraph>
-                <div className="flex items-start flex-wrap gap-1.5">
-                  {proposal.submittedBy && (
-                    <Paragraph size="sm" className="text-foreground">{proposal.submittedBy}</Paragraph>
-                  )}
-                  {proposal.submittedByAddress ? (
-                    <Copyable
-                      withKey={false}
-                      link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.submittedByAddress}`}
-                      value={proposal.submittedByAddress}
-                      keyLabel={''}
-                    />
-                  ) : (
-                    !proposal.submittedBy && <Paragraph size="sm" className="text-foreground">Not specified</Paragraph>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Paragraph size="xs" className="text-muted-foreground font-light">Funds Requested</Paragraph>
-                <Paragraph size="sm" className="text-foreground">{proposal.fundsRequested}</Paragraph>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <Title level="5" className="text-foreground">Overview</Title>
-            <div className="flex gap-3 sm:gap-4">
-              {isEditing ? (
-                <>
-                  <div className="text-primary-base">
-                    <Button variant="outline"  onClick={handleDiscardChanges}>
-                      Discard Changes
-                    </Button>
-                  </div>
-                  <Button variant="primary" size='sm' onClick={handleSaveChanges}>
-                    Save proposal
-                  </Button>
-                </>
-              ) : (
-                <Button variant="primary" size='sm' onClick={() => setIsEditing(true)}>
-                  Edit Proposal
-                </Button>
-              )}
-            </div>
-          </div>
-          {isEditing ? (
-            <>
-              <div className="w-full border-b border-border">
-                <TopNav tabs={tabs} activeTabId={activeTab} onTabChange={setActiveTab} />
-              </div>
-
-              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-                {activeTab === "details" && (
-                  <FormDetails
-                    mode="edit"
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                    descriptionEditorRef={descriptionEditorRef}
-                  />
-                )}
-
-                {activeTab === "funds" && (
-                  <FormFunds
-                    mode="edit"
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                  />
-                )}
-
-                {activeTab === "review" && (
-                  <FormReview
-                    mode="edit"
-                    formData={formData}
-                    userAddress={proposal.submittedByAddress}
-                    proposalId={proposal.id}
-                  />
-                )}
-
-                <div className="flex items-center justify-between pt-6 gap-4">
-                  {activeTab !== 'details' && (
-                    <div className="w-1/4 text-primary-base">
-                      <Button variant="outline" onClick={() => handleTabNavigation('prev')} className="w-full">
-                        Back
-                      </Button>
-                    </div>
-                  )}
-
-                  <div className={activeTab === 'details' ? "w-full" : "w-3/4"}>
-                    {activeTab !== 'review' ? (
-                      <Button variant="primary"  onClick={() => handleTabNavigation('next')} className="w-full">
-                        Next
-                      </Button>
-                    ) : (
-                      <Button variant="primary" onClick={handleSaveChanges} className="w-full">
-                        Save Proposal
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="space-y-5">
-              <div className="space-y-2.5">
-                <Title level="6" className="text-base text-foreground">Title</Title>
-                <RichTextDisplay content={proposal.title} className="text-foreground" />
-              </div>
-              <div className="space-y-6">
-                <Title level="6" className="text-foreground">Description</Title>
-                <RichTextDisplay content={proposal.description} className="text-foreground" />
-              </div>
-            </div>
-          )}
+          
+          <Table
+            data={proposalsData}
+            columns={proposalColumns}
+            pageSize={10}
+            searchable={true}
+            searchPlaceholder="Search by title, details, or status..."
+            onCopy={handleCopyAddress}
+            context="proposals"
+            autoSize={true}
+          />
         </div>
       </div>
     </div>
