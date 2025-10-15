@@ -59,7 +59,7 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     header: '#',
     accessor: 'id',
     sortable: true,
-    cell: (value) => <span className="text-sm">#{value}</span>,
+    cell: (value) => <span className="text-sm">{value}</span>,
   },
   {
     header: 'Proposal title',
@@ -128,16 +128,6 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     ),
   },
   {
-    header: 'Status',
-    accessor: 'status',
-    sortable: true,
-    cell: (value) => (
-      <Chip variant={getChipVariant(value)}>
-        {value ? value.replace('_', ' ').replace(/\b\w/g, (letter: string) => letter.toUpperCase()) : 'Unknown'}
-      </Chip>
-    ),
-  },
-  {
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
@@ -156,7 +146,10 @@ export default function ProposalIntentsPage() {
   const { proposalIntents: rawProposalIntents } = useDatabase();
 
   useEffect(() => {
+    console.log("RAW PROPOSAL INTENTS:", rawProposalIntents);
     if (rawProposalIntents) {
+      console.log("Count:", rawProposalIntents.length);
+      console.log("First item:", rawProposalIntents[0]);
       try {
         setLoading(true);
         const transformedData = transformRawData(rawProposalIntents);
