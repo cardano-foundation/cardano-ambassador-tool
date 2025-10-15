@@ -39,11 +39,12 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
 
   const { members } = useApp();
   const { formatDate, getRelativeTime, cleanHtml } = useDateFormatting();
+  const decodedUsername = decodeURIComponent(ambassadorUsername);
 
   const memberData = useMemo(() => {
     const defaultData = {
-      name: ambassadorUsername,
-      username: ambassadorUsername,
+      name: decodedUsername,
+      username: decodedUsername,
       country: '',
       city: '',
       bio_excerpt: '',
@@ -57,7 +58,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
         if (!parsed?.member?.metadata) return false;
         return (
           parsed.member.metadata.displayName?.toLowerCase() ===
-          ambassadorUsername.toLowerCase()
+          decodedUsername.toLowerCase()
         );
       } catch {
         return false;
@@ -79,8 +80,8 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
         name:
           memberMetadata.fullName ||
           memberMetadata.displayName ||
-          ambassadorUsername,
-        username: memberMetadata.displayName || ambassadorUsername,
+          decodedUsername,
+        username: memberMetadata.displayName || decodedUsername,
         country: countryData?.name || memberMetadata.country || '',
         city:  memberMetadata.city || '',
         bio_excerpt: memberMetadata.bio || '',
@@ -89,13 +90,13 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
     } catch {
       return defaultData;
     }
-  }, [members, ambassadorUsername]);
+  }, [members, decodedUsername]);
 
   const {
     profile,
     loading: forumLoading,
     error,
-  } = useAmbassadorProfile(ambassadorUsername);
+  } = useAmbassadorProfile(decodedUsername);
 
   const tabs = [
     { id: 'summary', label: 'Summary' },
@@ -118,6 +119,11 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
           },
     },
   };
+
+  const hasActivities = profile?.activities && profile.activities.length > 0;
+  const hasTopics = profile?.summary.top_topics && profile.summary.top_topics.length > 0;
+  const hasReplies = profile?.summary.top_replies && profile.summary.top_replies.length > 0;
+  const hasAnyContent = hasActivities || hasTopics || hasReplies;
 
   return (
     <div className="bg-background min-h-screen max-w-full">
@@ -160,7 +166,6 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
                             Recent Activity
                           </Title>
                         </div>
-
                         <ActivityPulse />
                       </div>
                     </Card>
@@ -171,7 +176,6 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
                             Top Topics
                           </Title>
                         </div>
-
                         <TopicsPulse />
                       </div>
                     </Card>
@@ -182,57 +186,43 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
                             Top Replies
                           </Title>
                         </div>
-
                         <RepliesPulse />
                       </div>
                     </Card>
                   </>
-                ) : profile ? (
+                ) : profile && hasAnyContent ? (
                   <>
-                    <ActivitySection
-                      activities={profile.activities}
-                      showAllActivities={showAllActivities}
-                      onToggleShowAll={() =>
-                        setShowAllActivities(!showAllActivities)
-                      }
-                      notificationsEnabled={notificationsEnabled}
-                      onNotificationsToggle={setNotificationsEnabled}
-                      getRelativeTime={getRelativeTime}
-                    />
-                    <TopicsSection
-                      topics={profile.summary.top_topics}
-                      showAllTopics={showAllTopics}
-                      onToggleShowAll={() => setShowAllTopics(!showAllTopics)}
-                      formatDate={formatDate}
-                    />
-                    <RepliesSection
-                      replies={profile.summary.top_replies}
-                      showAllReplies={showAllReplies}
-                      onToggleShowAll={() => setShowAllReplies(!showAllReplies)}
-                      formatDate={formatDate}
-                    />
+                    {hasActivities && (
+                      <ActivitySection
+                        activities={profile.activities}
+                        showAllActivities={showAllActivities}
+                        onToggleShowAll={() =>
+                          setShowAllActivities(!showAllActivities)
+                        }
+                        notificationsEnabled={notificationsEnabled}
+                        onNotificationsToggle={setNotificationsEnabled}
+                        getRelativeTime={getRelativeTime}
+                      />
+                    )}
+                    {hasTopics && (
+                      <TopicsSection
+                        topics={profile.summary.top_topics}
+                        showAllTopics={showAllTopics}
+                        onToggleShowAll={() => setShowAllTopics(!showAllTopics)}
+                        formatDate={formatDate}
+                      />
+                    )}
+                    {hasReplies && (
+                      <RepliesSection
+                        replies={profile.summary.top_replies}
+                        showAllReplies={showAllReplies}
+                        onToggleShowAll={() => setShowAllReplies(!showAllReplies)}
+                        formatDate={formatDate}
+                      />
+                    )}
                   </>
                 ) : (
-                  <>
-                    <div className="bg-card border border-border rounded-lg p-8 text-center">
-                      <Title level="5" className="mb-2">No Recent Activity</Title>
-                      <Paragraph className="text-muted-foreground">
-                        This ambassador hasn't been active on the forum recently.
-                      </Paragraph>
-                    </div>
-                    <div className="bg-card border border-border rounded-lg p-8 text-center">
-                      <Title level="5" className="mb-2">No Topics</Title>
-                      <Paragraph className="text-muted-foreground">
-                        This ambassador hasn't created any topics yet.
-                      </Paragraph>
-                    </div>
-                    <div className="bg-card border border-border rounded-lg p-8 text-center">
-                      <Title level="5" className="mb-2">No Replies</Title>
-                      <Paragraph className="text-muted-foreground">
-                        This ambassador hasn't made any replies yet.
-                      </Paragraph>
-                    </div>
-                  </>
+                  <EmptyState message="No recent activities" />
                 )}
               </div>
             )}
@@ -240,16 +230,12 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
             {activeTab === 'badges' &&
               (forumLoading ? (
                 <BadgesPulse />
-              ) : profile ? (
+              ) : profile?.badges && profile.badges.length > 0 ? (
                 <BadgesSection badges={profile.badges} cleanHtml={cleanHtml} />
               ) : (
-                <div className="bg-card border border-border rounded-lg p-8 text-center">
-                  <Title level="5" className="mb-2">No Badges</Title>
-                  <Paragraph className="text-muted-foreground">
-                    This ambassador hasn't earned any badges yet.
-                  </Paragraph>
-                </div>
+                <EmptyState message="No badges yet" />
               ))}
+            
             {activeTab === 'proposals' && (
               <EmptyState message="No proposals yet" />
             )}
