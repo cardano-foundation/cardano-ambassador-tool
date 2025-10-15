@@ -6,6 +6,7 @@ import Button from '@/components/atoms/Button';
 import Chip from '@/components/atoms/Chip';
 import Title from '@/components/atoms/Title';
 import { useState } from 'react';
+import Paragraph from '@/components/atoms/Paragraph';
 
 type Proposal = {
   id: number;
@@ -176,21 +177,19 @@ export default function ProposalsPage() {
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4">
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="space-y-2">
             <Title level="5" className="text-foreground">Proposals</Title>
-            {copiedAddress && (
-              <div className="text-sm text-green-600 bg-green-100 px-3 py-1 rounded">
-                Address copied to clipboard!
-              </div>
-            )}
-          </div>
+            <Paragraph className="text-sm text-muted-foreground">
+                Search proposals by title, content, or ambassador
+            </Paragraph>
+            </div>
           
           <Table
             data={proposalsData}
             columns={proposalColumns}
             pageSize={10}
             searchable={true}
-            searchPlaceholder="Search by title, details, or status..."
+            searchPlaceholder="Search proposal"
             onCopy={handleCopyAddress}
             context="proposals"
             autoSize={true}
