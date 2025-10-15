@@ -49,9 +49,9 @@ const proposalsData: Proposal[] = [
 
 const getChipVariant = (status: Proposal['status']) => {
   switch (status) {
-    case 'active': return 'success';
+    case 'active': return 'default';
       case 'pending': return 'warning';
-      case 'Approved': return 'default';
+      case 'Approved': return 'success';
       case 'rejected': return 'error';
       default: return 'inactive';
   }
