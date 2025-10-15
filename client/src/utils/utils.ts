@@ -92,15 +92,12 @@ export function getProvider(network = 'preprod'): BlockfrostProvider {
 /**
  * Helper function to safely extract readable string from ByteString | List<ByteString>
  */
-const safeExtractString = (field: any, fieldName?: string): string => {
+const safeExtractString = (field: any, fieldName?: string): string => {  
   try {
-    // Check if it's a List<ByteString> (has a 'list' property)
     if (field?.list) {
-      const hexResult = plutusBSArrayToString(field);
-      // plutusBSArrayToString returns hex, so we need to decode it
+      const hexResult = plutusBSArrayToString(field);      
       return hexToString(hexResult);
     }
-    // Check if it's a single ByteString (has a 'bytes' property)
     if (field?.bytes) {
       return hexToString(field.bytes);
     }
@@ -251,18 +248,22 @@ export function parseProposalDatum(
     ) {
       return null;
     }
+
     const metadataPlutus: ProposalMetadata = datum.fields[3];
+    
     const metadata: ProposalData = {
       title: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
-      description: hexToString((metadataPlutus.fields[1] as ByteString).bytes),
+      description: safeExtractString(
+        (metadataPlutus.fields[1] as ByteString),
+      ),
       fundsRequested: hexToString(
         (metadataPlutus.fields[2] as ByteString).bytes,
       ),
-      receiverWalletAddress: hexToString(
-        (metadataPlutus.fields[3] as ByteString).bytes,
+      receiverWalletAddress: safeExtractString(
+        (metadataPlutus.fields[3] as ByteString),
       ),
-      submittedByAddress: hexToString(
-        (metadataPlutus.fields[4] as ByteString).bytes,
+      submittedByAddress: safeExtractString(
+        (metadataPlutus.fields[4] as ByteString),
       ),
       status: hexToString((metadataPlutus.fields[5] as ByteString).bytes),
     };

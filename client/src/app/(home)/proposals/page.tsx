@@ -1,86 +1,46 @@
 "use client";
 
 import { Table, ColumnDef } from '@/components/Table/Table';
-import { CopyIcon } from '@/components/atoms/CopyIcon';
 import Button from '@/components/atoms/Button';
+import Link from 'next/link';
 import Chip from '@/components/atoms/Chip';
 import Title from '@/components/atoms/Title';
 import { useState } from 'react';
 import Paragraph from '@/components/atoms/Paragraph';
+import RichTextDisplay from '@/components/atoms/RichTextDisplay';
+import Copyable from '@/components/Copyable';
+import { useApp } from '@/context';
+import { parseProposalDatum } from '@/utils';
+import { getCurrentNetworkConfig } from '@/config/cardano';
+import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 
 type Proposal = {
   id: number;
   title: string;
   details: string;
-  address: string;
-  status: 'pending' | 'active' | 'Approved' | 'rejected';
+  receiverWalletAddress: string;
+  submittedByAddress: string;
+  fundsRequested: number;
+  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected';
+  txHash: string;
 };
-
-const proposalsData: Proposal[] = [
-  {
-    id: 1,
-    title: 'Increase Community Fund Allocation',
-    details: 'This proposal aims to increase the community fund allocation from 10% to 15% of the total treasury to support more community-driven initiatives and projects that benefit the ecosystem.',
-    address: '0x742d35Cc6634C0532925a3b8D4b5b1a4E2b5b3e2',
-    status: 'active'
-  },
-  {
-    id: 2,
-    title: 'Protocol Upgrade v2.1',
-    details: 'Implementation of new security features and performance improvements including gas optimization, enhanced validator rewards, and cross-chain compatibility.',
-    address: '0x962d35Cc6634C0532925a3b8D4b5b1a4E2b5b3e4',
-    status: 'pending'
-  },
-  {
-    id: 3,
-    title: 'Tokenomics Revision',
-    details: 'Proposal to revise the token emission schedule and staking rewards to ensure long-term sustainability and better align incentives for network participants.',
-    address: '0x142d35Cc6634C0532925a3b8D4b5b1a4E2b5b3e5',
-    status: 'rejected'
-  },
-  {
-    id: 4,
-    title: 'Tokenomics Revision',
-    details: 'Proposal to revise the token emission schedule and staking rewards to ensure long-term sustainability and better align incentives for network participants.',
-    address: '0x142d35Cc6634C0532925a3b8D4b5b1a4E2b5b3e5',
-    status: 'Approved'
-  },
-];
 
 const getChipVariant = (status: Proposal['status']) => {
   switch (status) {
-    case 'active': return 'default';
-      case 'pending': return 'warning';
-      case 'Approved': return 'success';
-      case 'rejected': return 'error';
-      default: return 'inactive';
+    case 'pending': return 'warning';
+    case 'submitted': return 'default';
+    case 'under_review': return 'default';
+    case 'approved': return 'success';
+    case 'rejected': return 'error';
+    default: return 'inactive';
   }
 };
 
 const truncateToWords = (text: string, wordCount: number = 8) => {
+  if (!text) return 'No description';
   const words = text.split(' ');
   if (words.length <= wordCount) return text;
   return words.slice(0, wordCount).join(' ') + '...';
-};
-
-const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch (err) {
-    try {
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      return true;
-    } catch (fallbackErr) {
-      console.error('Failed to copy text: ', fallbackErr);
-      return false;
-    }
-  }
 };
 
 const proposalColumns: ColumnDef<Proposal>[] = [
@@ -89,7 +49,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     accessor: 'id',
     sortable: true,
     cell: (value) => (
-      <span className="text-sm text-muted-foreground">{value}</span>
+      <span className="text-muted-foreground text-sm">{value}</span>
     ),
   },
   {
@@ -97,39 +57,47 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     accessor: 'title',
     sortable: true,
     cell: (value) => (
-      <span className="text-sm text-muted-foreground">{value}</span>
+      <span className="text-foreground text-sm font-medium">{value}</span>
     ),
   },
   {
     header: 'Proposal details',
     accessor: 'details',
     sortable: false,
+    cell: (value) => {
+      const truncatedValue = truncateToWords(value, 10);
+      return (
+        <div className="max-w-[400px] text-sm">
+          <RichTextDisplay 
+            content={truncatedValue} 
+            className="prose-sm [&_p]:mb-1 [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_strong]:font-semibold" 
+          />
+        </div>
+      );
+    },
+  },
+  {
+    header: 'Funds Requested',
+    accessor: 'fundsRequested',
+    sortable: true,
     cell: (value) => (
-      <span className="text-sm text-muted-foreground max-w-[400px]">{truncateToWords(value, 8)}</span>
+      <span className="text-sm">
+        {value ? `$${value.toLocaleString()}` : 'N/A'}
+      </span>
     ),
   },
   {
-    header: 'Receiver address',
-    accessor: 'address',
+    header: 'Submitted By',
+    accessor: 'submittedByAddress',
     sortable: false,
     cell: (value: string) => (
-      <div className="flex items-center text-muted-foreground gap-2">
-        <code className="text-xs">
-          {value.slice(0, 8)}...{value.slice(-6)}
-        </code>
-        <button
-          onClick={async (e) => {
-            e.stopPropagation();
-            await copyToClipboard(value);
-          }}
-          className="p-1 rounded"
-          title="copy"
-        >
-          <CopyIcon />
-        </button>
-      </div>
+      <Copyable
+        withKey={false}
+        link={`${getCurrentNetworkConfig().explorerUrl}/address/${value}`}
+        value={value}
+        keyLabel=""
+      />
     ),
-    getCopyText: (value: string) => value,
   },
   {
     header: 'Status',
@@ -137,7 +105,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     sortable: true,
     cell: (value) => (
       <Chip variant={getChipVariant(value)}>
-        {value.charAt(0).toUpperCase() + value.slice(1)}
+        {value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
       </Chip>
     ),
   },
@@ -145,52 +113,66 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
-      <Button
-        variant="primary"
-        size="sm"
-      >
-        View
-      </Button>
+      <Link href={`/proposals/${row.txHash}`} prefetch={true}>
+        <Button variant="primary" size="sm">
+          View
+        </Button>
+      </Link>
     ),
   },
 ];
 
 export default function ProposalsPage() {
-  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+  const { proposalIntents, dbLoading } = useApp();
 
-  const handleViewProposal = (proposalId: number) => {
-    console.log('View proposal:', proposalId);
-  };
+  if (dbLoading) {
+    return <SimpleCardanoLoader />;
+  }
 
-  const handleCopyAddress = async (text: string) => {
-    const success = await copyToClipboard(text);
-    if (success) {
-      setCopiedAddress(text);
-      
-      setTimeout(() => {
-        setCopiedAddress(null);
-      }, 2000);
-    }
-  };
+  const proposalsData: Proposal[] = proposalIntents
+    .map((utxo, idx) => {
+      if (!utxo.plutusData) return null;
+
+      try {
+        const { metadata } = parseProposalDatum(utxo.plutusData)!;
+        
+        if (!metadata) return null;
+
+        return {
+          id: idx + 1,
+          title: metadata.title || 'Untitled Proposal',
+          details: metadata.description || 'No description provided',
+          receiverWalletAddress: metadata.receiverWalletAddress || '',
+          submittedByAddress: metadata.submittedByAddress || '',
+          fundsRequested: parseInt(metadata.fundsRequested || '0'),
+          status: 'pending' as const,
+          txHash: utxo.txHash,
+        };
+      } catch (error) {
+        console.error('Error parsing proposal datum:', error);
+        return null;
+      }
+    })
+    .filter(Boolean) as Proposal[];
 
   return (
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4">
         <div className="space-y-6">
           <div className="space-y-2">
-            <Title level="5" className="text-foreground">Proposals</Title>
+            <Title level="5" className="text-foreground">Community Proposals</Title>
             <Paragraph className="text-sm text-muted-foreground">
-                Search proposals by title, content, or ambassador
+              Browse and discover proposals submitted by Cardano ambassadors
+              {proposalsData.length > 0 && ` - ${proposalsData.length} found`}
             </Paragraph>
-            </div>
+          </div>
           
           <Table
             data={proposalsData}
             columns={proposalColumns}
             pageSize={10}
             searchable={true}
-            searchPlaceholder="Search proposal"
-            onCopy={handleCopyAddress}
+            searchPlaceholder="Search proposals..."
             context="proposals"
             autoSize={true}
           />

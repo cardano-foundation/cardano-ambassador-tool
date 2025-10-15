@@ -1,4 +1,7 @@
 'use client';
+import FormDetails from '@/app/(home)/proposals/components/FormDetails';
+import FormFunds from '@/app/(home)/proposals/components/FormFunds';
+import FormReview from '@/app/(home)/proposals/components/FormReview';
 import Button from '@/components/atoms/Button';
 import Chip from '@/components/atoms/Chip';
 import Paragraph from '@/components/atoms/Paragraph';
@@ -6,22 +9,76 @@ import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
 import TopNav from '@/components/Navigation/TabNav';
+import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { mockProposal } from '@/hooks/UseProposalData';
+import { useApp } from '@/context';
+import { parseProposalDatum } from '@/utils';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import { useRef, useState } from 'react';
-import FormDetails from '../components/FormDetails';
-import FormFunds from '../components/FormFunds';
-import FormReview from '../components/FormReview';
+import { use, useRef, useState } from 'react';
 
-export default function Page() {
-  const proposal = mockProposal;
+interface PageProps {
+  params: Promise<{ txhash: string }>;
+}
+
+
+export default function Page({ params }: PageProps) {
+  const { proposalIntents, dbLoading } = useApp();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
+  const { txhash } = use(params);
 
   const descriptionEditorRef = useRef<any>(null);
 
-  const [formData, setFormData] = useState<ProposalData>(proposal);
+  const proposal = proposalIntents.find(
+    (utxo) => utxo.txHash === txhash,
+  );
+
+  if (dbLoading) {
+    return <SimpleCardanoLoader />;
+  }
+
+  if (!proposal || !proposal.plutusData) {
+    return (
+      <div className="bg-background flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <Title level="3" className="text-foreground mb-2">
+            Proposal Not Found
+          </Title>
+          <Paragraph className="text-muted-foreground mb-4">
+            The proposal with hash {txhash} could not be found.
+          </Paragraph>
+          <Button variant="primary" onClick={() => window.history.back()}>
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  let proposalData: ProposalData;
+  try {
+    const { metadata } = parseProposalDatum(proposal.plutusData)!;
+    proposalData = {
+      title: metadata?.title,
+      description: metadata?.description,
+      fundsRequested: metadata?.fundsRequested || '0',
+      receiverWalletAddress: metadata?.receiverWalletAddress,
+      submittedByAddress: metadata?.submittedByAddress,
+      status: 'pending',
+    };
+  } catch (error) {
+    console.error('Error parsing proposal datum:', error);
+    proposalData = {
+      title: 'Error Loading Proposal',
+      description: 'Could not parse proposal data',
+      fundsRequested: '0',
+      receiverWalletAddress: '',
+      submittedByAddress: '',
+      status: 'pending',
+    };
+  }
+
+  const [formData, setFormData] = useState<ProposalData>(proposalData);
 
   const tabs = [
     { id: 'details', label: 'Details' },
@@ -30,13 +87,15 @@ export default function Page() {
   ];
 
   const getChipVariant = () => {
-    switch (proposal.status) {
-      case 'active':
-        return 'success';
+    switch (proposalData.status) {
       case 'pending':
         return 'warning';
-      case 'completed':
+      case 'submitted':
         return 'default';
+      case 'under_review':
+        return 'default';
+      case 'approved':
+        return 'success';
       case 'rejected':
         return 'error';
       default:
@@ -54,7 +113,7 @@ export default function Page() {
   };
 
   const handleDiscardChanges = () => {
-    setFormData(proposal);
+    setFormData(proposalData);
     setIsEditing(false);
     setActiveTab('details');
   };
@@ -74,10 +133,10 @@ export default function Page() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <Title level="5" className="text-foreground">
-              {proposal.title}
+              {proposalData.title}
             </Title>
             <Chip variant={getChipVariant()} size="md" className="capitalize">
-              {proposal.status}
+              {proposalData.status.replace('_', ' ')}
             </Chip>
           </div>
           <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
@@ -100,11 +159,11 @@ export default function Page() {
                 >
                   Receiver wallet
                 </Paragraph>
-                {proposal.receiverWalletAddress ? (
+                {proposalData.receiverWalletAddress ? (
                   <Copyable
                     withKey={false}
-                    link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.receiverWalletAddress}`}
-                    value={proposal.receiverWalletAddress}
+                    link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.receiverWalletAddress}`}
+                    value={proposalData.receiverWalletAddress}
                     keyLabel={''}
                   />
                 ) : (
@@ -124,20 +183,20 @@ export default function Page() {
                   Submitted by
                 </Paragraph>
                 <div className="flex flex-wrap items-start gap-1.5">
-                  {proposal.submittedByAddress && (
+                  {proposalData.submittedByAddress && (
                     <Paragraph size="sm" className="text-foreground">
-                      {proposal.submittedByAddress}
+                      {proposalData.submittedByAddress}
                     </Paragraph>
                   )}
-                  {proposal.submittedByAddress ? (
+                  {proposalData.submittedByAddress ? (
                     <Copyable
                       withKey={false}
-                      link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.submittedByAddress}`}
-                      value={proposal.submittedByAddress}
+                      link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
+                      value={proposalData.submittedByAddress}
                       keyLabel={''}
                     />
                   ) : (
-                    !proposal.submittedByAddress && (
+                    !proposalData.submittedByAddress && (
                       <Paragraph size="sm" className="text-foreground">
                         Not specified
                       </Paragraph>
@@ -153,7 +212,7 @@ export default function Page() {
                   Funds Requested
                 </Paragraph>
                 <Paragraph size="sm" className="text-foreground">
-                  {proposal.fundsRequested}
+                  {proposalData.fundsRequested}
                 </Paragraph>
               </div>
             </div>
@@ -222,7 +281,7 @@ export default function Page() {
                   <FormReview
                     mode="edit"
                     formData={formData}
-                    userAddress={proposal.submittedByAddress}
+                    userAddress={proposalData.submittedByAddress}
                     // proposalId={proposal.id}
                   />
                 )}
@@ -269,7 +328,7 @@ export default function Page() {
                   Title
                 </Title>
                 <RichTextDisplay
-                  content={proposal.title}
+                  content={proposalData.title}
                   className="text-foreground"
                 />
               </div>
@@ -278,7 +337,7 @@ export default function Page() {
                   Description
                 </Title>
                 <RichTextDisplay
-                  content={proposal.description}
+                  content={proposalData.description}
                   className="text-foreground"
                 />
               </div>

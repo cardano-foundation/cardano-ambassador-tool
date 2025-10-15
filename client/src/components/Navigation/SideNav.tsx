@@ -65,19 +65,19 @@ const adminToolsSection: NavigationSection = {
     {
       id: 'manage-ambassadors',
       label: 'Manage Ambassadors',
-      href: '/manage/ambassadors',
+      href: '/manage/memberships',
       icon: UsersIcon,
     },
     {
       id: 'membership-intent',
       label: 'Membership intents',
-      href: '/manage/memberships',
+      href: '/manage/memberships-intents',
       icon: SettingsIcon,
     },
     {
       id: 'proposal-intent',
       label: 'Proposal intents',
-      href: '/manage/proposals',
+      href: '/manage/proposal-intents',
       icon: ProposalIcon,
     },
   ],
@@ -85,9 +85,8 @@ const adminToolsSection: NavigationSection = {
 
 const SideNav = () => {
   const { user, isAdmin, wallet, isNetworkValid, userRoles } = useApp();
-
   const pathname = usePathname();
-
+  const [fetch, setFetch] = useState(false);
   const [sections, setSections] = useState(defaultNavigationSections);
 
   // Active link handling
@@ -105,10 +104,6 @@ const SideNav = () => {
   // Update sections when roles change
   useEffect(() => {
     const updated = [...defaultNavigationSections];
-
-    // if (!isNetworkValid) {
-    //   return;
-    // }
 
     if (isAdmin) {
       updated.push(adminToolsSection);
@@ -143,10 +138,13 @@ const SideNav = () => {
               {section.items.map((item) => {
                 const IconComponent = item.icon || GridIcon;
                 const isActive = item.id === currentActiveId;
+
                 return (
                   <Link
                     key={item.id}
                     href={item.href}
+                    prefetch={fetch ? null : false}
+                    onMouseEnter={() => setFetch(true)}
                     className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
                       isActive ? 'bg-muted' : ''
                     }`}

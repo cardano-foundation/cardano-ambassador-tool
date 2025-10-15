@@ -1,6 +1,6 @@
 'use client';
 import Input from '@/components/atoms/Input';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const SearchIcon = ({ className = '' }: { className?: string }) => (
   <svg
@@ -96,6 +96,24 @@ export default function AmbassadorSearch({
   currentView = 'grid',
 }: AmbassadorSearchProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const regionOptions = [
     { value: 'all', label: 'All Regions' },
@@ -116,21 +134,19 @@ export default function AmbassadorSearch({
   };
 
   return (
-    <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-end sm:gap-4">
+    <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:gap-4">
       <div className="relative flex-1">
-        <div className="pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2">
-          <SearchIcon className="text-muted-foreground" />
-        </div>
         <Input
           placeholder="Search ambassador"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="dark:!bg-card !bg-neutral-50 pl-10"
+          className="dark:!bg-card !bg-neutral-50"
+          icon={<SearchIcon className="text-muted-foreground" />}
         />
       </div>
 
-      <div className="flex items-center gap-2 pb-1.5 sm:gap-3">
-        <div className="relative flex-1 sm:flex-none">
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1 sm:flex-none" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="dark:bg-card border-border inline-flex w-full min-w-0 items-center justify-between gap-2.5 rounded-md border bg-neutral-50 px-2.5 py-2.5 transition-colors hover:bg-gray-200 sm:w-auto sm:justify-start dark:hover:bg-gray-700"
@@ -205,12 +221,12 @@ export default function AmbassadorSearch({
             </div>
           )}
         </div>
-        <div className="dark:bg-card border-border inline-flex flex-shrink-0 items-center justify-center rounded-md border bg-neutral-50 px-[2px] py-1">
+        <div className="dark:bg-card border-border inline-flex flex-shrink-0 items-center justify-center rounded-md border bg-neutral-50 px-[2px] lg:py-1">
           <button
-            className={`dark:bg-muted flex items-center justify-center rounded-md bg-white p-1.5 ${
+            className={`dark:bg-muted flex items-center justify-center rounded-md bg-white lg:p-1.5 p-1 ${
               currentView === 'grid'
-                ? 'bg-white shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] dark:bg-gray-900'
-                : 'hover:bg-white/50 dark:hover:bg-gray-900/50'
+                ? 'bg-white shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] '
+                : 'hover:bg-white/50 '
             }`}
             onClick={() => onViewChange?.('grid')}
             title="Grid view"
@@ -218,10 +234,10 @@ export default function AmbassadorSearch({
             <GridIcon className="text-muted-foreground h-4 w-4" />
           </button>
           <button
-            className={`flex items-center justify-center rounded-md p-1.5 ${
+            className={`flex items-center justify-center rounded-md lg:p-1.5 p-1 ${
               currentView === 'list'
-                ? 'bg-white shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] outline-1 outline-offset-[-1px] outline-gray-100 dark:bg-gray-900'
-                : 'hover:bg-white/50 dark:hover:bg-gray-900/50'
+                ? 'bg-white shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] outline-1 outline-offset-[-1px] outline-gray-100 '
+                : 'hover:bg-white/50 '
             }`}
             onClick={() => onViewChange?.('list')}
             title="List view"

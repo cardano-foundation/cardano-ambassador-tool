@@ -1,6 +1,6 @@
 'use client';
 
-import MemberDataComponent from '@/app/manage/memberships/_components/MemberDataComponent';
+import MemberDataComponent from '@/app/manage/memberships-intents/_components/MemberDataComponent';
 import Timeline from '@/components/atoms/Timeline';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
 import {
@@ -131,9 +131,10 @@ const OwnerMembershipTimeline = ({
   }, []);
 
   const getSignedCount = () => {
-    if (!adminDecisionData?.selectedAdmins || !adminDecisionData?.signers) return 0;
-    return adminDecisionData.selectedAdmins.filter(admin => 
-      adminDecisionData.signers.includes(admin)
+    if (!adminDecisionData?.selectedAdmins || !adminDecisionData?.signers)
+      return 0;
+    return adminDecisionData.selectedAdmins.filter((admin) =>
+      adminDecisionData.signers.includes(admin),
     ).length;
   };
 

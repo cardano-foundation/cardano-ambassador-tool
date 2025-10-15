@@ -26,33 +26,6 @@ function OnboardingContent({ children }: { children: React.ReactNode }) {
               <Link href="/">
                 <AppLogo />
               </Link>
-              {/* <div>
-                {signUp ? (
-                  <LinkButton
-                    href="/login"
-                    variant="outline"
-                    size="md"
-                    rounded="full"
-                    className="flex w-full gap-2 lg:gap-4"
-                  >
-                    <span className="text-primary-base font-bold">Sign In</span>
-                    <InboxIcon />
-                  </LinkButton>
-                ) : (
-                  <LinkButton
-                    href="/sign-up"
-                    variant="outline"
-                    size="md"
-                    rounded="full"
-                    className="flex w-full gap-2 lg:gap-4"
-                  >
-                    <span className="text-primary-base font-bold">
-                      Create account
-                    </span>
-                    <InboxIcon />
-                  </LinkButton>
-                )}
-              </div>*/}
             </div>
             <div className="flex w-full flex-1 flex-col items-center justify-center">
               {children}

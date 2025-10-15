@@ -17,20 +17,16 @@ import WalletList from './WalletList';
 
 const ConnectWallet = () => {
   const [open, setOpen] = useState(false);
-  const { wallet, isNetworkValid, hasNetworkError, dismissNetworkError } =
-    useApp();
+  const { wallet } = useApp();
 
   const { isConnected, address, disconnectWallet, clearError } = wallet;
 
   const handlechange = (open: boolean | ((prevState: boolean) => boolean)) => {
     if (!open) {
-      // Dismiss network errors when dialog closes
       clearError();
     }
     setOpen(open);
   };
-
-  // Don't auto-close dialog on connection - let user see network errors in dialog
 
   return (
     <Dialog open={open} onOpenChange={(open) => handlechange(open)}>

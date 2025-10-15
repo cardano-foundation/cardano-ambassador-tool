@@ -32,14 +32,12 @@ export default function HomePage() {
 
           if (!memberMetadata) return null;
 
-          // Convert country code to full country name and get flag
           const countryData = memberMetadata.country
             ? getCountryByCode(memberMetadata.country)
             : null;
           const countryName = countryData?.name || memberMetadata.country || '';
           const countryFlag = countryData?.flag || '';
 
-          // Convert member data to Ambassador format
           const ambassador: Ambassador = {
             href: `/members/${utxo.txHash}`,
             username: memberMetadata.displayName || '',
@@ -117,7 +115,7 @@ export default function HomePage() {
   return (
     <div className="space-y-4 p-3 py-2 sm:space-y-6 sm:p-6">
       <div className="space-y-3 sm:space-y-4">
-        <Title level="2" className="text-xl sm:text-2xl">
+        <Title level="4" className="text-xl sm:text-2xl">
           Welcome to Cardano Ambassador Explorer
         </Title>
         <Paragraph

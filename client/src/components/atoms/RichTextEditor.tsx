@@ -70,8 +70,8 @@ const RichTextEditor = forwardRef(({ value, onChange, placeholder }: RichTextEdi
     ],
     content: value,
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      onChange(html);
+      const markdown = (editor.storage as any).markdown.getMarkdown();
+      onChange(markdown);
     },
     editorProps: {
       attributes: {

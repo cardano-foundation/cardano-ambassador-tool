@@ -17,12 +17,12 @@ function HomeContent({ children }: { children: React.ReactNode }) {
         <div className="flex-shrink-0">
           <SideNav />
         </div>
-        <div className="flex flex-1 flex-col h-screen">
-          <div className="flex-shrink-0 sticky top-0 z-20">
+        <div className="flex h-screen flex-1 flex-col">
+          <div className="sticky top-0 z-20 flex-shrink-0">
             <TopNavBar />
           </div>
           <main className="flex-1 overflow-auto">
-            {children}
+            <div className="min-h-screen">{children}</div>
             <Footer />
           </main>
           <div className="sticky top-0 z-60">

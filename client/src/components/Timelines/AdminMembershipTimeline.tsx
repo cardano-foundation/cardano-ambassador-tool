@@ -1,15 +1,15 @@
 'use client';
 
-import MemberDataComponent from '@/app/manage/memberships/_components/MemberDataComponent';
+import MemberDataComponent from '@/app/manage/memberships-intents/_components/MemberDataComponent';
 import Timeline from '@/components/atoms/Timeline';
 import { parseMembershipIntentDatum } from '@/utils';
 import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
 import { AdminDecisionData, TimelineStep, Utxo } from '@types';
 import { useEffect, useState } from 'react';
+import ActivateMembership from '../ActivateMembership';
 import Title from '../atoms/Title';
 import ApproveReject from '../RejectApprove';
 import MultisigProgressTracker from '../SignatureProgress/MultisigProgressTracker';
-import ActivateMembership from '../ActivateMembership';
 
 type ExtendedMemberData = MemberData & {
   txHash?: string;
@@ -54,11 +54,11 @@ const AdminMembershipTimeline = ({
     }
   }, [intentUtxo]);
 
-
   const getSignedCount = () => {
-    if (!adminDecisionData?.selectedAdmins || !adminDecisionData?.signers) return 0;
-    return adminDecisionData.selectedAdmins.filter(admin => 
-      adminDecisionData.signers.includes(admin)
+    if (!adminDecisionData?.selectedAdmins || !adminDecisionData?.signers)
+      return 0;
+    return adminDecisionData.selectedAdmins.filter((admin) =>
+      adminDecisionData.signers.includes(admin),
     ).length;
   };
 
