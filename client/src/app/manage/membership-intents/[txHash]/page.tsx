@@ -5,6 +5,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import AdminMembershipTimeline from '@/components/Timelines/AdminMembershipTimeline';
+import { routes } from '@/config/routes';
 import { useApp } from '@/context/AppContext';
 import { Utxo } from '@types';
 import Link from 'next/link';
@@ -58,7 +59,7 @@ const MembershipIntentPage = ({ params }: PageProps) => {
           <Title level="3" className="text-foreground mb-2">
             Membership Intent Not Found
           </Title>
-          <Link href="/manage/memberships">
+          <Link href={routes.manage.ambassadors}>
             <Button variant="primary">Back to Memberships</Button>
           </Link>
         </div>

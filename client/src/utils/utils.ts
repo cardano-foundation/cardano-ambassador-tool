@@ -710,7 +710,7 @@ export async function getCounterUtxo(): Promise<UTxO | null> {
 
     if (!response.ok) {
       if (response.status === 404) {
-        return null; // Counter UTxO not found
+        return null; 
       }
       throw new Error('Failed to fetch counter UTxO');
     }

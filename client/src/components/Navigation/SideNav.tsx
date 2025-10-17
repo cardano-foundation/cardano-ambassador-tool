@@ -6,6 +6,7 @@ import SettingsIcon from '@/components/atoms/SettingsIcon';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { useApp } from '@/context';
+import { routes } from '@/config/routes';
 import { NavigationSection } from '@types';
 import {
   BookOpenTextIcon,
@@ -23,18 +24,18 @@ import UserIcon from '../atoms/UserIcon';
 const defaultNavigationSections: NavigationSection[] = [
   {
     items: [
-      { id: 'home', label: 'Home', href: '/', icon: HomeIcon },
+      { id: 'home', label: 'Home', href: routes.home, icon: HomeIcon },
       {
         id: 'proposals',
         label: 'Proposals',
-        href: '/proposals',
+        href: routes.proposals,
         icon: ProposalIcon,
       },
-      { id: 'about', label: 'About', href: '/about', icon: InfoIcon },
+      { id: 'about', label: 'About', href: routes.about, icon: InfoIcon },
       {
         id: 'ambassador',
         label: 'Become an Ambassador',
-        href: '/sign-up',
+        href: routes.signUp,
         icon: BookOpenTextIcon,
       },
     ],
@@ -47,13 +48,13 @@ const memberToolsSection: NavigationSection = {
     {
       id: 'submissions',
       label: 'Submissions',
-      href: '/my/submissions',
+      href: routes.my.submissions,
       icon: SendIcon,
     },
     {
       id: 'dashboard',
       label: 'Profile',
-      href: '/my/profile',
+      href: routes.my.profile,
       icon: UserIcon,
     },
   ],
@@ -65,19 +66,19 @@ const adminToolsSection: NavigationSection = {
     {
       id: 'manage-ambassadors',
       label: 'Manage Ambassadors',
-      href: '/manage/memberships',
+      href: routes.manage.ambassadors,
       icon: UsersIcon,
     },
     {
       id: 'membership-intent',
       label: 'Membership intents',
-      href: '/manage/membership-intents',
+      href: routes.manage.membershipIntents,
       icon: SettingsIcon,
     },
     {
       id: 'proposal-intent',
       label: 'Proposal intents',
-      href: '/manage/proposal-intents',
+      href: routes.manage.proposalIntents,
       icon: ProposalIcon,
     },
   ],

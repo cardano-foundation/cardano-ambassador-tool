@@ -2,6 +2,7 @@ import Button from '@/components/atoms/Button';
 import Empty from '@/components/atoms/Empty';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
+import { routes } from '@/config/routes';
 import Link from 'next/link';
 
 export default function EmptyProfileState() {
@@ -16,7 +17,7 @@ export default function EmptyProfileState() {
           You haven't submitted a membership intent yet. Start your journey to
           become a Cardano Ambassador by submitting your application.
         </Paragraph>
-        <Link href="/sign-up">
+        <Link href={routes.signUp}>
           <Button variant="primary" size="lg">
             Become an Ambassador
           </Button>

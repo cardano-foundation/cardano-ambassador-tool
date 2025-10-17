@@ -7,6 +7,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import { getCurrentNetworkConfig } from '@/config/cardano';
+import { routes } from '@/config/routes';
 import { useApp } from '@/context';
 import { parseProposalDatum } from '@/utils';
 import Link from 'next/link';
@@ -96,7 +97,7 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
-      <Link href={`/my/proposal-intents/${row.txHash}`}>
+      <Link href={routes.my.proposalIntents(row.txHash)}>
         <Button variant="primary" size="sm">
           View
         </Button>

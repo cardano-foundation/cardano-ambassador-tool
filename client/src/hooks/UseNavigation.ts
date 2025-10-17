@@ -2,9 +2,8 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useWallet } from '@meshsdk/react';
-// import { useApp } from '@/context';
+import { routes } from '@/config/routes';
 import { useApp } from '@/context/AppContext';
-// import { useUserAuth } from '@/hooks/useUserAuth';
 import { NavigationSection } from '@types';
 import { BookOpenTextIcon, GridIcon, HomeIcon, SendIcon, UserIcon } from 'lucide-react';
 import UsersIcon from '@/components/atoms/UsersIcon';
@@ -14,13 +13,13 @@ import ProposalIcon from '@/components/atoms/ProposalIcon';
 const defaultNavigationSections: NavigationSection[] = [
   {
     items: [
-      { id: 'home', label: 'Home', href: '/', icon: HomeIcon },
-      { id: 'proposals', label: 'Proposals', href: '/proposals', icon: ProposalIcon },
-      { id: 'about', label: 'About', href: '/about', icon: GridIcon },
+      { id: 'home', label: 'Home', href: routes.home, icon: HomeIcon },
+      { id: 'proposals', label: 'Proposals', href: routes.proposals, icon: ProposalIcon },
+      { id: 'about', label: 'About', href: routes.about, icon: GridIcon },
       {
         id: 'ambassador',
         label: 'Become an Ambassador',
-        href: '/sign-up',
+        href: routes.signUp,
         icon: BookOpenTextIcon,
       },
     ],
@@ -33,13 +32,13 @@ const memberToolsSection: NavigationSection = {
     {
       id: 'submissions',
       label: 'Submissions',
-      href: '/dashboard/submissions',
+      href: routes.my.submissions,
       icon: SendIcon,
     },
     {
       id: 'dashboard',
       label: 'Profile',
-      href: '/dashboard',
+      href: routes.my.profile,
       icon: UserIcon,
     },
   ],
@@ -51,19 +50,19 @@ const adminToolsSection: NavigationSection = {
     {
       id: 'manage-ambassadors',
       label: 'Manage Ambassadors',
-      href: '/manage/ambassadors',
+      href: routes.manage.ambassadors,
       icon: UsersIcon,
     },
     {
       id: 'membership-intent',
-      label: 'Membership intent',
-      href: '/manage/membership',
+      label: 'Membership intents',
+      href: routes.manage.membershipIntents,
       icon: SettingsIcon,
     },
     {
       id: 'proposal-intent',
-      label: 'Proposal intent',
-      href: '/manage/proposals',
+      label: 'Proposal intents',
+      href: routes.manage.proposalIntents,
       icon: ProposalIcon,
     },
   ],

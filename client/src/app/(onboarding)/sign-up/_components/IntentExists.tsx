@@ -3,6 +3,7 @@ import CardanoLogo from '@/components/atoms/CardanoLogo';
 import LinkButton from '@/components/atoms/LinkButton';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
+import { routes } from '@/config/routes';
 
 const IntentExists = ({
   goBack
@@ -30,7 +31,7 @@ const IntentExists = ({
         </Button>
 
         <LinkButton
-          href="/dashboard/submissions"
+          href={routes.my.submissions}
           variant="primary"
           className="w-full"
         >

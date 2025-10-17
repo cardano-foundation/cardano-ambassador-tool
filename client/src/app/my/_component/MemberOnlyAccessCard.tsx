@@ -3,6 +3,7 @@ import Card from '@/components/atoms/Card';
 import Paragraph from '@/components/atoms/Paragraph';
 import TextLink from '@/components/atoms/TextLink';
 import Title from '@/components/atoms/Title';
+import { routes } from '@/config/routes';
 import Link from 'next/link';
 
 interface MemberOnlyAccessCardProps {
@@ -53,12 +54,12 @@ export default function MemberOnlyAccessCard({
             </div>
 
             <div className="flex flex-col justify-center gap-3 sm:flex-row">
-              <Link href="/sign-up">
+              <Link href={routes.signUp}>
                 <Button variant="primary" size="lg">
                   Become a Member
                 </Button>
               </Link>
-              <Link href="/dashboard/submissions">
+              <Link href={routes.my.submissions}>
                 <Button
                   variant="outline"
                   size="lg"
@@ -70,7 +71,7 @@ export default function MemberOnlyAccessCard({
             </div>
 
             <div className="pt-4">
-              <TextLink href="/" variant="dotted" size="sm">
+              <TextLink href={routes.home} variant="dotted" size="sm">
                 ← Back to Home
               </TextLink>
             </div>

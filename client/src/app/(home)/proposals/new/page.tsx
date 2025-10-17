@@ -7,6 +7,7 @@ import Title from '@/components/atoms/Title';
 import TopNav from '@/components/Navigation/TabNav';
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import CardanoLoaderSVG from '@/components/ui/CardanoLoaderSVG';
+import { routes } from '@/config/routes';
 import { useApp } from '@/context';
 import { useMemberValidation } from '@/hooks/useMemberValidation';
 import {
@@ -303,7 +304,7 @@ export default function SubmitProposalPage() {
             variant: 'primary',
             onClick: () => {
               setShowConfirmation(false);
-              window.location.href = '/dashboard?tab=submissions';
+              window.location.href = routes.my.submissions;
             },
           },
           {

@@ -9,6 +9,7 @@ import Title from '@/components/atoms/Title';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Link from 'next/link';
 import { getCurrentNetworkConfig } from '@/config/cardano';
+import { routes } from '@/config/routes';
 import { useApp } from '@/context';
 import { parseProposalDatum } from '@/utils';
 
@@ -128,7 +129,7 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
-      <Link href={`/manage/proposal-intents/${row.txHash}`} prefetch={true}>
+      <Link href={routes.manage.proposalIntent(row.txHash)} prefetch={true}>
         <Button variant="primary" size="md">
           View
         </Button>

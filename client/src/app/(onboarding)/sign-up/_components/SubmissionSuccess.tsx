@@ -2,6 +2,7 @@ import CardanoLogo from '@/components/atoms/CardanoLogo';
 import LinkButton from '@/components/atoms/LinkButton';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
+import { routes } from '@/config/routes';
 
 const SubmissionSuccess = () => {
   return (
@@ -18,7 +19,7 @@ const SubmissionSuccess = () => {
         </Paragraph>
       </div>
       <LinkButton
-        href="/dashboard/submissions"
+        href={routes.my.submissions}
         variant="primary"
         className="mt-4 w-full"
       >

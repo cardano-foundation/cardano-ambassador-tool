@@ -9,6 +9,7 @@ import { useState } from 'react';
 import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Copyable from '@/components/Copyable';
+import { routes } from '@/config/routes';
 import { useApp } from '@/context';
 import { parseProposalDatum } from '@/utils';
 import { getCurrentNetworkConfig } from '@/config/cardano';
@@ -113,7 +114,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
-      <Link href={`/proposals/${row.txHash}`}>
+      <Link href={routes.proposal(row.txHash)}>
         <Button variant="primary" size="sm">
           View
         </Button>

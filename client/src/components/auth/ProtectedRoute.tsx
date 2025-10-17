@@ -1,6 +1,7 @@
 'use client';
 
 import { toast } from '@/components/toast/toast-manager';
+import { routes } from '@/config/routes';
 import { useApp } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -46,7 +47,7 @@ export function ProtectedRoute({
         'Admin Access Required',
         'You need admin privileges to access this page',
       );
-      router.push('/unauthorized');
+      router.push(routes.unauthorized);
       return;
     }
   }, [

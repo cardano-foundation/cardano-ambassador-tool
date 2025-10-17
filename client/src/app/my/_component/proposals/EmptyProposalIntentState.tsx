@@ -2,6 +2,7 @@ import Button from '@/components/atoms/Button';
 import Empty from '@/components/atoms/Empty';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
+import { routes } from '@/config/routes';
 import Link from 'next/link';
 
 export default function EmptyProposalIntentState() {
@@ -17,10 +18,10 @@ export default function EmptyProposalIntentState() {
           contribute to the Cardano ecosystem by submitting a proposal.
         </Paragraph>
         <div className="flex flex-col justify-center gap-3 sm:flex-row">
-          <Link href="/proposals/new">
+          <Link href={routes.newProposal}>
             <Button variant="primary">Submit Proposal</Button>
           </Link>
-          <Link href="/proposals">
+          <Link href={routes.proposals}>
             <Button variant="outline" className="text-primary-base!">
               Browse Proposals
             </Button>
