@@ -21,8 +21,8 @@ import {
 } from '@sidan-lab/cardano-ambassador-tool';
 import { TransactionConfirmationResult, Utxo } from '@types';
 import { useCallback, useEffect, useState } from 'react';
-import EmptyMembershipState from '../membership-intents/EmptyMembershipState';
-import MemberStatusCard from '../membership-intents/MemberStatusCard';
+import EmptyMembershipState from './EmptyMembershipState';
+import MemberStatusCard from './MemberStatusCard';
 
 export default function MembershipSubmissionsTab() {
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;

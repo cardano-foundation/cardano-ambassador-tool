@@ -7,12 +7,11 @@ interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
 
 const titleSizes = {
   '1': 'text-[48px] leading-[52px] sm:text-[56px] sm:leading-[60px] lg:text-[72px] lg:leading-[68px]',
-  '2': 'text-[36px] leading-[40px] sm:text-[42px] sm:leading-[46px] lg:text-[48px] lg:leading-[52px]',
-  '3': 'text-[32px] leading-[36px] sm:text-[38px] sm:leading-[44px] lg:text-[44px] lg:leading-[52px]',
-  '4': 'text-[28px] leading-[32px] sm:text-[34px] sm:leading-[38px] lg:text-[40px] lg:leading-[44px]',
-  '5': 'text-[24px] leading-[28px] sm:text-[28px] sm:leading-[34px] lg:text-[27px] lg:leading-[27px]',
-  // '6': 'text-[20px] leading-[24px] sm:text-[24px] sm:leading-[28px] lg:text-[27px] lg:leading-[27px]',
-  '6': 'text-[16px] leading-[20px]',
+  '2': 'text-[32px] leading-[36px] sm:text-[40px] sm:leading-[44px] lg:text-[48px] lg:leading-[52px]',
+  '3': 'text-[28px] leading-[32px] sm:text-[36px] sm:leading-[40px] lg:text-[44px] lg:leading-[52px]',
+  '4': 'text-[24px] leading-[28px] sm:text-[32px] sm:leading-[36px] lg:text-[40px] lg:leading-[44px]',
+  '5': 'text-[20px] leading-[24px] sm:text-[24px] sm:leading-[28px] lg:text-[32px] lg:leading-[40px]',
+  '6': 'text-[16px] leading-[20px] sm:text-[18px] sm:leading-[22px] lg:text-[20px] lg:leading-[24px]',
 } as const;
 
 export default function Title({

@@ -113,7 +113,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
-      <Link href={`/proposals/${row.txHash}`} prefetch={true}>
+      <Link href={`/proposals/${row.txHash}`}>
         <Button variant="primary" size="sm">
           View
         </Button>
@@ -123,19 +123,19 @@ const proposalColumns: ColumnDef<Proposal>[] = [
 ];
 
 export default function ProposalsPage() {
-  const { proposalIntents, dbLoading } = useApp();
+  const { proposals, dbLoading } = useApp();
 
   if (dbLoading) {
     return <SimpleCardanoLoader />;
   }
 
-  const proposalsData: Proposal[] = proposalIntents
+  const proposalsData: Proposal[] = proposals
     .map((utxo, idx) => {
       if (!utxo.plutusData) return null;
 
       try {
         const { metadata } = parseProposalDatum(utxo.plutusData)!;
-        
+
         if (!metadata) return null;
 
         return {
@@ -145,7 +145,7 @@ export default function ProposalsPage() {
           receiverWalletAddress: metadata.receiverWalletAddress || '',
           submittedByAddress: metadata.submittedByAddress || '',
           fundsRequested: parseInt(metadata.fundsRequested || '0'),
-          status: 'pending' as const,
+          status: 'approved' as const,
           txHash: utxo.txHash,
         };
       } catch (error) {

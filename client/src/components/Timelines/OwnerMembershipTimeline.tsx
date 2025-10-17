@@ -1,6 +1,6 @@
 'use client';
 
-import MemberDataComponent from '@/app/manage/memberships-intents/_components/MemberDataComponent';
+import MemberDataComponent from '@/app/manage/membership-intents/_components/MemberDataComponent';
 import Timeline from '@/components/atoms/Timeline';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
 import {

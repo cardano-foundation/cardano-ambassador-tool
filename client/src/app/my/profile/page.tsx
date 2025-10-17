@@ -16,11 +16,11 @@ import {
 } from '@sidan-lab/cardano-ambassador-tool';
 import { TransactionConfirmationResult } from '@types';
 import { useCallback, useMemo, useState } from 'react';
-import DashboardHeader from './_component/DashboardHeader';
-import MemberOnlyAccessCard from './_component/MemberOnlyAccessCard';
-import ProfileDetails from './_component/ProfileDetails';
-import ProfileEditModal from './_component/ProfileEditModal';
-import ProfileHeader from './_component/ProfileHeader';
+import DashboardHeader from '../_component/DashboardHeader';
+import MemberOnlyAccessCard from '../_component/MemberOnlyAccessCard';
+import ProfileDetails from '../_component/ProfileDetails';
+import ProfileEditModal from '../_component/ProfileEditModal';
+import ProfileHeader from '../_component/ProfileHeader';
 
 export default function ProfilesPage() {
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;

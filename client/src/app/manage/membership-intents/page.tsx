@@ -124,7 +124,7 @@ export default function MembershipIntentPage() {
       copyable: true,
       accessor: 'txHash',
       cell: (value: string) => (
-        <Link href={`/manage/memberships/${value}`}>
+        <Link href={`/manage/membership-intents/${value}`}>
           <Button variant={'primary'} size="sm" className="text-nowrap">
             {'View intent'}
           </Button>

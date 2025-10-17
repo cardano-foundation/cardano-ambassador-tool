@@ -2,12 +2,10 @@
 
 import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
 import { useApp } from '@/context';
 import { useState } from 'react';
-import MembershipSubmissionsTab from '../_component/membership-submissions/MembershipSubmissionsTab';
-import ProposalSubmissionsTab from '../_component/proposal-submissions/ProposalSubmissionsTab';
+import ProposalSubmissionsTab from '../_component/proposals/ProposalSubmissionsTab';
+import MembershipSubmissionsTab from '../_component/membership/MembershipSubmissionsTab';
 export default function IntentSubmissionsPage() {
   const tabs = [
     { id: 'membership-intent', label: 'Membership Intent' },

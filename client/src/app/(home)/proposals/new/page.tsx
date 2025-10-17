@@ -1,6 +1,6 @@
 'use client';
 
-import MemberOnlyAccessCard from '@/app/dashboard/_component/MemberOnlyAccessCard';
+import MemberOnlyAccessCard from '@/app/my/_component/MemberOnlyAccessCard';
 import Button from '@/components/atoms/Button';
 import Modal from '@/components/atoms/Modal';
 import Title from '@/components/atoms/Title';
@@ -138,13 +138,11 @@ export default function SubmitProposalPage() {
         metadata,
       );
 
-      console.log('Transaction submitted:', result);
        const txHash = resolveTxHash(result.txHex);
 
       setTxHash(txHash);
       setShowTxConfirmation(true);
     } catch (error:any) {
-      console.error('Error submitting proposal:', error);
       setError(error.message || 'Failed to submit proposal. Please try again.');
       setShowError(true);
     } finally {

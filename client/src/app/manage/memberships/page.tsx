@@ -7,7 +7,7 @@ import UserAvatar from '@/components/atoms/UserAvatar';
 import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
 import { useApp } from '@/context/AppContext';
-import { parseMemberDatum } from '@/utils';
+import { getCountryByCode, parseMemberDatum } from '@/utils';
 import Link from 'next/link';
 
 export default function ManageAmbassadorsPage() {
@@ -92,7 +92,9 @@ export default function ManageAmbassadorsPage() {
             alt={value}
             className="mr-2 inline size-6 rounded-full"
           />
-          <span className="text-neutral font-normal">{value}</span>
+          <span className="text-neutral font-normal">
+            {getCountryByCode(value)?.name||''}
+          </span>
         </div>
       ),
     },

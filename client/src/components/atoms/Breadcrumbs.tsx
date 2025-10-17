@@ -1,4 +1,5 @@
 'use client';
+import { shortenString } from '@/utils';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -10,7 +11,7 @@ export default function Breadcrumbs() {
 
   return (
     <nav className="my-4 w-full text-sm">
-      <ol className="flex space-x-1 text-primary-base font-semibold">
+      <ol className="text-primary-base flex space-x-1 font-semibold">
         <Link
           href="/"
           className="hover:text-primary-300 text-primary-base font-semibold hover:underline"
@@ -25,7 +26,7 @@ export default function Breadcrumbs() {
           if (link == 'manage') {
             return;
           }
-          if (link == 'dashboard') {
+          if (link == 'my') {
             return;
           }
 
@@ -48,7 +49,11 @@ export default function Breadcrumbs() {
                     {itemLink}
                   </Link>
                 ) : (
-                  <span>{itemLink}</span>
+                  <span>
+                    {itemLink.length > 20
+                      ? shortenString(itemLink, 12)
+                      : itemLink}
+                  </span>
                 )}
               </li>
               {pathNames.length !== index + 1 && (

@@ -46,14 +46,11 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
     timeTaken: 0,
   });
   
-  // Ref to track if confirmation is already running
   const confirmationRunning = useRef(false);
-  // Ref to store the current txHash to compare changes
   const currentTxHash = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (!isVisible || !txHash) {
-      // Reset state when not visible or no txHash
       confirmationRunning.current = false;
       currentTxHash.current = undefined;
       setConfirmationState({
@@ -64,12 +61,10 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
       return;
     }
 
-    // If confirmation is already running for the same transaction, don't start again
     if (confirmationRunning.current && currentTxHash.current === txHash) {
       return;
     }
 
-    // Update current transaction hash
     currentTxHash.current = txHash;
     confirmationRunning.current = true;
 
@@ -87,12 +82,11 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
             setConfirmationState(prev => ({
               ...prev,
               attempts: attempt,
-              timeTaken: Date.now() - (Date.now() - (attempt * 10000)), // rough estimate
+              timeTaken: Date.now() - (Date.now() - (attempt * 10000)), 
             }));
           },
         });
 
-        // Mark confirmation as completed
         confirmationRunning.current = false;
 
         if (result.confirmed) {

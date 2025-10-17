@@ -4,20 +4,6 @@ import { AppProvider } from '@/context/AppContext';
 
 import './app.css';
 
-// export const metadata: Metadata = {
-//   title: 'Cardano Ambassador Tool',
-//   description:
-//     'Discover the passionate individuals shaping the Cardano ecosystem. From developers and educators to community organizers, these ambassadors are driving innovation, connection, and real-world impact.',
-//   keywords: [
-//     'Cardano',
-//     'Ambassador',
-//     'Blockchain',
-//     'Cryptocurrency',
-//     'Community',
-//   ],
-//   authors: [{ name: 'Cardano Ambassador Team' }],
-// };
-
 export default function RootLayout({
   children,
 }: {

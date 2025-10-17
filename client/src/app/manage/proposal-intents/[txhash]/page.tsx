@@ -1,37 +1,68 @@
 'use client';
-import FormDetails from '@/app/(home)/proposals/components/FormDetails';
-import FormFunds from '@/app/(home)/proposals/components/FormFunds';
-import FormReview from '@/app/(home)/proposals/components/FormReview';
 import Button from '@/components/atoms/Button';
+import Card, { CardContent } from '@/components/atoms/Card';
 import Chip from '@/components/atoms/Chip';
 import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
-import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
+import ApproveReject from '@/components/RejectApprove';
+import FinalizeDecision from '@/components/FinalizeDecision';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
 import { parseProposalDatum } from '@/utils';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import { use, useRef, useState } from 'react';
+import { AdminDecisionData } from '@types';
+import { use, useState } from 'react';
+
 
 interface PageProps {
   params: Promise<{ txhash: string }>;
 }
 
-
 export default function Page({ params }: PageProps) {
   const { proposalIntents, dbLoading } = useApp();
-  const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState('details');
+  const [adminDecisionData, setAdminDecisionData] = useState<AdminDecisionData | null>(null);
+  const [isFinalized, setIsFinalized] = useState(false);
   const { txhash } = use(params);
 
-  const descriptionEditorRef = useRef<any>(null);
+  const proposal = proposalIntents.find((utxo) => utxo.txHash === txhash);
 
-  const proposal = proposalIntents.find(
-    (utxo) => utxo.txHash === txhash,
-  );
+  let proposalData: ProposalData;
+  if (proposal && proposal.plutusData) {
+    try {
+      const { metadata } = parseProposalDatum(proposal.plutusData)!;
+      proposalData = {
+        title: metadata?.title,
+        description: metadata?.description,
+        fundsRequested: metadata?.fundsRequested || '0',
+        receiverWalletAddress: metadata?.receiverWalletAddress,
+        submittedByAddress: metadata?.submittedByAddress,
+        status: 'pending',
+      };
+    } catch (error) {
+      console.error('Error parsing proposal datum:', error);
+      proposalData = {
+        title: 'Error Loading Proposal',
+        description: 'Could not parse proposal data',
+        fundsRequested: '0',
+        receiverWalletAddress: '',
+        submittedByAddress: '',
+        status: 'pending',
+      };
+    }
+  } else {
+    proposalData = {
+      title: 'Error Loading Proposal',
+      description: 'Could not parse proposal data',
+      fundsRequested: '0',
+      receiverWalletAddress: '',
+      submittedByAddress: '',
+      status: 'pending',
+    };
+  }
 
   if (dbLoading) {
     return <SimpleCardanoLoader />;
@@ -55,37 +86,6 @@ export default function Page({ params }: PageProps) {
     );
   }
 
-  let proposalData: ProposalData;
-  try {
-    const { metadata } = parseProposalDatum(proposal.plutusData)!;
-    proposalData = {
-      title: metadata?.title,
-      description: metadata?.description,
-      fundsRequested: metadata?.fundsRequested || '0',
-      receiverWalletAddress: metadata?.receiverWalletAddress,
-      submittedByAddress: metadata?.submittedByAddress,
-      status: 'pending',
-    };
-  } catch (error) {
-    console.error('Error parsing proposal datum:', error);
-    proposalData = {
-      title: 'Error Loading Proposal',
-      description: 'Could not parse proposal data',
-      fundsRequested: '0',
-      receiverWalletAddress: '',
-      submittedByAddress: '',
-      status: 'pending',
-    };
-  }
-
-  const [formData, setFormData] = useState<ProposalData>(proposalData);
-
-  const tabs = [
-    { id: 'details', label: 'Details' },
-    { id: 'funds', label: 'Funds' },
-    { id: 'review', label: 'Review' },
-  ];
-
   const getChipVariant = () => {
     switch (proposalData.status) {
       case 'pending':
@@ -103,60 +103,41 @@ export default function Page({ params }: PageProps) {
     }
   };
 
-  const handleInputChange = (field: keyof ProposalData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleAdminDecisionUpdate = (data: AdminDecisionData | null) => {
+    setAdminDecisionData(data);
   };
 
-  const handleSaveChanges = async () => {
-    console.log('Saving edited proposal...', formData);
-    setIsEditing(false);
-  };
-
-  const handleDiscardChanges = () => {
-    setFormData(proposalData);
-    setIsEditing(false);
-    setActiveTab('details');
-  };
-
-  const handleTabNavigation = (direction: 'next' | 'prev') => {
-    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
-    if (direction === 'next' && currentIndex < tabs.length - 1) {
-      setActiveTab(tabs[currentIndex + 1].id);
-    } else if (direction === 'prev' && currentIndex > 0) {
-      setActiveTab(tabs[currentIndex - 1].id);
-    }
+  const handleFinalizationComplete = () => {
+    setIsFinalized(true);
   };
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="container mx-auto px-4">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <Title level="5" className="text-foreground">
-              {proposalData.title}
-            </Title>
-            <Chip variant={getChipVariant()} size="md" className="capitalize">
-              {proposalData.status.replace('_', ' ')}
-            </Chip>
-          </div>
-          <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
+    <div className="container px-4 py-2 pb-8 sm:px-6">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <Title level="5" className="text-foreground">
+            {proposalData.title}
+          </Title>
+          <Chip variant={getChipVariant()} size="md" className="capitalize">
+            {proposalData.status.replace('_', ' ')}
+          </Chip>
+        </div>
+        <Card>
+          <CardContent className="flex flex-col gap-10 sm:flex-row sm:justify-between">
             <div className="flex-1 space-y-7">
-              {/* <div className="space-y-1.5">
-                <Paragraph
-                  size="xs"
-                  className="text-muted-foreground font-light"
-                >
-                  Proposal ID
-                </Paragraph>
-                <Paragraph size="sm" className="text-foreground">
-                  {proposal.id}
-                </Paragraph>
-              </div> */}
               <div className="space-y-1.5">
-                <Paragraph
-                  size="xs"
-                  className="text-muted-foreground font-light"
-                >
+                <Paragraph size="xs" className="">
+                  TxHash
+                </Paragraph>
+                <Copyable
+                  withKey={false}
+                  link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.txHash}`}
+                  value={proposal.txHash}
+                  keyLabel={''}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Paragraph size="xs" className="">
                   Receiver wallet
                 </Paragraph>
                 {proposalData.receiverWalletAddress ? (
@@ -173,21 +154,12 @@ export default function Page({ params }: PageProps) {
                 )}
               </div>
             </div>
-
             <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
-                <Paragraph
-                  size="xs"
-                  className="text-muted-foreground font-light"
-                >
+                <Paragraph size="xs" className="">
                   Submitted by
                 </Paragraph>
                 <div className="flex flex-wrap items-start gap-1.5">
-                  {proposalData.submittedByAddress && (
-                    <Paragraph size="sm" className="text-foreground">
-                      {proposalData.submittedByAddress}
-                    </Paragraph>
-                  )}
                   {proposalData.submittedByAddress ? (
                     <Copyable
                       withKey={false}
@@ -205,10 +177,7 @@ export default function Page({ params }: PageProps) {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Paragraph
-                  size="xs"
-                  className="text-muted-foreground font-light"
-                >
+                <Paragraph size="xs" className="">
                   Funds Requested
                 </Paragraph>
                 <Paragraph size="sm" className="text-foreground">
@@ -216,134 +185,86 @@ export default function Page({ params }: PageProps) {
                 </Paragraph>
               </div>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="flex items-center justify-between">
-            <Title level="5" className="text-foreground">
-              Overview
-            </Title>
-            <div className="flex gap-3 sm:gap-4">
-              {isEditing ? (
-                <>
-                  <div className="text-primary-base">
-                    <Button variant="outline" onClick={handleDiscardChanges}>
-                      Discard Changes
-                    </Button>
-                  </div>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={handleSaveChanges}
-                  >
-                    Save proposal
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit Proposal
-                </Button>
-              )}
+        <Title level="5" className="text-foreground">
+          Overview
+        </Title>
+        <Card>
+          <div className="space-y-5">
+            <div className="space-y-2.5">
+              <Title level="6" className="text-foreground text-base">
+                Title
+              </Title>
+              <RichTextDisplay
+                content={proposalData.title}
+                className="text-foreground"
+              />
+            </div>
+            <div className="space-y-6">
+              <Title level="6" className="text-foreground">
+                Description
+              </Title>
+              <RichTextDisplay
+                content={proposalData.description}
+                className="text-foreground"
+              />
             </div>
           </div>
-          {isEditing ? (
-            <>
-              <div className="border-border w-full border-b">
-                <TopNav
-                  tabs={tabs}
-                  activeTabId={activeTab}
-                  onTabChange={setActiveTab}
-                />
-              </div>
+        </Card>
 
-              <div className="border-border bg-card rounded-lg border p-6 shadow-sm">
-                {activeTab === 'details' && (
-                  <FormDetails
-                    mode="edit"
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                    descriptionEditorRef={descriptionEditorRef}
-                  />
-                )}
-
-                {activeTab === 'funds' && (
-                  <FormFunds
-                    mode="edit"
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                  />
-                )}
-
-                {activeTab === 'review' && (
-                  <FormReview
-                    mode="edit"
-                    formData={formData}
-                    userAddress={proposalData.submittedByAddress}
-                    // proposalId={proposal.id}
-                  />
-                )}
-
-                <div className="flex items-center justify-between gap-4 pt-6">
-                  {activeTab !== 'details' && (
-                    <div className="text-primary-base w-1/4">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleTabNavigation('prev')}
-                        className="w-full"
-                      >
-                        Back
-                      </Button>
-                    </div>
-                  )}
-
-                  <div className={activeTab === 'details' ? 'w-full' : 'w-3/4'}>
-                    {activeTab !== 'review' ? (
-                      <Button
-                        variant="primary"
-                        onClick={() => handleTabNavigation('next')}
-                        className="w-full"
-                      >
-                        Next
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="primary"
-                        onClick={handleSaveChanges}
-                        className="w-full"
-                      >
-                        Save Proposal
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="space-y-5">
-              <div className="space-y-2.5">
-                <Title level="6" className="text-foreground text-base">
-                  Title
-                </Title>
-                <RichTextDisplay
-                  content={proposalData.title}
-                  className="text-foreground"
-                />
-              </div>
-              <div className="space-y-6">
-                <Title level="6" className="text-foreground">
-                  Description
-                </Title>
-                <RichTextDisplay
-                  content={proposalData.description}
-                  className="text-foreground"
-                />
-              </div>
+        {/* Admin Review Section */}
+        <div className="space-y-4">
+          <Title level="5" className="text-foreground">
+            Admin Review
+          </Title>
+          <Card>
+            <div className="p-6">
+              <ApproveReject
+                intentUtxo={proposal}
+                context={'ProposalIntent'}
+                onDecisionUpdate={handleAdminDecisionUpdate}
+              />
             </div>
-          )}
+          </Card>
         </div>
+
+        {/* Multisig Progress Section */}
+        {adminDecisionData && (
+          <div className="space-y-4">
+            <Title level="5" className="text-foreground">
+              Multisig Progress
+            </Title>
+            <Card>
+              <div className="p-6">
+                <MultisigProgressTracker
+                  txhash={proposal?.txHash}
+                  adminDecisionData={adminDecisionData}
+                />
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* Finalize Decision Section */}
+        {adminDecisionData && (
+          <div className="space-y-4">
+            <Title level="5" className="text-foreground">
+              Finalize Decision
+            </Title>
+            <Card>
+              <div className="p-6">
+                <FinalizeDecision
+                  txhash={proposal?.txHash}
+                  adminDecisionData={adminDecisionData}
+                  context={'ProposalIntent'}
+                  onFinalizationComplete={handleFinalizationComplete}
+                />
+              </div>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );

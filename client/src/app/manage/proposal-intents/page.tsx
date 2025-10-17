@@ -128,7 +128,7 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
-      <Link href={`manage/proposals-intents/${row.txHash}`} prefetch={true}>
+      <Link href={`/manage/proposal-intents/${row.txHash}`} prefetch={true}>
         <Button variant="primary" size="md">
           View
         </Button>

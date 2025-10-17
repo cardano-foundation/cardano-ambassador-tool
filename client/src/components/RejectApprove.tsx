@@ -158,10 +158,17 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
     try {
       const oracleUtxo = await findOracleUtxo();
-      const counterUtxo = await getCounterUtxo();
+      
+      if (!oracleUtxo) {
+        throw new Error('Failed to fetch Oracle UTxO');
+      }
 
-      if (!oracleUtxo || !counterUtxo) {
-        throw new Error('Failed to fetch required UTxOs');
+      let counterUtxo = null;
+      if (context === 'MembershipIntent' && decision === 'approve') {
+        counterUtxo = await getCounterUtxo();
+        if (!counterUtxo) {
+          throw new Error('Failed to fetch Counter UTxO');
+        }
       }
 
       const blockfrost = getProvider();
@@ -180,12 +187,39 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         getCatConstants(),
       );
 
-      const unsignedTx = await adminAction.approveMember(
-        oracleUtxo,
-        counterUtxo,
-        dbUtxoToMeshUtxo(intentUtxo!),
-        adminsPkh,
-      );
+      let unsignedTx;
+      if (context === 'MembershipIntent') {
+        if (decision === 'approve') {
+          unsignedTx = await adminAction.approveMember(
+            oracleUtxo,
+            counterUtxo!,
+            dbUtxoToMeshUtxo(intentUtxo!),
+            adminsPkh,
+          );
+        } else {
+          unsignedTx = await adminAction.rejectMember(
+            oracleUtxo,
+            dbUtxoToMeshUtxo(intentUtxo!),
+            adminsPkh,
+          );
+        }
+      } else if (context === 'ProposalIntent') {
+        if (decision === 'approve') {
+          unsignedTx = await adminAction.approveProposal(
+            oracleUtxo,
+            dbUtxoToMeshUtxo(intentUtxo!),
+            adminsPkh,
+          );
+        } else {
+          unsignedTx = await adminAction.rejectProposal(
+            oracleUtxo,
+            dbUtxoToMeshUtxo(intentUtxo!),
+            adminsPkh,
+          );
+        }
+      } else {
+        throw new Error(`Unsupported context: ${context}`);
+      }
 
       const firstSigTX = await wallet!.signTx(unsignedTx.txHex, true);
 
@@ -366,7 +400,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         />
 
         <div className="text-base font-medium">
-          Review the membership application and make a decision:
+          Review the {context === 'MembershipIntent' ? 'membership application' : 'proposal'} and make a decision:
         </div>
         <div className="flex w-full gap-4">
           <Button
@@ -375,7 +409,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
             disabled={isProcessing || !intentUtxo!.txHash}
             className="text-primary-base! flex-1"
           >
-            {isProcessing ? 'Processing...' : 'Reject Application'}
+            {isProcessing ? 'Processing...' : `Reject ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
           </Button>
           <Button
             variant="primary"
@@ -383,7 +417,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
             disabled={isProcessing || !intentUtxo!.txHash}
             className="flex-1"
           >
-            {isProcessing ? 'Processing...' : 'Approve Application'}
+            {isProcessing ? 'Processing...' : `Approve ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
           </Button>
         </div>
       </div>

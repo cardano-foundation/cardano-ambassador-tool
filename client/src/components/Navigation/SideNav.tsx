@@ -47,13 +47,13 @@ const memberToolsSection: NavigationSection = {
     {
       id: 'submissions',
       label: 'Submissions',
-      href: '/dashboard/submissions',
+      href: '/my/submissions',
       icon: SendIcon,
     },
     {
       id: 'dashboard',
       label: 'Profile',
-      href: '/dashboard',
+      href: '/my/profile',
       icon: UserIcon,
     },
   ],
@@ -71,7 +71,7 @@ const adminToolsSection: NavigationSection = {
     {
       id: 'membership-intent',
       label: 'Membership intents',
-      href: '/manage/memberships-intents',
+      href: '/manage/membership-intents',
       icon: SettingsIcon,
     },
     {
@@ -86,7 +86,6 @@ const adminToolsSection: NavigationSection = {
 const SideNav = () => {
   const { user, isAdmin, wallet, isNetworkValid, userRoles } = useApp();
   const pathname = usePathname();
-  const [fetch, setFetch] = useState(false);
   const [sections, setSections] = useState(defaultNavigationSections);
 
   // Active link handling
@@ -143,8 +142,6 @@ const SideNav = () => {
                   <Link
                     key={item.id}
                     href={item.href}
-                    prefetch={fetch ? null : false}
-                    onMouseEnter={() => setFetch(true)}
                     className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
                       isActive ? 'bg-muted' : ''
                     }`}

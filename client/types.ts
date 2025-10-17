@@ -205,8 +205,8 @@ export interface TransactionConfirmationResult {
  */
 export interface AdminDecision {
   decision: string;
-  counterUtxoTxIndex: number;
-  memberUtxoTxIndex: number;
+  counterUtxoTxIndex?: number;
+  memberUtxoTxIndex?: number;
   context: string;
   signedTx: string;
 }

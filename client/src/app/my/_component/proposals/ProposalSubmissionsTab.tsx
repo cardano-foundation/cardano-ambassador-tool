@@ -1,16 +1,16 @@
 'use client';
 
+import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
 import Button from '@/components/atoms/Button';
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
-import Link from 'next/link';
-import Copyable from '@/components/Copyable';
-import Title from '@/components/atoms/Title';
 import Paragraph from '@/components/atoms/Paragraph';
+import RichTextDisplay from '@/components/atoms/RichTextDisplay';
+import Title from '@/components/atoms/Title';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
 import { parseProposalDatum } from '@/utils';
-import EmptyProposalIntentState from '../proposal-intents/EmptyProposalIntentState';
+import Link from 'next/link';
+import EmptyProposalIntentState from './EmptyProposalIntentState';
 
 type UserProposal = {
   id: number;
@@ -51,9 +51,9 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
       const truncatedValue = truncateToWords(value, 8);
       return (
         <div className="max-w-[350px] text-sm">
-          <RichTextDisplay 
-            content={truncatedValue} 
-            className="prose-sm [&_p]:mb-1 [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_strong]:font-semibold" 
+          <RichTextDisplay
+            content={truncatedValue}
+            className="prose-sm [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_p]:mb-1 [&_strong]:font-semibold"
           />
         </div>
       );
@@ -87,7 +87,7 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
     accessor: 'status',
     sortable: true,
     cell: (value) => (
-      <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800">
+      <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
         {value}
       </span>
     ),
@@ -96,7 +96,7 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
-      <Link href={`/proposals/${row.txHash}`} prefetch={true}>
+      <Link href={`/my/proposal-intents/${row.txHash}`}>
         <Button variant="primary" size="sm">
           View
         </Button>
@@ -126,7 +126,7 @@ export default function ProposalSubmissionsTab() {
 
       try {
         const { metadata } = parseProposalDatum(utxo.plutusData)!;
-        
+
         if (!metadata || metadata.submittedByAddress !== userAddress) {
           return null;
         }
