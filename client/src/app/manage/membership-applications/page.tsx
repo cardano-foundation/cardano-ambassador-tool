@@ -124,7 +124,7 @@ export default function MembershipIntentPage() {
       copyable: true,
       accessor: 'txHash',
       cell: (value: string) => (
-        <Link href={`/manage/membership-intents/${value}`}>
+        <Link href={`/manage/membership-applications/${value}`}>
           <Button variant={'primary'} size="sm" className="text-nowrap">
             {'View intent'}
           </Button>
@@ -137,13 +137,13 @@ export default function MembershipIntentPage() {
     <div className="space-y-4 px-4 py-2 pb-8 sm:space-y-6 sm:px-6">
       <div className="space-y-3 sm:space-y-4">
         <Title level="2" className="text-xl sm:text-2xl">
-          Membership intent
+          Membership Applications
         </Title>
         <Paragraph
           size="base"
           className="text-muted-foreground max-w-4xl text-sm sm:text-base"
         >
-          Review and manage Membership intent requests submitted by users who
+          Review and manage membership applications submitted by users who
           wish to become recognized ambassadors.
         </Paragraph>
       </div>
@@ -154,7 +154,7 @@ export default function MembershipIntentPage() {
           columns={columns}
           pageSize={10}
           searchable={true}
-          context="membership intents"
+          context="membership applications"
         />
       </section>
     </div>

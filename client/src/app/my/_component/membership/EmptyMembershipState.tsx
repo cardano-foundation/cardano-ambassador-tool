@@ -11,10 +11,10 @@ export default function EmptyMembershipState() {
       <Empty />
       <div className="mt-6 max-w-md text-center">
         <Title level="6" className="text-foreground mb-3">
-          No Membership Intent Submission
+          No Membership Application Submission
         </Title>
         <Paragraph className="text-muted-foreground mb-4">
-          You haven't submitted a membership intent yet. Start your
+          You haven't submitted a membership application yet. Start your
           journey to become a Cardano Ambassador by submitting your
           application.
         </Paragraph>

@@ -55,14 +55,14 @@ const adminToolsSection: NavigationSection = {
     },
     {
       id: 'membership-intent',
-      label: 'Membership intents',
-      href: routes.manage.membershipIntents,
+      label: 'Membership Applications',
+      href: routes.manage.membershipApplications,
       icon: SettingsIcon,
     },
     {
       id: 'proposal-intent',
-      label: 'Proposal intents',
-      href: routes.manage.proposalIntents,
+      label: 'Proposals',
+      href: routes.manage.proposals,
       icon: ProposalIcon,
     },
   ],

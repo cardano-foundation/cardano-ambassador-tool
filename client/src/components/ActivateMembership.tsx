@@ -207,8 +207,8 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
         title="Activating Membership"
         description={
           isActivated
-            ? 'Your membership has been successfully activated! 🎉'
-            : 'Please wait while your membership activation is being confirmed on the blockchain.'
+            ? 'Membership has been successfully activated! 🎉'
+            : 'Please wait while membership activation is being confirmed on the blockchain.'
         }
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}

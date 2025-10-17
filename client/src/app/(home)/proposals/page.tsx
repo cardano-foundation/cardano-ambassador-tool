@@ -160,12 +160,19 @@ export default function ProposalsPage() {
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4">
         <div className="space-y-6">
-          <div className="space-y-2">
-            <Title level="5" className="text-foreground">Community Proposals</Title>
-            <Paragraph className="text-sm text-muted-foreground">
-              Browse and discover proposals submitted by Cardano ambassadors
-              {proposalsData.length > 0 && ` - ${proposalsData.length} found`}
-            </Paragraph>
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <Title level="5" className="text-foreground">Community Proposals</Title>
+              <Paragraph className="text-sm text-muted-foreground">
+                Browse and discover proposals submitted by Cardano ambassadors
+                {proposalsData.length > 0 && ` - ${proposalsData.length} found`}
+              </Paragraph>
+            </div>
+            <Link href={routes.newProposal}>
+              <Button variant="primary" size="md">
+                New Proposal
+              </Button>
+            </Link>
           </div>
           
           <Table

@@ -11,7 +11,7 @@ export default function EmptyProposalIntentState() {
       <Empty />
       <div className="mt-6 max-w-md text-center">
         <Title level="6" className="text-foreground mb-3">
-          No Proposal Intent Submissions
+          No Proposal Submissions
         </Title>
         <Paragraph className="text-muted-foreground mb-6">
           You haven't submitted any proposals yet. Share your ideas and

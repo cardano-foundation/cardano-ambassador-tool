@@ -101,13 +101,13 @@ export default function SubmitProposalPage() {
       setIsSubmitting(true);
 
       if (!memberUtxo) {
-        throw new Error('No membership intent UTxO found for this address');
+        throw new Error('No membership application UTxO found for this address');
       }
       const mbrUtxo = dbUtxoToMeshUtxo(memberUtxo);
       const tokenUtxo = await findTokenUtxoByMemberUtxo(mbrUtxo);
 
       if (!tokenUtxo) {
-        throw new Error('No token UTxO found for this membership intent');
+        throw new Error('No token UTxO found for this membership application');
       }
 
       const oracleUtxos = await blockfrost.fetchUTxOs(

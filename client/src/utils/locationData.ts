@@ -49,6 +49,7 @@ export const countries: Country[] = [
   { name: 'Chad', code: 'TD', flag: '🇹🇩', coordinates: { lat: 15.4542, lng: 18.7322 } },
   { name: 'Chile', code: 'CL', flag: '🇨🇱', coordinates: { lat: -35.6751, lng: -71.5430 } },
   { name: 'China', code: 'CN', flag: '🇨🇳', coordinates: { lat: 35.8617, lng: 104.1954 } },
+  { name: 'Hong Kong', code: 'HK', flag: '🇭🇰', coordinates: { lat: 22.3193, lng: 114.1694 } },
   { name: 'Colombia', code: 'CO', flag: '🇨🇴', coordinates: { lat: 4.5709, lng: -74.2973 } },
   { name: 'Comoros', code: 'KM', flag: '🇰🇲', coordinates: { lat: -11.6455, lng: 43.3333 } },
   { name: 'Congo', code: 'CG', flag: '🇨🇬', coordinates: { lat: -0.2280, lng: 15.8277 } },
@@ -745,7 +746,6 @@ export const citiesByCountry: Record<string, City[]> = {
     { name: 'Tianjin', country: 'CN', coordinates: { lat: 39.3434, lng: 117.3616 } },
     { name: 'Guangzhou', country: 'CN', coordinates: { lat: 23.1291, lng: 113.2644 } },
     { name: 'Shenzhen', country: 'CN', coordinates: { lat: 22.3193, lng: 114.1694 } },
-    { name: 'Hong Kong', country: 'CN', coordinates: { lat: 22.3193, lng: 114.1694 } },
     { name: 'Wuhan', country: 'CN', coordinates: { lat: 30.5928, lng: 114.3055 } },
     { name: 'Dongguan', country: 'CN', coordinates: { lat: 23.0489, lng: 113.7447 } },
     { name: 'Chengdu', country: 'CN', coordinates: { lat: 30.5728, lng: 104.0668 } },
@@ -1187,6 +1187,9 @@ export const citiesByCountry: Record<string, City[]> = {
     { name: 'Choluteca', country: 'HN', coordinates: { lat: 13.3056, lng: -87.1914 } },
     { name: 'Comayagua', country: 'HN', coordinates: { lat: 14.4600, lng: -87.6417 } },
     { name: 'Puerto Cortés', country: 'HN', coordinates: { lat: 15.8500, lng: -87.9417 } },
+  ],
+  HK: [
+    { name: 'Hong Kong', country: 'HK', coordinates: { lat: 22.3193, lng: 114.1694 } },
   ],
   HU: [
     { name: 'Budapest', country: 'HU', coordinates: { lat: 47.4979, lng: 19.0402 } },

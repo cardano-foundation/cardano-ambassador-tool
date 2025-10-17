@@ -14,16 +14,16 @@ export const routes = {
   my: {
     profile: '/my/profile',
     submissions: '/my/submissions',
-    proposalIntents: (txhash: string) => `/my/proposal-intents/${txhash}`,
+    proposals: (txhash: string) => `/my/proposals/${txhash}`,
   },
   
   // Admin routes
   manage: {
     ambassadors: '/manage/memberships',
-    membershipIntents: '/manage/memberships-intents',
-    membershipIntent: (txhash: string) => `/manage/memberships-intents/${txhash}`,
-    proposalIntents: '/manage/proposal-intents',
-    proposalIntent: (txhash: string) => `/manage/proposal-intents/${txhash}`,
+    membershipApplications: '/manage/membership-applications',
+    membershipApplication: (txhash: string) => `/manage/membership-applications/${txhash}`,
+    proposals: '/manage/proposals',
+    proposal: (txhash: string) => `/manage/proposals/${txhash}`,
   },
 } as const;
 
@@ -31,7 +31,7 @@ export const routes = {
 // Helper function to get route with parameters
 export const getRoute = {
   proposal: (txhash: string) => routes.proposal(txhash),
-  myProposalIntent: (txhash: string) => routes.my.proposalIntents(txhash),
-  manageMembershipIntent: (txhash: string) => routes.manage.membershipIntent(txhash),
-  manageProposalIntent: (txhash: string) => routes.manage.proposalIntent(txhash),
+  myProposal: (txhash: string) => routes.my.proposals(txhash),
+  manageMembershipApplication: (txhash: string) => routes.manage.membershipApplication(txhash),
+  manageProposal: (txhash: string) => routes.manage.proposal(txhash),
 } as const;

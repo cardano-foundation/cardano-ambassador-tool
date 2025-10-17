@@ -18,7 +18,7 @@ const IntentExists = ({
           Intent already existing
         </Title>
         <Paragraph size="sm">
-          There is a pending membership intent with the selected address.
+          There is a pending membership application with the selected address.
         </Paragraph>
       </div>
       <div className="mt-6 flex w-full justify-between gap-2">

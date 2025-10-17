@@ -89,14 +89,14 @@ export default function MembershipSubmissionsTab() {
       const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
 
       if (!membershipIntentUtxo) {
-        throw new Error('No membership intent UTxO found for this address');
+        throw new Error('No membership application UTxO found for this address');
       }
 
       const tokenUtxo =
         await findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo);
 
       if (!tokenUtxo) {
-        throw new Error('No token UTxO found for this membership intent');
+        throw new Error('No token UTxO found for this membership application');
       }
 
       const oracleUtxos = await blockfrost.fetchUTxOs(
@@ -145,7 +145,7 @@ export default function MembershipSubmissionsTab() {
         }
       }
     } catch (error) {
-      console.error('Error updating membership intent metadata:', error);
+      console.error('Error updating membership application metadata:', error);
       throw error;
     }
   };
@@ -263,8 +263,8 @@ export default function MembershipSubmissionsTab() {
       <TransactionConfirmationOverlay
         isVisible={isTransactionPending}
         txHash={transactionHash || undefined}
-        title="Updating Membership Intent"
-        description="Please wait while your membership intent metadata is being updated on the blockchain."
+        title="Updating Membership Application"
+        description="Please wait while your membership application metadata is being updated on the blockchain."
         onClose={handleCloseTransactionOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}

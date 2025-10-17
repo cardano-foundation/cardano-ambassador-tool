@@ -8,8 +8,8 @@ import ProposalSubmissionsTab from '../_component/proposals/ProposalSubmissionsT
 import MembershipSubmissionsTab from '../_component/membership/MembershipSubmissionsTab';
 export default function IntentSubmissionsPage() {
   const tabs = [
-    { id: 'membership-intent', label: 'Membership Intent' },
-    { id: 'proposal-intent', label: 'Proposal Intent' },
+    { id: 'membership-intent', label: 'Membership Application' },
+    { id: 'proposal-intent', label: 'Proposal' },
   ];
 
   const [activeTab, setActiveTab] = useState('membership-intent');

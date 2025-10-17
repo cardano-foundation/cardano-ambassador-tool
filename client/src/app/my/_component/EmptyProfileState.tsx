@@ -14,7 +14,7 @@ export default function EmptyProfileState() {
           No Profile created.
         </Title>
         <Paragraph className="text-muted-foreground mb-4">
-          You haven't submitted a membership intent yet. Start your journey to
+          You haven't submitted a membership application yet. Start your journey to
           become a Cardano Ambassador by submitting your application.
         </Paragraph>
         <Link href={routes.signUp}>

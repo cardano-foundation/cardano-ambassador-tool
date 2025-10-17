@@ -84,7 +84,7 @@ const SubmitIntent = ({
     if (isMember && memberData) {
       setSubmitError({
         message: 'You are already a Cardano Ambassador member',
-        details: 'Members cannot submit new membership intents. You can view your profile at /my/submissions.',
+        details: 'Members cannot submit new membership applications. You can view your profile at /my/submissions.',
       });
       return;
     }
@@ -95,8 +95,8 @@ const SubmitIntent = ({
       const existingIntent = await findMembershipIntentUtxo(userAddress);
       if (existingIntent) {
         setSubmitError({
-          message: 'You already have a pending membership intent',
-          details: 'You can only have one membership intent at a time. Check your submission status at /my/submissions.',
+          message: 'You already have a pending membership application',
+          details: 'You can only have one membership application at a time. Check your submission status at /my/submissions.',
         });
         return;
       }

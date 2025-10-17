@@ -97,7 +97,7 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
-      <Link href={routes.my.proposalIntents(row.txHash)}>
+      <Link href={routes.my.proposals(row.txHash)}>
         <Button variant="primary" size="sm">
           View
         </Button>
@@ -154,14 +154,21 @@ export default function ProposalSubmissionsTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <Title level="4" className="text-foreground">
-          Your Proposal Submissions
-        </Title>
-        <Paragraph className="text-muted-foreground text-sm">
-          Track the status of your submitted proposals
-          {userProposals.length > 0 && ` - ${userProposals.length} found`}
-        </Paragraph>
+      <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-2">
+          <Title level="4" className="text-foreground">
+            Your Proposal Submissions
+          </Title>
+          <Paragraph className="text-muted-foreground text-sm">
+            Track the status of your submitted proposals
+            {userProposals.length > 0 && ` - ${userProposals.length} found`}
+          </Paragraph>
+        </div>
+        <Link href={routes.newProposal}>
+          <Button variant="primary" size="md">
+            New Proposal
+          </Button>
+        </Link>
       </div>
 
       <Table

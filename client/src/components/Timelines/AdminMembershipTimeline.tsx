@@ -1,6 +1,6 @@
 'use client';
 
-import MemberDataComponent from '@/app/manage/membership-intents/_components/MemberDataComponent';
+import MemberDataComponent from '@/app/manage/membership-applications/_components/MemberDataComponent';
 import Timeline from '@/components/atoms/Timeline';
 import { parseMembershipIntentDatum } from '@/utils';
 import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
@@ -148,7 +148,7 @@ const AdminMembershipTimeline = ({
     <div className="max-w-4xl space-y-6">
       {membershipData && (
         <div className="space-y-2">
-          <Title level="2" className="text-xl sm:text-2xl">
+          <Title level="4" className="text-xl sm:text-2xl">
             Reviewing: {membershipData.fullName || membershipData.displayName}
           </Title>
         </div>
