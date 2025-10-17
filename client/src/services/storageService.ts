@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-const STORAGE_ROOT = process.env.STORAGE_PATH || path.join(process.cwd(), 'storage');
+const STORAGE_ROOT = path.join(process.cwd(), 'storage');
 
 interface StorageOptions {
   filename: string;
