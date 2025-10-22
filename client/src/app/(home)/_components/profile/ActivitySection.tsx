@@ -45,8 +45,6 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
             />
           </div>
         </div>
-
-        {/* Desktop Layout - Horizontal */}
         <div className="border-border/60 hidden items-center justify-between border-b pb-4 sm:flex">
           <Title level="6" className="text-neutral text-lg">
             Recent Activities

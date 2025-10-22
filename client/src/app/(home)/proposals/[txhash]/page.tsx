@@ -57,14 +57,15 @@ export default function Page({ params }: PageProps) {
     };
   }
 
-
   if (dbLoading) {
     return <SimpleCardanoLoader />;
   }
 
   if (!proposal || !proposal.plutusData) {
     return (
-      <div className="bg-background flex min-h-screen items-center justify-center">
+      <div 
+        className="bg-background flex min-h-screen items-center justify-center"
+      >
         <div className="text-center">
           <Title level="3" className="text-foreground mb-2">
             Proposal Not Found
@@ -72,14 +73,16 @@ export default function Page({ params }: PageProps) {
           <Paragraph className="text-muted-foreground mb-4">
             The proposal with hash {txhash} could not be found.
           </Paragraph>
-          <Button variant="primary" onClick={() => window.history.back()}>
+          <Button 
+            variant="primary" 
+            onClick={() => window.history.back()}
+          >
             Go Back
           </Button>
         </div>
       </div>
     );
   }
-
 
   const getChipVariant = () => {
     switch (proposalData.status) {
@@ -97,36 +100,53 @@ export default function Page({ params }: PageProps) {
         return 'inactive';
     }
   };
-
+  const statusLabel = proposalData.status.replace('_', ' ');
 
   return (
-    <div className="container px-4 py-2 pb-8 sm:px-6">
+    <div 
+      className="container px-4 py-2 pb-8 sm:px-6"
+      role="main"
+      aria-label={`Proposal details: ${proposalData.title}`}
+    >
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div 
+          className="flex items-center justify-between"
+          role="heading" 
+          aria-level={1} 
+        >
           <Title level="5" className="text-foreground">
             {proposalData.title}
           </Title>
-          <Chip variant={getChipVariant()} size="md" className="capitalize">
-            {proposalData.status.replace('_', ' ')}
+          <Chip 
+            variant={getChipVariant()} 
+            size="md" 
+            className="capitalize"
+            aria-label={`Status: ${statusLabel}`} 
+          >
+            {statusLabel}
           </Chip>
         </div>
         <Card>
-          <CardContent className="flex flex-col gap-10 sm:flex-row sm:justify-between">
+          <CardContent 
+            className="flex flex-col gap-10 sm:flex-row sm:justify-between"
+            aria-label="Proposal transaction details"
+          >
             <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  TxHash
+                  Transaction Hash
                 </Paragraph>
                 <Copyable
                   withKey={false}
                   link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.txHash}`}
                   value={proposal.txHash}
                   keyLabel={''}
+                  aria-label={`Transaction hash: ${proposal.txHash}`}
                 />
               </div>
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  Receiver wallet
+                  Receiver Wallet Address
                 </Paragraph>
                 {proposalData.receiverWalletAddress ? (
                   <Copyable
@@ -134,9 +154,13 @@ export default function Page({ params }: PageProps) {
                     link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.receiverWalletAddress}`}
                     value={proposalData.receiverWalletAddress}
                     keyLabel={''}
+                    aria-label={`Receiver wallet address: ${proposalData.receiverWalletAddress}`}
                   />
                 ) : (
-                  <Paragraph size="sm" className="text-foreground">
+                  <Paragraph 
+                    size="sm" 
+                    className="text-foreground"
+                  >
                     Not specified
                   </Paragraph>
                 )}
@@ -145,7 +169,7 @@ export default function Page({ params }: PageProps) {
             <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  Submitted by
+                  Submitted By Address
                 </Paragraph>
                 <div className="flex flex-wrap items-start gap-1.5">
                   {proposalData.submittedByAddress ? (
@@ -154,10 +178,14 @@ export default function Page({ params }: PageProps) {
                       link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
                       value={proposalData.submittedByAddress}
                       keyLabel={''}
+                      aria-label={`Submitted by address: ${proposalData.submittedByAddress}`}
                     />
                   ) : (
                     !proposalData.submittedByAddress && (
-                      <Paragraph size="sm" className="text-foreground">
+                      <Paragraph 
+                        size="sm" 
+                        className="text-foreground"
+                      >
                         Not specified
                       </Paragraph>
                     )
@@ -168,39 +196,49 @@ export default function Page({ params }: PageProps) {
                 <Paragraph size="xs" className="">
                   Funds Requested
                 </Paragraph>
-                <Paragraph size="sm" className="text-foreground">
+                <Paragraph 
+                  size="sm" 
+                  className="text-foreground"
+                  aria-label={`Funds requested: ${proposalData.fundsRequested}`}
+                >
                   {proposalData.fundsRequested}
                 </Paragraph>
               </div>
             </div>
           </CardContent>
         </Card>
-
-        <Title level="5" className="text-foreground">
-          Overview
-        </Title>
-        <Card>
-          <div className="space-y-5">
-            <div className="space-y-2.5">
-              <Title level="6" className="text-foreground text-base">
-                Title
-              </Title>
-              <RichTextDisplay
-                content={proposalData.title}
-                className="text-foreground"
-              />
+        <div 
+          role="region"
+          aria-label="Proposal overview"
+        >
+          <Title level="5" className="text-foreground">
+            Overview
+          </Title>
+          <Card>
+            <div className="space-y-5">
+              <div className="space-y-2.5">
+                <Title level="6" className="text-foreground text-base">
+                  Title
+                </Title>
+                <RichTextDisplay
+                  content={proposalData.title}
+                  className="text-foreground"
+                  aria-label={`Proposal title: ${proposalData.title}`}
+                />
+              </div>
+              <div className="space-y-6">
+                <Title level="6" className="text-foreground">
+                  Description
+                </Title>
+                <RichTextDisplay
+                  content={proposalData.description}
+                  className="text-foreground"
+                  aria-label="Proposal description"
+                />
+              </div>
             </div>
-            <div className="space-y-6">
-              <Title level="6" className="text-foreground">
-                Description
-              </Title>
-              <RichTextDisplay
-                content={proposalData.description}
-                className="text-foreground"
-              />
-            </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );

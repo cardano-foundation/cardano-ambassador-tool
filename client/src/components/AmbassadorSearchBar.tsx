@@ -98,7 +98,6 @@ export default function AmbassadorSearch({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -146,10 +145,11 @@ export default function AmbassadorSearch({
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Dropdown Container */}
         <div className="relative flex-1 sm:flex-none" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="dark:bg-card border-border inline-flex w-full min-w-0 items-center justify-between gap-2.5 rounded-md border bg-neutral-50 px-2.5 py-2.5 transition-colors hover:bg-gray-200 sm:w-auto sm:justify-start dark:hover:bg-gray-700"
+            className="dark:!bg-background border-border inline-flex w-full min-w-0 items-center justify-between gap-2.5 rounded-md border bg-neutral-50 px-2.5 py-2.5 transition-all duration-200 hover:bg-muted hover:cursor-pointer sm:w-auto sm:justify-start"
           >
             <div className="flex min-w-0 items-center justify-start gap-1">
               <div className="text-muted-foreground flex-shrink-0 font-['Chivo'] text-sm leading-3 font-normal">
@@ -163,13 +163,13 @@ export default function AmbassadorSearch({
               {selectedRegion !== 'all' ? (
                 <button
                   onClick={handleClearRegion}
-                  className="text-sm text-slate-400 transition-colors hover:text-slate-600"
+                  className="text-sm text-slate-400 transition-colors duration-200 hover:text-slate-600 hover:cursor-pointer"
                 >
                   ×
                 </button>
               ) : (
                 <svg
-                  className={`text-muted-foreground h-3 w-3 transition-transform ${
+                  className={`text-muted-foreground h-3 w-3 transition-transform duration-200 ${
                     isDropdownOpen ? 'rotate-180' : ''
                   }`}
                   fill="none"
@@ -193,10 +193,10 @@ export default function AmbassadorSearch({
                   <button
                     key={option.value}
                     onClick={() => handleRegionSelect(option.value)}
-                    className={`hover:bg-muted flex w-full items-center justify-between px-4 py-3 text-left text-sm transition-colors ${
+                    className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm transition-all duration-200 hover:cursor-pointer ${
                       selectedRegion === option.value
                         ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground'
+                        : 'text-muted-foreground hover:bg-muted'
                     }`}
                   >
                     <span className="mr-2 flex-1 truncate">{option.label}</span>
@@ -221,28 +221,28 @@ export default function AmbassadorSearch({
             </div>
           )}
         </div>
-        <div className="dark:bg-card border-border inline-flex flex-shrink-0 items-center justify-center rounded-md border bg-neutral-50 px-[2px] lg:py-1">
+        <div className="border-border inline-flex flex-shrink-0 items-center justify-center rounded-md border bg-neutral-50 dark:!bg-background px-[2px] lg:py-1 transition-all duration-200 hover:bg-muted hover:cursor-pointer">
           <button
-            className={`dark:bg-muted flex items-center justify-center rounded-md bg-white lg:p-1.5 p-1 ${
+            className={`flex items-center justify-center rounded-md lg:p-1.5 p-1 transition-all duration-200 hover:cursor-pointer ${
               currentView === 'grid'
-                ? 'bg-white shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] '
-                : 'hover:bg-white/50 '
+                ? 'bg-muted shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)]'
+                : 'hover:bg-muted/50'
             }`}
             onClick={() => onViewChange?.('grid')}
             title="Grid view"
           >
-            <GridIcon className="text-muted-foreground h-4 w-4" />
+            <GridIcon className="text-muted-foreground h-4 w-4 transition-colors duration-200 hover:text-foreground" />
           </button>
           <button
-            className={`flex items-center justify-center rounded-md lg:p-1.5 p-1 ${
+            className={`flex items-center justify-center rounded-md lg:p-1.5 p-1 transition-all duration-200 hover:cursor-pointer ${
               currentView === 'list'
-                ? 'bg-white shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] outline-1 outline-offset-[-1px] outline-gray-100 '
-                : 'hover:bg-white/50 '
+                ? 'bg-muted shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)]'
+                : 'hover:bg-muted/50'
             }`}
             onClick={() => onViewChange?.('list')}
             title="List view"
           >
-            <ListIcon className="text-muted-foreground h-4 w-4" />
+            <ListIcon className="text-muted-foreground h-4 w-4 transition-colors duration-200 hover:text-foreground" />
           </button>
         </div>
       </div>

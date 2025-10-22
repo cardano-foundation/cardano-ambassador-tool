@@ -17,7 +17,6 @@ import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { AdminDecisionData } from '@types';
 import { use, useState } from 'react';
 
-
 interface PageProps {
   params: Promise<{ txhash: string }>;
 }
@@ -70,7 +69,11 @@ export default function Page({ params }: PageProps) {
 
   if (!proposal || !proposal.plutusData) {
     return (
-      <div className="bg-background flex min-h-screen items-center justify-center">
+      <div 
+        className="bg-background flex min-h-screen items-center justify-center"
+        role="alert"
+        aria-live="polite"
+      >
         <div className="text-center">
           <Title level="3" className="text-foreground mb-2">
             Proposal Not Found
@@ -78,7 +81,11 @@ export default function Page({ params }: PageProps) {
           <Paragraph className="text-muted-foreground mb-4">
             The proposal with hash {txhash} could not be found.
           </Paragraph>
-          <Button variant="primary" onClick={() => window.history.back()}>
+          <Button 
+            variant="primary" 
+            onClick={() => window.history.back()}
+            aria-label="Go back to previous page"
+          >
             Go Back
           </Button>
         </div>
@@ -106,39 +113,55 @@ export default function Page({ params }: PageProps) {
   const handleAdminDecisionUpdate = (data: AdminDecisionData | null) => {
     setAdminDecisionData(data);
   };
-
   const handleFinalizationComplete = () => {
     setIsFinalized(true);
   };
-
+  const statusLabel = proposalData.status.replace('_', ' ');
   return (
-    <div className="container px-4 py-2 pb-8 sm:px-6">
+    <div 
+      className="container px-4 py-2 pb-8 sm:px-6"
+      role="main"
+      aria-label={`Admin review for proposal: ${proposalData.title}`}
+    >
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div 
+          className="flex items-center justify-between"
+          role="heading"
+          aria-level={1}
+        >
           <Title level="5" className="text-foreground">
             {proposalData.title}
           </Title>
-          <Chip variant={getChipVariant()} size="md" className="capitalize">
-            {proposalData.status.replace('_', ' ')}
+          <Chip 
+            variant={getChipVariant()} 
+            size="md" 
+            className="capitalize"
+            aria-label={`Current status: ${statusLabel}`}
+          >
+            {statusLabel}
           </Chip>
         </div>
         <Card>
-          <CardContent className="flex flex-col gap-10 sm:flex-row sm:justify-between">
+          <CardContent 
+            className="flex flex-col gap-10 sm:flex-row sm:justify-between"
+            aria-label="Proposal transaction details"
+          >
             <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  TxHash
+                  Transaction Hash
                 </Paragraph>
                 <Copyable
                   withKey={false}
                   link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.txHash}`}
                   value={proposal.txHash}
                   keyLabel={''}
+                  aria-label={`Transaction hash: ${proposal.txHash}`}
                 />
               </div>
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  Receiver wallet
+                  Receiver Wallet Address
                 </Paragraph>
                 {proposalData.receiverWalletAddress ? (
                   <Copyable
@@ -146,9 +169,14 @@ export default function Page({ params }: PageProps) {
                     link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.receiverWalletAddress}`}
                     value={proposalData.receiverWalletAddress}
                     keyLabel={''}
+                    aria-label={`Receiver wallet address: ${proposalData.receiverWalletAddress}`}
                   />
                 ) : (
-                  <Paragraph size="sm" className="text-foreground">
+                  <Paragraph 
+                    size="sm" 
+                    className="text-foreground"
+                    aria-label="Receiver wallet address not specified"
+                  >
                     Not specified
                   </Paragraph>
                 )}
@@ -157,7 +185,7 @@ export default function Page({ params }: PageProps) {
             <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  Submitted by
+                  Submitted By Address
                 </Paragraph>
                 <div className="flex flex-wrap items-start gap-1.5">
                   {proposalData.submittedByAddress ? (
@@ -166,10 +194,15 @@ export default function Page({ params }: PageProps) {
                       link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
                       value={proposalData.submittedByAddress}
                       keyLabel={''}
+                      aria-label={`Submitted by address: ${proposalData.submittedByAddress}`}
                     />
                   ) : (
                     !proposalData.submittedByAddress && (
-                      <Paragraph size="sm" className="text-foreground">
+                      <Paragraph 
+                        size="sm" 
+                        className="text-foreground"
+                        aria-label="Submitted by address not specified"
+                      >
                         Not specified
                       </Paragraph>
                     )
@@ -180,42 +213,54 @@ export default function Page({ params }: PageProps) {
                 <Paragraph size="xs" className="">
                   Funds Requested
                 </Paragraph>
-                <Paragraph size="sm" className="text-foreground">
+                <Paragraph 
+                  size="sm" 
+                  className="text-foreground"
+                  aria-label={`Funds requested: ${proposalData.fundsRequested}`}
+                >
                   {proposalData.fundsRequested}
                 </Paragraph>
               </div>
             </div>
           </CardContent>
         </Card>
-
-        <Title level="5" className="text-foreground">
-          Overview
-        </Title>
-        <Card>
-          <div className="space-y-5">
-            <div className="space-y-2.5">
-              <Title level="6" className="text-foreground text-base">
-                Title
-              </Title>
-              <RichTextDisplay
-                content={proposalData.title}
-                className="text-foreground"
-              />
+        <div 
+          role="region"
+          aria-label="Proposal overview"
+        >
+          <Title level="5" className="text-foreground">
+            Overview
+          </Title>
+          <Card>
+            <div className="space-y-5">
+              <div className="space-y-2.5">
+                <Title level="6" className="text-foreground text-base">
+                  Title
+                </Title>
+                <RichTextDisplay
+                  content={proposalData.title}
+                  className="text-foreground"
+                  aria-label={`Proposal title: ${proposalData.title}`}
+                />
+              </div>
+              <div className="space-y-6">
+                <Title level="6" className="text-foreground">
+                  Description
+                </Title>
+                <RichTextDisplay
+                  content={proposalData.description}
+                  className="text-foreground"
+                  aria-label="Proposal description"
+                />
+              </div>
             </div>
-            <div className="space-y-6">
-              <Title level="6" className="text-foreground">
-                Description
-              </Title>
-              <RichTextDisplay
-                content={proposalData.description}
-                className="text-foreground"
-              />
-            </div>
-          </div>
-        </Card>
-
-        {/* Admin Review Section */}
-        <div className="space-y-4">
+          </Card>
+        </div>
+        <div 
+          className="space-y-4"
+          role="region"
+          aria-label="Admin review section"
+        >
           <Title level="5" className="text-foreground">
             Admin Review
           </Title>
@@ -225,14 +270,17 @@ export default function Page({ params }: PageProps) {
                 intentUtxo={proposal}
                 context={'ProposalIntent'}
                 onDecisionUpdate={handleAdminDecisionUpdate}
+                aria-label="Approve or reject proposal"
               />
             </div>
           </Card>
         </div>
-
-        {/* Multisig Progress Section */}
         {adminDecisionData && (
-          <div className="space-y-4">
+          <div 
+            className="space-y-4"
+            role="region"
+            aria-label="Multisignature progress"
+          >
             <Title level="5" className="text-foreground">
               Multisig Progress
             </Title>
@@ -241,15 +289,18 @@ export default function Page({ params }: PageProps) {
                 <MultisigProgressTracker
                   txhash={proposal?.txHash}
                   adminDecisionData={adminDecisionData}
+                  aria-label="Multisignature progress tracker"
                 />
               </div>
             </Card>
           </div>
         )}
-
-        {/* Finalize Decision Section */}
         {adminDecisionData && (
-          <div className="space-y-4">
+          <div 
+            className="space-y-4"
+            role="region"
+            aria-label="Finalize decision section"
+          >
             <Title level="5" className="text-foreground">
               Finalize Decision
             </Title>
@@ -260,9 +311,20 @@ export default function Page({ params }: PageProps) {
                   adminDecisionData={adminDecisionData}
                   context={'ProposalIntent'}
                   onFinalizationComplete={handleFinalizationComplete}
+                  aria-label="Finalize proposal decision"
                 />
               </div>
             </Card>
+          </div>
+        )}
+        {isFinalized && (
+          <div 
+            role="status"
+            aria-live="polite"
+            aria-label="Proposal decision has been finalized"
+            className="sr-only"
+          >
+            Proposal decision has been finalized successfully.
           </div>
         )}
       </div>

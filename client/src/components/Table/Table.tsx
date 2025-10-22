@@ -130,6 +130,7 @@ export function Table<T>({
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -144,6 +145,7 @@ export function Table<T>({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="border-border text-foreground placeholder:text-muted-foreground focus:ring-ring w-64 rounded-lg border bg-white py-2 pr-4 pl-10 transition-colors focus:border-transparent focus:ring-2"
+                  aria-label={`Search ${context || 'table'}`}
                 />
               </div>
             )}
@@ -182,6 +184,7 @@ export function Table<T>({
                                 ? 'text-neutral'
                                 : 'text-muted-foreground'
                             }
+                            aria-hidden="true"
                           />
                           <SortDownIcon
                             className={
@@ -190,6 +193,7 @@ export function Table<T>({
                                 ? 'text-neutral'
                                 : 'text-muted-foreground'
                             }
+                            aria-hidden="true"
                           />
                         </div>
                       )}

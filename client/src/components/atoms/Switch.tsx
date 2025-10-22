@@ -42,7 +42,7 @@ export default function Switch({
       }}
       className={cn(
         'inline-flex flex-shrink-0 items-center rounded-full border-2 border-transparent transition-all duration-200 ease-in-out',
-        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+        'hover:cursor-pointer focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
         isChecked ? 'bg-primary-base' : 'dark:bg-black-500 bg-gray-300',
         disabled &&
           'dark:bg-black-200 cursor-not-allowed bg-gray-300 opacity-70',
