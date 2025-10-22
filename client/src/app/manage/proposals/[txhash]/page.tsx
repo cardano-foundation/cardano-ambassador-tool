@@ -259,11 +259,7 @@ export default function Page({ params }: PageProps) {
           </div>
         )}
         {adminDecisionData && (
-          <div 
-            className="space-y-4"
-            role="region"
-            aria-label="Finalize decision section"
-          >
+          <div className="space-y-4">
             <Title level="5" className="text-foreground">
               Finalize Decision
             </Title>
