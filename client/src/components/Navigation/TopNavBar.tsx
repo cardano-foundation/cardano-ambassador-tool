@@ -40,6 +40,9 @@ export default function TopNavBar() {
                 size="sm"
                 className="bg-background border-none p-2"
                 onClick={toggleMobileMenu}
+                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-navigation"
               >
                 {isMobileMenuOpen ? (
                   <X className="h-5 w-5" />

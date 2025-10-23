@@ -16,6 +16,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   rounded?: 'lg' | 'full';
   children?: React.ReactNode;
   fullWidth?: boolean;
+  'aria-label'?: string;
+  'aria-pressed'?: boolean;
+  'aria-expanded'?: boolean;
 }
 
 export default function Button({
@@ -25,6 +28,9 @@ export default function Button({
   fullWidth = false,
   className,
   children,
+  'aria-label': ariaLabel,
+  'aria-pressed': ariaPressed,
+  'aria-expanded': ariaExpanded,
   ...props
 }: ButtonProps) {
   return (
@@ -72,6 +78,9 @@ export default function Button({
         fullWidth && 'w-full',
         className,
       )}
+      aria-label={ariaLabel}
+      aria-pressed={ariaPressed}
+      aria-expanded={ariaExpanded}
       {...props}
     >
       {children}

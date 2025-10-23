@@ -17,7 +17,6 @@ import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { AdminDecisionData } from '@types';
 import { use, useState } from 'react';
 
-
 interface PageProps {
   params: Promise<{ txhash: string }>;
 }
@@ -106,11 +105,10 @@ export default function Page({ params }: PageProps) {
   const handleAdminDecisionUpdate = (data: AdminDecisionData | null) => {
     setAdminDecisionData(data);
   };
-
   const handleFinalizationComplete = () => {
     setIsFinalized(true);
   };
-
+  const statusLabel = proposalData.status.replace('_', ' ');
   return (
     <div className="container px-4 py-2 pb-8 sm:px-6">
       <div className="space-y-6">
@@ -118,8 +116,13 @@ export default function Page({ params }: PageProps) {
           <Title level="5" className="text-foreground">
             {proposalData.title}
           </Title>
-          <Chip variant={getChipVariant()} size="md" className="capitalize">
-            {proposalData.status.replace('_', ' ')}
+          <Chip 
+            variant={getChipVariant()} 
+            size="md" 
+            className="capitalize"
+            aria-label={`Current status: ${statusLabel}`}
+          >
+            {statusLabel}
           </Chip>
         </div>
         <Card>
@@ -138,7 +141,7 @@ export default function Page({ params }: PageProps) {
               </div>
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  Receiver wallet
+                  Receiver Wallet
                 </Paragraph>
                 {proposalData.receiverWalletAddress ? (
                   <Copyable
@@ -148,7 +151,11 @@ export default function Page({ params }: PageProps) {
                     keyLabel={''}
                   />
                 ) : (
-                  <Paragraph size="sm" className="text-foreground">
+                  <Paragraph 
+                    size="sm" 
+                    className="text-foreground"
+                    aria-label="Receiver wallet address not specified"
+                  >
                     Not specified
                   </Paragraph>
                 )}
@@ -180,41 +187,46 @@ export default function Page({ params }: PageProps) {
                 <Paragraph size="xs" className="">
                   Funds Requested
                 </Paragraph>
-                <Paragraph size="sm" className="text-foreground">
+                <Paragraph 
+                  size="sm" 
+                  className="text-foreground"
+                >
                   {proposalData.fundsRequested}
                 </Paragraph>
               </div>
             </div>
           </CardContent>
         </Card>
-
-        <Title level="5" className="text-foreground">
-          Overview
-        </Title>
-        <Card>
-          <div className="space-y-5">
-            <div className="space-y-2.5">
-              <Title level="6" className="text-foreground text-base">
-                Title
-              </Title>
-              <RichTextDisplay
-                content={proposalData.title}
-                className="text-foreground"
-              />
+        <div 
+          role="region"
+          aria-label="Proposal overview"
+        >
+          <Title level="5" className="text-foreground">
+            Overview
+          </Title>
+          <Card>
+            <div className="space-y-5">
+              <div className="space-y-2.5">
+                <Title level="6" className="text-foreground text-base">
+                  Title
+                </Title>
+                <RichTextDisplay
+                  content={proposalData.title}
+                  className="text-foreground"
+                />
+              </div>
+              <div className="space-y-6">
+                <Title level="6" className="text-foreground">
+                  Description
+                </Title>
+                <RichTextDisplay
+                  content={proposalData.description}
+                  className="text-foreground"
+                />
+              </div>
             </div>
-            <div className="space-y-6">
-              <Title level="6" className="text-foreground">
-                Description
-              </Title>
-              <RichTextDisplay
-                content={proposalData.description}
-                className="text-foreground"
-              />
-            </div>
-          </div>
-        </Card>
-
-        {/* Admin Review Section */}
+          </Card>
+        </div>
         <div className="space-y-4">
           <Title level="5" className="text-foreground">
             Admin Review
@@ -225,12 +237,11 @@ export default function Page({ params }: PageProps) {
                 intentUtxo={proposal}
                 context={'ProposalIntent'}
                 onDecisionUpdate={handleAdminDecisionUpdate}
+                aria-label="Approve or reject proposal"
               />
             </div>
           </Card>
         </div>
-
-        {/* Multisig Progress Section */}
         {adminDecisionData && (
           <div className="space-y-4">
             <Title level="5" className="text-foreground">
@@ -241,13 +252,12 @@ export default function Page({ params }: PageProps) {
                 <MultisigProgressTracker
                   txhash={proposal?.txHash}
                   adminDecisionData={adminDecisionData}
+                  aria-label="Multisignature progress tracker"
                 />
               </div>
             </Card>
           </div>
         )}
-
-        {/* Finalize Decision Section */}
         {adminDecisionData && (
           <div className="space-y-4">
             <Title level="5" className="text-foreground">

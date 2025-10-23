@@ -33,6 +33,7 @@ export default function Radio({ className, ...props }: RadioProps) {
           'flex',
           'items-center',
           'justify-center',
+          'hover:cursor-pointer',
 
           "after:content-['']",
           'after:w-3.5',

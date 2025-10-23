@@ -22,12 +22,14 @@ const Copyable = ({
           <Copy
             className="text-neutral size-4 hover:cursor-pointer"
             onClick={() => copyToClipboard(shortenString(value))}
+            aria-label={`Copy ${shortenString(value)} to clipboard`}
           />
           <a
             href={link}
             target="_blank"
             className={`${link.length ? 'hover:cursor-pointer' : 'hover:cursor-not-allowed'}`}
             rel="noreferrer"
+            aria-label={`Open ${shortenString(value)} in explorer`}
           >
             {
               link && (

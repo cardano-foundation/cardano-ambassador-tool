@@ -43,21 +43,11 @@ const getChipVariant = (status: ProposalIntent['status']) => {
   }
 };
 
-
 const truncateToWords = (text: string, wordCount: number = 6) => {
   if (!text) return 'No description';
   const words = text.split(' ');
   if (words.length <= wordCount) return text;
   return words.slice(0, wordCount).join(' ') + '...';
-};
-
-const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch (err) {
-    return false;
-  }
 };
 
 const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [

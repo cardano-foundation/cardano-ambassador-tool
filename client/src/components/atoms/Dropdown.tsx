@@ -76,12 +76,16 @@ export default function Dropdown({
         }}
         className={cn(
           'inline-flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-4 text-sm transition-colors focus-visible:outline-none',
-          'bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-primary/20 focus:ring-2',
+          'bg-background border-border hover:border-primary/50 hover:cursor-pointer focus:border-primary focus:ring-primary/20 focus:ring-2',
           disabled && 'hover:border-border cursor-not-allowed opacity-50',
           isOpen && 'border-primary ring-primary/20 ring-2',
         )}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-labelledby="dropdown-label"
       >
         <span
+          id="dropdown-label"
           className={cn(
             selectedOption ? 'text-foreground' : 'text-muted-foreground',
             'mr-2 truncate',
@@ -97,6 +101,7 @@ export default function Dropdown({
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -108,10 +113,18 @@ export default function Dropdown({
       </button>
 
       {isOpen && (
-        <div className="bg-background border-border absolute right-0 left-0 z-[9999] mt-1 max-h-60 origin-top overflow-hidden rounded-md border shadow-lg">
+        <div 
+          className="bg-background border-border absolute right-0 left-0 z-[9999] mt-1 max-h-60 origin-top overflow-hidden rounded-md border shadow-lg"
+          role="listbox"
+          aria-labelledby="dropdown-label"
+        >
           <div className="max-h-60 overflow-y-auto py-1">
             {options.length === 0 ? (
-              <div className="text-muted-foreground px-4 py-3 text-sm">
+              <div 
+                className="text-muted-foreground px-4 py-3 text-sm"
+                role="option"
+                aria-selected="false"
+              >
                 No options available
               </div>
             ) : (
@@ -126,10 +139,12 @@ export default function Dropdown({
                   }}
                   className={cn(
                     'flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm transition-colors',
-                    'text-foreground hover:bg-muted hover:text-foreground',
+                    'text-foreground hover:bg-muted hover:text-foreground hover:cursor-pointer',
                     value === option.value &&
                       'bg-muted text-primary font-medium',
                   )}
+                  role="option"
+                  aria-selected={value === option.value}
                 >
                   <span className="mr-2 flex-1 truncate">{option.label}</span>
                   {value === option.value && (
@@ -138,6 +153,7 @@ export default function Dropdown({
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
                       <path
                         strokeLinecap="round"

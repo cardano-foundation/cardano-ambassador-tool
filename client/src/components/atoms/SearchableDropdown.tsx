@@ -116,8 +116,12 @@ export default function SearchableDropdown({
           disabled && 'hover:border-border cursor-not-allowed opacity-50',
           isOpen && 'border-primary ring-primary/20 ring-2',
         )}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-labelledby="searchable-dropdown-label"
       >
         <span
+          id="searchable-dropdown-label"
           className={cn(
             selectedOption ? 'text-foreground' : 'text-muted-foreground',
             'mr-2 truncate',
@@ -133,6 +137,7 @@ export default function SearchableDropdown({
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -144,7 +149,11 @@ export default function SearchableDropdown({
       </button>
 
       {isOpen && (
-        <div className="bg-background border-border absolute right-0 left-0 z-[9999] mt-1 max-h-80 origin-top overflow-hidden rounded-md border shadow-lg">
+        <div 
+          className="bg-background border-border absolute right-0 left-0 z-[9999] mt-1 max-h-80 origin-top overflow-hidden rounded-md border shadow-lg"
+          role="listbox"
+          aria-labelledby="searchable-dropdown-label"
+        >
           {/* Search Input */}
           <div className="border-b border-border p-2">
             <div className="relative">
@@ -153,6 +162,7 @@ export default function SearchableDropdown({
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -173,14 +183,16 @@ export default function SearchableDropdown({
                   'text-foreground placeholder:text-muted-foreground',
                   'focus:border-primary focus:ring-primary/20 focus:ring-2 focus:outline-none'
                 )}
+                aria-label="Search options"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="text-muted-foreground hover:text-foreground absolute right-2 top-1/2 -translate-y-1/2"
+                  aria-label="Clear search"
                 >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -196,7 +208,11 @@ export default function SearchableDropdown({
           {/* Options List */}
           <div className="max-h-60 overflow-y-auto py-1">
             {filteredOptions.length === 0 ? (
-              <div className="text-muted-foreground px-4 py-3 text-sm text-center">
+              <div 
+                className="text-muted-foreground px-4 py-3 text-sm text-center"
+                role="option"
+                aria-selected="false"
+              >
                 {searchQuery ? noOptionsMessage : 'No options available'}
               </div>
             ) : (
@@ -215,6 +231,8 @@ export default function SearchableDropdown({
                     value === option.value &&
                       'bg-muted text-primary font-medium',
                   )}
+                  role="option"
+                  aria-selected={value === option.value}
                 >
                   <span className="mr-2 flex-1 truncate">{option.label}</span>
                   {value === option.value && (
@@ -223,6 +241,7 @@ export default function SearchableDropdown({
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
                       <path
                         strokeLinecap="round"

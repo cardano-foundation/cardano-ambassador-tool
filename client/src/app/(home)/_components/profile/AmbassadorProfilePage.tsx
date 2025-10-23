@@ -124,13 +124,19 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
   const hasTopics = profile?.summary.top_topics && profile.summary.top_topics.length > 0;
   const hasReplies = profile?.summary.top_replies && profile.summary.top_replies.length > 0;
   const hasAnyContent = hasActivities || hasTopics || hasReplies;
+  const currentTabLabel = tabs.find(tab => tab.id === activeTab)?.label || 'Content';
 
   return (
-    <div className="bg-background min-h-screen max-w-full">
+    <div className="bg-background min-h-screen max-w-full"
+      role="main"
+      aria-label={`Ambassador profile for ${memberData.name}`}>
       <ProfileHeader profile={displayProfile} isLoading={forumLoading} />
 
-      <div className="block p-6 lg:grid lg:grid-cols-[320px_1fr] lg:items-start lg:gap-6 ">
-        <div className="w-full lg:sticky lg:top-0 lg:z-20 lg:w-auto">
+      <div className="block p-6 lg:grid lg:grid-cols-[320px_1fr] lg:items-start lg:gap-6 " aria-label="Profile content">
+        <div className="w-full lg:sticky lg:top-0 lg:z-20 lg:w-auto"
+          role="complementary"
+          aria-label="Ambassador information"
+          >
           <ProfileSidebar
             profile={{
               name: memberData.name,
@@ -144,8 +150,14 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
             cleanHtml={cleanHtml}
           />
         </div>
-        <div className="mt-6 flex w-full min-w-0 flex-col lg:mt-0 lg:w-auto">
-          <div className="border-border bg-background mb-4 w-full border-b lg:sticky lg:top-0 lg:z-50">
+        <div className="mt-6 flex w-full min-w-0 flex-col lg:mt-0 lg:w-auto"
+          role="region"
+          aria-label={`${currentTabLabel} section`}
+          >
+          <div className="border-border bg-background mb-4 w-full border-b lg:sticky lg:top-0 lg:z-50"
+            role="navigation"
+            aria-label="Profile sections"
+            >
             <div className="w-full min-w-0 px-0">
               <TopNav
                 tabs={tabs}
@@ -154,7 +166,10 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
               />
             </div>
           </div>
-          <div className="w-full max-w-full flex-1">
+          <div className="w-full max-w-full flex-1"
+            role="tabpanel"
+            aria-labelledby={`tab-${activeTab}`}
+            >
             {activeTab === 'summary' && (
               <div className="w-full space-y-6 lg:space-y-8">
                 {forumLoading ? (
