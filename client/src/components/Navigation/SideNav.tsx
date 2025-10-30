@@ -152,6 +152,8 @@ const SideNav = () => {
                     className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
                       isActive ? 'bg-muted' : ''
                     }`}
+                    aria-label={item.label}
+                    aria-current={isActive ? 'page' : undefined}
                   >
                     <div
                       className={`flex h-5 w-5 flex-shrink-0 items-center justify-center ${

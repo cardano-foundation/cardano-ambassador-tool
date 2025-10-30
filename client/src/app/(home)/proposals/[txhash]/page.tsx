@@ -57,7 +57,6 @@ export default function Page({ params }: PageProps) {
     };
   }
 
-
   if (dbLoading) {
     return <SimpleCardanoLoader />;
   }
@@ -72,14 +71,13 @@ export default function Page({ params }: PageProps) {
           <Paragraph className="text-muted-foreground mb-4">
             The proposal with hash {txhash} could not be found.
           </Paragraph>
-          <Button variant="primary" onClick={() => window.history.back()}>
+          <Button variant="primary" onClick={() => window.history.back()} >
             Go Back
           </Button>
         </div>
       </div>
     );
   }
-
 
   const getChipVariant = () => {
     switch (proposalData.status) {
@@ -97,7 +95,7 @@ export default function Page({ params }: PageProps) {
         return 'inactive';
     }
   };
-
+  const statusLabel = proposalData.status.replace('_', ' ');
 
   return (
     <div className="container px-4 py-2 pb-8 sm:px-6">
@@ -106,12 +104,17 @@ export default function Page({ params }: PageProps) {
           <Title level="5" className="text-foreground">
             {proposalData.title}
           </Title>
-          <Chip variant={getChipVariant()} size="md" className="capitalize">
-            {proposalData.status.replace('_', ' ')}
+          <Chip 
+            variant={getChipVariant()} 
+            size="md" 
+            className="capitalize"
+            aria-label={`Status: ${statusLabel}`} 
+          >
+            {statusLabel}
           </Chip>
         </div>
         <Card>
-          <CardContent className="flex flex-col gap-10 sm:flex-row sm:justify-between">
+          <CardContent className="flex flex-col gap-10 sm:flex-row sm:justify-between" >
             <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
@@ -126,7 +129,7 @@ export default function Page({ params }: PageProps) {
               </div>
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  Receiver wallet
+                  Receiver Wallet
                 </Paragraph>
                 {proposalData.receiverWalletAddress ? (
                   <Copyable
@@ -136,7 +139,7 @@ export default function Page({ params }: PageProps) {
                     keyLabel={''}
                   />
                 ) : (
-                  <Paragraph size="sm" className="text-foreground">
+                  <Paragraph size="sm" className="text-foreground" >
                     Not specified
                   </Paragraph>
                 )}
@@ -157,7 +160,10 @@ export default function Page({ params }: PageProps) {
                     />
                   ) : (
                     !proposalData.submittedByAddress && (
-                      <Paragraph size="sm" className="text-foreground">
+                      <Paragraph 
+                        size="sm" 
+                        className="text-foreground"
+                      >
                         Not specified
                       </Paragraph>
                     )
@@ -175,32 +181,30 @@ export default function Page({ params }: PageProps) {
             </div>
           </CardContent>
         </Card>
-
-        <Title level="5" className="text-foreground">
-          Overview
-        </Title>
-        <Card>
-          <div className="space-y-5">
-            <div className="space-y-2.5">
-              <Title level="6" className="text-foreground text-base">
-                Title
-              </Title>
-              <RichTextDisplay
-                content={proposalData.title}
-                className="text-foreground"
-              />
+          <Title level="5" className="text-foreground">
+            Overview
+          </Title>
+          <Card>
+            <div className="space-y-5">
+              <div className="space-y-2.5">
+                <Title level="6" className="text-foreground text-base">
+                  Title
+                </Title>
+                <RichTextDisplay
+                  content={proposalData.title}
+                  className="text-foreground"/>
+              </div>
+              <div className="space-y-6">
+                <Title level="6" className="text-foreground">
+                  Description
+                </Title>
+                <RichTextDisplay
+                  content={proposalData.description}
+                  className="text-foreground"
+                />
+              </div>
             </div>
-            <div className="space-y-6">
-              <Title level="6" className="text-foreground">
-                Description
-              </Title>
-              <RichTextDisplay
-                content={proposalData.description}
-                className="text-foreground"
-              />
-            </div>
-          </div>
-        </Card>
+          </Card>
       </div>
     </div>
   );

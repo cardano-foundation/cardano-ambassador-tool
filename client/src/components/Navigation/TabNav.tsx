@@ -42,10 +42,13 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
                 disabled={tab.disabled}
                 value={tab.id}
                 className="w-full flex justify-center"
+                aria-label={tab.label}
+                aria-selected={activeTabId === tab.id}
+                role="tab"
               >
                 <div
                   className={cn(
-                    'text-sm leading-none whitespace-nowrap transition-all duration-200',
+                    'text-sm leading-none whitespace-nowrap transition-all duration-200 hover:cursor-pointer',
                     activeTabId === tab.id
                       ? 'text-primary-base font-bold'
                       : 'font-normal text-neutral-500 hover:text-neutral-700',
