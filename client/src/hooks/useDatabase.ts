@@ -39,41 +39,39 @@ export function useDatabase() {
   const [proposalIntents, setProposalIntents] = useState<Utxo[]>([]);
   const [members, setMembers] = useState<Utxo[]>([]);
   const [proposals, setProposals] = useState<Utxo[]>([]);
+  const [signOfApprovals, setSignOfApprovals] = useState<Utxo[]>([]);
 
   const [dbError, setDbError] = useState<string | null>(null);
 
   // Database initialization and worker setup
   useEffect(() => {
-    // Set a timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
       setDbLoading(false);
-    }, 10000); // 10 second timeout
+    }, 10000);
 
     try {
-      // Initialize worker
       initUtxoWorker();
 
-      // Listen for DB updates from worker
       const unsubscribe = onUtxoWorkerMessage(async (data) => {
         if (data.db) {
           try {
-            clearTimeout(timeoutId); // Cancel timeout
+            clearTimeout(timeoutId); 
 
-            // Use the DatabaseManager to initialize
             await dbManager.initializeDatabase(data.db);
-
-            // Query the initialized database
             const memberships_intents =
               dbManager.getUtxosByContext('membership_intent');
             const proposals_intents =
               dbManager.getUtxosByContext('proposal_intent');
             const members = dbManager.getUtxosByContext('members');
             const proposals = dbManager.getUtxosByContext('proposals');
+            const sign_of_approvals =
+              dbManager.getUtxosByContext('sign_of_approval');
             setMembershipIntents(memberships_intents);
             setProposalIntents(proposals_intents);
             setMembers(members);
             setProposals(proposals);
-            // Set loading states based on operation type
+            setSignOfApprovals(sign_of_approvals);
+
             if (data.isSyncOperation) {
               setIsSyncing(false);
             } else {
@@ -93,7 +91,7 @@ export function useDatabase() {
           }
         }
       });
-      // Request worker to seed all data
+
       syncAllData();
 
       return () => {
@@ -123,7 +121,6 @@ export function useDatabase() {
 
   function syncData(context: string) {
     setIsSyncing(true);
-    // Use same pattern as initial load - fetch all contexts fresh
     sendUtxoWorkerMessage({
       action: 'seedAll',
       apiBaseUrl: window.location.origin,
@@ -186,6 +183,7 @@ export function useDatabase() {
     proposalIntents,
     members,
     proposals,
+    signOfApprovals,
 
     // Operations
     syncData,

@@ -41,6 +41,7 @@ export function TableTestPage() {
       Austria: '🇦🇹',
       Slovakia: '🇸🇰',
       China: '🇨🇳',
+      'Hong Kong': '🇭🇰',
       Colombia: '🇨🇴',
       Egypt: '🇪🇬',
       'New Zealand': '🇳🇿',

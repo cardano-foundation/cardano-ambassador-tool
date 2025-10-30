@@ -154,7 +154,7 @@ export default function ProposalSubmissionsTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <Title level="4" className="text-foreground">
             Your Proposal Submissions
@@ -164,22 +164,27 @@ export default function ProposalSubmissionsTab() {
             {userProposals.length > 0 && ` - ${userProposals.length} found`}
           </Paragraph>
         </div>
-        <Link href={routes.newProposal}>
-          <Button variant="primary" size="md">
+        <Link href={routes.newProposal} className="w-full sm:w-auto">
+          <Button variant="primary" size="md" className="w-full sm:w-auto">
             New Proposal
           </Button>
         </Link>
       </div>
 
-      <Table
-        data={userProposals}
-        columns={userProposalColumns}
-        pageSize={10}
-        searchable={true}
-        searchPlaceholder="Search your proposals..."
-        context="your proposals"
-        autoSize={true}
-      />
+      {/* Mobile-optimized scrollable table container */}
+      <div className="w-full overflow-x-auto">
+        <div className="min-w-[800px]">
+          <Table
+            data={userProposals}
+            columns={userProposalColumns}
+            pageSize={10}
+            searchable={true}
+            searchPlaceholder="Search your proposals..."
+            context="your proposals"
+            autoSize={true}
+          />
+        </div>
+      </div>
     </div>
   );
 }

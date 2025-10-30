@@ -58,6 +58,7 @@ export const getCountryFlag = (countryInput: string): string => {
     Austria: '🇦🇹',
     Slovakia: '🇸🇰',
     China: '🇨🇳',
+    'Hong Kong': '🇭🇰',
     Colombia: '🇨🇴',
     Egypt: '🇪🇬',
     'New Zealand': '🇳🇿',

@@ -77,8 +77,14 @@ const adminToolsSection: NavigationSection = {
     },
     {
       id: 'proposal-intent',
-      label: 'Proposals',
-      href: routes.manage.proposals,
+      label: 'Proposal Applications',
+      href: routes.manage.proposalApplications,
+      icon: ProposalIcon,
+    },
+    {
+      id: 'treasury-signoffs',
+      label: 'Treasury Sign offs',
+      href: routes.manage.treasurySignoffs,
       icon: ProposalIcon,
     },
   ],

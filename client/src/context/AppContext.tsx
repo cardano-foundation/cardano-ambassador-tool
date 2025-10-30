@@ -40,6 +40,7 @@ interface AppContextValue {
   proposalIntents: Utxo[];
   members: Utxo[];
   proposals: Utxo[];
+  signOfApprovals: Utxo[];
   syncData: (context: string) => void;
   syncAllData: () => void;
   query: <T = Record<string, unknown>>(sql: string, params?: any[]) => T[];
@@ -114,6 +115,7 @@ const AppContext = createContext<AppContextValue>({
   proposalIntents: [],
   members: [],
   proposals: [],
+  signOfApprovals: [],
   syncData: () => {},
   syncAllData: () => {},
   query: () => [],
@@ -181,6 +183,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     proposalIntents,
     members,
     proposals,
+    signOfApprovals,
     syncData,
     syncAllData,
     query,
@@ -335,6 +338,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     proposalIntents,
     members,
     proposals,
+    signOfApprovals,
     syncData,
     syncAllData,
     query,
