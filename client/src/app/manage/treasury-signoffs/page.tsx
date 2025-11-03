@@ -8,11 +8,14 @@ import { CopyIcon } from '@/components/atoms/CopyIcon';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
+import Chip from '@/components/atoms/Chip';
 import Link from 'next/link';
+import DepositToTreasury from '@/components/DepositToTreasury';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { parseProposalDatum } from '@/utils';
+import { parseProposalDatum, getCatConstants, getProvider } from '@/utils';
+import { useState, useEffect } from 'react';
 
 type ProposalIntent = {
   id: number;
@@ -21,7 +24,7 @@ type ProposalIntent = {
   submittedByAddress: string;
   receiverWalletAddress: string;
   createdAt?: string;
-  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected';
+  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'ready';
   fundsRequested?: number;
   txHash: string;
   outputIndex?: number;
@@ -36,6 +39,8 @@ const getChipVariant = (status: ProposalIntent['status']) => {
     case 'under_review':
       return 'default';
     case 'approved':
+      return 'success';
+    case 'ready':
       return 'success';
     case 'rejected':
       return 'error';
@@ -127,12 +132,22 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     ),
   },
   {
+    header: 'Status',
+    accessor: 'status',
+    sortable: true,
+    cell: (value) => (
+      <Chip variant={getChipVariant(value)}>
+        {value === 'ready' ? 'Ready for Withdrawal' : value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
+      </Chip>
+    ),
+  },
+  {
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
       <Link href={routes.manage.treasurySignoff(row.txHash)} prefetch={true}>
         <Button variant="primary" size="sm">
-          View Proposal
+          View
         </Button>
       </Link>
     ),
@@ -140,9 +155,12 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
 ];
 
 export default function TreasurySignOffsPage() {
-  const { signOfApprovals, dbLoading } = useApp();
+  const { signOfApprovals, dbLoading, treasuryBalance, isTreasuryLoading } = useApp();
+  
+  // Convert BigInt treasury balance to ADA
+  const treasuryBalanceAda = Math.floor(Number(treasuryBalance) / 1_000_000);
 
-  if (dbLoading) {
+  if (dbLoading || isTreasuryLoading) {
     return <div className="p-4">Loading treasury sign-offs...</div>;
   }
 
@@ -153,7 +171,7 @@ export default function TreasurySignOffsPage() {
       fundsRequested: 0,
       receiverWalletAddress: '',
       submittedByAddress: '',
-      status: 'pending',
+      status: 'ready',
       id: 0,
       txHash: utxo.txHash,
     };
@@ -174,12 +192,12 @@ export default function TreasurySignOffsPage() {
     return decodedDatum;
   });
 
-  // Calculate treasury overview totals
-  const totalTreasury = 120000; // You may want to make this dynamic
-  const totalAllocated = decodedUtxos.reduce((sum, utxo) => {
+  // Calculate treasury overview totals using real data
+  const totalPendingWithdrawals = decodedUtxos.reduce((sum, utxo) => {
     return sum + (utxo.fundsRequested || 0);
   }, 0);
-  const availableBalance = totalTreasury - totalAllocated;
+  const availableBalance = treasuryBalanceAda - totalPendingWithdrawals;
+  const hasInsufficientBalance = availableBalance < 0;
 
   return (
     <div className="bg-background min-h-screen">
@@ -197,34 +215,69 @@ export default function TreasurySignOffsPage() {
               <Title level="5" className="text-foreground mb-6 font-medium">
                 Treasury Overview
               </Title>
+              <div className="mb-6">
+                <Paragraph className="text-muted-foreground text-sm mb-2">
+                  Treasury Address
+                </Paragraph>
+                <Copyable
+                  withKey={false}
+                  link={`${getCurrentNetworkConfig().explorerUrl}/address/${getCatConstants().scripts.treasury.spend.address}`}
+                  value={getCatConstants().scripts.treasury.spend.address}
+                  keyLabel={''}
+                />
+              </div>
               <div className="grid grid-cols-3 gap-8">
                 <div className="space-y-2">
                   <Paragraph className="text-muted-foreground text-sm">
                     Total Treasury
                   </Paragraph>
                   <Title level="5" className="text-foreground font-semibold">
-                    ₳{totalTreasury.toLocaleString()}
+                    ₳{treasuryBalanceAda.toLocaleString()}
                   </Title>
                 </div>
                 <div className="space-y-2">
                   <Paragraph className="text-muted-foreground text-sm">
-                    Allocated
+                    Pending Withdrawals
                   </Paragraph>
                   <Title level="5" className="text-foreground font-semibold">
-                    ₳{totalAllocated.toLocaleString()}
+                    ₳{totalPendingWithdrawals.toLocaleString()}
                   </Title>
                 </div>
                 <div className="space-y-2">
                   <Paragraph className="text-muted-foreground text-sm">
-                    Available Balance
+                    Remaining After All Withdrawals
                   </Paragraph>
-                  <Title level="5" className="text-green-600 font-semibold">
+                  <Title level="5" className={hasInsufficientBalance ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold'}>
                     ₳{availableBalance.toLocaleString()}
                   </Title>
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Deposit to Treasury */}
+          <DepositToTreasury />
+
+          {/* Insufficient Balance Warning */}
+          {hasInsufficientBalance && (
+            <Card className="border-orange-200 bg-orange-50">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-5 h-5 bg-orange-400 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
+                    !
+                  </div>
+                  <div className="space-y-1">
+                    <Title level="6" className="text-orange-800 font-semibold">
+                      Insufficient Treasury Balance
+                    </Title>
+                    <Paragraph className="text-orange-700 text-sm">
+                      The current available balance (₳{Math.abs(availableBalance).toLocaleString()}) is insufficient to cover all pending withdrawals. Please adjust the requested funds before proceeding with sign-off.
+                    </Paragraph>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {signOfApprovals.length > 0 ? (
             <div className="space-y-4">

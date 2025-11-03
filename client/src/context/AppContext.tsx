@@ -4,6 +4,7 @@ import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useNetworkValidation } from '@/hooks';
 import { useAppLoading } from '@/hooks/useAppLoading';
 import { useDatabase } from '@/hooks/useDatabase';
+import { useTreasuryBalance } from '@/hooks/useTreasuryBalance';
 import { Theme, useThemeManager } from '@/hooks/useThemeManager';
 import { User, useUserAuth } from '@/hooks/useUserAuth';
 import { useWalletManager } from '@/hooks/useWalletManager';
@@ -46,6 +47,11 @@ interface AppContextValue {
   query: <T = Record<string, unknown>>(sql: string, params?: any[]) => T[];
   getUtxosByContext: (contextName: string) => Utxo[];
   findMembershipIntentUtxo: (address: string) => Promise<Utxo | null>;
+
+  // Treasury state
+  treasuryBalance: bigint;
+  isTreasuryLoading: boolean;
+  refreshTreasuryBalance: () => Promise<void>;
 
   // User state
   user: User;
@@ -121,6 +127,11 @@ const AppContext = createContext<AppContextValue>({
   query: () => [],
   getUtxosByContext: () => [],
   findMembershipIntentUtxo: async () => null,
+
+  // Treasury defaults
+  treasuryBalance: BigInt(0),
+  isTreasuryLoading: true,
+  refreshTreasuryBalance: async () => {},
 
   // User defaults
   user: null,
@@ -214,6 +225,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     isDark,
     isLight,
   } = useThemeManager();
+
+  const { treasuryBalance, isTreasuryLoading, refreshTreasuryBalance } = useTreasuryBalance();
 
   const {
     currentNetwork,
@@ -359,6 +372,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toggleTheme,
     isDark,
     isLight,
+
+    // Treasury
+    treasuryBalance,
+    isTreasuryLoading,
+    refreshTreasuryBalance,
 
     // network
     currentNetwork,

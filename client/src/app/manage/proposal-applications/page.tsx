@@ -12,6 +12,7 @@ import { getCurrentNetworkConfig } from '@/config/cardano';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
 import { parseProposalDatum } from '@/utils';
+import Chip from '@/components/atoms/Chip';
 
 type ProposalIntent = {
   id: number;
@@ -116,6 +117,16 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     ),
   },
   {
+    header: 'Status',
+    accessor: 'status',
+    sortable: true,
+    cell: (value) => (
+      <Chip variant={getChipVariant(value)}>
+        {value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
+      </Chip>
+    ),
+  },
+  {
     header: 'Action',
     sortable: false,
     cell: (value, row) => (
@@ -129,17 +140,20 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
 ];
 
 export default function ProposalIntentsPage() {
-  const { proposalIntents, dbLoading } = useApp();
+  const { proposalIntents, proposals, dbLoading } = useApp();
 
   if (dbLoading) {
     return <div className="p-4">Loading proposals...</div>;
   }
 
-  if (!proposalIntents.length) {
+  // Combine both pending proposals (proposalIntents) and approved proposals (proposals)
+  const allProposals = [...proposalIntents, ...proposals];
+
+  if (!allProposals.length) {
     return <div className="p-4">No proposals found.</div>;
   }
 
-  const decodedUtxos = proposalIntents.map((utxo, idx) => {
+  const decodedUtxos = allProposals.map((utxo, idx) => {
     const decodedDatum: ProposalIntent = {
       title: '',
       description: '',
@@ -152,15 +166,24 @@ export default function ProposalIntentsPage() {
     };
 
     if (utxo.plutusData) {
-      const { metadata } = parseProposalDatum(utxo.plutusData)!;
+      try {
+        const { metadata } = parseProposalDatum(utxo.plutusData)!;
 
-      if (metadata) {
-        decodedDatum['title'] = metadata.title!;
-        decodedDatum['description'] = metadata.description!;
-        decodedDatum['fundsRequested'] = parseInt(metadata.fundsRequested!);
-        decodedDatum['receiverWalletAddress'] = metadata.receiverWalletAddress!;
-        decodedDatum['submittedByAddress'] = metadata.submittedByAddress!;
-        decodedDatum['id'] = idx + 1;
+        if (metadata) {
+          decodedDatum['title'] = metadata.title || 'Untitled Proposal';
+          decodedDatum['description'] = metadata.description || 'No description provided';
+          decodedDatum['fundsRequested'] = parseInt(metadata.fundsRequested || '0');
+          decodedDatum['receiverWalletAddress'] = metadata.receiverWalletAddress || '';
+          decodedDatum['submittedByAddress'] = metadata.submittedByAddress || '';
+          decodedDatum['id'] = idx + 1;
+          
+          // Determine status: if it's in the proposals array, it's approved; if in proposalIntents, it's pending
+          decodedDatum['status'] = proposals.some(p => p.txHash === utxo.txHash) ? 'approved' : 'pending';
+        }
+      } catch (error) {
+        console.error('Error parsing proposal datum:', error);
+        decodedDatum['title'] = 'Error parsing proposal';
+        decodedDatum['description'] = 'Unable to parse proposal data';
       }
     }
 
@@ -176,9 +199,9 @@ export default function ProposalIntentsPage() {
               Proposals
             </Title>
             <Paragraph className="text-muted-foreground text-sm">
-              Browse and manage proposals submitted by ambassadors
-              {proposalIntents.length > 0 &&
-                ` - ${proposalIntents.length} found`}
+              Browse and manage all proposals submitted by ambassadors
+              {allProposals.length > 0 &&
+                ` - ${allProposals.length} found (${proposalIntents.length} pending, ${proposals.length} approved)`}
             </Paragraph>
           </div>
 

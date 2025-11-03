@@ -24,7 +24,7 @@ export const routes = {
     membershipApplication: (txhash: string) =>
       `/manage/membership-applications/${txhash}`,
     proposalApplications: '/manage/proposal-applications',
-    proposal: (txhash: string) => `/manage/proposals/${txhash}`,
+    proposal: (txhash: string) => `/manage/proposal-applications/${txhash}`,
     treasurySignoffs: '/manage/treasury-signoffs',
     treasurySignoff: (txhash: string) => `/manage/treasury-signoffs/${txhash}`,
   },

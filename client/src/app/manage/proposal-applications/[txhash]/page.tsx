@@ -10,6 +10,9 @@ import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
 import ApproveReject from '@/components/RejectApprove';
 import FinalizeDecision from '@/components/FinalizeDecision';
+import ApproveSignoff from '@/components/ApproveSignoff';
+import FinalizeSignoffApproval from '@/components/FinalizeSignoffApproval';
+import ExecuteSignoff from '@/components/ExecuteSignoff';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
 import { parseProposalDatum } from '@/utils';
@@ -22,34 +25,44 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
-  const { proposalIntents, dbLoading } = useApp();
+  const { proposalIntents, proposals, signOfApprovals, members, dbLoading } = useApp();
   const [adminDecisionData, setAdminDecisionData] = useState<AdminDecisionData | null>(null);
+  const [signoffDecisionData, setSignoffDecisionData] = useState<AdminDecisionData | null>(null);
   const [isFinalized, setIsFinalized] = useState(false);
+  const [isSignoffFinalized, setIsSignoffFinalized] = useState(false);
   const { txhash } = use(params);
 
-  const proposal = proposalIntents.find((utxo) => utxo.txHash === txhash);
+
+  const proposal = proposalIntents.find((utxo) => utxo.txHash === txhash) || 
+                  proposals.find((utxo) => utxo.txHash === txhash);
+
+  const signoffApprovalUtxo = signOfApprovals.find((utxo) => utxo.txHash === txhash);
+  const memberUtxo = members.length > 0 ? members[0] : undefined;
 
   let proposalData: ProposalData;
   if (proposal && proposal.plutusData) {
     try {
       const { metadata } = parseProposalDatum(proposal.plutusData)!;
+
+      const isApproved = proposals.some(p => p.txHash === txhash);
       proposalData = {
         title: metadata?.title,
         description: metadata?.description,
         fundsRequested: metadata?.fundsRequested || '0',
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
-        status: 'pending',
+        status: isApproved ? 'approved' : 'pending',
       };
     } catch (error) {
       console.error('Error parsing proposal datum:', error);
+      const isApproved = proposals.some(p => p.txHash === txhash);
       proposalData = {
         title: 'Error Loading Proposal',
         description: 'Could not parse proposal data',
         fundsRequested: '0',
         receiverWalletAddress: '',
         submittedByAddress: '',
-        status: 'pending',
+        status: isApproved ? 'approved' : 'pending',
       };
     }
   } else {
@@ -107,6 +120,12 @@ export default function Page({ params }: PageProps) {
   };
   const handleFinalizationComplete = () => {
     setIsFinalized(true);
+  };
+  const handleSignoffDecisionUpdate = (data: AdminDecisionData | null) => {
+    setSignoffDecisionData(data);
+  };
+  const handleSignoffFinalizationComplete = () => {
+    setIsSignoffFinalized(true);
   };
   const statusLabel = proposalData.status.replace('_', ' ');
   return (
@@ -227,22 +246,24 @@ export default function Page({ params }: PageProps) {
             </div>
           </Card>
         </div>
-        <div className="space-y-4">
-          <Title level="5" className="text-foreground">
-            Admin Review
-          </Title>
-          <Card>
-            <div className="p-6">
-              <ApproveReject
-                intentUtxo={proposal}
-                context={'ProposalIntent'}
-                onDecisionUpdate={handleAdminDecisionUpdate}
-                aria-label="Approve or reject proposal"
-              />
-            </div>
-          </Card>
-        </div>
-        {adminDecisionData && (
+        {proposalData.status === 'pending' && (
+          <div className="space-y-4">
+            <Title level="5" className="text-foreground">
+              Admin Review
+            </Title>
+            <Card>
+              <div className="p-6">
+                <ApproveReject
+                  intentUtxo={proposal}
+                  context={'ProposalIntent'}
+                  onDecisionUpdate={handleAdminDecisionUpdate}
+                  aria-label="Approve or reject proposal"
+                />
+              </div>
+            </Card>
+          </div>
+        )}
+        {adminDecisionData && proposalData.status === 'pending' && (
           <div className="space-y-4">
             <Title level="5" className="text-foreground">
               Multisig Progress
@@ -258,7 +279,7 @@ export default function Page({ params }: PageProps) {
             </Card>
           </div>
         )}
-        {adminDecisionData && (
+        {adminDecisionData && proposalData.status === 'pending' && (
           <div className="space-y-4">
             <Title level="5" className="text-foreground">
               Finalize Decision
@@ -274,6 +295,94 @@ export default function Page({ params }: PageProps) {
               </div>
             </Card>
           </div>
+        )}
+        
+        {/* Signoff Workflow for Approved Proposals */}
+        {proposalData.status === 'approved' && (
+          <>
+            {/* Step 1: Approve Signoff */}
+            <div className="space-y-4">
+              <Title level="5" className="text-foreground">
+                Signoff Approval
+              </Title>
+              <Card>
+                <div className="p-6">
+                  <ApproveSignoff
+                    proposalUtxo={proposal}
+                    onDecisionUpdate={handleSignoffDecisionUpdate}
+                    aria-label="Approve signoff for proposal"
+                  />
+                </div>
+              </Card>
+            </div>
+
+            {/* Step 2: Multisig Progress for Signoff */}
+            {signoffDecisionData && (
+              <div className="space-y-4">
+                <Title level="5" className="text-foreground">
+                  Signoff Multisig Progress
+                </Title>
+                <Card>
+                  <div className="p-6">
+                    <MultisigProgressTracker
+                      txhash={proposal?.txHash}
+                      adminDecisionData={signoffDecisionData}
+                      aria-label="Signoff multisignature progress tracker"
+                    />
+                  </div>
+                </Card>
+              </div>
+            )}
+
+            {/* Step 3: Finalize Signoff Approval */}
+            {signoffDecisionData && (
+              <div className="space-y-4">
+                <Title level="5" className="text-foreground">
+                  Execute Signoff Approval
+                </Title>
+                <Card>
+                  <div className="p-6">
+                    <FinalizeSignoffApproval
+                      txhash={proposal?.txHash}
+                      adminDecisionData={signoffDecisionData}
+                      onFinalizationComplete={handleSignoffFinalizationComplete}
+                      aria-label="Execute signoff approval"
+                    />
+                  </div>
+                </Card>
+              </div>
+            )}
+
+            {/* Step 4: Final SignOff (Multisig) - Requires Admin API or Server-side Implementation */}
+            {signoffApprovalUtxo && (
+              <div className="space-y-4">
+                <Title level="5" className="text-foreground">
+                  Final Treasury Withdrawal
+                </Title>
+                <Card>
+                  <div className="p-4">
+                    <div className="space-y-4">
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                            i
+                          </div>
+                          <div className="space-y-2">
+                            <Title level="6" className="text-blue-800 font-semibold">
+                              Admin Multi-signature Required
+                            </Title>
+                            <Paragraph className="text-blue-700 text-sm">
+                              The final treasury withdrawal (SignOff) requires multiple admin signatures and cannot be executed directly from the browser. This step needs to be completed using the admin dashboard or server-side API with access to admin wallets.
+                            </Paragraph>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

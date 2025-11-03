@@ -7,15 +7,13 @@ import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
-import ApproveReject from '@/components/RejectApprove';
-import FinalizeDecision from '@/components/FinalizeDecision';
+import ExecuteSignoff from '@/components/ExecuteSignoff';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
-import { parseProposalDatum } from '@/utils';
+import { parseProposalDatum, getCatConstants, getProvider } from '@/utils';
+import { useState, useEffect } from 'react';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import { AdminDecisionData } from '@types';
-import { use, useState } from 'react';
+import { use } from 'react';
 
 
 interface PageProps {
@@ -23,12 +21,12 @@ interface PageProps {
 }
 
 export default function TreasurySignoffDetailsPage({ params }: PageProps) {
-  const { signOfApprovals, dbLoading } = useApp();
-  const [adminDecisionData, setAdminDecisionData] = useState<AdminDecisionData | null>(null);
-  const [isFinalized, setIsFinalized] = useState(false);
+  const { signOfApprovals, members, dbLoading, treasuryBalance, isTreasuryLoading } = useApp();
   const { txhash } = use(params);
 
   const proposal = signOfApprovals.find((utxo) => utxo.txHash === txhash);
+  const memberUtxo = members.length > 0 ? members[0] : undefined;
+
 
   let proposalData: ProposalData;
   if (proposal && proposal.plutusData) {
@@ -40,7 +38,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
         fundsRequested: metadata?.fundsRequested || '0',
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
-        status: 'pending',
+        status: 'ready',
       };
     } catch (error) {
       console.error('Error parsing proposal datum:', error);
@@ -50,7 +48,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
         fundsRequested: '0',
         receiverWalletAddress: '',
         submittedByAddress: '',
-        status: 'pending',
+        status: 'ready',
       };
     }
   } else {
@@ -60,11 +58,15 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
       fundsRequested: '0',
       receiverWalletAddress: '',
       submittedByAddress: '',
-      status: 'pending',
+      status: 'ready',
     };
   }
 
-  if (dbLoading) {
+  // Convert BigInt to ADA for display
+  const treasuryBalanceAda = Number(treasuryBalance) / 1_000_000;
+  const proposalAmountAda = parseInt(proposalData?.fundsRequested || '0');
+
+  if (dbLoading || isTreasuryLoading) {
     return <SimpleCardanoLoader />;
   }
 
@@ -96,19 +98,13 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
         return 'default';
       case 'approved':
         return 'success';
+      case 'ready':
+        return 'success';
       case 'rejected':
         return 'error';
       default:
         return 'inactive';
     }
-  };
-
-  const handleAdminDecisionUpdate = (data: AdminDecisionData | null) => {
-    setAdminDecisionData(data);
-  };
-
-  const handleFinalizationComplete = () => {
-    setIsFinalized(true);
   };
 
   return (
@@ -188,6 +184,71 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
           </CardContent>
         </Card>
 
+        {/* Treasury Overview Section */}
+        <Card>
+          <CardContent className="p-6">
+            <Title level="5" className="text-foreground mb-4 font-medium">
+              Treasury Overview
+            </Title>
+            <div className="mb-6">
+              <Paragraph className="text-muted-foreground text-sm mb-2">
+                Treasury Address
+              </Paragraph>
+              <Copyable
+                withKey={false}
+                link={`${getCurrentNetworkConfig().explorerUrl}/address/${getCatConstants().scripts.treasury.spend.address}`}
+                value={getCatConstants().scripts.treasury.spend.address}
+                keyLabel={''}
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-8">
+              <div className="space-y-2">
+                <Paragraph className="text-muted-foreground text-sm">
+                  Total Treasury
+                </Paragraph>
+                <Title level="6" className="text-foreground font-semibold">
+                  ₳{isTreasuryLoading ? '...' : Math.floor(treasuryBalanceAda).toLocaleString()}
+                </Title>
+              </div>
+              <div className="space-y-2">
+                <Paragraph className="text-muted-foreground text-sm">
+                  Proposal Amount
+                </Paragraph>
+                <Title level="6" className="text-red-600 font-semibold">
+                  ₳{proposalAmountAda.toLocaleString()}
+                </Title>
+              </div>
+              <div className="space-y-2">
+                <Paragraph className="text-muted-foreground text-sm">
+                  Remaining After Approval
+                </Paragraph>
+                <Title level="6" className={treasuryBalanceAda < proposalAmountAda ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold'}>
+                  ₳{isTreasuryLoading ? '...' : Math.floor(treasuryBalanceAda - proposalAmountAda).toLocaleString()}
+                </Title>
+              </div>
+            </div>
+            
+            {/* Insufficient Balance Warning */}
+            {!isTreasuryLoading && treasuryBalanceAda < proposalAmountAda && (
+              <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-5 h-5 bg-orange-400 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                    !
+                  </div>
+                  <div className="space-y-1">
+                    <Paragraph className="text-orange-800 font-semibold text-sm">
+                      Insufficient Treasury Balance
+                    </Paragraph>
+                    <Paragraph className="text-orange-700 text-sm">
+                      The current available balance (₳{Math.floor(treasuryBalanceAda).toLocaleString()}) is lower than the requested amount (₳{proposalAmountAda.toLocaleString()}). Please adjust the requested funds before proceeding with sign-off.
+                    </Paragraph>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         <Title level="5" className="text-foreground">
           Overview
         </Title>
@@ -214,57 +275,20 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
           </div>
         </Card>
 
-        {/* Admin Review Section */}
+        {/* Treasury Withdrawal */}
         <div className="space-y-4">
           <Title level="5" className="text-foreground">
-            Admin Review
+            Treasury Withdrawal
           </Title>
           <Card>
-            <div className="p-6">
-              <ApproveReject
-                intentUtxo={proposal}
-                context={'ProposalIntent'}
-                onDecisionUpdate={handleAdminDecisionUpdate}
+            <div className="p-4">
+              <ExecuteSignoff
+                signoffApprovalUtxo={proposal}
+                memberUtxo={memberUtxo}
               />
             </div>
           </Card>
         </div>
-
-        {/* Multisig Progress Section */}
-        {adminDecisionData && (
-          <div className="space-y-4">
-            <Title level="5" className="text-foreground">
-              Multisig Progress
-            </Title>
-            <Card>
-              <div className="p-6">
-                <MultisigProgressTracker
-                  txhash={proposal?.txHash}
-                  adminDecisionData={adminDecisionData}
-                />
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {/* Finalize Decision Section */}
-        {adminDecisionData && (
-          <div className="space-y-4">
-            <Title level="5" className="text-foreground">
-              Finalize Decision
-            </Title>
-            <Card>
-              <div className="p-6">
-                <FinalizeDecision
-                  txhash={proposal?.txHash}
-                  adminDecisionData={adminDecisionData}
-                  context={'ProposalIntent'}
-                  onFinalizationComplete={handleFinalizationComplete}
-                />
-              </div>
-            </Card>
-          </div>
-        )}
       </div>
     </div>
   );

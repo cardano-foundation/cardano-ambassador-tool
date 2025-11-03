@@ -21,7 +21,7 @@ const Copyable = ({
         <span className="flex items-center gap-2">
           <Copy
             className="text-neutral size-4 hover:cursor-pointer"
-            onClick={() => copyToClipboard(shortenString(value))}
+            onClick={() => copyToClipboard(value)}
             aria-label={`Copy ${shortenString(value)} to clipboard`}
           />
           <a
@@ -31,11 +31,7 @@ const Copyable = ({
             rel="noreferrer"
             aria-label={`Open ${shortenString(value)} in explorer`}
           >
-            {
-              link && (
-                <ExternalLink className="text-neutral size-4" />
-              )
-            }
+            {link && <ExternalLink className="text-neutral size-4" />}
           </a>
         </span>
       </div>
