@@ -191,8 +191,6 @@ export class AdminActionTx extends Layer1Tx {
       }
       const txHex = await txBuilder.complete();
 
-      console.log(txHex);
-
       return { txHex, counterUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
     } catch (e) {
       console.error(e);
@@ -258,8 +256,6 @@ export class AdminActionTx extends Layer1Tx {
 
     const txHex = await txBuilder.complete();
 
-    console.log(txHex);
-
     return { txHex };
   };
 
@@ -310,8 +306,6 @@ export class AdminActionTx extends Layer1Tx {
     }
 
     const txHex = await txBuilder.complete();
-
-    console.log(txHex);
 
     return { txHex };
   };
@@ -419,8 +413,6 @@ export class AdminActionTx extends Layer1Tx {
       }
       const txHex = await txBuilder.complete();
 
-      console.log(txHex);
-
       return { txHex, txIndex: 0 };
     } catch (e) {
       console.error(e);
@@ -494,8 +486,6 @@ export class AdminActionTx extends Layer1Tx {
 
     const txHex = await txBuilder.complete();
 
-    console.log(txHex);
-
     return { txHex };
   };
 
@@ -512,8 +502,6 @@ export class AdminActionTx extends Layer1Tx {
     proposalUtxo: UTxO,
     adminSigned: string[]
   ) => {
-    console.log(this.catConstant.scripts.treasury.spend.address);
-
     const proposalAssetName = getTokenAssetNameByPolicyId(
       proposalUtxo,
       this.catConstant.scripts.proposal.mint.hash
@@ -605,8 +593,6 @@ export class AdminActionTx extends Layer1Tx {
       }
 
       const txHex = await txBuilder.complete();
-
-      console.log(txHex);
 
       return { txHex, txIndex: 0 };
     } catch (e) {
@@ -724,8 +710,7 @@ export class AdminActionTx extends Layer1Tx {
           ).toString(),
           this.catConstant.scripts.treasury.withdraw.hash
         )
-        .withdrawalRedeemerValue("", "Mesh")
-        .setFee("1200000");
+        .withdrawalRedeemerValue("", "Mesh");
 
       for (const selectedUtxo of selectedUtxos) {
         txBuilder
@@ -757,8 +742,6 @@ export class AdminActionTx extends Layer1Tx {
       }
 
       const txHex = await txBuilder.complete();
-
-      console.log(txHex);
 
       return { txHex, treasuryUtxoTxIndex: 0, memberUtxoTxIndex: 1 };
     } catch (e) {
@@ -819,8 +802,6 @@ export class AdminActionTx extends Layer1Tx {
 
     const txHex = await txBuilder.complete();
 
-    console.log(txHex);
-
     return { txHex, txIndex: 0 };
   };
 
@@ -874,8 +855,6 @@ export class AdminActionTx extends Layer1Tx {
 
     const txHex = await txBuilder.complete();
 
-    console.log(txHex);
-
     return { txHex, txIndex: 0 };
   };
 
@@ -922,8 +901,6 @@ export class AdminActionTx extends Layer1Tx {
 
     const txHex = await txBuilder.complete();
 
-    console.log(txHex);
-
     return { txHex, txIndex: 0 };
   };
 
@@ -969,8 +946,6 @@ export class AdminActionTx extends Layer1Tx {
     }
 
     const txHex = await txBuilder.complete();
-
-    console.log(txHex);
 
     return { txHex };
   };

@@ -2,7 +2,7 @@
   "name": "@sidan-lab/cardano-ambassador-tool",
   "description": "The Typescript SDK for the Cardano Ambassador Tool",
   "license": "Apache-2.0",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "homepage": "https://github.com/sidan-lab/cardano-ambassador-tool",
   "author": {
     "name": "SIDAN Lab",
@@ -34,8 +34,8 @@
     "ci": "npm install && npm run build"
   },
   "dependencies": {
-    "@meshsdk/core": "1.9.0-beta.56",
-    "@meshsdk/core-csl": "1.9.0-beta.56",
+    "@meshsdk/core": "1.9.0-beta.80",
+    "@meshsdk/core-csl": "1.9.0-beta.80",
     "blakejs": "^1.2.1"
   },
   "devDependencies": {

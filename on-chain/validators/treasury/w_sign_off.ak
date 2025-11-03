@@ -3,8 +3,9 @@ use cardano/certificate.{Certificate}
 use cardano/transaction.{Transaction}
 use cocktail.{
   convert_int_to_bytes, get_all_value_from, get_all_value_to, inputs_at_with,
-  inputs_at_with_policy, only_minted_token, output_inline_datum, outputs_at,
-  outputs_at_with, value_length, value_policy_info,
+  inputs_at_with_policy, one_of_keys_signed, only_minted_token,
+  output_inline_datum, outputs_at, outputs_at_with, value_length,
+  value_policy_info,
 }
 use types.{MemberDatum, OracleDatum, ProposalDatum}
 use utils.{get_oracle_nft_datum, updated_member_datum}
@@ -80,8 +81,12 @@ validator treasury(oracle_nft: PolicyId) {
     )?
   }
 
-  publish(_redeemer: Data, _credential: Certificate, _tx: Transaction) {
-    True
+  publish(_redeemer: Data, _credential: Certificate, tx: Transaction) {
+    let Transaction { reference_inputs, extra_signatories, .. } = tx
+    let OracleDatum { admins, .. }: OracleDatum =
+      reference_inputs |> get_oracle_nft_datum(oracle_nft)
+
+    one_of_keys_signed(extra_signatories, admins)?
   }
 
   else(_) {
