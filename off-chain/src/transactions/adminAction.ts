@@ -39,7 +39,7 @@ import {
   getOracleAdmins,
   processMembershipIntent,
 } from "../../../off-chain/src/lib";
-import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
+import { IWallet, mConStr0, stringToHex, UTxO } from "@meshsdk/core";
 
 export class AdminActionTx extends Layer1Tx {
   constructor(
@@ -710,7 +710,7 @@ export class AdminActionTx extends Layer1Tx {
           ).toString(),
           this.catConstant.scripts.treasury.withdraw.hash
         )
-        .withdrawalRedeemerValue("", "Mesh");
+        .withdrawalRedeemerValue(mConStr0([]));
 
       for (const selectedUtxo of selectedUtxos) {
         txBuilder
