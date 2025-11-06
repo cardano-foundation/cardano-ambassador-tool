@@ -365,7 +365,7 @@ export default function SubmitProposalPage() {
         actions={[]}
       >
           <CardanoLoaderSVG size={64} />
-F      </Modal>
+      </Modal>
     </div>
   );
 }

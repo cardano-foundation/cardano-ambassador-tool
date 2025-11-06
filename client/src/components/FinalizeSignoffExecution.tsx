@@ -28,9 +28,10 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
   } | null>(null);
 
   const getSignedCount = useCallback(() => {
-    if (!adminDecisionData?.selectedAdmins || !adminDecisionData?.signers) return 0;
-    return adminDecisionData.selectedAdmins.filter(admin => 
-      adminDecisionData.signers.includes(admin)
+    if (!adminDecisionData?.selectedAdmins || !adminDecisionData?.signers)
+      return 0;
+    return adminDecisionData.selectedAdmins.filter((admin) =>
+      adminDecisionData.signers.includes(admin),
     ).length;
   }, [adminDecisionData]);
 
@@ -87,7 +88,9 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
     [onFinalizationComplete, txhash],
   );
 
-  const handleTransactionTimeout = (result: TransactionConfirmationResult) => {};
+  const handleTransactionTimeout = (
+    result: TransactionConfirmationResult,
+  ) => {};
 
   const handleCloseConfirmationOverlay = useCallback(() => {
     setShowConfirmationOverlay(false);
@@ -119,10 +122,11 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
         </Paragraph>
       )}
 
-      {hasAdminDecision && !signatureRequirementsMet && (
+      {hasAdminDecision && !signatureRequirementsMet && adminDecisionData && (
         <div className="space-y-1 text-center">
           <Paragraph size="sm" className="text-gray-500">
-            Waiting for {adminDecisionData.selectedAdmins.length - getSignedCount()} more
+            Waiting for{' '}
+            {adminDecisionData.selectedAdmins.length - getSignedCount()} more
             signature(s) before execution.
           </Paragraph>
           <Paragraph size="xs" className="text-gray-400">

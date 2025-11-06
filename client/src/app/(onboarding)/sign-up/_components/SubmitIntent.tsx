@@ -68,7 +68,6 @@ const SubmitIntent = ({
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Clear submit error when form data changes
   useEffect(() => {
     if (submitError) {
       setSubmitError(null);
@@ -80,7 +79,6 @@ const SubmitIntent = ({
     setValidationErrors([]);
     setSubmitError(null);
 
-    // Check for prior submissions - prevent duplicate intents
     if (isMember && memberData) {
       setSubmitError({
         message: 'You are already a Cardano Ambassador member',
@@ -89,7 +87,6 @@ const SubmitIntent = ({
       return;
     }
 
-    // Check for existing membership intent
     try {
       const userAddress = await wallet!.getChangeAddress();
       const existingIntent = await findMembershipIntentUtxo(userAddress);
@@ -122,7 +119,6 @@ const SubmitIntent = ({
 
     if (!validation.isValid) {
       setValidationErrors(validation.errors);
-      // Focus on the first error field
       const firstError = validation.errors[0];
       const errorElement = document.querySelector(
         `[name="${firstError.field}"]`,
@@ -134,7 +130,6 @@ const SubmitIntent = ({
       return;
     }
 
-    // Check required wallet and asset data
     if (!wallet || !address || !asset?.txHash || asset.outputIndex === null) {
       setSubmitError({
         message: 'Wallet or asset information is missing',
@@ -281,14 +276,17 @@ const SubmitIntent = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full overflow-hidden">
       {/* Error Accordion */}
-      <ErrorAccordion
-        isVisible={!!submitError}
-        message={submitError?.message}
-        details={submitError?.details}
-        onDismiss={() => setSubmitError(null)}
-      />
+      <div className="w-full max-w-full">
+        <ErrorAccordion
+          isVisible={!!submitError}
+          message={submitError?.message}
+          details={submitError?.details}
+          onDismiss={() => setSubmitError(null)}
+          className="max-w-full"
+        />
+      </div>
 
       <CardHeader
         title="You're Whitelisted!"
