@@ -1,5 +1,3 @@
-import React from 'react';
-
 const GridIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
     <rect
@@ -39,6 +37,6 @@ const GridIcon = () => (
       strokeWidth="1.5"
     />
   </svg>
-);;
+);
 
 export default GridIcon;

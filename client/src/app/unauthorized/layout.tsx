@@ -18,17 +18,15 @@ function HomeContent({ children }: { children: React.ReactNode }) {
           <SideNav />
         </div>
 
-        <div className="min-h-screen flex-1">
-          <div className="sticky top-0 z-20">
+        <div className="flex h-screen min-w-0 flex-1 flex-col">
+          <div className="sticky top-0 z-20 flex-shrink-0">
             <TopNavBar />
           </div>
-          {children}
-          <div className="sticky top-0 z-60">
-            <ToastContainer />
-          </div>
-          <div className="bottom-0">
+          <main className="flex-1 overflow-auto">
+            <div className="min-h-screen">{children}</div>
             <Footer />
-          </div>
+          </main>
+          <ToastContainer />
         </div>
       </div>
     </>

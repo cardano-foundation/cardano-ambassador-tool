@@ -2,7 +2,11 @@
 import AmbassadorSearchBar from '@/components/AmbassadorSearchBar';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
+import { Pagination } from '@/components/Pagination';
 import { useApp } from '@/context';
+import { parseMemberDatum } from '@/utils';
+import { getCountryByCode } from '@/utils/locationData';
+import { Ambassador } from '@types';
 import React, { useMemo, useState } from 'react';
 import AmbassadorCard from './_components/AmbassadorCard';
 
@@ -10,15 +14,73 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [currentView, setCurrentView] = useState<'grid' | 'list'>('grid');
-  const [displayCount, setDisplayCount] = useState(20);
-  const { ambassadors } = useApp();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const { members } = useApp();
 
-  const uniqueCountries = [
-    ...new Set(ambassadors.map((a) => a.country)),
-  ].sort();
+  const parsedMembers = useMemo(() => {
+    return members
+      .map((utxo) => {
+        if (!utxo.plutusData) return null;
+
+        try {
+          const parsed = parseMemberDatum(utxo.plutusData);
+          if (!parsed || !parsed.member) return null;
+
+          const { member } = parsed;
+          const memberMetadata = member.metadata;
+
+          if (!memberMetadata) return null;
+
+          const countryData = memberMetadata.country
+            ? getCountryByCode(memberMetadata.country)
+            : null;
+          const countryName = countryData?.name || memberMetadata.country || '';
+          const countryFlag = countryData?.flag || '';
+
+          const ambassador: Ambassador = {
+            href: `/members/${utxo.txHash}`,
+            username: memberMetadata.displayName || '',
+            name: memberMetadata.fullName || memberMetadata.displayName || '',
+            bio_excerpt: memberMetadata.bio || null,
+            country: countryName,
+            flag: countryFlag,
+            avatar: '',
+            created_at: '',
+            summary: {
+              stats: {
+                topics_entered: 0,
+                posts_read_count: 0,
+                days_visited: 0,
+                likes_given: 0,
+                likes_received: 0,
+                topics_created: 0,
+                replies_created: 0,
+                time_read: 0,
+                recent_time_read: 0,
+              },
+              top_replies: [],
+              top_topics: [],
+            },
+            activities: [],
+            badges: [],
+          };
+
+          return ambassador;
+        } catch (error) {
+          console.error('Error parsing member datum:', error);
+          return null;
+        }
+      })
+      .filter((member): member is Ambassador => member !== null);
+  }, [members]);
+
+  const uniqueCountries = [...new Set(parsedMembers.map((a) => a.country))]
+    .filter((country) => country && country.trim() !== '')
+    .sort();
 
   const filteredAmbassadors = useMemo(() => {
-    return ambassadors.filter((ambassador) => {
+    return parsedMembers.filter((ambassador) => {
       const matchesSearch =
         ambassador.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ambassador.country.toLowerCase().includes(searchTerm.toLowerCase());
@@ -26,23 +88,34 @@ export default function HomePage() {
         selectedRegion === 'all' || ambassador.country === selectedRegion;
       return matchesSearch && matchesRegion;
     });
-  }, [searchTerm, selectedRegion, ambassadors]);
+  }, [searchTerm, selectedRegion, parsedMembers]);
 
-  const displayedAmbassadors = filteredAmbassadors.slice(0, displayCount);
-  const hasMoreAmbassadors = displayCount < filteredAmbassadors.length;
+  // Calculate pagination values
+  const totalItems = filteredAmbassadors.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalItems);
+  const displayedAmbassadors = filteredAmbassadors.slice(startIndex, endIndex);
 
+  // Reset to page 1 when search or filter changes
   React.useEffect(() => {
-    setDisplayCount(20);
+    setCurrentPage(1);
   }, [searchTerm, selectedRegion]);
 
-  const handleShowMore = () => {
-    setDisplayCount((prevCount) => prevCount + 12);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1);
   };
 
   return (
     <div className="space-y-4 p-3 py-2 sm:space-y-6 sm:p-6">
       <div className="space-y-3 sm:space-y-4">
-        <Title level="2" className="text-xl sm:text-2xl">
+        <Title level="4" className="text-xl sm:text-2xl">
           Welcome to Cardano Ambassador Explorer
         </Title>
         <Paragraph
@@ -69,39 +142,60 @@ export default function HomePage() {
 
       <div className="flex items-center justify-between">
         <Paragraph size="sm" className="text-neutral">
-          Showing {displayedAmbassadors.length} Users
+          Showing {startIndex + 1}-{endIndex} of {totalItems} Users
         </Paragraph>
       </div>
 
       <div
         className={
           currentView === 'grid'
-            ? 'grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
+            ? 'grid grid-cols-1 gap-3 sm:grid-cols-1 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
             : 'space-y-3 sm:space-y-4'
         }
       >
-        {displayedAmbassadors.map((ambassador) => (
+        {displayedAmbassadors.map((member) => (
           <AmbassadorCard
-            key={ambassador.name}
-            ambassador={ambassador}
+            key={member.username || member.name}
+            ambassador={member}
             isListView={currentView === 'list'}
           />
         ))}
       </div>
 
-      {hasMoreAmbassadors && (
-        <div className="flex justify-center pt-6 sm:pt-8">
-          <button
-            className="decoration-primary-400 cursor-pointer border-none bg-transparent p-0 text-sm font-medium underline decoration-dotted underline-offset-4"
-            onClick={handleShowMore}
-          >
-            <Paragraph
-              size="base"
-              className="text-primary-400 text-base font-medium"
+      {/* Show pagination only if there are items */}
+      {totalItems > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={totalItems}
+          itemsPerPageStart={startIndex + 1}
+          itemsPerPageEnd={endIndex}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          pageSizeOptions={[10, 20, 50, 100]}
+          showPageSizeSelector={true}
+          maxVisiblePages={5}
+        />
+      )}
+
+      {/* Show message when no results found */}
+      {totalItems === 0 && (
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <Paragraph size="base" className="text-muted-foreground">
+            No ambassadors found matching your search criteria.
+          </Paragraph>
+          {(searchTerm || selectedRegion !== 'all') && (
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedRegion('all');
+              }}
+              className="text-primary mt-4 underline"
             >
-              Show more Ambassadors
-            </Paragraph>
-          </button>
+              Clear filters
+            </button>
+          )}
         </div>
       )}
     </div>

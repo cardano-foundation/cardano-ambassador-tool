@@ -1,12 +1,10 @@
-import React from "react";
-
 export default function AppLogo() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 181 54"
       fill="none"
-      className="w-[120px] lg:w-[181px] h-auto"
+      className="h-auto w-[120px] lg:w-[181px]"
     >
       <g clipPath="url(#clip0_46_50)">
         <path

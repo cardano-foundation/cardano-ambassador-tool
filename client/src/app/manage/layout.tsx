@@ -15,14 +15,22 @@ function ManageContent({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AppLoadingScreen isVisible={shouldShowLoading} />
-      <div className="flex min-h-screen">
-        <SideNav />
-        <div className="flex min-h-screen flex-1 flex-col">
-          <div className="sticky top-0 z-20">
+      <div className="flex h-screen overflow-hidden">
+        <div className="flex-shrink-0">
+          <SideNav />
+        </div>
+        <div className="flex h-screen min-w-0 flex-1 flex-col">
+          <div className="sticky top-0 z-20 flex-shrink-0">
             <TopNavBar />
           </div>
-          <main className="flex-1">{children}</main>
-          <Footer />
+
+          <main className="flex-1 overflow-auto">
+            <ProtectedRoute requireAdmin={true} requireAuth={true}>
+              <div className="min-h-screen">{children}</div>
+            </ProtectedRoute>
+            <Footer />
+          </main>
+
           <ToastContainer />
         </div>
       </div>
@@ -30,14 +38,4 @@ function ManageContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function ManageLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <ProtectedRoute requireAdmin={true} requireAuth={true}>
-      <ManageContent>{children}</ManageContent>
-    </ProtectedRoute>
-  );
-}
+export default ManageContent;

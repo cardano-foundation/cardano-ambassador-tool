@@ -1,36 +1,42 @@
 'use client';
 
-import { useWallet } from '@meshsdk/react';
+import { SingleRowStepper } from '@/components/atoms/Stepper';
+import { useApp } from '@/context/AppContext';
+import { useMemberValidation } from '@/hooks/useMemberValidation';
+import { findMembershipIntentUtxo, smoothScrollToElement } from '@/utils';
+import { UTxO } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { SingleRowStepper } from '@/components/atoms/Stepper';
-import ConnectWallet from './components/ConnectWallet';
-import SelectToken from './components/SelectToken';
-import SubmissionSuccess from './components/SubmissionSuccess';
-import SubmitIntent from './components/SubmitIntent';
-import TokenNotFound from './components/TokenNotFound';
+import { useEffect, useState, useRef } from 'react';
+import ConnectWallet from './_components/ConnectWallet';
+import IntentExists from './_components/IntentExists';
+import SelectToken from './_components/SelectToken';
+import SubmissionSuccess from './_components/SubmissionSuccess';
+import SubmitIntent from './_components/SubmitIntent';
+import TokenNotFound from './_components/TokenNotFound';
 
 function SignUp() {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(0);
   const [asset, setAsset] = useState<MemberTokenDetail | undefined>(undefined);
-  const { address, wallet } = useWallet();
+  const { wallet: walletState } = useApp();
+  const { address, wallet } = walletState;
   const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
   const [walletAssets, setWalletAssets] = useState<MemberTokenDetail[]>([]);
   const [selectedAssetName, setSelectedAssetName] = useState<string | null>(
     null,
   );
+  const { memberData } = useMemberValidation();
 
-  const steps = [
-    {
-      name: 'Connect Wallet',
-      component: <ConnectWallet goNext={() => goNext()} />,
-      showProgress: true,
-    },
-    {
-      name: 'Pick Token',
-      component: walletAssets.length ? (
+  const [membershipIntent, setMembershipIntent] = useState<UTxO | null>(null);
+  const scrollTargetRef = useRef<HTMLDivElement>(null);
+
+  const resolveStep2 = () => {
+    if (membershipIntent || memberData) {
+      return <IntentExists goBack={() => goBack()} />;
+    } else {
+      
+      return walletAssets.length ? (
         <SelectToken
           goNext={() => goNext()}
           goBack={() => goBack()}
@@ -41,13 +47,30 @@ function SignUp() {
         />
       ) : (
         <TokenNotFound />
-      ),
+      );
+    }
+  };
+
+  const steps = [
+    {
+      name: 'Connect Wallet',
+      component: <ConnectWallet goNext={() => goNext()} />,
+      showProgress: true,
+    },
+
+    {
+      name: 'Pick Token',
+      component: resolveStep2(),
       showProgress: !walletAssets.length,
     },
     {
       name: 'Intent Form',
       component: selectedAssetName ? (
-        <SubmitIntent asset={asset} goNext={() => goNext()} />
+        <SubmitIntent
+          asset={asset}
+          goNext={() => goNext()}
+          goBack={() => goBack()}
+        />
       ) : (
         <TokenNotFound />
       ),
@@ -78,14 +101,21 @@ function SignUp() {
     }),
   };
 
-  const goNext = () => {
+  const goNext = async () => {
     setDirection(1);
+
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    
+    // Smooth scroll to top of stepper
+    smoothScrollToElement(scrollTargetRef);
   };
 
   const goBack = () => {
     setDirection(-1);
     setCurrentStep((prev) => Math.max(prev - 1, 0));
+    
+    // Smooth scroll to top of stepper
+    smoothScrollToElement(scrollTargetRef);
   };
 
   const handleStepClick = (stepIndex: number) => {
@@ -97,19 +127,27 @@ function SignUp() {
 
   useEffect(() => {
     const fetchAssets = async () => {
-      if (wallet && currentStep == 1) {
+      if (wallet) {
         const assets = await getAssetsDetails();
-
         setWalletAssets(assets);
       }
     };
 
+    const fetchMembership = async () => {
+      if (!wallet) return;
+      const userAddress = await wallet!.getChangeAddress();
+      if (!userAddress) return;
+      const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
+      setMembershipIntent(membershipIntentUtxo);
+    };
+
     fetchAssets();
-  }, [address, steps]);
+    fetchMembership();
+  }, [address, wallet, currentStep]);
 
   async function getAssetsDetails() {
-    const utxos = await wallet.getUtxos();
-    const assets = await wallet.getPolicyIdAssets(policyId);
+    const utxos = await wallet!.getUtxos();
+    const assets = await wallet!.getPolicyIdAssets(policyId);
 
     // Flatten UTXOs and filter for assets that match policyId
     const utxoAssets = utxos.flatMap((utxo) =>
@@ -140,13 +178,13 @@ function SignUp() {
 
   return (
     <div className="h-full w-full gap-8 p-6 lg:p-24">
-      <div className="mb-6 flex justify-center">
+      <div ref={scrollTargetRef} className="mb-6 flex justify-center">
         <SingleRowStepper
           currentStep={currentStep}
           totalSteps={steps.length}
-          stepLabels={steps.map(step => step.name)}
+          stepLabels={steps.map((step) => step.name)}
           clickable={true}
-          // onStepClick={handleStepClick}
+          onStepClick={handleStepClick}
           className="max-w-md"
         />
       </div>

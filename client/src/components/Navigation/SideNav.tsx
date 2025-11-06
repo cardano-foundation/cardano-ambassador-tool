@@ -3,29 +3,40 @@
 import Card, { CardContent } from '@/components/atoms/Card';
 import AppLogo from '@/components/atoms/Logo';
 import SettingsIcon from '@/components/atoms/SettingsIcon';
-import Title from '@/components/atoms/Title';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { useApp } from '@/context';
-import { useUserAuth } from '@/hooks/useUserAuth';
-import { useWallet } from '@meshsdk/react';
+import { routes } from '@/config/routes';
 import { NavigationSection } from '@types';
-import { GridIcon } from 'lucide-react';
+import {
+  BookOpenTextIcon,
+  GridIcon,
+  HomeIcon,
+  InfoIcon,
+  SendIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import ProposalIcon from '../atoms/ProposalIcon';
+import UserIcon from '../atoms/UserIcon';
 
 const defaultNavigationSections: NavigationSection[] = [
   {
     items: [
-      { id: 'home', label: 'Home', href: '/', icon: GridIcon },
-      { id: 'learn', label: 'Learn', href: '/learn', icon: GridIcon },
-      { id: 'about', label: 'About', href: '/about', icon: GridIcon },
+      { id: 'home', label: 'Home', href: routes.home, icon: HomeIcon },
+      {
+        id: 'proposals',
+        label: 'Proposals',
+        href: routes.proposals,
+        icon: ProposalIcon,
+      },
+      { id: 'about', label: 'About', href: routes.about, icon: InfoIcon },
       {
         id: 'ambassador',
         label: 'Become an Ambassador',
-        href: '/sign-up',
-        icon: GridIcon,
+        href: routes.signUp,
+        icon: BookOpenTextIcon,
       },
     ],
   },
@@ -37,14 +48,14 @@ const memberToolsSection: NavigationSection = {
     {
       id: 'submissions',
       label: 'Submissions',
-      href: '/dashboard/submissions',
-      icon: UsersIcon,
+      href: routes.my.submissions,
+      icon: SendIcon,
     },
     {
       id: 'dashboard',
       label: 'Profile',
-      href: '/dashboard',
-      icon: SettingsIcon,
+      href: routes.my.profile,
+      icon: UserIcon,
     },
   ],
 };
@@ -55,32 +66,34 @@ const adminToolsSection: NavigationSection = {
     {
       id: 'manage-ambassadors',
       label: 'Manage Ambassadors',
-      href: '/manage/ambassadors',
+      href: routes.manage.ambassadors,
       icon: UsersIcon,
     },
     {
       id: 'membership-intent',
-      label: 'Membership intent',
-      href: '/manage/membership',
+      label: 'Membership Applications',
+      href: routes.manage.membershipApplications,
       icon: SettingsIcon,
     },
     {
       id: 'proposal-intent',
-      label: 'Proposal intent',
-      href: '/manage/proposals',
-      icon: SettingsIcon,
+      label: 'Proposal Applications',
+      href: routes.manage.proposalApplications,
+      icon: ProposalIcon,
+    },
+    {
+      id: 'treasury-signoffs',
+      label: 'Treasury Sign offs',
+      href: routes.manage.treasurySignoffs,
+      icon: ProposalIcon,
     },
   ],
 };
 
 const SideNav = () => {
-  const { user, isAdmin } = useUserAuth();
+  const { user, isAdmin, wallet, isNetworkValid, userRoles } = useApp();
   const pathname = usePathname();
-
   const [sections, setSections] = useState(defaultNavigationSections);
-
-  const { connected } = useWallet();
-  const { isNetworkValid} = useApp();
 
   // Active link handling
   const [currentActiveId, setCurrentActiveId] = useState('');
@@ -92,15 +105,11 @@ const SideNav = () => {
     ];
     const match = allItems.find((item) => item.href === pathname);
     if (match) setCurrentActiveId(match.id);
-  }, [pathname, connected]);
+  }, [pathname, wallet.isConnected, userRoles]);
 
   // Update sections when roles change
   useEffect(() => {
     const updated = [...defaultNavigationSections];
-
-    if (!isNetworkValid) {
-      return;
-    }
 
     if (isAdmin) {
       updated.push(adminToolsSection);
@@ -111,12 +120,14 @@ const SideNav = () => {
     }
 
     setSections(updated);
-  }, [user, isAdmin, connected]);
+  }, [user, isAdmin, wallet.isConnected, userRoles]);
 
   return (
-    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col border-r lg:flex">
+    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r lg:flex">
       <div className="flex items-center justify-start p-6">
-        <AppLogo />
+        <Link href="/">
+          <AppLogo />
+        </Link>
       </div>
 
       <div className="space-y-8">
@@ -124,18 +135,16 @@ const SideNav = () => {
           <div key={i}>
             {section.title && (
               <div className="mb-3 px-6">
-                <Title
-                  level="3"
-                  className="text-neutral text-base leading-normal font-normal tracking-wide"
-                >
+                <span className="text-neutral text-base leading-normal font-normal tracking-wide">
                   {section.title}
-                </Title>
+                </span>
               </div>
             )}
             <nav className="space-y-1">
               {section.items.map((item) => {
                 const IconComponent = item.icon || GridIcon;
                 const isActive = item.id === currentActiveId;
+
                 return (
                   <Link
                     key={item.id}
@@ -143,6 +152,8 @@ const SideNav = () => {
                     className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
                       isActive ? 'bg-muted' : ''
                     }`}
+                    aria-label={item.label}
+                    aria-current={isActive ? 'page' : undefined}
                   >
                     <div
                       className={`flex h-5 w-5 flex-shrink-0 items-center justify-center ${
@@ -171,7 +182,7 @@ const SideNav = () => {
 
       <Card padding="sm" className="mx-4 mt-auto mb-4">
         <CardContent className="flex flex-col">
-          {connected && isNetworkValid ? (
+          {wallet.isConnected && isNetworkValid ? (
             <span className="text-muted-foreground text-sm">
               Connected Wallet{' '}
             </span>

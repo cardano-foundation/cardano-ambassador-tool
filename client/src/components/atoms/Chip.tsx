@@ -1,10 +1,10 @@
-import React from 'react';
 import { cn } from '@/utils/utils';
 import { X } from 'lucide-react';
+import React from 'react';
 
 interface ChipProps {
   children: React.ReactNode;
-  variant?: 'default' | 'success' | 'inactive' | 'error' | 'warning';
+  variant?: 'default' | 'success' | 'inactive' | 'error' | 'warning' ;
   size?: 'sm' | 'md';
   dismissible?: boolean;
   onDismiss?: () => void;
@@ -29,7 +29,7 @@ export default function Chip({
   return (
     <div
       className={cn(
-        "inline-flex justify-center items-center gap-2 overflow-hidden rounded-3xl shadow-[0px_1px_2px_0px_rgba(13,13,18,0.06)] outline outline-1 outline-offset-[-1px] font-['Chivo'] font-normal leading-none",
+        "inline-flex items-center justify-center gap-2 overflow-hidden rounded-3xl font-['Chivo'] leading-none font-normal shadow-[0px_1px_2px_0px_rgba(13,13,18,0.06)] outline outline-1 outline-offset-[-1px]",
 
         {
           'px-2.5 py-1 text-xs': size === 'sm',
@@ -37,16 +37,20 @@ export default function Chip({
         },
 
         {
-          'bg-rose-50 outline-primary-base text-primary-base': variant === 'default',
-          'bg-emerald-50 outline-emerald-400 text-emerald-400': variant === 'success',
-          'bg-zinc-50 outline-zinc-400 text-zinc-400': variant === 'inactive',
-          'bg-pink-100 outline-primary-base text-primary-base': variant === 'error',
-          'bg-orange-50 outline-amber-500 text-amber-500': variant === 'warning',
+          'outline-primary-base text-primary-base bg-rose-50':
+            variant === 'default',
+          'bg-emerald-50 text-emerald-400 outline-emerald-400':
+            variant === 'success',
+          'bg-zinc-50 text-zinc-400 outline-zinc-400': variant === 'inactive',
+          'outline-primary-base text-primary-base bg-pink-100':
+            variant === 'error',
+          'bg-orange-50 text-amber-500 outline-amber-500':
+            variant === 'warning',
         },
 
-        onClick && 'cursor-pointer hover:opacity-80 transition-opacity',
+        onClick && 'cursor-pointer transition-opacity hover:opacity-80',
 
-        className
+        className,
       )}
       onClick={onClick}
     >
@@ -55,10 +59,10 @@ export default function Chip({
       {dismissible && (
         <button
           onClick={handleDismiss}
-          className="flex items-center justify-center w-3 h-3 ml-1 rounded-full hover:bg-black hover:bg-opacity-10 transition-colors"
+          className="hover:bg-opacity-10 ml-1 flex h-3 w-3 items-center justify-center rounded-full transition-colors hover:bg-black"
           aria-label="Remove chip"
         >
-          <X className="w-2 h-2 text-muted-foreground" />
+          <X className="text-muted-foreground h-2 w-2" />
         </button>
       )}
     </div>

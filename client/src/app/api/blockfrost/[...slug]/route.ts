@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server';
 import axios from 'axios';
-import { toBytes } from '@meshsdk/common';
+import { NextResponse } from 'next/server';
 
-export async function GET(req: Request, context: { params: Promise<{ slug: string[] }> }) {
-
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ slug: string[] }> },
+) {
   try {
     const { slug } = await context.params;
 
@@ -36,12 +37,15 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.response?.data || error?.message || 'Unknown error' },
-      { status: error?.response?.status || 500 }
+      { status: error?.response?.status || 500 },
     );
   }
 }
 
-export async function POST(req: Request, context: { params: Promise<{ slug: string[] }> }) {
+export async function POST(
+  req: Request,
+  context: { params: Promise<{ slug: string[] }> },
+) {
   try {
     const { slug } = await context.params;
 
@@ -66,17 +70,19 @@ export async function POST(req: Request, context: { params: Promise<{ slug: stri
       headers: { project_id: key },
     });
 
-    const body = await req.arrayBuffer(); 
+    const body = await req.arrayBuffer();
     const headers = { 'Content-Type': 'application/cbor' };
 
     // Convert ArrayBuffer to Uint8Array for axios
     const bodyBytes = new Uint8Array(body);
-    const { data, status } = await axiosInstance.post(endpoint, bodyBytes, { headers });
+    const { data, status } = await axiosInstance.post(endpoint, bodyBytes, {
+      headers,
+    });
     return NextResponse.json(data, { status });
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.response?.data || error?.message || 'Unknown error' },
-      { status: error?.response?.status || 500 }
+      { status: error?.response?.status || 500 },
     );
   }
 }

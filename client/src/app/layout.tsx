@@ -1,23 +1,8 @@
 'use client';
 
 import { AppProvider } from '@/context/AppContext';
-import { MeshProvider } from '@meshsdk/react';
-import type { Metadata } from 'next';
-import './app.css';
 
-// export const metadata: Metadata = {
-//   title: 'Cardano Ambassador Tool',
-//   description:
-//     'Discover the passionate individuals shaping the Cardano ecosystem. From developers and educators to community organizers, these ambassadors are driving innovation, connection, and real-world impact.',
-//   keywords: [
-//     'Cardano',
-//     'Ambassador',
-//     'Blockchain',
-//     'Cryptocurrency',
-//     'Community',
-//   ],
-//   authors: [{ name: 'Cardano Ambassador Team' }],
-// };
+import './app.css';
 
 export default function RootLayout({
   children,
@@ -58,9 +43,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <MeshProvider>
-          <AppProvider>{children}</AppProvider>
-        </MeshProvider>
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );

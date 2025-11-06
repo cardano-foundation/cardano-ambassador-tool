@@ -1,14 +1,17 @@
-import {
-  parseMemberDatum,
-  parseMembershipIntentDatum,
-  parseProposalDatum,
-} from '@/utils';
 import { BlockfrostProvider, UTxO } from '@meshsdk/core';
 import { scripts } from '@sidan-lab/cardano-ambassador-tool';
 import { NextRequest, NextResponse } from 'next/server';
+import { unstable_cache, revalidateTag } from 'next/cache';
+
+// Validate required environment variables
+if (!process.env.BLOCKFROST_API_KEY_PREPROD) {
+  throw new Error(
+    'BLOCKFROST_API_KEY_PREPROD environment variable is required',
+  );
+}
 
 const blockfrost = new BlockfrostProvider(
-  process.env.BLOCKFROST_API_KEY_PREPROD || '',
+  process.env.BLOCKFROST_API_KEY_PREPROD,
 );
 
 const allScripts = scripts({
@@ -36,34 +39,28 @@ const POLICY_IDS = {
 
 const actionData = {
   sign_of_approval: {
-    parser: parseProposalDatum,
     errorContext: 'sign off approval',
     address: SCRIPT_ADDRESSES.SIGN_OFF_APPROVAL,
   },
-  member: {
-    parser: parseMemberDatum,
+  members: {
     errorContext: 'Member',
     address: SCRIPT_ADDRESSES.MEMBER_NFT,
   },
   membership_intent: {
-    parser: parseMembershipIntentDatum,
     errorContext: 'Membership Intent',
     address: SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
   },
-  proposal: {
-    parser: parseProposalDatum,
+  proposals: {
     errorContext: 'Proposal',
     address: SCRIPT_ADDRESSES.PROPOSAL,
   },
   proposal_intent: {
-    parser: parseMemberDatum,
     errorContext: 'Proposal Intent',
     address: SCRIPT_ADDRESSES.PROPOSE_INTENT,
   },
   specific_address_utxos: {
-    parser: parseMemberDatum,
-    errorContext: 'Proposal Intent',
-    address: SCRIPT_ADDRESSES.PROPOSE_INTENT,
+    errorContext: 'Address',
+    address: '',
   },
 } as const;
 
@@ -71,9 +68,8 @@ type ContextType = keyof typeof actionData;
 
 type HandlerRequestBody = {
   context: ContextType;
-  params?: {
-    address: string;
-  };
+  address: string;
+  forceRefresh?: boolean; 
 };
 
 export async function POST(req: NextRequest): Promise<
@@ -84,8 +80,8 @@ export async function POST(req: NextRequest): Promise<
 > {
   try {
     const body: HandlerRequestBody = await req.json();
-    // console.log({ req: req.json() });
-    const { context, params } = body;
+
+    const { context, address, forceRefresh } = body;
 
     const action = actionData[context];
 
@@ -93,19 +89,22 @@ export async function POST(req: NextRequest): Promise<
       return NextResponse.json({ error: 'Invalid context' }, { status: 400 });
     }
 
-    const userAddress = params?.address ?? action.address;
+    const userAddress = address ?? action.address;
 
-    const utxos = await fetchAddressUTxOs(userAddress);
+    if (forceRefresh) {
+      revalidateTag(`utxos-${userAddress}`);
+      revalidateTag('all-utxos');
+    }
 
-    const validUtxos = await Promise.all(
-      utxos.filter((utxo) => utxo.output.plutusData),
-    );
+    const utxos = await fetchAddressUTxOs(userAddress);    
 
-    const filtered = validUtxos.filter((utxo): utxo is UTxO => utxo !== null);
+    const validUtxos =
+      context == 'specific_address_utxos'
+        ? utxos
+        : utxos.filter((utxo) => utxo.output.plutusData);
 
-    return NextResponse.json(filtered, { status: 200 });
+    return NextResponse.json(validUtxos, { status: 200 });
   } catch (error) {
-    console.error('Error in POST /api/utxos:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
@@ -113,7 +112,26 @@ export async function POST(req: NextRequest): Promise<
   }
 }
 
-async function fetchAddressUTxOs(address: string): Promise<UTxO[]> {
-  const utxos = await blockfrost.fetchAddressUTxOs(address);
-  return utxos;
+// Uncached version - does actual blockchain fetch
+async function fetchAddressUTxOsUncached(address: string): Promise<UTxO[]> {
+  try {
+    const utxos = await blockfrost.fetchAddressUTxOs(address);
+
+    return Array.isArray(utxos) ? utxos : [];
+  } catch (error) {
+    return [];
+  }
 }
+
+// Cached version with 1 hour revalidation
+const fetchAddressUTxOs = (address: string) =>
+  unstable_cache(
+    async () => fetchAddressUTxOsUncached(address),
+    ['address-utxos', address], 
+    {
+      revalidate: 3600, // Cache for 1 hour 
+      tags: [`utxos-${address}`, 'all-utxos'], 
+    }
+  )();
+
+

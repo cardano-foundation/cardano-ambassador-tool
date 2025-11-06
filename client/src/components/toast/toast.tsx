@@ -74,7 +74,7 @@ export default function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4  max-h-screen overflow-hidden">
+    <div className="fixed top-4 right-4 max-h-screen overflow-hidden">
       <div className="flex max-h-screen flex-col-reverse overflow-y-auto">
         {toasts.length > 1 && (
           <div className="mb-3">

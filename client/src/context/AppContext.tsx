@@ -1,21 +1,19 @@
 'use client';
 
-import { toast } from '@/components/toast/toast-manager';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useNetworkValidation } from '@/hooks';
 import { useAppLoading } from '@/hooks/useAppLoading';
 import { useDatabase } from '@/hooks/useDatabase';
+import { useTreasuryBalance } from '@/hooks/useTreasuryBalance';
 import { Theme, useThemeManager } from '@/hooks/useThemeManager';
 import { User, useUserAuth } from '@/hooks/useUserAuth';
+import { useWalletManager } from '@/hooks/useWalletManager';
+import { parseMemberDatum, getCountryByCode } from '@/utils';
+import { WalletContextValue } from '@/types/wallet';
 import { IWallet } from '@meshsdk/core';
-import {
-  Ambassador,
-  NetworkConfig,
-  NetworkValidationResult,
-  Utxo,
-} from '@types';
-import { connected } from 'process';
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
+import { NetworkConfig, NetworkValidationResult, Utxo } from '@types';
+import { createContext, useContext, useEffect, useMemo } from 'react';
 
 // ---------- Types ----------
 interface AppContextValue {
@@ -28,19 +26,38 @@ interface AppContextValue {
     authLoading: boolean,
   ) => null | undefined;
   shouldShowLoading: boolean;
+  wallet: WalletContextValue;
+
+  // Member validation state
+  isMember: boolean;
+  memberValidationLoading: boolean;
+  memberUtxo: Utxo | null;
+  memberData: MemberData | null;
 
   // Database state
   dbLoading: boolean;
-  intents: Utxo[];
-  ambassadors: Ambassador[];
+  isSyncing: boolean;
+  membershipIntents: Utxo[];
+  proposalIntents: Utxo[];
+  members: Utxo[];
+  proposals: Utxo[];
+  signOfApprovals: Utxo[];
   syncData: (context: string) => void;
   syncAllData: () => void;
   query: <T = Record<string, unknown>>(sql: string, params?: any[]) => T[];
   getUtxosByContext: (contextName: string) => Utxo[];
+  findMembershipIntentUtxo: (address: string) => Promise<Utxo | null>;
+
+  // Treasury state
+  treasuryBalance: bigint;
+  isTreasuryLoading: boolean;
+  refreshTreasuryBalance: () => Promise<void>;
 
   // User state
   user: User;
   isAuthenticated: boolean;
+  isAdmin: boolean;
+  isLoading: boolean;
   userAddress: string | undefined;
   userRoles: string[];
   userWallet: IWallet | undefined;
@@ -59,6 +76,7 @@ interface AppContextValue {
   networkValidation: NetworkValidationResult | null;
   isValidatingNetwork: boolean;
   validateCurrentWallet: () => Promise<void>;
+  validateBeforeConnection: (wallet: IWallet) => Promise<boolean>;
   dismissNetworkError: () => void;
   isNetworkValid: boolean | undefined;
   hasNetworkError: boolean | null;
@@ -72,22 +90,62 @@ const AppContext = createContext<AppContextValue>({
   isAppLoading: true,
   isInitialLoad: true,
 
+  // Wallet defaults
+  wallet: {
+    isConnected: false,
+    isConnecting: false,
+    hasAttemptedAutoConnect: false,
+    selectedWalletId: null,
+    walletName: null,
+    address: null,
+    wallet: null,
+    availableWallets: [],
+    error: null,
+    isNetworkValid: true,
+    connectWallet: async () => {},
+    disconnectWallet: () => {},
+    clearError: () => {},
+    refreshWalletList: async () => {},
+  },
+
+  // Member validation defaults
+  isMember: false,
+  memberValidationLoading: true,
+  memberUtxo: null,
+  memberData: null,
+
   // Database defaults
   dbLoading: true,
-  intents: [],
-  ambassadors: [],
+  isSyncing: false,
+  membershipIntents: [],
+  proposalIntents: [],
+  members: [],
+  proposals: [],
+  signOfApprovals: [],
   syncData: () => {},
   syncAllData: () => {},
   query: () => [],
   getUtxosByContext: () => [],
+  findMembershipIntentUtxo: async () => null,
+
+  // Treasury defaults
+  treasuryBalance: BigInt(0),
+  isTreasuryLoading: true,
+  refreshTreasuryBalance: async () => {},
 
   // User defaults
   user: null,
-  // setUser: () => {},
+  isAuthenticated: false,
+  isAdmin: false,
+  isLoading: false,
+  userAddress: undefined,
+  userRoles: [],
+  userWallet: undefined,
+  logout: () => {},
+
   // Theme defaults
   theme: 'light',
   setTheme: () => {},
-  logout: () => {},
   toggleTheme: () => {},
   updateLoadingState: function (
     dbLoading: boolean,
@@ -97,10 +155,6 @@ const AppContext = createContext<AppContextValue>({
     throw new Error('Function not implemented.');
   },
   shouldShowLoading: false,
-  isAuthenticated: false,
-  userAddress: undefined,
-  userRoles: [],
-  userWallet: undefined,
   isThemeInitialized: false,
   isDark: false,
   isLight: false,
@@ -108,6 +162,9 @@ const AppContext = createContext<AppContextValue>({
   networkValidation: null,
   isValidatingNetwork: false,
   validateCurrentWallet: function (): Promise<void> {
+    throw new Error('Function not implemented.');
+  },
+  validateBeforeConnection: function (): Promise<boolean> {
     throw new Error('Function not implemented.');
   },
   dismissNetworkError: function (): void {
@@ -125,21 +182,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     isAppLoading,
     isInitialLoad,
     updateLoadingState,
-    // Helper values
     shouldShowLoading,
   } = useAppLoading();
 
-  const {
-    // State
-    dbLoading,
-    intents,
-    ambassadors,
+  const wallet = useWalletManager();
 
-    // Operations
+  const {
+    dbLoading,
+    isSyncing,
+    membershipIntents,
+    proposalIntents,
+    members,
+    proposals,
+    signOfApprovals,
     syncData,
     syncAllData,
     query,
     getUtxosByContext,
+    findMembershipIntentUtxo,
   } = useDatabase();
 
   const {
@@ -149,33 +209,115 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     userAddress,
     userRoles,
     userWallet,
+    isAdmin,
     logout,
-  } = useUserAuth();
+  } = useUserAuth({
+    wallet: wallet.wallet,
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+  });
 
   const {
     theme,
     setTheme,
     toggleTheme,
     isThemeInitialized,
-    // Helper computed values
     isDark,
     isLight,
   } = useThemeManager();
+
+  const { treasuryBalance, isTreasuryLoading, refreshTreasuryBalance } = useTreasuryBalance();
 
   const {
     currentNetwork,
     networkValidation,
     isValidatingNetwork,
     validateCurrentWallet,
+    validateBeforeConnection,
     dismissNetworkError,
-    // Helper computed values
     isNetworkValid,
     hasNetworkError,
     networkErrorMessage,
     walletNetwork,
-  } = useNetworkValidation();
+  } = useNetworkValidation({
+    wallet: wallet.wallet,
+    isConnected: wallet.isConnected,
+  });
 
-  // Coordinate app loading state based on dependencies
+  // Member validation logic
+  const memberValidation = useMemo(() => {
+    if (dbLoading || !wallet.address) {
+      return {
+        isMember: false,
+        memberValidationLoading: true,
+        memberUtxo: null,
+        memberData: null,
+      };
+    }
+
+    // Find member UTXO that belongs to the current user
+    const userMember = members.find((utxo) => {
+      if (!utxo.plutusData) return false;
+      try {
+        const parsed = parseMemberDatum(utxo.plutusData);
+        if (!parsed?.member?.metadata) return false;
+        return parsed.member.metadata.walletAddress === wallet.address;
+      } catch {
+        return false;
+      }
+    });
+
+    if (!userMember?.plutusData) {
+      return {
+        isMember: false,
+        memberValidationLoading: false,
+        memberUtxo: null,
+        memberData: null,
+      };
+    }
+
+    try {
+      const parsed = parseMemberDatum(userMember.plutusData);
+      if (!parsed?.member?.metadata) {
+        return {
+          isMember: false,
+          memberValidationLoading: false,
+          memberUtxo: null,
+          memberData: null,
+        };
+      }
+
+      const memberMetadata = parsed.member.metadata;
+      const countryData = memberMetadata.country
+        ? getCountryByCode(memberMetadata.country)
+        : null;
+      
+      return {
+        isMember: true,
+        memberValidationLoading: false,
+        memberUtxo: userMember,
+        memberData: {
+          walletAddress: memberMetadata.walletAddress,
+          fullName: memberMetadata.fullName || memberMetadata.displayName,
+          displayName: memberMetadata.displayName,
+          emailAddress: memberMetadata.emailAddress,
+          country: countryData?.name || memberMetadata.country || '',
+          city: memberMetadata.city || '',
+          bio: memberMetadata.bio || '',
+        } as MemberData,
+      };
+    } catch (error) {
+      console.error('Error parsing member data:', error);
+      return {
+        isMember: false,
+        memberValidationLoading: false,
+        memberUtxo: null,
+        memberData: null,
+      };
+    }
+  }, [members, wallet.address, dbLoading]);
+
+  // Coordinate app loading state
   useEffect(() => {
     const timer = updateLoadingState(
       dbLoading,
@@ -190,41 +332,58 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, [dbLoading, isThemeInitialized, authLoading, updateLoadingState]);
 
- 
   // Create the context value
   const contextValue: AppContextValue = {
-    // App loading
     isAppLoading: isAppLoading,
     isInitialLoad: isInitialLoad,
+    wallet,
+
+    // Member validation
+    isMember: memberValidation.isMember,
+    memberValidationLoading: memberValidation.memberValidationLoading,
+    memberUtxo: memberValidation.memberUtxo,
+    memberData: memberValidation.memberData,
 
     // Database
     dbLoading,
-    intents,
-    ambassadors,
+    isSyncing,
+    membershipIntents,
+    proposalIntents,
+    members,
+    proposals,
+    signOfApprovals,
     syncData,
     syncAllData,
     query,
     getUtxosByContext,
+    findMembershipIntentUtxo,
 
     // User
     user,
     logout,
     isAuthenticated,
+    isAdmin,
+    isLoading: authLoading,
     userAddress,
     userRoles,
     userWallet,
-    // Theme
     theme,
     setTheme,
     toggleTheme,
     isDark,
     isLight,
 
+    // Treasury
+    treasuryBalance,
+    isTreasuryLoading,
+    refreshTreasuryBalance,
+
     // network
     currentNetwork,
     networkValidation,
     isValidatingNetwork,
     validateCurrentWallet,
+    validateBeforeConnection,
     dismissNetworkError,
     // Helper computed values
     isNetworkValid,

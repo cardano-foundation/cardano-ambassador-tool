@@ -1,65 +1,44 @@
 'use client';
 
 import { useApp } from '@/context';
-import { useWallet, useWalletList } from '@meshsdk/react';
+import { shortenString } from '@/utils';
 import { AlertTriangle, X } from 'lucide-react';
 import Image from 'next/image';
 import { MouseEvent, useEffect } from 'react';
 import Button from '../atoms/Button';
 import { toast } from '../toast/toast-manager';
-import { shortenString } from '@/utils';
 
 const WalletList = () => {
-  const walletList = useWalletList();
-
-  const { isNetworkValid, hasNetworkError, logout } = useApp();
+  const { wallet, isNetworkValid, logout } = useApp();
 
   const {
-    connected,
-    name,
-    connecting,
-    connect,
-    disconnect,
-    setPersist,
+    availableWallets,
+    isConnected,
+    isConnecting,
+    selectedWalletId,
     address,
     error,
-  } = useWallet();
+    connectWallet,
+    disconnectWallet,
+  } = wallet;
 
   const handleConnect = async (
     e: MouseEvent<HTMLButtonElement>,
     walletId: string,
   ) => {
     e.stopPropagation();
-    setPersist(true);
-    disconnect();
-    await connect(walletId, true);
+    await connectWallet(walletId);
   };
 
   useEffect(() => {
-    if (connected && address.length && isNetworkValid) {
-      toast.success('Wallet connected', shortenString(address,8));
+    if (isConnected && address && isNetworkValid === true) {
+      toast.success('Wallet connected', shortenString(address, 8));
     }
-
-    if (error) {
-      console.log(error);
-      const errorMessage =
-        typeof error === 'string'
-          ? error
-          : (error as any)?.message || 'Wallet connection error';
-      toast.error('Error!', errorMessage);
-      return;
-    }
-  }, [connected, address, error]);
-
-  useEffect(() => {
-    if (hasNetworkError) {
-      disconnect();
-    }
-  }, [hasNetworkError]);
+  }, [isConnected, address, error, isNetworkValid]);
 
   return (
     <div className="flex flex-col items-center gap-3">
-      {hasNetworkError && (
+      {error && (
         <>
           <div className="bg-muted border-border mb-2 w-full rounded-lg border p-3">
             <div className="flex items-center gap-2 text-sm">
@@ -72,42 +51,46 @@ const WalletList = () => {
         </>
       )}
 
-      {walletList.length ? (
-        walletList.map((wallet) => {
-          const isConnected = connected && wallet.name === name;
-          const shouldShowWarning = isConnected;
+      {availableWallets.length ? (
+        availableWallets.map((walletItem) => {
+          const isWalletConnected =
+            isConnected && walletItem.id === selectedWalletId;
+          const shouldShowWarning = isWalletConnected;
 
           return (
-            <div key={wallet.id} className={isConnected ? 'relative' : ''}>
+            <div
+              key={walletItem.id}
+              className={isWalletConnected ? 'relative' : ''}
+            >
               <Button
-                disabled={connecting}
+                disabled={isConnecting}
                 variant="ghost"
                 className={`flex min-w-80 items-center justify-start gap-4 px-20 ${
-                  isConnected ? 'border-primary-400! border!' : ''
+                  isWalletConnected ? 'border-primary-400! border!' : ''
                 } ${shouldShowWarning ? 'border-primary-base border-2!' : ''}`}
                 onClick={(e) => {
-                  handleConnect(e, wallet.id);
+                  handleConnect(e, walletItem.id);
                 }}
               >
                 <Image
-                  src={wallet.icon}
-                  alt={wallet.id}
+                  src={walletItem.icon}
+                  alt={walletItem.id}
                   width={24}
                   height={24}
                   className="rounded"
                 />
                 <span className="text-[16px] font-medium capitalize">
-                  {wallet.name.includes('Wallet')
-                    ? wallet.name
-                    : wallet.name + ' wallet'}
+                  {walletItem.name.includes('Wallet')
+                    ? walletItem.name
+                    : walletItem.name + ' wallet'}
                 </span>
 
-                {isConnected && (
+                {isWalletConnected && (
                   <span
                     onClick={(e) => {
                       e.stopPropagation();
-                      disconnect();
-                      logout()
+                      disconnectWallet();
+                      logout();
                       toast.warning('Warning!', 'Wallet disconnected');
                     }}
                     className="absolute right-3 z-10 flex cursor-pointer items-center rounded p-1"

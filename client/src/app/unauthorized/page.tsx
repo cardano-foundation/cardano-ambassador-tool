@@ -26,16 +26,16 @@ export default function UnauthorizedPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center p-6">
+      <Card className="w-full max-w-lg">
         <CardHeader
           title="Access Denied"
           subtitle="You don't have permission to access this page. Admin privileges are required."
         />
         <div className="flex justify-center px-6 pb-4">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+          <div className="bg-primary-50 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
             <svg
-              className="h-8 w-8 text-red-600"
+              className="text-primary-base h-8 w-8"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -54,7 +54,11 @@ export default function UnauthorizedPage() {
             <Button variant="primary" onClick={handleGoBack} className="w-full">
               Go Back
             </Button>
-            <Button variant="outline" onClick={handleGoHome} className="w-full">
+            <Button
+              variant="outline"
+              onClick={handleGoHome}
+              className="text-primary-base! w-full"
+            >
               Go to Home
             </Button>
           </div>

@@ -8,22 +8,33 @@ interface SimpleCardanoLoaderProps {
   message?: string;
 }
 
-export function SimpleCardanoLoader({ 
-  size = 64, 
+export function SimpleCardanoLoader({
+  size = 64,
   className = '',
-  message = 'Loading...' 
+  message = 'Loading...',
 }: SimpleCardanoLoaderProps) {
   return (
-    <div className={`flex flex-col items-center justify-center min-h-[300px] space-y-6 ${className}`}>
+    <div
+      className={`flex min-h-screen flex-col items-center justify-center space-y-6 ${className}`}
+    >
       <CardanoLoaderSVG size={size} />
-      <div className="text-center space-y-2">
-        <p className="text-base text-muted-foreground animate-pulse">
+      <div className="space-y-2 text-center">
+        <p className="text-muted-foreground animate-pulse text-base">
           {message}
         </p>
-        <div className="flex space-x-1 justify-center">
-          <div className="w-1.5 h-1.5 bg-primary-base rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-          <div className="w-1.5 h-1.5 bg-primary-base rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-          <div className="w-1.5 h-1.5 bg-primary-base rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        <div className="flex justify-center space-x-1">
+          <div
+            className="bg-primary-base h-1.5 w-1.5 animate-bounce rounded-full"
+            style={{ animationDelay: '0ms' }}
+          />
+          <div
+            className="bg-primary-base h-1.5 w-1.5 animate-bounce rounded-full"
+            style={{ animationDelay: '150ms' }}
+          />
+          <div
+            className="bg-primary-base h-1.5 w-1.5 animate-bounce rounded-full"
+            style={{ animationDelay: '300ms' }}
+          />
         </div>
       </div>
     </div>

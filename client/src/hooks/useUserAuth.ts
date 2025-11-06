@@ -1,9 +1,12 @@
 'use client';
 
 import { resolveRoles } from '@/lib/auth/roles';
-import { createClientSession, getClientSession, destroyClientSession } from '@/lib/auth/session';
+import {
+  createClientSession,
+  destroyClientSession,
+  getClientSession,
+} from '@/lib/auth/session';
 import { IWallet } from '@meshsdk/core';
-import { useWallet } from '@meshsdk/react';
 import { useEffect, useState } from 'react';
 
 export type User = {
@@ -12,62 +15,63 @@ export type User = {
   address: string;
 } | null;
 
-export function useUserAuth() {
-  // User state
+interface UseUserAuthProps {
+  wallet: IWallet | null;
+  address: string | null;
+  isConnected: boolean;
+}
+
+export function useUserAuth({
+  wallet,
+  address,
+  isConnected,
+}: UseUserAuthProps) {
   const [user, setUserState] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { setPersist, address, wallet, connected } = useWallet();
 
-  // Load existing session on mount
-  useEffect(() => {
-    const existingSession = getClientSession();
-    if (existingSession && connected) {
-      setUserState({
-        wallet,
-        roles: existingSession.roles.map((r: { role: string }) => r.role),
-        address: existingSession.address
-      });
-    }
-  }, [wallet]);
-
-  // Persist wallet connection
-  useEffect(() => {
-    setPersist(true);
-  }, [setPersist]);
-
-  // Handle wallet connection and session creation
+  // Handle wallet connection and session management
   useEffect(() => {
     async function handleWalletConnection() {
-      if (connected) {
-        setIsLoading(true);
-        try {
-          const roles = await resolveRoles(address);
-
-          // Store session in frontend
-          createClientSession(address, roles);
-
-          // Set user state
-          const userRoles = roles.map((r) => r.role);
-          setUserState({ wallet, roles: userRoles, address });
-        } catch (error) {
-          console.error('Failed to resolve user roles:', error);
-          setUserState(null);
-          destroyClientSession();
-        } finally {
-          setIsLoading(false);
-        }
-      } else if (!connected) {
-        // Wallet disconnected, clear user state and session
+      if (!isConnected || !wallet || !address) {
         setUserState(null);
         destroyClientSession();
+        return;
+      }
+
+      // Check for existing session
+      const existingSession = getClientSession();
+      if (existingSession && existingSession.address === address) {
+        setUserState({
+          wallet,
+          roles: existingSession.roles.map((r: { role: string }) => r.role),
+          address: existingSession.address,
+        });
+        return;
+      }
+
+      // Resolve roles for new connection
+      setIsLoading(true);
+      try {
+        const roles = await resolveRoles(address);
+        createClientSession(address, roles);
+        setUserState({
+          wallet,
+          roles: roles.map((r) => r.role),
+          address,
+        });
+      } catch (error) {
+        setUserState(null);
+        destroyClientSession();
+      } finally {
+        setIsLoading(false);
       }
     }
 
     handleWalletConnection();
-  }, [address, wallet, connected]);
+  }, [address, wallet, isConnected]);
 
   const logout = async () => {
-    try {      
+    try {
       localStorage.removeItem('user_session');
       setUserState(null);
     } catch (error) {

@@ -60,7 +60,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 bg-card outline-border fixed top-[50%] left-[50%] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-xl p-6 shadow-[0px_3px_8px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px] transition-all duration-200 ease-in-out active:scale-[0.98] sm:max-w-lg',
+          'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 bg-card outline-border fixed top-[50%] left-[50%] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-xl p-6 shadow-[0px_3px_8px_rgba(0,0,0,0.08)] outline-1 outline-offset-[-1px] transition-all duration-200 ease-in-out sm:max-w-lg',
           className,
         )}
         {...props}
@@ -69,9 +69,9 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="data-[state=open]:bg-accent hover:cursor-pointer data-[state=open]:text-muted-foreground outline-primary-300 absolute top-4 right-4 rounded-xs border-0 opacity-70 transition-opacity hover:opacity-100 focus:ring focus:ring-offset-1 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+            className="data-[state=open]:bg-accent data-[state=open]:text-muted-foreground outline-primary-300 absolute top-4 right-4 rounded-xs border-0 opacity-70 transition-opacity hover:cursor-pointer hover:opacity-100 focus:ring focus:ring-offset-1 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6"
           >
-            <XIcon className="text-primary-300 hover:text-primary-base" />
+            <XIcon className="text-primary-300 hover:text-primary-base size-6" />
             <span className="text-primary-300 hover:text-primary-base sr-only">
               Close
             </span>

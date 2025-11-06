@@ -6,10 +6,10 @@ interface XIconProps {
   color?: string;
 }
 
-const XIcon: React.FC<XIconProps> = ({ 
-  className = '', 
-  size = 24, 
-  color = 'currentColor' 
+const XIcon: React.FC<XIconProps> = ({
+  className = '',
+  size = 24,
+  color = 'currentColor',
 }) => {
   return (
     <svg

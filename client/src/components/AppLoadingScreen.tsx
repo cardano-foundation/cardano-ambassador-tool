@@ -1,8 +1,8 @@
 'use client';
 
+import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useEffect, useState } from 'react';
 import { CardanoLoaderSVG } from './ui/CardanoLoaderSVG';
-import { getCurrentNetworkConfig } from '@/config/cardano';
 
 interface AppLoadingScreenProps {
   isVisible: boolean;
@@ -56,7 +56,7 @@ export function AppLoadingScreen({
             <div className="text-muted-foreground flex items-center justify-center space-x-2 text-sm">
               <div className="bg-primary-base h-2 w-2 rounded-full" />
               <span>
-                Mode{' '}
+                Network{' '}
                 <span className="text-primary-base font-medium">
                   {currentNetwork}
                 </span>
@@ -64,13 +64,6 @@ export function AppLoadingScreen({
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Footer */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 transform">
-        <p className="text-muted-foreground text-xs">
-          Initializing application...
-        </p>
       </div>
     </div>
   );

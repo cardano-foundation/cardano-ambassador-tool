@@ -1,22 +1,42 @@
-import React from 'react';
-import { X } from "lucide-react";
 import { cn } from '@/utils/utils';
+import React from 'react';
 import Button from './Button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/Dialog';
 
 interface ModalAction {
   label: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'warning' | 'success' | 'primary-light';
+  variant?:
+    | 'primary'
+    | 'secondary'
+    | 'outline'
+    | 'ghost'
+    | 'warning'
+    | 'success'
+    | 'primary-light';
   onClick: () => void;
+  disabled?: boolean;
 }
 
 interface ModalProps {
   isOpen: boolean;
   onClose?: () => void;
-  title: string;
-  message: string;
+  title?: string;
+  description?: string;
+  message?: string; // Legacy support
+  children?: React.ReactNode;
   actions?: ModalAction[];
+  footer?: React.ReactNode;
   showCloseButton?: boolean;
   className?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  closable?: boolean;
 }
 
 export function useModal() {
@@ -36,72 +56,80 @@ export default function Modal({
   isOpen,
   onClose,
   title,
-  message,
+  description,
+  message, // Legacy support
+  children,
   actions = [],
+  footer,
   showCloseButton = true,
-  className,
+  className = '',
+  size = 'md',
+  closable = true,
 }: ModalProps) {
-  if (!isOpen) return null;
+  const sizeClasses = {
+    sm: 'sm:max-w-sm',
+    md: 'sm:max-w-md', 
+    lg: 'sm:max-w-lg',
+    xl: 'sm:max-w-xl',
+    '2xl': 'sm:max-w-2xl',
+  };
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && onClose) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open && closable && onClose) {
       onClose();
     }
   };
 
+  // Determine content - use children if provided, otherwise use legacy message
+  const content = children || (
+    <div className="text-center">
+      <p className="text-base text-foreground">
+        {message}
+      </p>
+    </div>
+  );
+
+  // Determine footer - use custom footer or actions
+  const footerContent = footer || (actions.length > 0 && (
+    <div className="flex gap-3">
+      {actions.map((action, index) => (
+        <Button
+          key={index}
+          variant={action.variant || 'primary'}
+          size="md"
+          className="flex-1"
+          onClick={action.onClick}
+          disabled={action.disabled}
+        >
+          {action.label}
+        </Button>
+      ))}
+    </div>
+  ));
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-70"
-      onClick={handleOverlayClick}
-    >
-      <div className={cn(
-        "px-5 py-3.5 bg-background rounded-xl shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)] outline outline-1 outline-offset-[-1px] outline-neutral-200 inline-flex flex-col justify-start items-end gap-5 overflow-hidden max-w-sm w-full mx-4",
-        className
-      )}>
-        {showCloseButton && (
-          <div className="p-1 inline-flex justify-start items-start gap-2.5">
-            <button
-              onClick={onClose}
-              className="w-6 h-6 flex items-center justify-center text-neutral-400 hover:text-neutral-600 transition-colors cursor-pointer rounded-full hover:bg-neutral-100"
-              aria-label="close"
-            >
-              <X className="w-4 h-4 text-muted-foreground" />
-            </button>
-          </div>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className={cn(`${sizeClasses[size]} max-h-[90vh] overflow-hidden flex flex-col`, className)}
+        showCloseButton={showCloseButton && closable}
+      >
+        {(title || description) && (
+          <DialogHeader>
+            {title && <DialogTitle>{title}</DialogTitle>}
+            {description && <DialogDescription>{description}</DialogDescription>}
+          </DialogHeader>
         )}
 
-        <div className="self-stretch flex flex-col justify-start items-start gap-3.5">
-          <div className="inline-flex justify-center items-start gap-3.5 w-full">
-            <div className="self-stretch inline-flex flex-col justify-center items-center gap-[5px] flex-1">
-              <div className="w-full inline-flex justify-center items-start">
-                <div className="justify-start text-neutral-900 text-xl font-bold  leading-7">
-                  {title}
-                </div>
-              </div>
-
-              <div className="self-stretch text-center justify-start text-neutral-700 text-base font-normal font-['Chivo'] leading-normal">
-                {message}
-              </div>
-            </div>
-          </div>
-
-          {actions.length > 0 && (
-            <div className="self-stretch inline-flex justify-center items-start gap-3">
-              {actions.map((action, index) => (
-                <Button
-                  key={index}
-                  variant={action.variant || 'primary'}
-                  size="sm"
-                  className="flex-1 h-9"
-                  onClick={action.onClick}
-                >
-                  {action.label}
-                </Button>
-              ))}
-            </div>
-          )}
+        <div className="flex-1 overflow-y-auto px-1">
+          {content}
         </div>
-      </div>
-    </div>
+
+        {footerContent && (
+          <DialogFooter className="pt-4">
+            {footerContent}
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,20 +1,14 @@
 import { IWallet, Quantity, Unit } from '@meshsdk/core';
+import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
 
 export interface MembershipIntentPayoad {
   tokenUtxoHash: string;
   tokenUtxoIndex: number;
-  userMetadata: MemberMetadata;
+  userMetadata: MemberData;
   wallet: IWallet;
   address: string;
   tokenPolicyId: string;
   tokenAssetName: string;
-}
-
-export interface MemberMetadata {
-  fullname: string;
-  bio: string;
-  email: string;
-  displayName: string;
 }
 
 export type MemberTokenDetail = {
@@ -132,3 +126,95 @@ export type SessionPayload = {
     role: string;
   }[];
 };
+
+export interface NormalizedUser {
+  href: string;
+  username: string;
+  name?: string;
+  bio_excerpt?: string;
+  country?: string;
+  flag?: string;
+  avatar?: string;
+  created_at?: string;
+  summary: {
+    stats: Record<string, any>;
+    top_replies: any[];
+    top_topics: any[];
+  };
+  activities: any[];
+  badges: any[];
+}
+
+export type TimelineStatus = 'pending' | 'current' | 'completed';
+
+export interface TimelineStep {
+  id: string;
+  title: string | React.ReactNode;
+  content?: React.ReactNode;
+  status: TimelineStatus;
+}
+
+export interface TimelineProps {
+  steps: TimelineStep[];
+  className?: string;
+  onStepClick?: (stepId: string, stepIndex: number) => void;
+  clickable?: boolean;
+}
+
+export type ExtendedMemberData = MemberData & {
+  txHash?: string;
+};
+
+// ============================================================================
+// Transaction Confirmation Types
+// ============================================================================
+
+/**
+ * Interface for transaction confirmation options
+ */
+export interface TransactionConfirmationOptions {
+  /** Maximum time to wait in milliseconds (default: 300000 = 5 minutes) */
+  timeout?: number;
+  /** Interval between polls in milliseconds (default: 10000 = 10 seconds) */
+  pollInterval?: number;
+  /** Callback function called on each poll attempt */
+  onPoll?: (attempt: number, txHash: string) => void;
+  /** Callback function called when timeout is reached */
+  onTimeout?: (txHash: string) => void;
+}
+
+/**
+ * Interface for transaction confirmation result
+ */
+export interface TransactionConfirmationResult {
+  /** Whether the transaction was confirmed */
+  confirmed: boolean;
+  /** Transaction hash */
+  txHash: string;
+  /** Number of poll attempts made */
+  attempts: number;
+  /** Time taken in milliseconds */
+  timeTaken: number;
+  /** Error message if confirmation failed */
+  error?: string;
+}
+
+
+/**
+ * Interface for transaction confirmation result
+ */
+export interface AdminDecision {
+  decision: string;
+  counterUtxoTxIndex?: number;
+  memberUtxoTxIndex?: number;
+  context: string;
+  signedTx: string;
+}
+
+
+export type AdminDecisionData = AdminDecision & {
+  signers: string[];
+  selectedAdmins: string[];
+  minRequiredSigners: number;
+  totalSigners: number;
+}

@@ -73,15 +73,15 @@ export function Pagination({
 
   if (totalPages === 0) {
     return (
-      <div className="px-5 py-3.5 border-t border-border bg-card">
-        <div className="flex items-center justify-between">
+      <div className="px-3 py-4 sm:px-5 sm:py-3.5 border-t border-border bg-card">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {showPageSizeSelector && onPageSizeChange && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground order-2 sm:order-1">
               <span>Show</span>
               <select
                 value={pageSize}
                 onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-                className="px-2 py-1 border border-border rounded bg-card text-neutral hover:bg-rose-200"
+                className="px-2 py-1 border border-border rounded bg-card text-neutral hover:bg-primary-200 text-sm cursor-pointer transition-colors"
               >
                 {pageSizeOptions.map(option => (
                   <option key={option} value={option}>{option}</option>
@@ -90,8 +90,8 @@ export function Pagination({
               <span>per page</span>
             </div>
           )}
-          <div className="flex items-center gap-1">
-            <div className="text-sm text-muted-foreground m-2">
+          <div className="flex items-center gap-1 order-1 sm:order-2">
+            <div className="text-sm text-muted-foreground">
               0 of 0
             </div>
           </div>
@@ -101,15 +101,15 @@ export function Pagination({
   }
 
   return (
-    <div className="px-5 py-3.5 border-t border-border bg-card">
-      <div className="flex items-center justify-between">
+    <div className="px-3 py-4 sm:px-5 sm:py-3.5 border-t border-border bg-card">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         {showPageSizeSelector && onPageSizeChange && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
             <span>Show</span>
             <select
               value={pageSize}
               onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-              className="px-2 py-1 border border-border rounded bg-card text-neutral hover:bg-rose-200"
+              className="px-2 py-1 border border-border rounded bg-card text-neutral hover:bg-primary-200 text-sm cursor-pointer transition-colors"
             >
               {pageSizeOptions.map(option => (
                 <option key={option} value={option}>{option}</option>
@@ -118,16 +118,70 @@ export function Pagination({
             <span>per page</span>
           </div>
         )}
+        <div className="flex flex-col items-center gap-3 sm:hidden w-full">
+          {showPageSizeSelector && onPageSizeChange && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>Show</span>
+              <select
+                value={pageSize}
+                onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+                className="px-2 py-1 border border-border rounded bg-card text-neutral hover:bg-primary-200 text-sm min-w-[60px] cursor-pointer transition-colors"
+              >
+                {pageSizeOptions.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+              <span>per page</span>
+            </div>
+          )}
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-muted-foreground whitespace-nowrap">
+              {itemsPerPageStart}-{itemsPerPageEnd} of {totalItems}
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={handlePrevious}
+                disabled={currentPage === 1}
+                className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <ArrowLeftIcon className="w-4 h-4 text-neutral" />
+              </button>
 
-        <div className="flex items-center gap-1">
-          <div className="text-sm text-muted-foreground m-2">
+              <div className="flex items-center gap-1">
+                {getVisiblePages().map(pageNum => (
+                  <button
+                    key={pageNum}
+                    onClick={() => onPageChange(pageNum)}
+                    className={`w-8 h-8 rounded transition-colors text-sm cursor-pointer ${
+                      currentPage === pageNum
+                        ? 'bg-muted text-neutral font-medium'
+                        : 'text-foreground opacity-50 hover:opacity-100 hover:bg-muted/50'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={handleNext}
+                disabled={currentPage === totalPages}
+                className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <ArrowRightIcon className="w-4 h-4 text-neutral" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="hidden sm:flex items-center gap-1">
+          <div className="text-sm text-muted-foreground mr-2">
             {itemsPerPageStart}-{itemsPerPageEnd} of {totalItems}
           </div>
 
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
-            className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             <ArrowLeftIcon className="w-4 h-4 text-neutral" />
           </button>
@@ -137,10 +191,10 @@ export function Pagination({
               <button
                 key={pageNum}
                 onClick={() => onPageChange(pageNum)}
-                className={`w-8 h-8 rounded transition-colors ${
+                className={`w-8 h-8 rounded transition-colors cursor-pointer ${
                   currentPage === pageNum
                     ? 'bg-muted text-neutral'
-                    : 'text-foreground opacity-50'
+                    : 'text-foreground opacity-50 hover:opacity-100 hover:bg-muted/50'
                 }`}
               >
                 {pageNum}
@@ -151,7 +205,7 @@ export function Pagination({
           <button
             onClick={handleNext}
             disabled={currentPage === totalPages}
-            className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             <ArrowRightIcon className="w-4 h-4 text-neutral" />
           </button>
