@@ -10,7 +10,7 @@ import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import ExecuteSignoff from '@/components/ExecuteSignoff';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
-import { parseProposalDatum, getCatConstants, getProvider } from '@/utils';
+import { parseProposalDatum, getCatConstants, getProvider, lovelaceToAda, formatAdaAmount } from '@/utils';
 import { useState, useEffect } from 'react';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { use } from 'react';

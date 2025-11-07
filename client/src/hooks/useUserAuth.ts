@@ -83,7 +83,6 @@ export function useUserAuth({
     user,
     isLoading,
     logout,
-    // Helper computed values
     isAuthenticated: !!user && !!user.address,
     userAddress: user?.address,
     userRoles: user?.roles || [],

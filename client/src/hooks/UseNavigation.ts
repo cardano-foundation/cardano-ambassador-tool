@@ -1,4 +1,3 @@
-// hooks/useNavigation.ts
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useWallet } from '@meshsdk/react';

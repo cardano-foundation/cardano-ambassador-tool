@@ -125,7 +125,6 @@ export function useNetworkValidation({
     [currentNetwork.name],
   );
 
-  // Clear validation when wallet disconnects
   useEffect(() => {
     if (!isConnected) {
       setNetworkValidation(null);

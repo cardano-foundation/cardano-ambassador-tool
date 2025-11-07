@@ -1,153 +1,88 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { GoogleMap, MarkerF, useJsApiLoader } from '@react-google-maps/api';
-import { MapsIcon } from '@/components/atoms/MapsIcon';
+import React from 'react';
 import { countries, getCityCoordinates } from '@/utils/locationData';
-import ReactDOMServer from 'react-dom/server';
+import { MapsIcon } from '@/components/atoms/MapsIcon';
 
 interface LocationMapProps {
   city?: string | null;
   country?: string | null;
   className?: string;
+  zoom?: number;
 }
 
-const defaultCenter = { lat: 0, lng: 0 };
+/**
+ * Generates simple Google Maps embed URL based on coordinates
+ */
+function generateMapEmbedUrl(
+  lat: number, 
+  lng: number
+): string {
+  // Use actual coordinates from the location data
+  return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.263838364847!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2sLocation!5e0!3m2!1sen!2sus!4v1234567890123`;
+}
 
-export const LocationMap: React.FC<LocationMapProps> = ({ city, country, className = '' }) => {
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
-  const [error, setError] = useState<string | null>(null);
+export const LocationMap: React.FC<LocationMapProps> = ({ 
+  city, 
+  country, 
+  className = '',
+  zoom = 8
+}) => {
 
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    preventGoogleFontsLoading: true,
-  });
-
-  const iconDataUrl = useMemo(() => {
-  try {
-    const svgString = ReactDOMServer.renderToStaticMarkup(
-      <MapsIcon
-        size={66}
-        pinColor="white"
-        backgroundColor="#ef4444"
-        cardanoIconSize={33}
-        cardanoIconColor="#ffffff"
-      />
-    );
-
-    const cleanedSvg = svgString.replace(/#/g, '%23');
-    return `data:image/svg+xml;charset=utf-8,${cleanedSvg}`;
-  } catch (error) {
-    console.error('Error creating SVG icon:', error);
-    return '';
+  let coordinates: { lat: number; lng: number } | null = null;
+  let locationName = '';
+  
+  if (city) {
+    coordinates = getCityCoordinates(city);
+    locationName = city;
   }
-}, []);
-
-
-  useEffect(() => {
-    return () => {
-      if (iconDataUrl) URL.revokeObjectURL(iconDataUrl);
-    };
-  }, [iconDataUrl]);
-
-  useEffect(() => {
-    if (city) {
-      const cityCoordinates = getCityCoordinates(city);
-      if (cityCoordinates) {
-        setCoordinates(cityCoordinates);
-        setError(null);
-        return;
-      }
-    }
-
-    if (country) {
-      const cityCoordinates = getCityCoordinates(country);
-      if (cityCoordinates) {
-        setCoordinates(cityCoordinates);
-        setError(null);
-        return;
-      }
-
+  
+  if (!coordinates && country) {
+    coordinates = getCityCoordinates(country);
+    if (!coordinates) {
       const countryData = countries.find(
         c => c.name.toLowerCase() === country.toLowerCase() ||
              c.code.toLowerCase() === country.toLowerCase()
       );
-
       if (countryData) {
-        setCoordinates(countryData.coordinates);
-        setError(null);
-        return;
+        coordinates = countryData.coordinates;
       }
     }
+    if (!locationName) locationName = country;
+  }
 
-    const locationName = city || country;
-    if (locationName) {
-      setError(`Unknown location: ${locationName}`);
-      setCoordinates(null);
-    }
-  }, [city, country]);
-
-
-  const onLoad = useCallback((map: google.maps.Map) => setMap(map), []);
-  const onUnmount = useCallback(() => setMap(null), []);
-
-  if (loadError) {
+  if (!coordinates) {
     return (
-      <div className={`flex items-center justify-center h-40 bg-muted rounded-lg ${className}`}>
-        <div className="text-destructive">Error loading map</div>
+      <div className={`flex items-center justify-center h-40 bg-muted rounded-lg border border-border ${className}`}>
+        <div className="text-muted-foreground text-sm">
+          {locationName ? `Location not found: ${locationName}` : 'No location specified'}
+        </div>
       </div>
     );
   }
 
-  if (!isLoaded) {
-    return (
-      <div className={`flex items-center justify-center h-40 bg-muted rounded-lg ${className}`}>
-      </div>
-    );
-  }
-
-  if (error || !coordinates) {
-    return (
-      <div className={`flex items-center justify-center h-40 bg-muted rounded-lg ${className}`}>
-        <div className="text-muted-foreground">{error ?? `Unknown location: ${city || country || '—'}`}</div>
-      </div>
-    );
-  }
+  const mapUrl = generateMapEmbedUrl(
+    coordinates.lat,
+    coordinates.lng
+  );
 
   return (
-    <div className={`mt-6 rounded-lg border border-border overflow-hidden z-0 ${className}`}>
-      <GoogleMap
-        mapContainerClassName="h-40 w-full"
-        center={coordinates ?? defaultCenter}
-        zoom={5}
-        options={{
-          disableDefaultUI: true,
-          zoomControl: true,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false,
-          styles: [
-            { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-          ],
-        }}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
-      >
-        <MarkerF
-          position={coordinates}
-          icon={
-            iconDataUrl
-              ? {
-                  url: iconDataUrl,
-                  scaledSize: new google.maps.Size(40, 40),
-                  anchor: new google.maps.Point(20, 40),
-                }
-              : undefined
-          }
+    <div className={`mt-6 rounded-lg border border-border overflow-hidden relative ${className}`}>
+      <iframe 
+        className="w-full h-40"
+        src={mapUrl}
+        loading="lazy" 
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+        title={`Map of ${locationName || 'location'}`}
+        style={{ border: 0 }}
+      />
+      {/* Custom pin icon overlay */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full pointer-events-none">
+        <MapsIcon 
+          className="w-12 h-12" 
         />
-      </GoogleMap>
+      </div>
     </div>
   );
 };

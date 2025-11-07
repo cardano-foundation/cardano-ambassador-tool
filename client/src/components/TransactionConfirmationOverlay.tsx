@@ -24,6 +24,14 @@ interface TransactionConfirmationOverlayProps {
   onConfirmed?: (result: TransactionConfirmationResult) => void;
   /** Called when transaction confirmation times out */
   onTimeout?: (result: TransactionConfirmationResult) => void;
+  /** Show navigation options */
+  showNavigationOptions?: boolean;
+  /** Navigation options */
+  navigationOptions?: {
+    label: string;
+    url: string;
+    variant?: 'primary' | 'outline';
+  }[];
 }
 
 const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayProps> = ({
@@ -34,6 +42,8 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
   onClose,
   onConfirmed,
   onTimeout,
+  showNavigationOptions,
+  navigationOptions,
 }) => {
   const [confirmationState, setConfirmationState] = useState<{
     status: 'waiting' | 'polling' | 'confirmed' | 'timeout';
@@ -59,6 +69,16 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
         timeTaken: 0,
       });
       return;
+    }
+
+    // Prevent overlay from closing on global refresh events
+    const handleGlobalRefresh = (e: Event) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    };
+
+    if (isVisible && (confirmationState.status === 'confirmed' || confirmationState.status === 'timeout')) {
+      window.addEventListener('app:refresh', handleGlobalRefresh, true);
     }
 
     if (confirmationRunning.current && currentTxHash.current === txHash) {
@@ -116,7 +136,14 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
     };
 
     startConfirmation();
-  }, [isVisible, txHash]);
+
+    // Cleanup function
+    return () => {
+      if (isVisible && (confirmationState.status === 'confirmed' || confirmationState.status === 'timeout')) {
+        window.removeEventListener('app:refresh', handleGlobalRefresh, true);
+      }
+    };
+  }, [isVisible, txHash, confirmationState.status]);
 
   if (!isVisible) {
     return null;
@@ -196,9 +223,27 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
               )}
             </div>
             <div className="mt-6">
-              <Button onClick={onClose} className="w-full" variant="primary">
-                Continue
-              </Button>
+              {showNavigationOptions && navigationOptions ? (
+                <div className="space-y-3">
+                  {navigationOptions.map((option, index) => (
+                    <Button
+                      key={index}
+                      onClick={() => window.location.href = option.url}
+                      className="w-full"
+                      variant={option.variant || 'outline'}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                  <Button onClick={onClose} className="w-full" variant="outline">
+                    Stay Here
+                  </Button>
+                </div>
+              ) : (
+                <Button onClick={onClose} className="w-full" variant="primary">
+                  Continue
+                </Button>
+              )}
             </div>
           </div>
         );

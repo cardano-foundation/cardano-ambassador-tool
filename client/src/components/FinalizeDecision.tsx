@@ -244,6 +244,11 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}
+        showNavigationOptions={context === 'ProposalIntent' && adminDecisionData?.decision === 'approve'}
+        navigationOptions={[
+          { label: 'Go to Treasury Signoff', url: '/manage/treasury-signoffs', variant: 'primary' },
+          { label: 'Back to Proposals', url: '/manage/proposal-applications', variant: 'outline' }
+        ]}
       />
     </div>
   );

@@ -13,7 +13,7 @@ export default function GlobalRefreshButton({
   size = 20,
   className = '',
 }: GlobalRefreshButtonProps) {
-  const { syncData, isSyncing } = useApp();
+  const { syncData, isSyncing, refreshTreasuryBalance } = useApp();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -34,6 +34,7 @@ export default function GlobalRefreshButton({
         syncData('proposal_intent'),
         syncData('member'),
         syncData('proposal'),
+        refreshTreasuryBalance(),
       ]);
 
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -42,7 +43,7 @@ export default function GlobalRefreshButton({
     } finally {
       setIsRefreshing(false);
     }
-  }, [syncData]);
+  }, [syncData, refreshTreasuryBalance]);
 
   useEffect(() => {
     const handleGlobalRefresh = () => {

@@ -213,6 +213,11 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}
+        showNavigationOptions={isActivated}
+        navigationOptions={[
+          { label: 'View Members', url: '/', variant: 'primary' },
+          { label: 'Back to Applications', url: '/manage/membership-applications', variant: 'outline' }
+        ]}
       />
     </div>
   );

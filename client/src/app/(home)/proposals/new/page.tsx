@@ -16,6 +16,8 @@ import {
   getCatConstants,
   getProvider,
   smoothScrollToElement,
+  adaToLovelace,
+  parseAdaInput,
 } from '@/utils';
 import {
   ProposalData,
@@ -128,13 +130,21 @@ export default function SubmitProposalPage() {
         getCatConstants(),
       );
 
-      const metadata = proposalMetadata(formData);
+      const cleanAdaAmount = parseAdaInput(formData.fundsRequested);
+      const lovelaceAmount = adaToLovelace(cleanAdaAmount);
+      
+
+      const metadataFormData = {
+        ...formData,
+        fundsRequested: lovelaceAmount.toString(),
+      };
+      const metadata = proposalMetadata(metadataFormData);
 
       const result = await userAction.proposeProject(
         oracleUtxo,
         tokenUtxo,
         mbrUtxo,
-        Number(formData.fundsRequested),
+        lovelaceAmount,
         formData.receiverWalletAddress,
         metadata,
       );

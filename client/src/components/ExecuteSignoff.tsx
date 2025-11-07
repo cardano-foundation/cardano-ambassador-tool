@@ -39,7 +39,8 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
   const proposalAmount = signoffApprovalUtxo?.plutusData ? (() => {
     try {
       const { metadata } = parseProposalDatum(signoffApprovalUtxo.plutusData)!;
-      return BigInt((parseInt(metadata?.fundsRequested || '0')) * 1_000_000); // Convert ADA to lovelace
+      const adaAmount = parseFloat(metadata?.fundsRequested || '0');
+      return BigInt(Math.round(adaAmount * 1_000_000));
     } catch {
       return BigInt(0);
     }
@@ -86,9 +87,14 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
         blockfrost,
         getCatConstants(),
       );
-      
+
       const signoffApprovalMesh = dbUtxoToMeshUtxo(signoffApprovalUtxo);
       const memberMesh = dbUtxoToMeshUtxo(memberUtxo);
+      console.log({
+        signoffApprovalMesh,
+        memberMesh,
+        oracleUtxo,
+      });
 
       const unsignedTx = await adminAction.SignOff(
         oracleUtxo,
@@ -214,6 +220,11 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}
+        showNavigationOptions={isExecuted}
+        navigationOptions={[
+          { label: 'View Treasury', url: '/manage/treasury-signoffs', variant: 'primary' },
+          { label: 'View All Proposals', url: '/proposals', variant: 'outline' }
+        ]}
       />
     </div>
   );

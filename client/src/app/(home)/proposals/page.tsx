@@ -6,12 +6,13 @@ import Link from 'next/link';
 import Chip from '@/components/atoms/Chip';
 import Title from '@/components/atoms/Title';
 import { useState } from 'react';
+import Select from '@/components/atoms/Select';
 import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Copyable from '@/components/Copyable';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { parseProposalDatum } from '@/utils';
+import { parseProposalDatum, formatAdaAmount } from '@/utils';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 
@@ -21,9 +22,14 @@ type Proposal = {
   details: string;
   receiverWalletAddress: string;
   submittedByAddress: string;
-  fundsRequested: number;
-  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected';
+  fundsRequested: string;
+  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'signoff_pending' ;
   txHash: string;
+  progress?: {
+    current: number;
+    total: number;
+    stage: string;
+  };
 };
 
 const getChipVariant = (status: Proposal['status']) => {
@@ -33,7 +39,16 @@ const getChipVariant = (status: Proposal['status']) => {
     case 'under_review': return 'default';
     case 'approved': return 'success';
     case 'rejected': return 'error';
+    case 'signoff_pending': return 'success';
     default: return 'inactive';
+  }
+};
+
+const formatStatus = (status: Proposal['status']) => {
+  switch (status) {
+    case 'signoff_pending': return 'Awaiting Signoff';
+    case 'under_review': return 'Under Review';
+    default: return status.charAt(0).toUpperCase() + status.slice(1);
   }
 };
 
@@ -69,9 +84,9 @@ const proposalColumns: ColumnDef<Proposal>[] = [
       const truncatedValue = truncateToWords(value, 10);
       return (
         <div className="max-w-[400px] text-sm">
-          <RichTextDisplay 
-            content={truncatedValue} 
-            className="prose-sm [&_p]:mb-1 [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_strong]:font-semibold" 
+          <RichTextDisplay
+            content={truncatedValue}
+            className="prose-sm [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_p]:mb-1 [&_strong]:font-semibold"
           />
         </div>
       );
@@ -82,9 +97,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     accessor: 'fundsRequested',
     sortable: true,
     cell: (value) => (
-      <span className="text-sm">
-        {value ? `$${value.toLocaleString()}` : 'N/A'}
-      </span>
+      <span className="text-sm">{value && value !== '0' ? formatAdaAmount(value) : 'N/A'}</span>
     ),
   },
   {
@@ -104,10 +117,12 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     header: 'Status',
     accessor: 'status',
     sortable: true,
-    cell: (value) => (
-      <Chip variant={getChipVariant(value)}>
-        {value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
-      </Chip>
+    cell: (value, row) => (
+      <div className="space-y-1">
+        <Chip variant={getChipVariant(value)} className='text-nowrap'>
+          {formatStatus(value)}
+        </Chip>
+      </div>
     ),
   },
   {
@@ -124,13 +139,18 @@ const proposalColumns: ColumnDef<Proposal>[] = [
 ];
 
 export default function ProposalsPage() {
-  const { proposals, dbLoading } = useApp();
+  const { proposals, proposalIntents, signOfApprovals, dbLoading } = useApp();
+  const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>('all');
 
   if (dbLoading) {
     return <SimpleCardanoLoader />;
   }
 
-  const proposalsData: Proposal[] = proposals
+
+
+  const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
+
+  const proposalsData: Proposal[] = allProposals
     .map((utxo, idx) => {
       if (!utxo.plutusData) return null;
 
@@ -139,15 +159,33 @@ export default function ProposalsPage() {
 
         if (!metadata) return null;
 
+
+        let status: Proposal['status'] = 'pending';
+        let progress: Proposal['progress'] | undefined;
+
+        if (signOfApprovals.some(p => p.txHash === utxo.txHash)) {
+          status = 'signoff_pending';
+          progress = {
+            current: 1,
+            total: 3,
+            stage: 'Treasury Signoff'
+          };
+        } else if (proposals.some(p => p.txHash === utxo.txHash)) {
+          status = 'approved';
+        } else {
+          status = 'pending';
+        }
+
         return {
           id: idx + 1,
           title: metadata.title || 'Untitled Proposal',
           details: metadata.description || 'No description provided',
           receiverWalletAddress: metadata.receiverWalletAddress || '',
           submittedByAddress: metadata.submittedByAddress || '',
-          fundsRequested: parseInt(metadata.fundsRequested || '0'),
-          status: 'approved' as const,
+          fundsRequested: metadata.fundsRequested || '0',
+          status,
           txHash: utxo.txHash,
+          progress,
         };
       } catch (error) {
         console.error('Error parsing proposal datum:', error);
@@ -155,6 +193,49 @@ export default function ProposalsPage() {
       }
     })
     .filter(Boolean) as Proposal[];
+
+
+  const uniqueProposals = proposalsData.reduce((acc, current) => {
+    const existing = acc.find(item => item.txHash === current.txHash);
+    if (!existing) {
+      acc.push(current);
+    } else {
+      const statusPriority = {
+        rejected: 1,
+        submitted: 3,
+        under_review: 1,
+        signoff_pending: 3,
+        approved: 2,
+        pending: 1,
+      };
+
+      if (statusPriority[current.status] > statusPriority[existing.status]) {
+        const index = acc.indexOf(existing);
+        acc[index] = current;
+      }
+    }
+    return acc;
+  }, [] as Proposal[]);
+
+  // Apply status filter
+  const filteredProposals = statusFilter === 'all' 
+    ? uniqueProposals 
+    : uniqueProposals.filter(proposal => proposal.status === statusFilter);
+
+  // Count by status for display
+  const statusCounts = {
+    pending: uniqueProposals.filter(p => p.status === 'pending').length,
+    approved: uniqueProposals.filter(p => p.status === 'approved').length,
+    signoff_pending: uniqueProposals.filter(p => p.status === 'signoff_pending').length,
+  };
+
+  const statusOptions = [
+    { value: 'all', label: 'All Statuses' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'signoff_pending', label: 'Awaiting Signoff' },
+    // { value: 'rejected', label: 'Rejected' },
+  ];
 
   return (
     <div className="bg-background min-h-screen">
@@ -164,8 +245,7 @@ export default function ProposalsPage() {
             <div className="space-y-2">
               <Title level="5" className="text-foreground">Community Proposals</Title>
               <Paragraph className="text-sm text-muted-foreground">
-                Browse and discover proposals submitted by Cardano ambassadors
-                {proposalsData.length > 0 && ` - ${proposalsData.length} found`}
+                Browse and discover all proposals at every stage of the process.
               </Paragraph>
             </div>
             <Link href={routes.newProposal} className="w-full sm:w-auto">
@@ -175,11 +255,28 @@ export default function ProposalsPage() {
             </Link>
           </div>
           
+          {/* Status Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Filter by status:</span>
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}
+              options={statusOptions.map(option => ({
+                ...option,
+                label: option.value !== 'all' && statusCounts[option.value as keyof typeof statusCounts] > 0 
+                  ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
+                  : option.label
+              }))}
+              placeholder="Select status..."
+              className="w-48"
+            />
+          </div>
+          
           {/* Mobile-optimized scrollable table container */}
           <div className="w-full overflow-x-auto">
             <div className="min-w-[800px]">
               <Table
-                data={proposalsData}
+                data={filteredProposals}
                 columns={proposalColumns}
                 pageSize={10}
                 searchable={true}

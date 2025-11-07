@@ -9,7 +9,7 @@ import Copyable from '@/components/Copyable';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
-import { parseProposalDatum } from '@/utils';
+import { parseProposalDatum, formatAdaAmount } from '@/utils';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { use } from 'react';
 
@@ -18,10 +18,11 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
-  const { proposals, dbLoading } = useApp();
+  const { proposals, proposalIntents, signOfApprovals, dbLoading } = useApp();
   const { txhash } = use(params);
 
-  const proposal = proposals.find((utxo) => utxo.txHash === txhash);
+  const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
+  const proposal = allProposals.find((utxo) => utxo.txHash === txhash);
 
   let proposalData: ProposalData;
   if (proposal && proposal.plutusData) {
@@ -33,7 +34,11 @@ export default function Page({ params }: PageProps) {
         fundsRequested: metadata?.fundsRequested || '0',
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
-        status: 'pending',
+        status: signOfApprovals.some(p => p.txHash === txhash) 
+          ? 'signoff_pending' 
+          : proposals.some(p => p.txHash === txhash) 
+          ? 'approved' 
+          : 'pending',
       };
     } catch (error) {
       console.error('Error parsing proposal datum:', error);
@@ -89,13 +94,17 @@ export default function Page({ params }: PageProps) {
         return 'default';
       case 'approved':
         return 'success';
+      case 'signoff_pending':
+        return 'warning';
       case 'rejected':
         return 'error';
       default:
         return 'inactive';
     }
   };
-  const statusLabel = proposalData.status.replace('_', ' ');
+  const statusLabel = proposalData.status === 'signoff_pending' 
+    ? 'Awaiting Signoff' 
+    : proposalData.status.replace('_', ' ');
 
   return (
     <div className="container px-4 py-2 pb-8 sm:px-6">
@@ -175,7 +184,7 @@ export default function Page({ params }: PageProps) {
                   Funds Requested
                 </Paragraph>
                 <Paragraph size="sm" className="text-foreground">
-                  {proposalData.fundsRequested}
+                  {proposalData.fundsRequested && proposalData.fundsRequested !== '0' ? formatAdaAmount(proposalData.fundsRequested) : 'N/A'}
                 </Paragraph>
               </div>
             </div>

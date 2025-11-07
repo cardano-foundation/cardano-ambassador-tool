@@ -3,16 +3,17 @@
 import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
 import Button from '@/components/atoms/Button';
-import { CopyIcon } from '@/components/atoms/CopyIcon';
+import Chip from '@/components/atoms/Chip';
 import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
-import Link from 'next/link';
+import Select from '@/components/atoms/Select';
+import Title from '@/components/atoms/Title';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { parseProposalDatum } from '@/utils';
-import Chip from '@/components/atoms/Chip';
+import { formatAdaAmount, parseProposalDatum } from '@/utils';
+import Link from 'next/link';
+import { useState } from 'react';
 
 type ProposalIntent = {
   id: number;
@@ -21,8 +22,14 @@ type ProposalIntent = {
   submittedByAddress: string;
   receiverWalletAddress: string;
   createdAt?: string;
-  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected';
-  fundsRequested?: number;
+  status:
+    | 'pending'
+    | 'submitted'
+    | 'under_review'
+    | 'approved'
+    | 'rejected'
+    | 'signoff_pending';
+  fundsRequested?: string;
   txHash: string;
   outputIndex?: number;
 };
@@ -36,6 +43,8 @@ const getChipVariant = (status: ProposalIntent['status']) => {
     case 'under_review':
       return 'default';
     case 'approved':
+      return 'success';
+    case 'signoff_pending':
       return 'success';
     case 'rejected':
       return 'error';
@@ -72,9 +81,9 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
       const truncatedValue = truncateToWords(value, 6);
       return (
         <div className="max-w-[300px] text-sm">
-          <RichTextDisplay 
-            content={truncatedValue} 
-            className="prose-sm [&_p]:mb-1 [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_strong]:font-semibold" 
+          <RichTextDisplay
+            content={truncatedValue}
+            className="prose-sm [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_p]:mb-1 [&_strong]:font-semibold"
           />
         </div>
       );
@@ -99,7 +108,7 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     sortable: true,
     cell: (value) => (
       <span className="text-sm">
-        {value ? `$${value.toLocaleString()}` : 'N/A'}
+        {value && value !== '0' ? formatAdaAmount(value) : 'N/A'}
       </span>
     ),
   },
@@ -121,8 +130,10 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     accessor: 'status',
     sortable: true,
     cell: (value) => (
-      <Chip variant={getChipVariant(value)}>
-        {value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
+      <Chip variant={getChipVariant(value)} className="text-nowrap">
+        {value === 'signoff_pending'
+          ? 'Awaiting Signoff'
+          : value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
       </Chip>
     ),
   },
@@ -140,14 +151,17 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
 ];
 
 export default function ProposalIntentsPage() {
-  const { proposalIntents, proposals, dbLoading } = useApp();
+  const { proposalIntents, proposals, signOfApprovals, dbLoading } = useApp();
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | ProposalIntent['status']
+  >('all');
 
   if (dbLoading) {
     return <div className="p-4">Loading proposals...</div>;
   }
 
-  // Combine both pending proposals (proposalIntents) and approved proposals (proposals)
-  const allProposals = [...proposalIntents, ...proposals];
+  // Combine all proposal stages
+  const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
 
   if (!allProposals.length) {
     return <div className="p-4">No proposals found.</div>;
@@ -157,7 +171,7 @@ export default function ProposalIntentsPage() {
     const decodedDatum: ProposalIntent = {
       title: '',
       description: '',
-      fundsRequested: 0,
+      fundsRequested: '0',
       receiverWalletAddress: '',
       submittedByAddress: '',
       status: 'pending',
@@ -171,14 +185,23 @@ export default function ProposalIntentsPage() {
 
         if (metadata) {
           decodedDatum['title'] = metadata.title || 'Untitled Proposal';
-          decodedDatum['description'] = metadata.description || 'No description provided';
-          decodedDatum['fundsRequested'] = parseInt(metadata.fundsRequested || '0');
-          decodedDatum['receiverWalletAddress'] = metadata.receiverWalletAddress || '';
-          decodedDatum['submittedByAddress'] = metadata.submittedByAddress || '';
+          decodedDatum['description'] =
+            metadata.description || 'No description provided';
+          decodedDatum['fundsRequested'] = metadata.fundsRequested || '0';
+          decodedDatum['receiverWalletAddress'] =
+            metadata.receiverWalletAddress || '';
+          decodedDatum['submittedByAddress'] =
+            metadata.submittedByAddress || '';
           decodedDatum['id'] = idx + 1;
-          
-          // Determine status: if it's in the proposals array, it's approved; if in proposalIntents, it's pending
-          decodedDatum['status'] = proposals.some(p => p.txHash === utxo.txHash) ? 'approved' : 'pending';
+
+          // Determine status based on which array contains the proposal
+          decodedDatum['status'] = signOfApprovals.some(
+            (p) => p.txHash === utxo.txHash,
+          )
+            ? 'signoff_pending'
+            : proposals.some((p) => p.txHash === utxo.txHash)
+              ? 'approved'
+              : 'pending';
         }
       } catch (error) {
         console.error('Error parsing proposal datum:', error);
@@ -190,6 +213,51 @@ export default function ProposalIntentsPage() {
     return decodedDatum;
   });
 
+  // Remove duplicates based on txHash (keep the most advanced status)
+  const uniqueProposals = decodedUtxos.reduce((acc, current) => {
+    const existing = acc.find((item) => item.txHash === current.txHash);
+    if (!existing) {
+      acc.push(current);
+    } else {
+      const statusPriority = {
+        rejected: 1,
+        submitted: 3,
+        under_review: 1,
+        signoff_pending: 3,
+        approved: 2,
+        pending: 1,
+      };
+      if (statusPriority[current.status] > statusPriority[existing.status]) {
+        const index = acc.indexOf(existing);
+        acc[index] = current;
+      }
+    }
+    return acc;
+  }, [] as ProposalIntent[]);
+
+  // Apply status filter
+  const filteredProposals =
+    statusFilter === 'all'
+      ? uniqueProposals
+      : uniqueProposals.filter((proposal) => proposal.status === statusFilter);
+
+  // Count by status for display
+  const statusCounts = {
+    pending: uniqueProposals.filter((p) => p.status === 'pending').length,
+    approved: uniqueProposals.filter((p) => p.status === 'approved').length,
+    signoff_pending: uniqueProposals.filter(
+      (p) => p.status === 'signoff_pending',
+    ).length,
+  };
+
+  const statusOptions = [
+    { value: 'all', label: 'All Statuses' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'signoff_pending', label: 'Awaiting Signoff' },
+    { value: 'rejected', label: 'Rejected' },
+  ];
+
   return (
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4">
@@ -199,14 +267,35 @@ export default function ProposalIntentsPage() {
               Proposals
             </Title>
             <Paragraph className="text-muted-foreground text-sm">
-              Browse and manage all proposals submitted by ambassadors
-              {allProposals.length > 0 &&
-                ` - ${allProposals.length} found (${proposalIntents.length} pending, ${proposals.length} approved)`}
+              Browse and manage all proposals at every stage of the process
             </Paragraph>
           </div>
 
+          {/* Status Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground text-sm">
+              Filter by status:
+            </span>
+            <Select
+              value={statusFilter}
+              onValueChange={(value) =>
+                setStatusFilter(value as typeof statusFilter)
+              }
+              options={statusOptions.map((option) => ({
+                ...option,
+                label:
+                  option.value !== 'all' &&
+                  statusCounts[option.value as keyof typeof statusCounts] > 0
+                    ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
+                    : option.label,
+              }))}
+              placeholder="Select status..."
+              className="w-48"
+            />
+          </div>
+
           <Table
-            data={decodedUtxos}
+            data={filteredProposals}
             columns={proposalIntentColumns}
             pageSize={10}
             searchable={true}

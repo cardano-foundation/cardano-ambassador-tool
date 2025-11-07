@@ -163,6 +163,11 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}
+        showNavigationOptions={isFinalized}
+        navigationOptions={[
+          { label: 'View Treasury', url: '/manage/treasury-signoffs', variant: 'primary' },
+          { label: 'View All Proposals', url: '/proposals', variant: 'outline' }
+        ]}
       />
     </div>
   );

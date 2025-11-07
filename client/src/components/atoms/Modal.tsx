@@ -91,7 +91,7 @@ export default function Modal({
 
   // Determine footer - use custom footer or actions
   const footerContent = footer || (actions.length > 0 && (
-    <div className="flex gap-3">
+    <div className="flex gap-3 w-full">
       {actions.map((action, index) => (
         <Button
           key={index}

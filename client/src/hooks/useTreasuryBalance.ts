@@ -36,7 +36,7 @@ export function useTreasuryBalance() {
     fetchTreasuryBalance();
   }, [fetchTreasuryBalance]);
 
-  // Listen for global refresh events (from successful signoff execution)
+  // Listen for global refresh events
   useEffect(() => {
     const handleRefresh = (event: CustomEvent) => {
       if (event.detail?.refreshTreasury) {

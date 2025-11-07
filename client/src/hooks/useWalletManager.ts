@@ -54,7 +54,6 @@ export function useWalletManager(): WalletState & {
         );
 
         if (!isNetworkValid) {
-          // Get detailed network information for error message
           const walletNetworkId = await wallet.getNetworkId();
           const expectedNetwork = await import('@/config/cardano').then((m) =>
             m.getCurrentNetworkConfig(),
@@ -74,7 +73,6 @@ export function useWalletManager(): WalletState & {
           return;
         }
 
-        // Only set as connected if network validation passes
         setState((prev) => ({
           ...prev,
           isConnected: true,
@@ -112,7 +110,6 @@ export function useWalletManager(): WalletState & {
     clearWalletSelection();
   }, []);
 
-  // Clear error
   const clearError = useCallback(() => {
     setState((prev) => ({ ...prev, error: null }));
   }, []);
@@ -150,7 +147,7 @@ export function useWalletManager(): WalletState & {
               isConnecting: false,
               error: `Auto-connect failed: Wallet is on ${walletNetworkName} but app requires ${expectedNetworkName}.`,
             }));
-            clearWalletSelection(); // Clear saved selection since it's invalid
+            clearWalletSelection(); 
             return;
           }
 

@@ -11,7 +11,7 @@ import Title from '@/components/atoms/Title';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { getCatConstants, parseProposalDatum } from '@/utils';
+import { getCatConstants, parseProposalDatum, lovelaceToAda, formatAdaAmount } from '@/utils';
 import Link from 'next/link';
 
 type ProposalIntent = {
@@ -28,7 +28,7 @@ type ProposalIntent = {
     | 'approved'
     | 'rejected'
     | 'ready';
-  fundsRequested?: number;
+  fundsRequested: string;
   txHash: string;
   outputIndex?: number;
 };
@@ -116,7 +116,7 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     sortable: true,
     cell: (value) => (
       <span className="text-sm">
-        {value ? `₳${value.toLocaleString()}` : 'N/A'}
+        {value && value !== '0' ? formatAdaAmount(value) : 'N/A'}
       </span>
     ),
   },
@@ -173,7 +173,7 @@ export default function TreasurySignOffsPage() {
     const decodedDatum: ProposalIntent = {
       title: '',
       description: '',
-      fundsRequested: 0,
+      fundsRequested: '0',
       receiverWalletAddress: '',
       submittedByAddress: '',
       status: 'ready',
@@ -187,7 +187,7 @@ export default function TreasurySignOffsPage() {
       if (metadata) {
         decodedDatum['title'] = metadata.title!;
         decodedDatum['description'] = metadata.description!;
-        decodedDatum['fundsRequested'] = parseInt(metadata.fundsRequested!);
+        decodedDatum['fundsRequested'] = metadata.fundsRequested || '0';
         decodedDatum['receiverWalletAddress'] = metadata.receiverWalletAddress!;
         decodedDatum['submittedByAddress'] = metadata.submittedByAddress!;
         decodedDatum['id'] = idx + 1;
@@ -197,9 +197,10 @@ export default function TreasurySignOffsPage() {
     return decodedDatum;
   });
 
-  // Calculate treasury overview totals using real data
+
   const totalPendingWithdrawals = decodedUtxos.reduce((sum, utxo) => {
-    return sum + (utxo.fundsRequested || 0);
+    const adaAmount = parseFloat(utxo.fundsRequested || '0');
+    return sum + (isNaN(adaAmount) ? 0 : adaAmount);
   }, 0);
   const availableBalance = treasuryBalanceAda - totalPendingWithdrawals;
   const hasInsufficientBalance = availableBalance < 0;
@@ -265,7 +266,7 @@ export default function TreasurySignOffsPage() {
               </div>
             </CardContent>
           </Card>
-          {/* Deposit to Treasury */}]{/* Insufficient Balance Warning */}
+          {/* Deposit to Treasury */}{/* Insufficient Balance Warning */}
           {hasInsufficientBalance && (
             <Card className="border-orange-200 bg-orange-50">
               <CardContent className="p-4">

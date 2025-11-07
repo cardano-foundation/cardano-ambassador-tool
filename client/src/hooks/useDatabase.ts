@@ -7,12 +7,17 @@ import {
   sendUtxoWorkerMessage,
 } from '@/lib/utxoWorkerClient';
 import { getProvider } from '@/utils';
-import { deserializeDatum, PubKeyAddress, ScriptAddress, serializeAddressObj, UTxO } from '@meshsdk/core';
+import {
+  deserializeDatum,
+  PubKeyAddress,
+  ScriptAddress,
+  serializeAddressObj,
+} from '@meshsdk/core';
 import {
   MembershipIntentDatum,
   MembershipMetadata,
 } from '@sidan-lab/cardano-ambassador-tool';
-import { Ambassador, Utxo } from '@types';
+import { Utxo } from '@types';
 import { useEffect, useState } from 'react';
 
 // ---------- Database operations ----------
@@ -55,7 +60,7 @@ export function useDatabase() {
       const unsubscribe = onUtxoWorkerMessage(async (data) => {
         if (data.db) {
           try {
-            clearTimeout(timeoutId); 
+            clearTimeout(timeoutId);
 
             await dbManager.initializeDatabase(data.db);
             const memberships_intents =
@@ -144,10 +149,7 @@ export function useDatabase() {
     address: string,
   ): Promise<Utxo | null> {
     try {
-
-      const utxosWithData = membershipIntents.filter(
-        (utxo) => utxo.plutusData,
-      );
+      const utxosWithData = membershipIntents.filter((utxo) => utxo.plutusData);
 
       const matchingUtxo = utxosWithData.find((utxo) => {
         try {

@@ -9,7 +9,7 @@ import Title from '@/components/atoms/Title';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { parseProposalDatum } from '@/utils';
+import { parseProposalDatum, lovelaceToAda, formatAdaAmount } from '@/utils';
 import Link from 'next/link';
 import EmptyProposalIntentState from './EmptyProposalIntentState';
 
@@ -20,7 +20,7 @@ type UserProposal = {
   submittedByAddress: string;
   receiverWalletAddress: string;
   status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected';
-  fundsRequested?: number;
+  fundsRequested: string;
   txHash: string;
 };
 
@@ -66,7 +66,7 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
     sortable: true,
     cell: (value) => (
       <span className="text-sm">
-        {value ? `$${value.toLocaleString()}` : 'N/A'}
+        {value ? formatAdaAmount(lovelaceToAda(value)) : 'N/A'}
       </span>
     ),
   },
@@ -136,7 +136,7 @@ export default function ProposalSubmissionsTab() {
           id: idx + 1,
           title: metadata.title || '',
           description: metadata.description || '',
-          fundsRequested: parseInt(metadata.fundsRequested || '0'),
+          fundsRequested: metadata.fundsRequested || '0',
           receiverWalletAddress: metadata.receiverWalletAddress || '',
           submittedByAddress: metadata.submittedByAddress || '',
           status: 'pending' as const,

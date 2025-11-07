@@ -15,7 +15,7 @@ import FinalizeSignoffApproval from '@/components/FinalizeSignoffApproval';
 import ExecuteSignoff from '@/components/ExecuteSignoff';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
-import { parseProposalDatum } from '@/utils';
+import { formatAdaAmount, parseProposalDatum } from '@/utils';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { AdminDecisionData } from '@types';
 import { use, useState } from 'react';
@@ -33,8 +33,8 @@ export default function Page({ params }: PageProps) {
   const { txhash } = use(params);
 
 
-  const proposal = proposalIntents.find((utxo) => utxo.txHash === txhash) || 
-                  proposals.find((utxo) => utxo.txHash === txhash);
+  const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
+  const proposal = allProposals.find((utxo) => utxo.txHash === txhash);
 
   const signoffApprovalUtxo = signOfApprovals.find((utxo) => utxo.txHash === txhash);
   const memberUtxo = members.length > 0 ? members[0] : undefined;
@@ -44,14 +44,17 @@ export default function Page({ params }: PageProps) {
     try {
       const { metadata } = parseProposalDatum(proposal.plutusData)!;
 
-      const isApproved = proposals.some(p => p.txHash === txhash);
       proposalData = {
         title: metadata?.title,
         description: metadata?.description,
         fundsRequested: metadata?.fundsRequested || '0',
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
-        status: isApproved ? 'approved' : 'pending',
+        status: signOfApprovals.some(p => p.txHash === txhash)
+          ? 'signoff_pending'
+          : proposals.some(p => p.txHash === txhash)
+          ? 'approved'
+          : 'pending',
       };
     } catch (error) {
       console.error('Error parsing proposal datum:', error);
@@ -108,6 +111,8 @@ export default function Page({ params }: PageProps) {
         return 'default';
       case 'approved':
         return 'success';
+      case 'signoff_pending':
+        return 'warning';
       case 'rejected':
         return 'error';
       default:
@@ -127,7 +132,9 @@ export default function Page({ params }: PageProps) {
   const handleSignoffFinalizationComplete = () => {
     setIsSignoffFinalized(true);
   };
-  const statusLabel = proposalData.status.replace('_', ' ');
+  const statusLabel = proposalData.status === 'signoff_pending' 
+    ? 'Awaiting Signoff' 
+    : proposalData.status.replace('_', ' ');
   return (
     <div className="container px-4 py-2 pb-8 sm:px-6">
       <div className="space-y-6">
@@ -135,9 +142,9 @@ export default function Page({ params }: PageProps) {
           <Title level="5" className="text-foreground">
             {proposalData.title}
           </Title>
-          <Chip 
-            variant={getChipVariant()} 
-            size="md" 
+          <Chip
+            variant={getChipVariant()}
+            size="md"
             className="capitalize"
             aria-label={`Current status: ${statusLabel}`}
           >
@@ -170,8 +177,8 @@ export default function Page({ params }: PageProps) {
                     keyLabel={''}
                   />
                 ) : (
-                  <Paragraph 
-                    size="sm" 
+                  <Paragraph
+                    size="sm"
                     className="text-foreground"
                     aria-label="Receiver wallet address not specified"
                   >
@@ -206,20 +213,14 @@ export default function Page({ params }: PageProps) {
                 <Paragraph size="xs" className="">
                   Funds Requested
                 </Paragraph>
-                <Paragraph 
-                  size="sm" 
-                  className="text-foreground"
-                >
-                  {proposalData.fundsRequested}
+                <Paragraph size="sm" className="text-foreground">
+                  {formatAdaAmount(proposalData.fundsRequested)}
                 </Paragraph>
               </div>
             </div>
           </CardContent>
         </Card>
-        <div 
-          role="region"
-          aria-label="Proposal overview"
-        >
+        <div role="region" aria-label="Proposal overview">
           <Title level="5" className="text-foreground">
             Overview
           </Title>
@@ -296,7 +297,7 @@ export default function Page({ params }: PageProps) {
             </Card>
           </div>
         )}
-        
+
         {/* Signoff Workflow for Approved Proposals */}
         {proposalData.status === 'approved' && (
           <>
@@ -362,17 +363,24 @@ export default function Page({ params }: PageProps) {
                 <Card>
                   <div className="p-4">
                     <div className="space-y-4">
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                         <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                          <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white">
                             i
                           </div>
                           <div className="space-y-2">
-                            <Title level="6" className="text-blue-800 font-semibold">
+                            <Title
+                              level="6"
+                              className="font-semibold text-blue-800"
+                            >
                               Admin Multi-signature Required
                             </Title>
-                            <Paragraph className="text-blue-700 text-sm">
-                              The final treasury withdrawal (SignOff) requires multiple admin signatures and cannot be executed directly from the browser. This step needs to be completed using the admin dashboard or server-side API with access to admin wallets.
+                            <Paragraph className="text-sm text-blue-700">
+                              The final treasury withdrawal (SignOff) requires
+                              multiple admin signatures and cannot be executed
+                              directly from the browser. This step needs to be
+                              completed using the admin dashboard or server-side
+                              API with access to admin wallets.
                             </Paragraph>
                           </div>
                         </div>
