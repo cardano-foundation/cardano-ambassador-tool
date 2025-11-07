@@ -403,10 +403,10 @@ const SubmitIntent = ({
             disabled={isSubmitting}
           >
             {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 flex-1 animate-spin" />
-                Submitting...
-              </>
+              <div>
+                <Loader2 className="mr-2 h-4 w-4  animate-spin" />
+                <span>Submitting...</span>
+              </div>
             ) : (
               'Create Account'
             )}
