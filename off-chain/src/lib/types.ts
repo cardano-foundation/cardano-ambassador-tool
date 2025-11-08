@@ -189,7 +189,12 @@ export type MembershipMetadata = ConStr0<
     ByteString | List<ByteString>, // emailAddress
     ByteString | List<ByteString>, // bio
     ByteString | List<ByteString>, // country
-    ByteString | List<ByteString> // city
+    ByteString | List<ByteString>, // city
+    ByteString | List<ByteString>, // x_handle
+    ByteString | List<ByteString>, // github
+    ByteString | List<ByteString>, // discord
+    ByteString | List<ByteString>, // spo_id
+    ByteString | List<ByteString> // drep_id
   ]
 >;
 
@@ -280,6 +285,11 @@ export const membershipMetadata = (
     handleString(jsonData.bio || ""),
     handleString(jsonData.country || ""),
     handleString(jsonData.city || ""),
+    handleString(jsonData.x_handle || ""),
+    handleString(jsonData.github || ""),
+    handleString(jsonData.discord || ""),
+    handleString(jsonData.spo_id || ""),
+    handleString(jsonData.drep_id || ""),
   ]);
 };
 
@@ -470,6 +480,11 @@ export type MemberData = {
   bio: string;
   country: string;
   city: string;
+  x_handle: string;
+  github: string;
+  discord: string;
+  spo_id: string;
+  drep_id: string;
 };
 
 export type Member = {

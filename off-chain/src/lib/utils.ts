@@ -234,6 +234,11 @@ export const getMembershipIntentDatum = (
     bio: extractString(metadataPluts.fields[4]),
     country: extractString(metadataPluts.fields[5]),
     city: extractString(metadataPluts.fields[6]),
+    x_handle: extractString(metadataPluts.fields[7]),
+    github: extractString(metadataPluts.fields[8]),
+    discord: extractString(metadataPluts.fields[9]),
+    spo_id: extractString(metadataPluts.fields[10]),
+    drep_id: extractString(metadataPluts.fields[11]),
   };
   return { policyId, assetName, metadata };
 };
@@ -251,6 +256,11 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
     bio: extractString(metadataPluts.fields[4]),
     country: extractString(metadataPluts.fields[5]),
     city: extractString(metadataPluts.fields[6]),
+    x_handle: extractString(metadataPluts.fields[7]),
+    github: extractString(metadataPluts.fields[8]),
+    discord: extractString(metadataPluts.fields[9]),
+    spo_id: extractString(metadataPluts.fields[10]),
+    drep_id: extractString(metadataPluts.fields[11]),
   };
 
   const policyId = datum.fields[0].list[0].bytes;
