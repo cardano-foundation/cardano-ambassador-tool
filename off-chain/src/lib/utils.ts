@@ -227,17 +227,13 @@ export const getMembershipIntentDatum = (
   };
 
   const metadata: MemberData = {
-    href: extractString(metadataPluts.fields[0]),
-    username: extractString(metadataPluts.fields[1]),
-    name: extractString(metadataPluts.fields[2]),
-    bio_excerpt: extractString(metadataPluts.fields[3]),
-    country: extractString(metadataPluts.fields[4]),
-    flag: extractString(metadataPluts.fields[5]),
-    avatar: extractString(metadataPluts.fields[6]),
-    created_at: extractString(metadataPluts.fields[7]),
-    summary: extractSummary(metadataPluts.fields[8]),
-    activities: extractActivities(metadataPluts.fields[9]),
-    badges: extractBadges(metadataPluts.fields[10]),
+    walletAddress: serializeAddressObj(metadataPluts.fields[0]),
+    fullName: extractString(metadataPluts.fields[1]),
+    displayName: extractString(metadataPluts.fields[2]),
+    emailAddress: extractString(metadataPluts.fields[3]),
+    bio: extractString(metadataPluts.fields[4]),
+    country: extractString(metadataPluts.fields[5]),
+    city: extractString(metadataPluts.fields[6]),
   };
   return { policyId, assetName, metadata };
 };
@@ -248,17 +244,13 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
   const metadataPluts: MembershipMetadata = datum.fields[3];
 
   const metadata: MemberData = {
-    href: extractString(metadataPluts.fields[0]),
-    username: extractString(metadataPluts.fields[1]),
-    name: extractString(metadataPluts.fields[2]),
-    bio_excerpt: extractString(metadataPluts.fields[3]),
-    country: extractString(metadataPluts.fields[4]),
-    flag: extractString(metadataPluts.fields[5]),
-    avatar: extractString(metadataPluts.fields[6]),
-    created_at: extractString(metadataPluts.fields[7]),
-    summary: extractSummary(metadataPluts.fields[8]),
-    activities: extractActivities(metadataPluts.fields[9]),
-    badges: extractBadges(metadataPluts.fields[10]),
+    walletAddress: serializeAddressObj(metadataPluts.fields[0]),
+    fullName: extractString(metadataPluts.fields[1]),
+    displayName: extractString(metadataPluts.fields[2]),
+    emailAddress: extractString(metadataPluts.fields[3]),
+    bio: extractString(metadataPluts.fields[4]),
+    country: extractString(metadataPluts.fields[5]),
+    city: extractString(metadataPluts.fields[6]),
   };
 
   const policyId = datum.fields[0].list[0].bytes;
@@ -268,7 +260,12 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
   datum.fields[1].map.forEach((item) => {
     completion.set(
       {
-        projectDetails: hexToString(item.k.fields[0].bytes),
+        title: extractString(item.k.fields[0]),
+        description: extractString(item.k.fields[1]),
+        fundsRequested: extractString(item.k.fields[2]),
+        receiverWalletAddress: extractString(item.k.fields[3]),
+        submittedByAddress: extractString(item.k.fields[4]),
+        status: extractString(item.k.fields[5]),
       },
       Number(item.v.int)
     );
@@ -293,17 +290,10 @@ export const updateMemberDatum = (
 
   const updatedCompletions: Map<ProposalData, number> = new Map();
   member.completion.forEach((v, k) => {
-    updatedCompletions.set(
-      {
-        projectDetails: stringToHex(k.projectDetails),
-      },
-      v
-    );
+    updatedCompletions.set(k, v);
   });
   updatedCompletions.set(
-    {
-      projectDetails: stringToHex(signOffApproval.metadata.projectDetails),
-    },
+    signOffApproval.metadata,
     signOffApproval.fundRequested
   );
 
@@ -340,7 +330,12 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
   const metadataPluts: ProposalMetadata = datum.fields[3];
 
   const metadata: ProposalData = {
-    projectDetails: hexToString(metadataPluts.fields[0].bytes),
+    title: extractString(metadataPluts.fields[0]),
+    description: extractString(metadataPluts.fields[1]),
+    fundsRequested: extractString(metadataPluts.fields[2]),
+    receiverWalletAddress: extractString(metadataPluts.fields[3]),
+    submittedByAddress: extractString(metadataPluts.fields[4]),
+    status: extractString(metadataPluts.fields[5]),
   };
   return {
     fundRequested: fundRequested,

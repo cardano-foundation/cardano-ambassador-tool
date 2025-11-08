@@ -43,8 +43,6 @@ export class Layer1Tx {
   };
 
   newTxBuilder = (evaluateTx = true) => {
-    console.log("no csl");
-
     const txBuilderConfig: MeshTxBuilderOptions = {
       fetcher: this.provider,
       submitter: this.provider,
@@ -59,7 +57,6 @@ export class Layer1Tx {
     }
 
     const txBuilder = new MeshTxBuilder(txBuilderConfig);
-    txBuilder.txEvaluationMultiplier = 1.5;
 
     txBuilder.setNetwork(
       this.catConstant.networkId === 1 ? "mainnet" : "preprod"
