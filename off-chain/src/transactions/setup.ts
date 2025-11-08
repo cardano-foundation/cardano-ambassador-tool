@@ -6,7 +6,7 @@ import {
   IProvider,
   OracleDatum,
   CATConstants,
-} from "../../../off-chain/src/lib";
+} from "../lib";
 import { IWallet, resolveScriptHash, UTxO } from "@meshsdk/core";
 
 export enum ScriptType {
@@ -61,6 +61,7 @@ export class SetupTx extends Layer1Tx {
       return txHash;
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -116,6 +117,7 @@ export class SetupTx extends Layer1Tx {
       return txHash;
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -149,6 +151,7 @@ export class SetupTx extends Layer1Tx {
       return txHash;
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -171,6 +174,7 @@ export class SetupTx extends Layer1Tx {
       return txHash;
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -270,6 +274,7 @@ export class SetupTx extends Layer1Tx {
       return { [scriptType]: txHash };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 }

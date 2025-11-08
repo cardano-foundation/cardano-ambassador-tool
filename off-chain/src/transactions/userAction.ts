@@ -18,7 +18,7 @@ import {
   memberDatum,
   getMemberDatum,
   memberUpdateMetadata,
-} from "../../../off-chain/src/lib";
+} from "../lib";
 import { hexToString, IWallet, UTxO } from "@meshsdk/core";
 
 export class UserActionTx extends Layer1Tx {
@@ -105,7 +105,6 @@ export class UserActionTx extends Layer1Tx {
       }
 
       const txHex = await txBuilder.complete();
-      console.log(txHex);
 
       const signedTx = await this.wallet.signTx(txHex, true);
       await this.wallet.submitTx(signedTx);
@@ -192,7 +191,6 @@ export class UserActionTx extends Layer1Tx {
       }
 
       const txHex = await txBuilder.complete();
-      console.log(txHex);
 
       const signedTx = await this.wallet.signTx(txHex, true);
       await this.wallet.submitTx(signedTx);
@@ -200,6 +198,7 @@ export class UserActionTx extends Layer1Tx {
       return { txHex, membershipIntentUtxoTxIndex: 0, userTokenUtxoTxIndex: 1 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -285,7 +284,6 @@ export class UserActionTx extends Layer1Tx {
       }
 
       const txHex = await txBuilder.complete();
-      console.log(txHex);
 
       const signedTx = await this.wallet.signTx(txHex, true);
       await this.wallet.submitTx(signedTx);
@@ -293,6 +291,7 @@ export class UserActionTx extends Layer1Tx {
       return { txHex, memberUtxoTxIndex: 0, userTokenUtxoTxIndex: 1 };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 
@@ -390,7 +389,6 @@ export class UserActionTx extends Layer1Tx {
       }
 
       const txHex = await txBuilder.complete();
-      console.log(txHex);
 
       const signedTx = await this.wallet.signTx(txHex, true);
       await this.wallet.submitTx(signedTx);
@@ -402,6 +400,7 @@ export class UserActionTx extends Layer1Tx {
       };
     } catch (e) {
       console.error(e);
+      throw e;
     }
   };
 }
