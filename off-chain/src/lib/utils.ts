@@ -8,7 +8,6 @@ import {
   list,
   serializeAddressObj,
   serializeData,
-  stringToHex,
   UTxO,
   plutusBSArrayToString,
   List,
@@ -271,10 +270,10 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
     completion.set(
       {
         title: extractString(item.k.fields[0]),
-        description: extractString(item.k.fields[1]),
+        url: extractString(item.k.fields[1]),
         fundsRequested: extractString(item.k.fields[2]),
-        receiverWalletAddress: extractString(item.k.fields[3]),
-        submittedByAddress: extractString(item.k.fields[4]),
+        receiverWalletAddress: serializeAddressObj(item.k.fields[3]),
+        submittedByAddress: serializeAddressObj(item.k.fields[4]),
         status: extractString(item.k.fields[5]),
       },
       Number(item.v.int)
@@ -310,14 +309,9 @@ export const updateMemberDatum = (
   const updatedFundRecevied =
     member.fundReceived + signOffApproval.fundRequested;
 
-  // Create updated metadata with the new structure
-  const updatedMetadata: MemberData = {
-    ...member.metadata,
-    // You can update specific fields here if needed
-  };
-
-  const memberMetadata: MembershipMetadata =
-    membershipMetadata(updatedMetadata);
+  const memberMetadata: MembershipMetadata = membershipMetadata(
+    member.metadata
+  );
 
   const updatedMemberDatum: MemberDatum = memberDatum(
     member.token.policyId,
@@ -341,10 +335,10 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
 
   const metadata: ProposalData = {
     title: extractString(metadataPluts.fields[0]),
-    description: extractString(metadataPluts.fields[1]),
+    url: extractString(metadataPluts.fields[1]),
     fundsRequested: extractString(metadataPluts.fields[2]),
-    receiverWalletAddress: extractString(metadataPluts.fields[3]),
-    submittedByAddress: extractString(metadataPluts.fields[4]),
+    receiverWalletAddress: serializeAddressObj(metadataPluts.fields[3]),
+    submittedByAddress: serializeAddressObj(metadataPluts.fields[4]),
     status: extractString(metadataPluts.fields[5]),
   };
   return {
