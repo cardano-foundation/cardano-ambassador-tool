@@ -360,10 +360,10 @@ export const memberUpdateMetadata: MemberUpdateMetadata = conStr2([]);
 export type ProposalMetadata = ConStr0<
   [
     ByteString | List<ByteString>, // title
-    ByteString | List<ByteString>, // description
+    ByteString | List<ByteString>, // url
     ByteString | List<ByteString>, // fundsRequested
-    ByteString | List<ByteString>, // receiverWalletAddress
-    ByteString | List<ByteString>, // submittedByAddress
+    PubKeyAddress, // receiverWalletAddress
+    PubKeyAddress, // submittedByAddress
     ByteString | List<ByteString> // status
   ]
 >;
@@ -371,10 +371,10 @@ export type ProposalMetadata = ConStr0<
 export const proposalMetadata = (jsonData: ProposalData): ProposalMetadata => {
   return conStr0([
     handleString(jsonData.title || ""),
-    handleString(jsonData.description || ""),
+    handleString(jsonData.url || ""),
     handleString(jsonData.fundsRequested || ""),
-    handleString(jsonData.receiverWalletAddress || ""),
-    handleString(jsonData.submittedByAddress || ""),
+    addrBech32ToPlutusDataObj(jsonData.receiverWalletAddress),
+    addrBech32ToPlutusDataObj(jsonData.submittedByAddress),
     handleString(jsonData.status || ""),
   ]);
 };
@@ -480,11 +480,11 @@ export type MemberData = {
   bio: string;
   country: string;
   city: string;
-  x_handle: string;
-  github: string;
-  discord: string;
-  spo_id: string;
-  drep_id: string;
+  x_handle?: string;
+  github?: string;
+  discord?: string;
+  spo_id?: string;
+  drep_id?: string;
 };
 
 export type Member = {
@@ -496,7 +496,7 @@ export type Member = {
 
 export type ProposalData = {
   title: string;
-  description: string;
+  url: string;
   fundsRequested: string;
   receiverWalletAddress: string;
   submittedByAddress: string;

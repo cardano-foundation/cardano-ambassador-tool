@@ -18,6 +18,8 @@ import {
   memberDatum,
   getMemberDatum,
   memberUpdateMetadata,
+  MembershipMetadata,
+  ProposalMetadata,
 } from "../lib";
 import { hexToString, IWallet, UTxO } from "@meshsdk/core";
 
@@ -46,7 +48,7 @@ export class UserActionTx extends Layer1Tx {
     tokenUtxo: UTxO,
     tokenPolicyId: string,
     tokenAssetName: string,
-    metadata: any
+    metadata: MembershipMetadata
   ) => {
     const redeemer: ApplyMembership = applyMembership(
       tokenPolicyId,
@@ -311,7 +313,7 @@ export class UserActionTx extends Layer1Tx {
     memberUtxo: UTxO,
     fundRequested: number,
     receiver: string,
-    metadata: any
+    metadata: ProposalMetadata
   ) => {
     const memberAssetName = hexToString(
       getTokenAssetNameByPolicyId(
