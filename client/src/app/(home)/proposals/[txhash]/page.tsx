@@ -7,6 +7,7 @@ import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import ProposalDescription from '@/components/ProposalDescription';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
 import { parseProposalDatum, formatAdaAmount } from '@/utils';
@@ -24,12 +25,15 @@ export default function Page({ params }: PageProps) {
   const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
   const proposal = allProposals.find((utxo) => utxo.txHash === txhash);
 
-  let proposalData: ProposalData;
-  if (proposal && proposal.plutusData) {
+  let proposalData: ProposalData & { description?: string };
+  if (proposal && proposal.parsedMetadata) {
     try {
-      const { metadata } = parseProposalDatum(proposal.plutusData)!;
+      const metadata = typeof proposal.parsedMetadata === 'string' 
+        ? JSON.parse(proposal.parsedMetadata) 
+        : proposal.parsedMetadata;
       proposalData = {
         title: metadata?.title,
+        url: metadata?.url,
         description: metadata?.description,
         fundsRequested: metadata?.fundsRequested || '0',
         receiverWalletAddress: metadata?.receiverWalletAddress,
@@ -41,10 +45,10 @@ export default function Page({ params }: PageProps) {
           : 'pending',
       };
     } catch (error) {
-      console.error('Error parsing proposal datum:', error);
+      console.error('Error parsing proposal metadata:', error);
       proposalData = {
         title: 'Error Loading Proposal',
-        description: 'Could not parse proposal data',
+        url: '',
         fundsRequested: '0',
         receiverWalletAddress: '',
         submittedByAddress: '',
@@ -54,7 +58,7 @@ export default function Page({ params }: PageProps) {
   } else {
     proposalData = {
       title: 'Error Loading Proposal',
-      description: 'Could not parse proposal data',
+      url: '',
       fundsRequested: '0',
       receiverWalletAddress: '',
       submittedByAddress: '',
@@ -153,32 +157,25 @@ export default function Page({ params }: PageProps) {
                   </Paragraph>
                 )}
               </div>
-            </div>
-            <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  Submitted by
+                  Submitted By
                 </Paragraph>
-                <div className="flex flex-wrap items-start gap-1.5">
-                  {proposalData.submittedByAddress ? (
-                    <Copyable
-                      withKey={false}
-                      link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
-                      value={proposalData.submittedByAddress}
-                      keyLabel={''}
-                    />
-                  ) : (
-                    !proposalData.submittedByAddress && (
-                      <Paragraph 
-                        size="sm" 
-                        className="text-foreground"
-                      >
-                        Not specified
-                      </Paragraph>
-                    )
-                  )}
-                </div>
+                {proposalData.submittedByAddress ? (
+                  <Copyable
+                    withKey={false}
+                    link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
+                    value={proposalData.submittedByAddress}
+                    keyLabel={''}
+                  />
+                ) : (
+                  <Paragraph size="sm" className="text-foreground" >
+                    Not specified
+                  </Paragraph>
+                )}
               </div>
+            </div>
+            <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
                   Funds Requested
@@ -207,8 +204,8 @@ export default function Page({ params }: PageProps) {
                 <Title level="6" className="text-foreground">
                   Description
                 </Title>
-                <RichTextDisplay
-                  content={proposalData.description}
+                <ProposalDescription
+                  content={proposalData.description || 'No description available'}
                   className="text-foreground"
                 />
               </div>

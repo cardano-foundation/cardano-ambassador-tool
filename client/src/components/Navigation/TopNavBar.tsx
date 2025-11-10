@@ -51,30 +51,34 @@ export default function TopNavBar() {
                 )}
               </Button>
             </div>
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <Breadcrumb />
             </div>
           </div>
           <div className="hidden justify-between lg:flex">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <Breadcrumb />
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <ThemeToggle />
+              <div className="border-border mx-1 h-6 border-l" />
               <GlobalRefreshButton />
               {user && (
-                <div className="flex items-center gap-3">
-                  {isAdmin && (
-                    <span className="bg-primary-base rounded-full px-2 py-1 text-xs text-white">
-                      Admin
-                    </span>
-                  )}
-                  <UserAvatar
-                    size="size-8"
-                    name={shortenString(user.address)}
-                  />
-                </div>
+                <>
+                  <div className="border-border mx-1 h-6 border-l" />
+                  <div className="relative">
+                    <UserAvatar
+                      size="size-8"
+                      name={shortenString(user.address)}
+                    />
+                    {isAdmin && (
+                      <span className="bg-primary-base absolute -bottom-1 left-1/2 -translate-x-1/2 transform whitespace-nowrap rounded-full px-2  text-[10px] font-medium text-white shadow-md">
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </div>

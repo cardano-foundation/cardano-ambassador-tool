@@ -4,10 +4,14 @@ import RichTextEditor from '@/components/atoms/RichTextEditor';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { RefObject } from 'react';
 
+type ProposalFormData = ProposalData & {
+  description: string;
+};
+
 interface Props {
   mode: 'create' | 'edit';
-  formData: ProposalData;
-  handleInputChange: (field: keyof ProposalData, value: string) => void;
+  formData: ProposalFormData;
+  handleInputChange: (field: keyof ProposalFormData, value: string) => void;
   descriptionEditorRef: RefObject<any>;
 }
 export default function FormDetails({

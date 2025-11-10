@@ -60,7 +60,7 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
   const currentTxHash = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!isVisible || !txHash) {
+    if (!isVisible) {
       confirmationRunning.current = false;
       currentTxHash.current = undefined;
       setConfirmationState({
@@ -68,6 +68,10 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
         attempts: 0,
         timeTaken: 0,
       });
+      return;
+    }
+
+    if (!txHash) {
       return;
     }
 
@@ -139,11 +143,9 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
 
     // Cleanup function
     return () => {
-      if (isVisible && (confirmationState.status === 'confirmed' || confirmationState.status === 'timeout')) {
-        window.removeEventListener('app:refresh', handleGlobalRefresh, true);
-      }
+      window.removeEventListener('app:refresh', handleGlobalRefresh, true);
     };
-  }, [isVisible, txHash, confirmationState.status]);
+  }, [isVisible, txHash]);
 
   if (!isVisible) {
     return null;

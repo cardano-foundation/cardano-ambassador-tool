@@ -1,5 +1,4 @@
 'use client';
-import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import { useApp } from '@/context';
 import { useAmbassadorProfile } from '@/hooks/useAmbassadorProfile';
 import {
@@ -29,12 +28,8 @@ export default function ProfilesPage() {
   );
 
   const blockfrost = getProvider();
-  const { userWallet, syncData, wallet, memberData, isMember } = useApp();
+  const { userWallet, syncData, wallet, memberData, isMember, showTxConfirmation } = useApp();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
-  // Transaction confirmation states
-  const [isTransactionPending, setIsTransactionPending] = useState(false);
-  const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
   const profileData = useMemo(() => {
     if (!memberData) {
@@ -71,10 +66,10 @@ export default function ProfilesPage() {
     email: profileData.email,
     username: profileData.username,
     bio: profileData.bio_excerpt ?? profile?.bio_excerpt,
-    spoId: '',
-    discord: '',
-    twitter: '',
-    github: '',
+    spoId: memberData?.spo_id || '',
+    discord: memberData?.discord || '',
+    twitter: memberData?.x_handle || '',
+    github: memberData?.github || '',
     href: profile?.href,
   };
 
@@ -143,6 +138,10 @@ export default function ProfilesPage() {
         bio: updatedProfile.bio || '',
         country: updatedProfile.country || '',
         city: updatedProfile.city || '',
+        x_handle: updatedProfile.twitter || '',
+        github: updatedProfile.github || '',
+        discord: updatedProfile.discord || '',
+        spo_id: updatedProfile.spoId || '',
       };
 
       const metadata = membershipMetadata(userMetadata);
@@ -158,9 +157,14 @@ export default function ProfilesPage() {
         const txHash = resolveTxHash(result.txHex);
 
         if (txHash) {
-          setTransactionHash(txHash);
-          setIsTransactionPending(true);
           setIsEditModalOpen(false);
+          showTxConfirmation({
+            txHash,
+            title: 'Updating Profile',
+            description: 'Please wait while your profile is being updated on the blockchain.',
+            onConfirmed: handleTransactionConfirmed,
+            onTimeout: handleTransactionTimeout,
+          });
         } else {
           console.error('Failed to compute transaction hash from txHex');
         }
@@ -173,9 +177,6 @@ export default function ProfilesPage() {
 
   const handleTransactionConfirmed = useCallback(
     async (result: TransactionConfirmationResult) => {
-      setIsTransactionPending(false);
-      setTransactionHash(null);
-
       try {
         await fetch('/api/revalidate', {
           method: 'POST',
@@ -198,9 +199,6 @@ export default function ProfilesPage() {
 
   const handleTransactionTimeout = useCallback(
     async (result: TransactionConfirmationResult) => {
-      setIsTransactionPending(false);
-      setTransactionHash(null);
-
       try {
         await fetch('/api/revalidate', {
           method: 'POST',
@@ -221,27 +219,6 @@ export default function ProfilesPage() {
     [syncData],
   );
 
-  const handleCloseTransactionOverlay = useCallback(async () => {
-    setIsTransactionPending(false);
-    setTransactionHash(null);
-
-    try {
-      await fetch('/api/revalidate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          allUtxos: true,
-          oracleAdmins: true,
-        }),
-      });
-    } catch (error) {
-      console.error('Cache invalidation error:', error);
-    }
-
-    setTimeout(() => {
-      syncData('membership_intent');
-    }, 2000);
-  }, [syncData]);
 
   // Show member-only access if user is not a member
   if (!isMember) {
@@ -278,17 +255,6 @@ export default function ProfilesPage() {
         profile={displayProfile}
         onClose={handleCloseEditModal}
         onSave={handleSaveProfile}
-      />
-
-      {/* Transaction Confirmation Overlay */}
-      <TransactionConfirmationOverlay
-        isVisible={isTransactionPending}
-        txHash={transactionHash || undefined}
-        title="Updating Profile"
-        description="Please wait while your profile is being updated on the blockchain."
-        onClose={handleCloseTransactionOverlay}
-        onConfirmed={handleTransactionConfirmed}
-        onTimeout={handleTransactionTimeout}
       />
     </div>
   );

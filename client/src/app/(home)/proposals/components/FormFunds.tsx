@@ -3,10 +3,14 @@ import Button from '@/components/atoms/Button';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { useApp } from '@/context';
 
+type ProposalFormData = ProposalData & {
+  description: string;
+};
+
 interface Props {
   mode: 'create' | 'edit';
-  formData: ProposalData;
-  handleInputChange: (field: keyof ProposalData, value: string) => void;
+  formData: ProposalFormData;
+  handleInputChange: (field: keyof ProposalFormData, value: string) => void;
   userAddress?: string;
 }
 

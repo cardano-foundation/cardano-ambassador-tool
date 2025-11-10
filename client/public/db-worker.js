@@ -23,7 +23,8 @@ self.onmessage = async function (e) {
         amount TEXT,
         dataHash TEXT,
         plutusData TEXT,
-        context TEXT
+        context TEXT,
+        parsedMetadata TEXT
       );
     `);
 
@@ -58,8 +59,8 @@ self.onmessage = async function (e) {
   // Insert UTxO
   function insertUtxo(utxo, contextName) {
     const stmt = db.prepare(`
-      INSERT INTO utxos (txHash, outputIndex, address, amount, dataHash, plutusData, context)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO utxos (txHash, outputIndex, address, amount, dataHash, plutusData, context, parsedMetadata)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run([
@@ -70,6 +71,7 @@ self.onmessage = async function (e) {
       utxo.output.dataHash || null,
       utxo.output.plutusData || null,
       contextName,
+      utxo.parsedMetadata ? JSON.stringify(utxo.parsedMetadata) : null,
     ]);
 
     stmt.free();

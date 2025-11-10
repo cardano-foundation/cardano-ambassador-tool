@@ -187,6 +187,9 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         getCatConstants(),
       );
 
+      console.log({ counterUtxo, cd: dbUtxoToMeshUtxo(intentUtxo!) });
+      
+
       let unsignedTx;
       if (context === 'MembershipIntent') {
         if (decision === 'approve') {
@@ -242,7 +245,6 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
       setAdminDecision(data);
 
-      // Extract and send decision data to parent (this also checks signature status)
       await extractAndSendDecisionData(data);
     } catch (error) {
       console.error('Error creating decision:', error);
@@ -258,7 +260,6 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
   useEffect(() => {
     async function loadAdminDecision() {
       try {
-        // Reset signature status when loading new decision
         setCurrentWalletHasSigned(false);
 
         const decision = await storageApiClient.get<AdminDecision>(
@@ -267,7 +268,6 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         );
         setAdminDecision(decision);
 
-        // If we have an existing decision, extract and send data to parent
         if (decision) {
           await extractAndSendDecisionData(decision);
         }

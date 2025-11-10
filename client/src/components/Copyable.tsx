@@ -17,7 +17,7 @@ const Copyable = ({
   return (
     <>
       <div className="flex items-center gap-8">
-        <span className="text-neutral">{`${withKey ? keyLabel + ';' : ''} ${shortenString(value, 12)}`}</span>
+        <span className="text-neutral">{`${withKey ? keyLabel + ':' : ''} ${shortenString(value, 12)}`}</span>
         <span className="flex items-center gap-2">
           <Copy
             className="text-neutral size-4 hover:cursor-pointer"

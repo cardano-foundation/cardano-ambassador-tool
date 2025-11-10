@@ -17,7 +17,6 @@ type UserProposal = {
   id: number;
   title: string;
   description: string;
-  submittedByAddress: string;
   receiverWalletAddress: string;
   status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected';
   fundsRequested: string;
@@ -48,7 +47,8 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
     header: 'Project details',
     accessor: 'description',
     sortable: false,
-    cell: (value) => {
+    cell: (value, row) => {
+      if (!value) return <span className="text-sm text-muted-foreground">No description</span>;
       const truncatedValue = truncateToWords(value, 8);
       return (
         <div className="max-w-[350px] text-sm">
@@ -68,19 +68,6 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
       <span className="text-sm">
         {value ? formatAdaAmount(lovelaceToAda(value)) : 'N/A'}
       </span>
-    ),
-  },
-  {
-    header: 'Receiver Address',
-    accessor: 'receiverWalletAddress',
-    sortable: true,
-    cell: (value: string) => (
-      <Copyable
-        withKey={false}
-        link={`${getCurrentNetworkConfig().explorerUrl}/address/${value}`}
-        value={value}
-        keyLabel=""
-      />
     ),
   },
   {
@@ -107,7 +94,21 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
 ];
 
 export default function ProposalSubmissionsTab() {
-  const { proposalIntents, userAddress, dbLoading } = useApp();
+  const { proposalIntents, proposals, signOfApprovals, members, userAddress, dbLoading } = useApp();
+  
+  const userMemberUtxo = members.find((m) => {
+    if (!m.parsedMetadata) return false;
+    try {
+      const metadata = typeof m.parsedMetadata === 'string'
+        ? JSON.parse(m.parsedMetadata)
+        : m.parsedMetadata;
+      return metadata?.walletAddress === userAddress;
+    } catch {
+      return false;
+    }
+  });
+  
+  const allProposalUtxos = [...proposalIntents, ...proposals, ...signOfApprovals];
 
   if (dbLoading) {
     return (
@@ -121,16 +122,24 @@ export default function ProposalSubmissionsTab() {
     );
   }
 
-  const userProposals = proposalIntents
+  const userProposals = allProposalUtxos
     .map((utxo, idx) => {
-      if (!utxo.plutusData) return null;
+      if (!utxo.parsedMetadata) return null;
 
       try {
-        const { metadata } = parseProposalDatum(utxo.plutusData)!;
+        const metadata = typeof utxo.parsedMetadata === 'string'
+          ? JSON.parse(utxo.parsedMetadata)
+          : utxo.parsedMetadata;
 
         if (!metadata || metadata.submittedByAddress !== userAddress) {
           return null;
         }
+
+        const status = signOfApprovals.some(p => p.txHash === utxo.txHash)
+          ? 'approved' as const
+          : proposals.some(p => p.txHash === utxo.txHash)
+          ? 'approved' as const
+          : 'pending' as const;
 
         return {
           id: idx + 1,
@@ -138,8 +147,7 @@ export default function ProposalSubmissionsTab() {
           description: metadata.description || '',
           fundsRequested: metadata.fundsRequested || '0',
           receiverWalletAddress: metadata.receiverWalletAddress || '',
-          submittedByAddress: metadata.submittedByAddress || '',
-          status: 'pending' as const,
+          status,
           txHash: utxo.txHash,
         };
       } catch (error) {

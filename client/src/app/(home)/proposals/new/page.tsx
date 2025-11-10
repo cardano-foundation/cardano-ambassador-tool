@@ -5,7 +5,6 @@ import Button from '@/components/atoms/Button';
 import Modal from '@/components/atoms/Modal';
 import Title from '@/components/atoms/Title';
 import TopNav from '@/components/Navigation/TabNav';
-import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import CardanoLoaderSVG from '@/components/ui/CardanoLoaderSVG';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
@@ -24,6 +23,10 @@ import {
   proposalMetadata,
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
+
+type ProposalFormData = ProposalData & {
+  description: string;
+};
 import { useEffect, useRef, useState } from 'react';
 import DetailsTab from './components/DetailsTab';
 import FundsTab from './components/FundsTab';
@@ -31,16 +34,15 @@ import ReviewTab from './components/ReviewTab';
 import { resolveTxHash } from '@meshsdk/core';
 
 export default function SubmitProposalPage() {
-  const { isAuthenticated, userWallet, memberUtxo, userAddress } = useApp();
+  const { isAuthenticated, userWallet, memberUtxo, userAddress, showTxConfirmation } = useApp();
   const { isMember, isLoading: memberLoading } = useMemberValidation();
   const [activeTab, setActiveTab] = useState('details');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [markdownData, setMarkdownData] = useState<any>({});
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [showTxConfirmation, setShowTxConfirmation] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [txHash, setTxHash] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [githubFilename, setGithubFilename] = useState<string>('');
   const descriptionEditorRef = useRef<any>(null);
   const impactEditorRef = useRef<any>(null);
   const objectivesEditorRef = useRef<any>(null);
@@ -54,9 +56,10 @@ export default function SubmitProposalPage() {
   );
 
   const blockfrost = getProvider();
-  const [formData, setFormData] = useState<ProposalData>({
+  const [formData, setFormData] = useState<ProposalFormData>({
     title: '',
     description: '',
+    url: '',
     fundsRequested: '',
     receiverWalletAddress: '',
     submittedByAddress: userAddress || '',
@@ -91,7 +94,7 @@ export default function SubmitProposalPage() {
     );
   }
 
-  const handleInputChange = (field: keyof ProposalData, value: string) => {
+  const handleInputChange = (field: keyof ProposalFormData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -99,8 +102,29 @@ export default function SubmitProposalPage() {
   };
 
   const handleSubmit = async () => {
+    let filename = '';
+    
     try {
       setIsSubmitting(true);
+
+      const saveResponse = await fetch('/api/proposal-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          submitterAddress: userAddress,
+        }),
+      });
+
+      if (!saveResponse.ok) {
+        const errorData = await saveResponse.json();
+        throw new Error(errorData.details || 'Failed to save proposal to GitHub');
+      }
+      
+      const saveData = await saveResponse.json();
+      filename = saveData.data.filename;
+      setGithubFilename(filename);
 
       if (!memberUtxo) {
         throw new Error('No membership application UTxO found for this address');
@@ -132,11 +156,16 @@ export default function SubmitProposalPage() {
 
       const cleanAdaAmount = parseAdaInput(formData.fundsRequested);
       const lovelaceAmount = adaToLovelace(cleanAdaAmount);
-      
 
-      const metadataFormData = {
-        ...formData,
+      const githubUrl = `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_REPO}/blob/${process.env.NEXT_PUBLIC_GITHUB_BRANCH}/proposals-applications/content/${filename}`;
+      
+      const metadataFormData: ProposalData = {
+        title: formData.title,
+        url: githubUrl,
         fundsRequested: lovelaceAmount.toString(),
+        receiverWalletAddress: formData.receiverWalletAddress,
+        submittedByAddress: formData.submittedByAddress,
+        status: formData.status,
       };
       const metadata = proposalMetadata(metadataFormData);
 
@@ -151,9 +180,37 @@ export default function SubmitProposalPage() {
 
        const txHash = resolveTxHash(result.txHex);
 
-      setTxHash(txHash);
-      setShowTxConfirmation(true);
+      showTxConfirmation({
+        txHash,
+        title: 'Proposal Submitted',
+        description: 'Your proposal has been submitted. Please wait for blockchain confirmation.',
+        onConfirmed: () => {
+          setShowConfirmation(true);
+        },
+        onTimeout: async () => {
+          if (filename) {
+            await fetch('/api/proposal-content', {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ filename }),
+            }).catch(err => console.error('Failed to rollback GitHub file:', err));
+          }
+          
+          setError(
+            'Transaction confirmation timed out. Your proposal may still be processed.',
+          );
+          setShowError(true);
+        },
+      });
     } catch (error:any) {
+      if (filename) {
+        await fetch('/api/proposal-content', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename }),
+        }).catch(err => console.error('Failed to rollback GitHub file:', err));
+      }
+      
       setError(error.message || 'Failed to submit proposal. Please try again.');
       setShowError(true);
     } finally {
@@ -280,26 +337,6 @@ export default function SubmitProposalPage() {
           )}
         </div>
       </div>
-
-      {/* Transaction Confirmation Overlay */}
-      <TransactionConfirmationOverlay
-        isVisible={showTxConfirmation}
-        txHash={txHash}
-        title="Proposal Submitted"
-        description="Your proposal has been submitted. Please wait for blockchain confirmation."
-        onClose={() => setShowTxConfirmation(false)}
-        onConfirmed={() => {
-          setShowTxConfirmation(false);
-          setShowConfirmation(true);
-        }}
-        onTimeout={() => {
-          setShowTxConfirmation(false);
-          setError(
-            'Transaction confirmation timed out. Your proposal may still be processed.',
-          );
-          setShowError(true);
-        }}
-      />
 
       {/* Success Modal - shown after transaction confirmation */}
       <Modal
