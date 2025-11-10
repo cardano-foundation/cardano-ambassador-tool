@@ -60,7 +60,7 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
   const currentTxHash = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!isVisible || !txHash) {
+    if (!isVisible) {
       confirmationRunning.current = false;
       currentTxHash.current = undefined;
       setConfirmationState({
@@ -68,6 +68,10 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
         attempts: 0,
         timeTaken: 0,
       });
+      return;
+    }
+
+    if (!txHash) {
       return;
     }
 

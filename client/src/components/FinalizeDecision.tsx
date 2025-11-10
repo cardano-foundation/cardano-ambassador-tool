@@ -64,8 +64,8 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
         completedMessage: '✓ Membership Activated!',
         overlayTitle: 'Activating Membership',
         overlayDescription: {
-          pending: 'Please wait while your membership activation is being confirmed on the blockchain.',
-          success: 'Your membership has been successfully activated! 🎉'
+          pending: 'Please wait while membership activation is being confirmed on the blockchain.',
+          success: 'Membership has been successfully activated! 🎉'
         }
       };
     } else {

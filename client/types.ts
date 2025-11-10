@@ -42,6 +42,7 @@ export interface Utxo {
   dataHash: string | null;
   plutusData: string | null;
   context: string;
+  parsedMetadata?: string | null;
 }
 
 export type Ambassador = {
@@ -218,3 +219,9 @@ export type AdminDecisionData = AdminDecision & {
   minRequiredSigners: number;
   totalSigners: number;
 }
+
+
+export type GithubProposalData = {
+  title: string;
+  description: string;
+};

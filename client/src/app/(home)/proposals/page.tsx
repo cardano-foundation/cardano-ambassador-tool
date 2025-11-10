@@ -155,10 +155,26 @@ export default function ProposalsPage() {
       if (!utxo.plutusData) return null;
 
       try {
-        const { metadata } = parseProposalDatum(utxo.plutusData)!;
+        let metadata: any;
+        let description = 'No description provided';
+
+        if (utxo.parsedMetadata) {
+          try {
+            const parsed = typeof utxo.parsedMetadata === 'string' 
+              ? JSON.parse(utxo.parsedMetadata) 
+              : utxo.parsedMetadata;
+            metadata = parsed;
+            description = parsed.description || 'No description provided';
+          } catch (e) {
+            const { metadata: datumMetadata } = parseProposalDatum(utxo.plutusData)!;
+            metadata = datumMetadata;
+          }
+        } else {
+          const { metadata: datumMetadata } = parseProposalDatum(utxo.plutusData)!;
+          metadata = datumMetadata;
+        }
 
         if (!metadata) return null;
-
 
         let status: Proposal['status'] = 'pending';
         let progress: Proposal['progress'] | undefined;
@@ -179,7 +195,7 @@ export default function ProposalsPage() {
         return {
           id: idx + 1,
           title: metadata.title || 'Untitled Proposal',
-          details: metadata.description || 'No description provided',
+          details: description,
           receiverWalletAddress: metadata.receiverWalletAddress || '',
           submittedByAddress: metadata.submittedByAddress || '',
           fundsRequested: metadata.fundsRequested || '0',

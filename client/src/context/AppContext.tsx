@@ -13,7 +13,9 @@ import { WalletContextValue } from '@/types/wallet';
 import { IWallet } from '@meshsdk/core';
 import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
 import { NetworkConfig, NetworkValidationResult, Utxo } from '@types';
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
+import { TransactionConfirmationResult } from '@types';
 
 // ---------- Types ----------
 interface AppContextValue {
@@ -82,7 +84,27 @@ interface AppContextValue {
   hasNetworkError: boolean | null;
   networkErrorMessage: string | undefined;
   walletNetwork: string | undefined;
+
+  // Transaction confirmation
+  showTxConfirmation: (options: TxConfirmationOptions) => void;
+  hideTxConfirmation: () => void;
 }
+
+interface TxConfirmationOptions {
+  txHash: string;
+  title?: string;
+  description?: string;
+  onConfirmed?: (result: TransactionConfirmationResult) => void;
+  onTimeout?: (result: TransactionConfirmationResult) => void;
+  showNavigationOptions?: boolean;
+  navigationOptions?: {
+    label: string;
+    url: string;
+    variant?: 'primary' | 'outline';
+  }[];
+}
+
+export type { TxConfirmationOptions };
 
 // ---------- Context ----------
 const AppContext = createContext<AppContextValue>({
@@ -174,6 +196,10 @@ const AppContext = createContext<AppContextValue>({
   hasNetworkError: null,
   networkErrorMessage: undefined,
   walletNetwork: undefined,
+
+  // Transaction confirmation defaults
+  showTxConfirmation: () => {},
+  hideTxConfirmation: () => {},
 });
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -227,6 +253,44 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   } = useThemeManager();
 
   const { treasuryBalance, isTreasuryLoading, refreshTreasuryBalance } = useTreasuryBalance();
+
+  // Transaction confirmation state
+  const [txConfirmationState, setTxConfirmationState] = useState<{
+    isVisible: boolean;
+    txHash?: string;
+    title?: string;
+    description?: string;
+    onConfirmed?: (result: TransactionConfirmationResult) => void;
+    onTimeout?: (result: TransactionConfirmationResult) => void;
+    showNavigationOptions?: boolean;
+    navigationOptions?: {
+      label: string;
+      url: string;
+      variant?: 'primary' | 'outline';
+    }[];
+  }>({
+    isVisible: false,
+  });
+
+  const showTxConfirmation = (options: TxConfirmationOptions) => {
+    setTxConfirmationState({
+      isVisible: true,
+      ...options,
+    });
+  };
+
+  const hideTxConfirmation = () => {
+    setTxConfirmationState({
+      isVisible: false,
+      txHash: undefined,
+      title: undefined,
+      description: undefined,
+      onConfirmed: undefined,
+      onTimeout: undefined,
+      showNavigationOptions: undefined,
+      navigationOptions: undefined,
+    });
+  };
 
   const {
     currentNetwork,
@@ -393,10 +457,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     updateLoadingState,
     shouldShowLoading,
     isThemeInitialized,
+
+    // Transaction confirmation
+    showTxConfirmation,
+    hideTxConfirmation,
   };
 
   return (
-    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
+    <AppContext.Provider value={contextValue}>
+      {children}
+      <TransactionConfirmationOverlay
+        isVisible={txConfirmationState.isVisible}
+        txHash={txConfirmationState.txHash}
+        title={txConfirmationState.title}
+        description={txConfirmationState.description}
+        onClose={hideTxConfirmation}
+        onConfirmed={(result) => {
+          txConfirmationState.onConfirmed?.(result);
+          hideTxConfirmation();
+        }}
+        onTimeout={txConfirmationState.onTimeout}
+        showNavigationOptions={txConfirmationState.showNavigationOptions}
+        navigationOptions={txConfirmationState.navigationOptions}
+      />
+    </AppContext.Provider>
   );
 }
 

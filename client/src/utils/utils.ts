@@ -201,7 +201,7 @@ export function parseMemberDatum(
         return completion.set(
           {
             title: hexToString(item.k.fields[0].bytes),
-            description: hexToString(item.k.fields[1].bytes),
+            url: hexToString(item.k.fields[1].bytes),
             fundsRequested: hexToString(item.k.fields[2].bytes),
             receiverWalletAddress: hexToString(item.k.fields[3].bytes),
             submittedByAddress: hexToString(item.k.fields[4].bytes),
@@ -235,7 +235,7 @@ export function parseMemberDatum(
  */
 export function parseProposalDatum(
   plutusData: string,
-): { datum: ProposalDatum; metadata: ProposalData } | null {
+): { datum: ProposalDatum; metadata: ProposalData; memberIndex: number } | null {
   try {
     const datum = deserializeDatum(plutusData);
     if (
@@ -249,6 +249,7 @@ export function parseProposalDatum(
       return null;
     }
 
+    const memberIndex = Number(datum.fields[2].int);
     const metadataPlutus: ProposalMetadata = datum.fields[3];
     
     const fundsRequestedLovelace = hexToString(
@@ -257,7 +258,7 @@ export function parseProposalDatum(
     
     const metadata: ProposalData = {
       title: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
-      description: safeExtractString(
+      url: safeExtractString(
         (metadataPlutus.fields[1] as ByteString),
       ),
       fundsRequested: lovelaceToAda(parseInt(fundsRequestedLovelace || '0')),
@@ -269,7 +270,7 @@ export function parseProposalDatum(
       ),
       status: hexToString((metadataPlutus.fields[5] as ByteString).bytes),
     };
-    return { datum: datum as ProposalDatum, metadata };
+    return { datum: datum as ProposalDatum, metadata, memberIndex };
   } catch (error) {
     console.error('Error parsing proposal datum:', error);
     return null;
@@ -678,7 +679,6 @@ export function shortenString(text: string, length = 8) {
  * @returns The converted MeshJS UTxO
  */
 export function dbUtxoToMeshUtxo(dbUtxo: Utxo): UTxO {
-  // Handle both string and array formats for amount
   let amount;
   if (typeof dbUtxo.amount === 'string') {
     amount = JSON.parse(dbUtxo.amount || '[]');
