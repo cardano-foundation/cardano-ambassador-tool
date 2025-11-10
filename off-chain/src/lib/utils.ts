@@ -141,11 +141,17 @@ export const getCounterDatum = (counterUtxo: UTxO): number => {
 };
 
 // Helper function to safely extract string from ByteString | List<ByteString>
-const extractString = (field: any): string => {
+export const extractString = (field: any): string => {
+  if (!field) {
+    return "";
+  }
   if (field.list) {
     return plutusBSArrayToString(field);
   }
-  return hexToString(field.bytes);
+  if (field.bytes) {
+    return hexToString(field.bytes);
+  }
+  return "";
 };
 
 const extractStats = (field: StatsPlutusData): StatsData => {
