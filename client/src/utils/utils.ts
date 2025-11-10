@@ -92,10 +92,10 @@ export function getProvider(network = 'preprod'): BlockfrostProvider {
 /**
  * Helper function to safely extract readable string from ByteString | List<ByteString>
  */
-const safeExtractString = (field: any, fieldName?: string): string => {  
+const safeExtractString = (field: any, fieldName?: string): string => {
   try {
     if (field?.list) {
-      const hexResult = plutusBSArrayToString(field);      
+      const hexResult = plutusBSArrayToString(field);
       return hexToString(hexResult);
     }
     if (field?.bytes) {
@@ -243,7 +243,11 @@ export function parseMemberDatum(
  */
 export function parseProposalDatum(
   plutusData: string,
-): { datum: ProposalDatum; metadata: ProposalData; memberIndex: number } | null {
+): {
+  datum: ProposalDatum;
+  metadata: ProposalData;
+  memberIndex: number;
+} | null {
   try {
     const datum = deserializeDatum(plutusData);
     if (
@@ -259,23 +263,17 @@ export function parseProposalDatum(
 
     const memberIndex = Number(datum.fields[2].int);
     const metadataPlutus: ProposalMetadata = datum.fields[3];
-    
+
     const fundsRequestedLovelace = hexToString(
       (metadataPlutus.fields[2] as ByteString).bytes,
     );
-    
+
     const metadata: ProposalData = {
       title: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
-      url: safeExtractString(
-        (metadataPlutus.fields[1] as ByteString),
-      ),
+      url: safeExtractString(metadataPlutus.fields[1] as ByteString),
       fundsRequested: lovelaceToAda(parseInt(fundsRequestedLovelace || '0')),
-      receiverWalletAddress: safeExtractString(
-        (metadataPlutus.fields[3] as ByteString),
-      ),
-      submittedByAddress: safeExtractString(
-        (metadataPlutus.fields[4] as ByteString),
-      ),
+      receiverWalletAddress: safeExtractString(metadataPlutus.fields[3]),
+      submittedByAddress: safeExtractString(metadataPlutus.fields[4]),
       status: hexToString((metadataPlutus.fields[5] as ByteString).bytes),
     };
     return { datum: datum as ProposalDatum, metadata, memberIndex };
@@ -730,7 +728,7 @@ export async function getCounterUtxo(): Promise<UTxO | null> {
 
     if (!response.ok) {
       if (response.status === 404) {
-        return null; 
+        return null;
       }
       throw new Error('Failed to fetch counter UTxO');
     }
@@ -812,7 +810,8 @@ export async function fetchTransactionTimestamp(txHash: string) {
  * @returns The amount in Lovelace
  */
 export function adaToLovelace(ada: string | number): number {
-  const adaValue = typeof ada === 'string' ? parseFloat(ada.replace(/[^0-9.-]/g, '')) : ada;
+  const adaValue =
+    typeof ada === 'string' ? parseFloat(ada.replace(/[^0-9.-]/g, '')) : ada;
   if (isNaN(adaValue)) {
     throw new Error('Invalid ADA value');
   }
@@ -825,14 +824,15 @@ export function adaToLovelace(ada: string | number): number {
  * @returns The amount in ADA as a string with proper formatting
  */
 export function lovelaceToAda(lovelace: number | string): string {
-  const lovelaceValue = typeof lovelace === 'string' ? parseFloat(lovelace) : lovelace;
+  const lovelaceValue =
+    typeof lovelace === 'string' ? parseFloat(lovelace) : lovelace;
   if (isNaN(lovelaceValue)) {
     return '0';
   }
   const ada = lovelaceValue / 1_000_000;
-  return ada.toLocaleString('en-US', { 
-    minimumFractionDigits: 0, 
-    maximumFractionDigits: 6 
+  return ada.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 6,
   });
 }
 
@@ -853,13 +853,13 @@ export function formatAdaAmount(ada: string | number): string {
  */
 export function parseAdaInput(input: string): string {
   if (!input) return '';
-  
+
   // Remove 'ADA', '₳', and extra whitespace, keep only numbers and decimal points
   const cleaned = input
     .replace(/ADA/gi, '')
     .replace(/₳/g, '')
     .replace(/[^0-9.-]/g, '')
     .trim();
-    
+
   return cleaned || '';
 }
