@@ -51,7 +51,7 @@ export default function ProfileHeader({ name, country, stats }: ProfileHeaderPro
           </div>
           
           {stats && (
-            <div className="grid grid-cols-2 gap-3 lg:flex lg:gap-2">
+            <div className="grid grid-cols-2 gap-3 lg:flex lg:flex-wrap lg:gap-2">
               <StatCard
                 label="Topics Created"
                 value={stats.topics_created}

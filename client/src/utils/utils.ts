@@ -153,6 +153,10 @@ export function parseMembershipIntentDatum(
       bio: safeExtractString(metadataPlutus.fields[4]),
       country: safeExtractString(metadataPlutus.fields[5]),
       city: safeExtractString(metadataPlutus.fields[6]),
+      x_handle: safeExtractString(metadataPlutus.fields[7]),
+      github: safeExtractString(metadataPlutus.fields[8]),
+      discord: safeExtractString(metadataPlutus.fields[9]),
+      spo_id: safeExtractString(metadataPlutus.fields[10]),
     };
 
     return { datum: datum as MembershipIntentDatum, metadata };
@@ -190,6 +194,10 @@ export function parseMemberDatum(
       bio: safeExtractString(metadataPlutus.fields[4]),
       country: safeExtractString(metadataPlutus.fields[5]),
       city: safeExtractString(metadataPlutus.fields[6]),
+      x_handle: safeExtractString(metadataPlutus.fields[7]),
+      github: safeExtractString(metadataPlutus.fields[8]),
+      discord: safeExtractString(metadataPlutus.fields[9]),
+      spo_id: safeExtractString(metadataPlutus.fields[10]),
     };
 
     const policyId = (datum.fields[0].list[0] as ByteString).bytes;

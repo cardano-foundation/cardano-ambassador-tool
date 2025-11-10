@@ -6,28 +6,31 @@ import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import ExecuteSignoff from '@/components/ExecuteSignoff';
 import ProposalDescription from '@/components/ProposalDescription';
+import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
-import { parseProposalDatum, getCatConstants, getProvider, lovelaceToAda, formatAdaAmount } from '@/utils';
-import { useState, useEffect } from 'react';
+import { getCatConstants, parseProposalDatum } from '@/utils';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { use } from 'react';
-
 
 interface PageProps {
   params: Promise<{ txhash: string }>;
 }
 
 export default function TreasurySignoffDetailsPage({ params }: PageProps) {
-  const { signOfApprovals, members, dbLoading, treasuryBalance, isTreasuryLoading } = useApp();
+  const {
+    signOfApprovals,
+    members,
+    dbLoading,
+    treasuryBalance,
+    isTreasuryLoading,
+  } = useApp();
   const { txhash } = use(params);
 
   const proposal = signOfApprovals.find((utxo) => utxo.txHash === txhash);
   const memberUtxo = members.length > 0 ? members[0] : undefined;
-
 
   let proposalData: ProposalData & { description?: string };
   if (proposal && proposal.plutusData) {
@@ -37,17 +40,22 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
 
       if (proposal.parsedMetadata) {
         try {
-          const parsed = typeof proposal.parsedMetadata === 'string' 
-            ? JSON.parse(proposal.parsedMetadata) 
-            : proposal.parsedMetadata;
+          const parsed =
+            typeof proposal.parsedMetadata === 'string'
+              ? JSON.parse(proposal.parsedMetadata)
+              : proposal.parsedMetadata;
           metadata = parsed;
           description = parsed.description || 'No description provided';
         } catch (e) {
-          const { metadata: datumMetadata } = parseProposalDatum(proposal.plutusData)!;
+          const { metadata: datumMetadata } = parseProposalDatum(
+            proposal.plutusData,
+          )!;
           metadata = datumMetadata;
         }
       } else {
-        const { metadata: datumMetadata } = parseProposalDatum(proposal.plutusData)!;
+        const { metadata: datumMetadata } = parseProposalDatum(
+          proposal.plutusData,
+        )!;
         metadata = datumMetadata;
       }
 
@@ -86,8 +94,6 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
 
   // Convert BigInt to ADA for display
   const treasuryBalanceAda = Number(treasuryBalance) / 1_000_000;
-  const proposalAmountLovelace = parseInt(proposalData?.fundsRequested || '0');
-  const proposalAmountAda = proposalAmountLovelace / 1_000_000;
 
   if (dbLoading || isTreasuryLoading) {
     return <SimpleCardanoLoader />;
@@ -236,8 +242,8 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                 <Paragraph className="text-muted-foreground text-sm">
                   Proposal Amount
                 </Paragraph>
-                <Title level="6" className="font-semibold text-red-600">
-                  ₳{proposalAmountAda.toLocaleString()}
+                <Title level="6" className="text-primary-base font-semibold">
+                  ₳{proposalData?.fundsRequested.toLocaleString()}
                 </Title>
               </div>
               <div className="space-y-2">
@@ -247,8 +253,8 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                 <Title
                   level="6"
                   className={
-                    treasuryBalanceAda < proposalAmountAda
-                      ? 'font-semibold text-red-600'
+                    treasuryBalanceAda < parseInt(proposalData?.fundsRequested)
+                      ? 'text-primary-base font-semibold'
                       : 'font-semibold text-green-600'
                   }
                 >
@@ -256,34 +262,37 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                   {isTreasuryLoading
                     ? '...'
                     : Math.floor(
-                        treasuryBalanceAda - proposalAmountAda,
+                        treasuryBalanceAda -
+                          parseInt(proposalData?.fundsRequested),
                       ).toLocaleString()}
                 </Title>
               </div>
             </div>
 
             {/* Insufficient Balance Warning */}
-            {!isTreasuryLoading && treasuryBalanceAda < proposalAmountAda && (
-              <div className="mt-4 rounded-lg border border-orange-200 bg-orange-50 p-3">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-orange-400 text-xs font-bold text-white">
-                    !
-                  </div>
-                  <div className="space-y-1">
-                    <Paragraph className="text-sm font-semibold text-orange-800">
-                      Insufficient Treasury Balance
-                    </Paragraph>
-                    <Paragraph className="text-sm text-orange-700">
-                      The current available balance (₳
-                      {Math.floor(treasuryBalanceAda).toLocaleString()}) is
-                      lower than the requested amount (₳
-                      {proposalAmountAda.toLocaleString()}). Please adjust the
-                      requested funds before proceeding with sign-off.
-                    </Paragraph>
+            {!isTreasuryLoading &&
+              treasuryBalanceAda < parseInt(proposalData?.fundsRequested) && (
+                <div className="mt-4 rounded-lg border border-orange-200 bg-orange-50 p-3">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-400 text-xs font-bold text-white">
+                      !
+                    </div>
+                    <div className="space-y-1">
+                      <Paragraph className="text-sm font-semibold text-orange-800">
+                        Insufficient Treasury Balance
+                      </Paragraph>
+                      <Paragraph className="text-sm text-orange-700">
+                        The current available balance (₳
+                        {Math.floor(treasuryBalanceAda).toLocaleString()}) is
+                        lower than the requested amount (₳
+                        {proposalData?.fundsRequested.toLocaleString()}). Please
+                        adjust the requested funds before proceeding with
+                        sign-off.
+                      </Paragraph>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
           </CardContent>
         </Card>
 

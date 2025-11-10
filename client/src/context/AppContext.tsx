@@ -368,6 +368,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           country: countryData?.name || memberMetadata.country || '',
           city: memberMetadata.city || '',
           bio: memberMetadata.bio || '',
+          x_handle: memberMetadata.x_handle || '',
+          github: memberMetadata.github || '',
+          discord: memberMetadata.discord || '',
+          spo_id: memberMetadata.spo_id || '',
         } as MemberData,
       };
     } catch (error) {

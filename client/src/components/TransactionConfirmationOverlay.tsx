@@ -143,11 +143,9 @@ const TransactionConfirmationOverlay: React.FC<TransactionConfirmationOverlayPro
 
     // Cleanup function
     return () => {
-      if (isVisible && (confirmationState.status === 'confirmed' || confirmationState.status === 'timeout')) {
-        window.removeEventListener('app:refresh', handleGlobalRefresh, true);
-      }
+      window.removeEventListener('app:refresh', handleGlobalRefresh, true);
     };
-  }, [isVisible, txHash, confirmationState.status]);
+  }, [isVisible, txHash]);
 
   if (!isVisible) {
     return null;

@@ -238,6 +238,10 @@ const SubmitIntent = ({
       bio: userMetadata.bio || '',
       country: userMetadata.country || '',
       city: userMetadata.city || '',
+      x_handle: '',
+      github: '',
+      discord: '',
+      spo_id: '',
     });
 
     // Apply membership

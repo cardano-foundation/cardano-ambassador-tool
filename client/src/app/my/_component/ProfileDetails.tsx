@@ -29,11 +29,11 @@ interface ProfileDetailsProps {
   onEditProfile?: () => void;
 }
 
-export default function ProfileDetails({ 
-  profile, 
-  walletAddress, 
+export default function ProfileDetails({
+  profile,
+  walletAddress,
   onWithdrawRole,
-  onEditProfile 
+  onEditProfile,
 }: ProfileDetailsProps) {
   return (
     <Card>
@@ -43,8 +43,8 @@ export default function ProfileDetails({
             <Title level="5" className="text-neutral">
               Profile details
             </Title>
-            <Button 
-              variant="primary" 
+            <Button
+              variant="primary"
               size="sm"
               onClick={onEditProfile}
               disabled={!onEditProfile}
@@ -61,13 +61,9 @@ export default function ProfileDetails({
             </div>
           </ProfileField>
 
-          <ProfileField label="Full name">
-            {profile.name}
-          </ProfileField>
+          <ProfileField label="Full name">{profile.name}</ProfileField>
 
-          <ProfileField label="Display name">
-            {profile.username}
-          </ProfileField>
+          <ProfileField label="Display name">{profile.username}</ProfileField>
 
           <ProfileField label="Email" className="gap-3 sm:gap-3">
             {profile.email}
@@ -93,23 +89,19 @@ export default function ProfileDetails({
           )}
 
           {profile.city && (
-            <ProfileField label="City">
-              {profile.city}
-            </ProfileField>
+            <ProfileField label="City">{profile.city}</ProfileField>
           )}
 
           {walletAddress && (
             <ProfileField label="Wallet">
-              <Copyable value={walletAddress} keyLabel='Wallet Address'  />
+              <Copyable value={walletAddress} withKey={false} />
             </ProfileField>
           )}
 
           {profile.href && (
             <ProfileField label="Ambassador URL">
               <div className="flex items-center gap-2 sm:gap-2">
-                <span className="break-all">
-                  {profile.href}
-                </span>
+                <span className="break-all">{profile.href}</span>
                 <Link
                   href={profile.href}
                   className="text-foreground hover:text-primary-base break-all"
@@ -124,15 +116,13 @@ export default function ProfileDetails({
           {profile.spoId && (
             <ProfileField label="SPO ID">
               <div className="flex items-center gap-2 sm:gap-3">
-                <span className="font-mono break-all">
-                  {profile.spoId}
-                </span>
+                <span className="font-mono break-all">{profile.spoId}</span>
                 <CopyIcon />
               </div>
             </ProfileField>
           )}
 
-          <SocialLinks 
+          <SocialLinks
             github={profile.github}
             twitter={profile.twitter}
             discord={profile.discord}
@@ -142,15 +132,11 @@ export default function ProfileDetails({
         {profile.username && (
           <div className="border-border mt-8 border-t pt-6">
             <Paragraph className="text-muted-foreground mb-4 text-sm">
-              You are currently an active ambassador. If you no longer wish
-              to serve in this role, you may withdraw. This action is
-              reversible only through re-application.
+              You are currently an active ambassador. If you no longer wish to
+              serve in this role, you may withdraw. This action is reversible
+              only through re-application.
             </Paragraph>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={onWithdrawRole}
-            >
+            <Button variant="primary" size="sm" onClick={onWithdrawRole}>
               Withdraw role
             </Button>
           </div>
