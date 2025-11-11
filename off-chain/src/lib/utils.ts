@@ -142,16 +142,10 @@ export const getCounterDatum = (counterUtxo: UTxO): number => {
 
 // Helper function to safely extract string from ByteString | List<ByteString>
 export const extractString = (field: any): string => {
-  if (!field) {
-    return "";
-  }
   if (field.list) {
-    return plutusBSArrayToString(field);
+    return hexToString(plutusBSArrayToString(field));
   }
-  if (field.bytes) {
-    return hexToString(field.bytes);
-  }
-  return "";
+  return hexToString(field.bytes);
 };
 
 const extractStats = (field: StatsPlutusData): StatsData => {
@@ -222,14 +216,6 @@ export const getMembershipIntentDatum = (
   const policyId = datum.fields[0].list[0].bytes;
   const assetName = datum.fields[0].list[1].bytes;
   const metadataPluts: MembershipMetadata = datum.fields[1];
-
-  // Helper function to safely extract string from ByteString | List<ByteString>
-  const extractString = (field: any): string => {
-    if (field.list) {
-      return plutusBSArrayToString(field);
-    }
-    return hexToString(field.bytes);
-  };
 
   const metadata: MemberData = {
     walletAddress: serializeAddressObj(metadataPluts.fields[0]),
