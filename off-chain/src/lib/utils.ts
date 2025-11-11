@@ -43,6 +43,7 @@ import {
   membershipMetadata,
 } from "./types";
 import { blake2b } from "blakejs";
+import { addrBech32ToPlutusDataObj } from "@meshsdk/core-csl";
 
 /**
  *
@@ -75,7 +76,7 @@ export const getOracleAdmins = (oracleUtxo: UTxO): string[] => {
   const datum: OracleDatum = deserializeDatum(plutusData);
 
   const admins: string[] = datum.fields[0].list.map((item) => {
-    return item.bytes;
+    return serializeAddressObj(item);
   });
 
   return admins;
@@ -102,7 +103,7 @@ export const updateOracleDatum = (
     newAdmins
       ? list(
           newAdmins.map((admin) => {
-            return byteString(admin);
+            return addrBech32ToPlutusDataObj(admin);
           })
         )
       : datum.fields[0],
