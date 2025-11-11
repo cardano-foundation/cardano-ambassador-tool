@@ -1,5 +1,6 @@
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
+use cocktail.{address_payment_key}
 use mocktail.{
   complete, mint, mock_policy_id, mock_tx_hash, mocktail_tx, ref_tx_in,
   ref_tx_in_inline_datum, required_signer_hash, script_withdrawal, tx_in,
@@ -92,8 +93,14 @@ fn mock_add_approval_tx(test_case: MintSignOffApprovalTestCase) -> Transaction {
         !is_approval_output_datum_correct,
         incorrect_approval_datum,
       )
-    |> required_signer_hash(is_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_admins_signed, mock_third_admin)
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_third_admin),
+      )
     |> complete()
 }
 
@@ -306,7 +313,13 @@ fn mock_process_sign_off_tx(test_case: ProcessSignOffTestCase) -> Transaction {
         is_oracle_inputed && !is_oracle_format_correct,
         mock_new_admins,
       )
-    |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_sign_off_approval_address)
+    |> tx_in(
+        True,
+        mock_tx_hash(0),
+        0,
+        input_value,
+        mock_sign_off_approval_address,
+      )
     |> script_withdrawal(
         is_treasury_withdrawal_cred_attached,
         mock_treasury_withdrawal_script_hash,
