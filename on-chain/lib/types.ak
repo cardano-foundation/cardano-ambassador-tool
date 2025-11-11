@@ -1,4 +1,4 @@
-use aiken/crypto.{ScriptHash, VerificationKeyHash}
+use aiken/crypto.{ScriptHash}
 use cardano/address.{Address}
 use cardano/assets.{AssetName, PolicyId}
 
@@ -11,16 +11,13 @@ pub type MintPolarity {
 
 // 0 - Oracle
 pub type OracleSpendRedeemer {
-  RotateAdmin {
-    new_admins: List<VerificationKeyHash>,
-    new_admin_tenure: ByteArray,
-  }
+  RotateAdmin { new_admins: List<Address>, new_admin_tenure: ByteArray }
   UpdateThreshold { new_threshold: Int }
   StopOracle
 }
 
 pub type OracleDatum {
-  admins: List<VerificationKeyHash>,
+  admins: List<Address>,
   admin_tenure: ByteArray,
   multi_sig_threshold: Int,
   oracle_nft: PolicyId,

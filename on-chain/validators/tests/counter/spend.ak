@@ -1,6 +1,6 @@
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
-use cocktail.{convert_int_to_bytes}
+use cocktail.{address_payment_key, convert_int_to_bytes}
 use counter/spend as counter_spend
 use mocktail.{
   complete, mint, mock_policy_id, mock_tx_hash, mock_utxo_ref, mocktail_tx,
@@ -232,8 +232,14 @@ fn mock_stop_counter_tx(test_case: StopCounterTestCase) -> Transaction {
     |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_counter_address)
     |> tx_in_inline_datum(True, mock_counter_input_datum)
     |> mint(is_counter_burnt, -1, mock_counter_nft, "")
-    |> required_signer_hash(is_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_admins_signed, mock_third_admin)
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_third_admin),
+      )
     |> complete()
 }
 

@@ -1,5 +1,6 @@
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
+use cocktail.{address_payment_key}
 use membership_intent/mint as membership_intent_mint
 use mocktail.{
   complete, mint, mock_policy_id, mock_tx_hash, mocktail_tx, ref_tx_in,
@@ -66,7 +67,13 @@ fn mock_apply_membership_tx(test_case: ApplyMembershipTestCase) -> Transaction {
         mock_new_admins,
       )
     |> mint(is_intent_minted, 1, mock_membership_intent_token, "")
-    |> tx_in(is_token_inputed, mock_tx_hash(0), 0, input_value, mock_user_address)
+    |> tx_in(
+        is_token_inputed,
+        mock_tx_hash(0),
+        0,
+        input_value,
+        mock_user_address,
+      )
     |> tx_out(is_token_output_correct, mock_user_address, input_value)
     |> tx_out(
         is_intent_output_clean,
@@ -80,7 +87,10 @@ fn mock_apply_membership_tx(test_case: ApplyMembershipTestCase) -> Transaction {
         input_value |> add(mock_policy_id(999), "", 1),
       )
     |> tx_out_inline_datum(is_intent_output_datum_correct, correct_intent_datum)
-    |> tx_out_inline_datum(!is_intent_output_datum_correct, incorrect_intent_datum)
+    |> tx_out_inline_datum(
+        !is_intent_output_datum_correct,
+        incorrect_intent_datum,
+      )
     |> complete()
 }
 
@@ -466,8 +476,14 @@ fn mock_reject_member_tx(test_case: RejectMemberTestCase) -> Transaction {
       )
     |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_counter_address)
     |> mint(is_intent_burnt, -1, mock_membership_intent_token, "")
-    |> required_signer_hash(is_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_admins_signed, mock_third_admin)
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_third_admin),
+      )
     |> complete()
 }
 
