@@ -13,10 +13,9 @@ import {
   AssetName,
   Pairs,
   List,
-  PubKeyHash,
-  ByteString,
   PubKeyAddress,
   ScriptAddress,
+  ByteString,
   ScriptHash,
   WithdrawalBlueprint,
 } from "@meshsdk/core";
@@ -328,7 +327,9 @@ export type MembershipIntentDatum = ConStr0<
 
 export type OracleSpendRedeemer = RotateAdmin | UpdateThreshold | StopOracle;
 
-export type RotateAdmin = ConStr0<[List<PubKeyHash>, ByteString]>;
+export type RotateAdmin = ConStr0<
+  [List<PubKeyAddress | ScriptAddress>, ByteString]
+>;
 
 export type UpdateThreshold = ConStr1<[Integer]>;
 
@@ -336,7 +337,7 @@ export type StopOracle = ConStr2<[]>;
 
 export type OracleDatum = ConStr0<
   [
-    List<PubKeyHash>,
+    List<PubKeyAddress | ScriptAddress>,
     ByteString,
     Integer,
     PolicyId,

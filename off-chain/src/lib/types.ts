@@ -69,7 +69,7 @@ export const oracleDatum = (
   return conStr0([
     list(
       admins.map((admin) => {
-        return byteString(admin);
+        return addrBech32ToPlutusDataObj(admin);
       })
     ),
     byteString(stringToHex(adminTenure)),
@@ -97,11 +97,12 @@ export const rotateAdmin = (
   newAdmins: string[],
   newAdminsTenure: string
 ): RotateAdmin => {
-  const newAdminsVerificationKeys = newAdmins.map((key) => {
-    return byteString(key);
-  });
   return conStr0([
-    list(newAdminsVerificationKeys),
+    list(
+      newAdmins.map((admin) => {
+        return addrBech32ToPlutusDataObj(admin);
+      })
+    ),
     byteString(newAdminsTenure),
   ]);
 };
