@@ -20,6 +20,7 @@ import {
   conStr2,
   ConStr0,
   List,
+  PubKeyAddress,
 } from "@meshsdk/core";
 import {
   AddMember,
@@ -68,7 +69,7 @@ export const oracleDatum = (
   return conStr0([
     list(
       admins.map((admin) => {
-        return byteString(admin);
+        return addrBech32ToPlutusDataObj(admin);
       })
     ),
     byteString(stringToHex(adminTenure)),
@@ -96,11 +97,12 @@ export const rotateAdmin = (
   newAdmins: string[],
   newAdminsTenure: string
 ): RotateAdmin => {
-  const newAdminsVerificationKeys = newAdmins.map((key) => {
-    return byteString(key);
-  });
   return conStr0([
-    list(newAdminsVerificationKeys),
+    list(
+      newAdmins.map((admin) => {
+        return addrBech32ToPlutusDataObj(admin);
+      })
+    ),
     byteString(newAdminsTenure),
   ]);
 };
@@ -182,17 +184,18 @@ export type SummaryPlutusData = ConStr0<
 
 export type MembershipMetadata = ConStr0<
   [
-    ByteString | List<ByteString>, // href
-    ByteString | List<ByteString>, // username
-    ByteString | List<ByteString>, // name
-    ByteString | List<ByteString>, // bio_excerpt
+    PubKeyAddress, // WalletAddress
+    ByteString | List<ByteString>, // fullName
+    ByteString | List<ByteString>, // displayName
+    ByteString | List<ByteString>, // emailAddress
+    ByteString | List<ByteString>, // bio
     ByteString | List<ByteString>, // country
-    ByteString | List<ByteString>, // flag
-    ByteString | List<ByteString>, // avatar
-    ByteString | List<ByteString>, // created_at
-    SummaryPlutusData, // summary stats
-    List<ActivityPlutusData>, // activities
-    List<BadgePlutusData> // badges
+    ByteString | List<ByteString>, // city
+    ByteString | List<ByteString>, // x_handle
+    ByteString | List<ByteString>, // github
+    ByteString | List<ByteString>, // discord
+    ByteString | List<ByteString>, // spo_id
+    ByteString | List<ByteString> // drep_id
   ]
 >;
 
@@ -276,33 +279,18 @@ export const membershipMetadata = (
   jsonData: MemberData
 ): MembershipMetadata => {
   return conStr0([
-    handleString(jsonData.href || ""),
-    handleString(jsonData.username || ""),
-    handleString(jsonData.name || ""),
-    handleString(jsonData.bio_excerpt || ""),
+    addrBech32ToPlutusDataObj(jsonData.walletAddress!),
+    handleString(jsonData.fullName || ""),
+    handleString(jsonData.displayName || ""),
+    handleString(jsonData.emailAddress || ""),
+    handleString(jsonData.bio || ""),
     handleString(jsonData.country || ""),
-    handleString(jsonData.flag || ""),
-    handleString(jsonData.avatar || ""),
-    handleString(jsonData.created_at || ""),
-    convertSummaryToPlutus(
-      jsonData.summary || {
-        stats: {
-          topics_entered: 0,
-          posts_read_count: 0,
-          days_visited: 0,
-          likes_given: 0,
-          likes_received: 0,
-          topics_created: 0,
-          replies_created: 0,
-          time_read: 0,
-          recent_time_read: 0,
-        },
-        top_replies: [],
-        top_topics: [],
-      }
-    ),
-    list((jsonData.activities || []).map(convertActivityToPlutus)),
-    list((jsonData.badges || []).map(convertBadgeToPlutus)),
+    handleString(jsonData.city || ""),
+    handleString(jsonData.x_handle || ""),
+    handleString(jsonData.github || ""),
+    handleString(jsonData.discord || ""),
+    handleString(jsonData.spo_id || ""),
+    handleString(jsonData.drep_id || ""),
   ]);
 };
 
@@ -348,10 +336,7 @@ export const memberDatum = (
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
   const completionItems: [ProposalMetadata, Integer][] = Array.from(
     completion.entries()
-  ).map(([key, value]) => [
-    proposalMetadata(key.projectDetails),
-    integer(value),
-  ]);
+  ).map(([key, value]) => [proposalMetadata(key), integer(value)]);
 
   const completionPluts: Pairs<ProposalMetadata, Integer> = pairs<
     ProposalMetadata,
@@ -375,12 +360,24 @@ export const memberUpdateMetadata: MemberUpdateMetadata = conStr2([]);
 
 export type ProposalMetadata = ConStr0<
   [
-    ByteString // project details
+    ByteString | List<ByteString>, // title
+    ByteString | List<ByteString>, // url
+    ByteString | List<ByteString>, // fundsRequested
+    PubKeyAddress, // receiverWalletAddress
+    PubKeyAddress, // submittedByAddress
+    ByteString | List<ByteString> // status
   ]
 >;
 
-export const proposalMetadata = (projectDetails: string): ProposalMetadata => {
-  return conStr0([byteString(projectDetails)]);
+export const proposalMetadata = (jsonData: ProposalData): ProposalMetadata => {
+  return conStr0([
+    handleString(jsonData.title || ""),
+    handleString(jsonData.url || ""),
+    handleString(jsonData.fundsRequested || ""),
+    addrBech32ToPlutusDataObj(jsonData.receiverWalletAddress),
+    addrBech32ToPlutusDataObj(jsonData.submittedByAddress),
+    handleString(jsonData.status || ""),
+  ]);
 };
 
 export const proposeProject = (
@@ -477,17 +474,18 @@ export type SummaryData = {
 };
 
 export type MemberData = {
-  href?: string;
-  username?: string;
-  name?: string;
-  bio_excerpt?: string;
-  country?: string;
-  flag?: string;
-  avatar?: string;
-  created_at?: string;
-  summary?: SummaryData;
-  activities?: ActivityData[];
-  badges?: BadgeData[];
+  walletAddress: string;
+  fullName: string;
+  displayName: string;
+  emailAddress: string;
+  bio: string;
+  country: string;
+  city: string;
+  x_handle?: string;
+  github?: string;
+  discord?: string;
+  spo_id?: string;
+  drep_id?: string;
 };
 
 export type Member = {
@@ -498,7 +496,12 @@ export type Member = {
 };
 
 export type ProposalData = {
-  projectDetails: string;
+  title: string;
+  url: string;
+  fundsRequested: string;
+  receiverWalletAddress: string;
+  submittedByAddress: string;
+  status: string;
 };
 
 export type Proposal = {
