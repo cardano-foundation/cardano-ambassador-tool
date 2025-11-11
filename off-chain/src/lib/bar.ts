@@ -21,7 +21,6 @@ import {
 } from "@meshsdk/core";
 
 const version = "V3";
-const networkId = 0; // 0 for testnet; 1 for mainnet
 // Every spending validator would compile into an address with an staking key hash
 // Recommend replace with your own stake key / script hash
 const stakeKeyHash = "";
@@ -43,7 +42,7 @@ export class CounterMintBlueprint extends MintingBlueprint {
 export class CounterSpendBlueprint extends SpendingBlueprint {
   compiledCode: string;
 
-  constructor(params: [PolicyId]) {
+  constructor(params: [PolicyId], networkId: number) {
     const compiledCode = blueprint.validators[2]!.compiledCode;
     super(version, networkId, stakeKeyHash, isStakeScriptCredential);
     this.compiledCode = compiledCode;
@@ -71,7 +70,7 @@ export class MemberMintBlueprint extends MintingBlueprint {
 export class MemberSpendBlueprint extends SpendingBlueprint {
   compiledCode: string;
 
-  constructor(params: [PolicyId]) {
+  constructor(params: [PolicyId], networkId: number) {
     const compiledCode = blueprint.validators[6]!.compiledCode;
     super(version, networkId, stakeKeyHash, isStakeScriptCredential);
     this.compiledCode = compiledCode;
@@ -99,7 +98,7 @@ export class MembershipIntentMintBlueprint extends MintingBlueprint {
 export class MembershipIntentSpendBlueprint extends SpendingBlueprint {
   compiledCode: string;
 
-  constructor(params: [PolicyId]) {
+  constructor(params: [PolicyId], networkId: number) {
     const compiledCode = blueprint.validators[10]!.compiledCode;
     super(version, networkId, stakeKeyHash, isStakeScriptCredential);
     this.compiledCode = compiledCode;
@@ -129,7 +128,7 @@ export class OracleMintBlueprint extends MintingBlueprint {
 export class OracleSpendBlueprint extends SpendingBlueprint {
   compiledCode: string;
 
-  constructor() {
+  constructor(networkId: number) {
     const compiledCode = blueprint.validators[14]!.compiledCode;
     super(version, networkId, stakeKeyHash, isStakeScriptCredential);
     this.compiledCode = compiledCode;
@@ -156,7 +155,7 @@ export class ProposalMintBlueprint extends MintingBlueprint {
 export class ProposalSpendBlueprint extends SpendingBlueprint {
   compiledCode: string;
 
-  constructor(params: [PolicyId]) {
+  constructor(params: [PolicyId], networkId: number) {
     const compiledCode = blueprint.validators[18]!.compiledCode;
     super(version, networkId, stakeKeyHash, isStakeScriptCredential);
     this.compiledCode = compiledCode;
@@ -184,7 +183,7 @@ export class ProposeIntentMintBlueprint extends MintingBlueprint {
 export class ProposeIntentSpendBlueprint extends SpendingBlueprint {
   compiledCode: string;
 
-  constructor(params: [PolicyId]) {
+  constructor(params: [PolicyId], networkId: number) {
     const compiledCode = blueprint.validators[22]!.compiledCode;
     super(version, networkId, stakeKeyHash, isStakeScriptCredential);
     this.compiledCode = compiledCode;
@@ -212,7 +211,7 @@ export class SignOffApprovalMintBlueprint extends MintingBlueprint {
 export class SignOffApprovalSpendBlueprint extends SpendingBlueprint {
   compiledCode: string;
 
-  constructor(params: [PolicyId]) {
+  constructor(params: [PolicyId], networkId: number) {
     const compiledCode = blueprint.validators[26]!.compiledCode;
     super(version, networkId, stakeKeyHash, isStakeScriptCredential);
     this.compiledCode = compiledCode;
@@ -227,7 +226,7 @@ export class SignOffApprovalSpendBlueprint extends SpendingBlueprint {
 export class TreasurySpendBlueprint extends SpendingBlueprint {
   compiledCode: string;
 
-  constructor(params: [PolicyId]) {
+  constructor(params: [PolicyId], networkId: number) {
     const compiledCode = blueprint.validators[28]!.compiledCode;
     super(version, networkId, stakeKeyHash, isStakeScriptCredential);
     this.compiledCode = compiledCode;
@@ -242,7 +241,7 @@ export class TreasurySpendBlueprint extends SpendingBlueprint {
 export class TreasuryWithdrawBlueprint extends WithdrawalBlueprint {
   compiledCode: string;
 
-  constructor(params: [PolicyId]) {
+  constructor(params: [PolicyId], networkId: number) {
     const compiledCode = blueprint.validators[30]!.compiledCode;
     super(version, networkId);
     this.compiledCode = compiledCode;
@@ -255,7 +254,7 @@ export class TreasuryWithdrawBlueprint extends WithdrawalBlueprint {
 export class TreasuryPublishBlueprint extends WithdrawalBlueprint {
   compiledCode: string;
 
-  constructor(params: [PolicyId]) {
+  constructor(params: [PolicyId], networkId: number) {
     const compiledCode = blueprint.validators[31]!.compiledCode;
     super(version, networkId);
     this.compiledCode = compiledCode;

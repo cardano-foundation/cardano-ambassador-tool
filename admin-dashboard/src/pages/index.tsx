@@ -235,10 +235,10 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const adminPk = admins.map((add: string) => deserializeAddress(add).pubKeyHash);
+
           const result = await setup.mintSpendOracleNFT(
             paramUtxo,
-            adminPk,
+            admins,
             adminTenure,
             Number(multiSigThreshold)
           );
@@ -314,13 +314,21 @@ export default function Home() {
             getCatConstants()
           );
 
-          const metadata: MembershipMetadata = membershipMetadata(
-            userData.walletAddress,
-            stringToHex(userData.fullName),
-            stringToHex(userData.displayName),
-            stringToHex(userData.emailAddress),
-            stringToHex(userData.bio)
-          );
+          const metadata: MembershipMetadata = membershipMetadata({
+            walletAddress:
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            fullName: "ken",
+            displayName: "kensidan",
+            emailAddress: "ken@a.com",
+            bio: "bio",
+            country: "hk",
+            city: "hk",
+            x_handle: "kkk",
+            github: "a",
+            discord: "ksss",
+            spo_id: "",
+            drep_id: "",
+          });
 
           console.log({
             oracleUtxo,
@@ -333,8 +341,8 @@ export default function Home() {
           const result = await userAction.applyMembership(
             oracleUtxo,
             tokenUtxo,
-            userData.tokenPolicyId,
-            userData.tokenAssetName,
+            "c76c35088ac826c8a0e6947c8ff78d8d4495789bc729419b3a334305",
+            "32323274657374696e6732",
             metadata
           );
           setResult(JSON.stringify(result, null, 2));
@@ -372,14 +380,23 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const metadata = proposalMetadata(stringToHex(params.projectUrl));
-          
+          const metadata = proposalMetadata({
+            title: "test 100",
+            url: "abc.com",
+            fundsRequested: "100000000",
+            receiverWalletAddress:
+              "addr_test1qrt4eqny7x5p3ef2p564amsqkpq8xymt3qrhj753njk9knarp2tyv20ff79pqmw3rkg656f67t3m76drluak83ggd69qqleqsc",
+            submittedByAddress:
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            status: "ok",
+          });
+
           const result = await userAction.proposeProject(
             oracleUtxo,
             tokenUtxo,
             memberUtxo,
-            Number(params.fundRequested),
-            params.receiver,
+            Number(100000000),
+            "addr_test1qrt4eqny7x5p3ef2p564amsqkpq8xymt3qrhj753njk9knarp2tyv20ff79pqmw3rkg656f67t3m76drluak83ggd69qqleqsc",
             metadata
           );
           setResult(JSON.stringify(result, null, 2));
