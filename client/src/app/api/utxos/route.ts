@@ -3,6 +3,7 @@ import { scripts } from '@sidan-lab/cardano-ambassador-tool';
 import { NextRequest, NextResponse } from 'next/server';
 import { unstable_cache, revalidateTag } from 'next/cache';
 import { parseProposalDatum, parseMembershipIntentDatum, parseMemberDatum } from '@/utils/utils';
+import { getCurrentNetworkConfig } from '@/config/cardano';
 
 
 if (!process.env.BLOCKFROST_API_KEY_PREPROD) {
@@ -15,16 +16,21 @@ const blockfrost = new BlockfrostProvider(
   process.env.BLOCKFROST_API_KEY_PREPROD,
 );
 
-const allScripts = scripts({
-  oracle: {
-    txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
+const allScripts = scripts(
+  {
+    oracle: {
+      txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
+      outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
+    },
+    counter: {
+      txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
+      outputIndex: parseInt(
+        process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!,
+      ),
+    },
   },
-  counter: {
-    txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!),
-  },
-});
+  getCurrentNetworkConfig().networkId,
+);
 
 const SCRIPT_ADDRESSES = {
   MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
@@ -34,9 +40,7 @@ const SCRIPT_ADDRESSES = {
   SIGN_OFF_APPROVAL: allScripts.signOffApproval.spend.address,
 } as const;
 
-const POLICY_IDS = {
-  MEMBER_NFT: allScripts.member.mint.hash,
-} as const;
+
 
 const actionData = {
   sign_of_approval: {

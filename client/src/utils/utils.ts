@@ -26,7 +26,7 @@ import {
   ProposalMetadata,
   scripts,
 } from '@sidan-lab/cardano-ambassador-tool';
-import { Utxo } from '@types';
+import { ProposalItem, Utxo } from '@types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -208,8 +208,8 @@ export function parseMemberDatum(
     const assetName = (datum.fields[0].list[1] as ByteString).bytes;
 
     const completion: Map<ProposalData, number> = new Map();
-    datum.fields[1].map.forEach((item: { k: { fields: { bytes: string; }[]; }; v: { int: any; }; }) => {
-      return completion.set(
+    datum.fields[1].map.forEach((item: ProposalItem) => {
+      completion.set(
         {
           title: hexToString(item.k.fields[0].bytes),
           url: hexToString(item.k.fields[1].bytes),

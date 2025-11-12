@@ -4,7 +4,6 @@ import { useApp } from '@/context';
 import { RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import Button from './atoms/Button';
-import Button from './atoms/Button';
 
 interface GlobalRefreshButtonProps {
   className?: string;
