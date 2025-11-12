@@ -111,8 +111,8 @@ export default function SearchableDropdown({
           if (!disabled) setIsOpen(!isOpen);
         }}
         className={cn(
-          'inline-flex w-full cursor-pointer items-center justify-between rounded-md border px-3 h-10 text-sm transition-colors focus-visible:outline-none',
-          'bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-primary/20 focus:ring-2',
+          'inline-flex h-10 w-full cursor-pointer items-center justify-between rounded-md border px-3 text-sm transition-colors focus-visible:outline-none',
+          'bg-background border-border hover:border-primary/50 focus:border-primary-300 focus:ring-primary-300/20 focus:ring-2',
           disabled && 'hover:border-border cursor-not-allowed opacity-50',
           isOpen && 'border-primary ring-primary/20 ring-2',
         )}
@@ -149,16 +149,16 @@ export default function SearchableDropdown({
       </button>
 
       {isOpen && (
-        <div 
+        <div
           className="bg-background border-border absolute right-0 left-0 z-[9999] mt-1 max-h-80 origin-top overflow-hidden rounded-md border shadow-lg"
           role="listbox"
           aria-labelledby="searchable-dropdown-label"
         >
           {/* Search Input */}
-          <div className="border-b border-border p-2">
+          <div className="border-border border-b p-2">
             <div className="relative">
               <svg
-                className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+                className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -179,9 +179,9 @@ export default function SearchableDropdown({
                 onKeyDown={handleKeyDown}
                 placeholder={searchPlaceholder}
                 className={cn(
-                  'w-full rounded-md border border-border bg-background px-3 py-2 pl-10 text-sm',
+                  'border-border bg-background w-full rounded-md border px-3 py-2 pl-10 text-sm',
                   'text-foreground placeholder:text-muted-foreground',
-                  'focus:border-primary focus:ring-primary/20 focus:ring-2 focus:outline-none'
+                  'focus:border-primary focus:ring-primary/20 focus:ring-2 focus:outline-none',
                 )}
                 aria-label="Search options"
               />
@@ -189,10 +189,16 @@ export default function SearchableDropdown({
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="text-muted-foreground hover:text-foreground absolute right-2 top-1/2 -translate-y-1/2"
+                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2"
                   aria-label="Clear search"
                 >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -208,8 +214,8 @@ export default function SearchableDropdown({
           {/* Options List */}
           <div className="max-h-60 overflow-y-auto py-1">
             {filteredOptions.length === 0 ? (
-              <div 
-                className="text-muted-foreground px-4 py-3 text-sm text-center"
+              <div
+                className="text-muted-foreground px-4 py-3 text-center text-sm"
                 role="option"
                 aria-selected="false"
               >

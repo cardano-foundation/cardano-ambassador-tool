@@ -34,7 +34,7 @@
     "@meshsdk/core-csl": "^1.9.0-beta.56",
     "@multiavatar/multiavatar": "github:multiavatar/multiavatar",
     "@radix-ui/react-tabs": "^1.1.12",
-    "@sidan-lab/cardano-ambassador-tool": "0.0.15",
+    "@sidan-lab/cardano-ambassador-tool": "0.0.17",
     "@tiptap/extension-image": "^3.6.6",
     "@tiptap/extension-text-align": "^3.6.1",
     "@tiptap/extension-underline": "^3.6.1",

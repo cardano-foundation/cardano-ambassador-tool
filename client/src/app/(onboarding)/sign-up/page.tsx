@@ -177,7 +177,7 @@ function SignUp() {
   }
 
   return (
-    <div className="h-full w-full gap-8 p-6 lg:p-24">
+    <div className="h-full w-full gap-8 p-3 lg:p-24">
       <div ref={scrollTargetRef} className="mb-6 flex justify-center">
         <SingleRowStepper
           currentStep={currentStep}
@@ -190,7 +190,7 @@ function SignUp() {
       </div>
 
       {/* Slide transition wrapper */}
-      <div className="relative min-h-[400px] w-full overflow-hidden px-2">
+      <div className="relative min-h-[400px] w-full overflow-hidden lg:px-2">
         <AnimatePresence custom={direction} mode="wait" initial={false}>
           <motion.div
             key={currentStep}

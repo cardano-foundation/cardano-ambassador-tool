@@ -8,9 +8,10 @@ import Button from './atoms/Button';
 import Checkbox from './atoms/Checkbox';
 import Modal from './atoms/Modal';
 import Copyable from './Copyable';
+import { getCurrentNetworkConfig } from '@/config/cardano';
 
 interface AdminInfo {
-  pubKeyHash: string;
+  address: string;
   displayName: string;
   isSelected: boolean;
   isCurrentUser: boolean;
@@ -34,7 +35,7 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
   const [loading, setLoading] = useState(true);
   const [minRequiredSigners, setMinRequiredSigners] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const { wallet: walletState } = useApp();
+  const { userAddress } = useApp();
 
   useEffect(() => {
     const loadAdmins = async () => {
@@ -44,29 +45,16 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
 
         const adminData = await findAdminsFromOracle();
 
-        if (!adminData || !adminData.adminPubKeyHashes) {
+        if (!adminData || !adminData.adminAddresses) {
           throw new Error('Failed to load admin data from oracle');
         }
 
-        // Get current user's public key hash
-        let currentUserPubKeyHash: string | null = null;
-        if (walletState?.wallet) {
-          try {
-            const wallet = await walletState.wallet;
-            const currentAddress = await wallet.getChangeAddress();
-            currentUserPubKeyHash =
-              deserializeAddress(currentAddress).pubKeyHash;
-          } catch (err) {
-            console.warn('Could not get current user pub key hash:', err);
-          }
-        }
-
-        const adminList: AdminInfo[] = adminData.adminPubKeyHashes.map(
-          (pubKeyHash) => {
-            const isCurrentUser = pubKeyHash === currentUserPubKeyHash;
+        const adminList: AdminInfo[] = adminData.adminAddresses.map(
+          (address) => {
+            const isCurrentUser = address === userAddress;
             return {
-              pubKeyHash,
-              displayName: shortenString(pubKeyHash, 6),
+              address,
+              displayName: address,
               isSelected: isCurrentUser,
               isCurrentUser,
               disabled: isCurrentUser,
@@ -87,12 +75,12 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
     if (isVisible) {
       loadAdmins();
     }
-  }, [isVisible, walletState]);
+  }, [isVisible]);
 
-  const toggleAdminSelection = (pubKeyHash: string) => {
+  const toggleAdminSelection = (userAddress: string) => {
     setAdmins((prev) =>
       prev.map((admin) =>
-        admin.pubKeyHash === pubKeyHash && !admin.disabled
+        admin.address === userAddress && !admin.disabled
           ? { ...admin, isSelected: !admin.isSelected }
           : admin,
       ),
@@ -105,7 +93,7 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
   const handleConfirm = () => {
     const selectedAdmins = admins
       .filter((admin) => admin.isSelected)
-      .map((admin) => admin.pubKeyHash);
+      .map((admin) => admin.address);
 
     onConfirm(selectedAdmins);
   };
@@ -117,36 +105,6 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
         isSelected: true,
       })),
     );
-  };
-
-  const handleSelectMinimum = () => {
-    setAdmins((prev) => {
-      const updated = [...prev];
-      let selectedSoFar = 0;
-
-      updated.forEach((admin) => {
-        if (admin.disabled && admin.isSelected) {
-          selectedSoFar++;
-        }
-      });
-
-      for (
-        let i = 0;
-        i < updated.length && selectedSoFar < minRequiredSigners;
-        i++
-      ) {
-        if (!updated[i].disabled) {
-          if (selectedSoFar < minRequiredSigners) {
-            updated[i].isSelected = true;
-            selectedSoFar++;
-          } else {
-            updated[i].isSelected = false;
-          }
-        }
-      }
-
-      return updated;
-    });
   };
 
   const handleClearSelectable = () => {
@@ -161,7 +119,7 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
   const modalContent = loading ? (
     <div className="py-8 text-center">
       <div className="border-primary-base mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
-      <p className="mt-2 ">Loading admins...</p>
+      <p className="mt-2">Loading admins...</p>
     </div>
   ) : error ? (
     <div className="py-8 text-center">
@@ -187,9 +145,6 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-2">
-        <Button variant="primary" size="sm" onClick={handleSelectMinimum}>
-          Select Min ({minRequiredSigners})
-        </Button>
         <Button
           variant="outline"
           size="sm"
@@ -213,11 +168,11 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
         <div className="max-h-60 overflow-y-auto py-1">
           {admins.map((admin) => (
             <button
-              key={admin.pubKeyHash}
+              key={admin.address}
               type="button"
               onClick={
                 !admin.disabled
-                  ? () => toggleAdminSelection(admin.pubKeyHash)
+                  ? () => toggleAdminSelection(admin.address)
                   : undefined
               }
               disabled={admin.disabled}
@@ -235,33 +190,28 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
                 <Checkbox
                   checked={admin.isSelected}
                   onCheckedChange={() =>
-                    !admin.disabled && toggleAdminSelection(admin.pubKeyHash)
+                    !admin.disabled && toggleAdminSelection(admin.address)
                   }
                   disabled={admin.disabled}
-                  id={`admin-${admin.pubKeyHash}`}
+                  id={`admin-${admin.address}`}
                 />
               </div>
 
-              <User className="text-muted-foreground h-4 w-4 flex-shrink-0" />
+              <User className="text-muted-foreground h-4 w-4 shrink-0" />
 
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex items-center gap-2">
-                  <div className="text-sm font-medium">
-                    Admin {admin.displayName}
-                  </div>
+                  <Copyable
+                    withKey={false}
+                    value={admin.address}
+                    link={`${getCurrentNetworkConfig().explorerUrl}/address/${admin.address}`}
+                    keyLabel={''}
+                  />
                   {admin.isCurrentUser && (
                     <span className="bg-primary-base rounded-full px-2 py-0.5 text-xs text-white">
                       You
                     </span>
                   )}
-                </div>
-                <div className="text-muted-foreground truncate font-mono text-xs">
-                  <Copyable
-                    withKey={false}
-                    value={admin.pubKeyHash}
-                    keyLabel={''}
-                  />
-                  {}
                 </div>
               </div>
             </button>

@@ -42,7 +42,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>
+      <body className="flex h-screen min-h-screen w-screen min-w-[320px] overflow-hidden antialiased">
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

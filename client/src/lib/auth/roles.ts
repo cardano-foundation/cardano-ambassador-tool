@@ -1,10 +1,13 @@
 'use server';
 
-import { deserializeAddress, deserializeDatum } from '@meshsdk/core';
-import { OracleDatum } from '@sidan-lab/cardano-ambassador-tool';
-import { unstable_cache, revalidateTag } from 'next/cache';
 import { BlockfrostService } from '@/services/blockfrostService';
 import type { UTxO } from '@meshsdk/core';
+import { deserializeAddress, deserializeDatum } from '@meshsdk/core';
+import {
+  getOracleAdmins,
+  OracleDatum,
+} from '@sidan-lab/cardano-ambassador-tool';
+import { revalidateTag, unstable_cache } from 'next/cache';
 
 const blockfrost = new BlockfrostService();
 
@@ -81,16 +84,16 @@ async function fetchOracleUtxoUncached(): Promise<UTxO | null> {
 /**
  * Fetches the oracle UTxO with 24-hour caching
  * Oracle UTxO rarely changes, so long-term caching is appropriate
- * 
+ *
  * @returns The oracle UTxO or null if not found
  */
 export const findOracleUtxo = unstable_cache(
   fetchOracleUtxoUncached,
   ['oracle-utxo'],
   {
-    revalidate: 86400, // 24 hours 
+    revalidate: 86400, // 24 hours
     tags: ['oracle-utxo', 'oracle-data'],
-  }
+  },
 );
 
 // ============================================================================
@@ -99,7 +102,7 @@ export const findOracleUtxo = unstable_cache(
 
 // Internal function that does the actual fetching
 async function fetchAdminsFromOracle(): Promise<{
-  adminPubKeyHashes: string[];
+  adminAddresses: string[];
   minsigners: number | BigInt;
 } | null> {
   try {
@@ -107,12 +110,10 @@ async function fetchAdminsFromOracle(): Promise<{
     const plutusData = oracleUtxo!.output.plutusData!;
     const datum: OracleDatum = deserializeDatum(plutusData);
     const minsigners = Number(datum.fields[2].int);
-    const adminPubKeyHashes: string[] = datum.fields[0].list.map((item) => {
-      return item.bytes;
-    });
+    const adminAddresses = getOracleAdmins(oracleUtxo!);
 
     return {
-      adminPubKeyHashes,
+      adminAddresses,
       minsigners,
     };
   } catch (error) {
@@ -127,9 +128,9 @@ export const findAdminsFromOracle = unstable_cache(
   fetchAdminsFromOracle,
   ['oracle-admins'],
   {
-    revalidate: 86400, 
-    tags: ['oracle-admins'], 
-  }
+    revalidate: 86400,
+    tags: ['oracle-admins'],
+  },
 );
 
 /**

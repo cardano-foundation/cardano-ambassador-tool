@@ -148,7 +148,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       const blockfrost = getProvider();
       const wallet = await walletState!.wallet;
       const address = await wallet!.getChangeAddress();
-      const adminsPkh = selectedAdmins;
+      const adminsPkh = selectedAdmins.map((add: string) => deserializeAddress(add).pubKeyHash);
 
       const adminAction = new AdminActionTx(
         address,

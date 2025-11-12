@@ -13,13 +13,13 @@ function HomeContent({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AppLoadingScreen isVisible={shouldShowLoading} />
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen w-full">
         <div className="sticky top-0 z-20">
           <SideNav />
         </div>
 
         <div className="flex h-screen min-w-0 flex-1 flex-col">
-          <div className="sticky top-0 z-20 flex-shrink-0">
+          <div className="sticky top-0 z-20 shrink-0">
             <TopNavBar />
           </div>
           <main className="flex-1 overflow-auto">

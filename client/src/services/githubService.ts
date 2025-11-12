@@ -5,7 +5,7 @@ const GITHUB_API = 'https://api.github.com';
 
 const GitContentService = {
   async saveContent({ title, description, submitterAddress }: GithubProposalData & { submitterAddress?: string }) {
-    if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO) {
+    if (!process.env.GITHUB_TOKEN || !process.env.NEXT_PUBLIC_GITHUB_REPO) {
       throw new Error('GitHub credentials missing in environment variables');
     }
 
@@ -127,10 +127,10 @@ const formatFilename = (title: string) => {
 };
 
 const loadGitCred = () => {
-  const { GITHUB_TOKEN, GITHUB_REPO, GITHUB_BRANCH = 'main' } = process.env;
-  const repo = GITHUB_REPO;
+  const { GITHUB_TOKEN, NEXT_PUBLIC_GITHUB_REPO, NEXT_PUBLIC_GITHUB_BRANCH = 'main' } = process.env;
+  const repo = NEXT_PUBLIC_GITHUB_REPO;
   const token = GITHUB_TOKEN;
-  const branch = GITHUB_BRANCH;
+  const branch = NEXT_PUBLIC_GITHUB_BRANCH;
 
   return { repo, token, branch };
 };

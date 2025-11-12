@@ -61,10 +61,10 @@ export default function GlobalRefreshButton({
   return (
     <Button
       variant="outline"
-      size="sm"
+      size="xs"
       onClick={handleRefresh}
       disabled={isLoading}
-      className={`gap-2 ${className}`}
+      className={`appearance-none ${className}`}
       aria-label={isLoading ? 'Syncing...' : 'Sync'}
     >
       <RefreshCw

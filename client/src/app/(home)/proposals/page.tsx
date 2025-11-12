@@ -23,7 +23,13 @@ type Proposal = {
   receiverWalletAddress: string;
   submittedByAddress: string;
   fundsRequested: string;
-  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'signoff_pending' ;
+  status:
+    | 'pending'
+    | 'submitted'
+    | 'under_review'
+    | 'approved'
+    | 'rejected'
+    | 'signoff_pending';
   txHash: string;
   progress?: {
     current: number;
@@ -97,7 +103,9 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     accessor: 'fundsRequested',
     sortable: true,
     cell: (value) => (
-      <span className="text-sm">{value && value !== '0' ? formatAdaAmount(value) : 'N/A'}</span>
+      <span className="text-sm">
+        {value && value !== '0' ? formatAdaAmount(value) : 'N/A'}
+      </span>
     ),
   },
   {
@@ -119,7 +127,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     sortable: true,
     cell: (value, row) => (
       <div className="space-y-1">
-        <Chip variant={getChipVariant(value)} className='text-nowrap'>
+        <Chip variant={getChipVariant(value)} className="text-nowrap">
           {formatStatus(value)}
         </Chip>
       </div>
