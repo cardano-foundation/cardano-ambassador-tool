@@ -8,13 +8,14 @@ import ThemeToggle from '@/components/ThemeToggle';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { useApp } from '@/context/AppContext';
 import { useNavigation } from '@/hooks/UseNavigation';
-import { shortenString } from '@/utils';
+// import { shortenString } from '@/utils';
 import { useWallet } from '@meshsdk/react';
 import { X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import UserAvatar from '../atoms/UserAvatar';
 import GlobalRefreshButton from '../GlobalRefreshButton';
+import { shortenString } from '@/utils';
 
 export default function TopNavBar() {
   const { user, isAdmin } = useApp();

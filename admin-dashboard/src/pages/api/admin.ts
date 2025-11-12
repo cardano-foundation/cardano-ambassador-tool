@@ -42,7 +42,7 @@ const getAdminWalletsAndPkh = async () => {
   const pkh2 = deserializeAddress(addr2).pubKeyHash;
   const addr3 = await admin3.getChangeAddress();
   const pkh3 = deserializeAddress(addr3).pubKeyHash;
-  const adminsPkh = [pkh1, pkh2, pkh3];
+  const adminsPkh = [pkh1];
   return { admin1, admin2, admin3, adminsPkh };
 };
 
@@ -60,13 +60,10 @@ const multiSignAndSubmit = async (
   admin2: MeshWallet,
   admin3: MeshWallet
 ) => {
-  const admin1SignedTx = await admin1.signTx(unsignedTx.txHex, true);
-  const admin12SignedTx = await admin2.signTx(admin1SignedTx, true);
-  const allSignedTx = await admin3.signTx(admin12SignedTx, true);
-  console.log(allSignedTx);
+  const admin1SignedTx = await admin1.signTx(unsignedTx.txHex);
 
   // Submit transaction
-  return await admin2.submitTx(allSignedTx);
+  return await admin1.submitTx(admin1SignedTx);
 };
 
 const getCatConstants = () => {
@@ -306,6 +303,8 @@ export default async function handler(
         return res.status(200).json({ result });
       }
       case "SignOff": {
+        console.log(getCatConstants().scripts.treasury.spend.address);
+
         const { signOffApprovalUtxo, memberUtxo } = params;
         const { admin1, admin2, admin3 } = await getAdminWalletsAndPkh();
         const oracleUtxo = await getOracleUtxo();

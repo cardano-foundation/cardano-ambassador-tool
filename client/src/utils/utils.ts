@@ -208,7 +208,7 @@ export function parseMemberDatum(
     const assetName = (datum.fields[0].list[1] as ByteString).bytes;
 
     const completion: Map<ProposalData, number> = new Map();
-    datum.fields[1].map.forEach((item) => {
+    datum.fields[1].map.forEach((item: { k: { fields: { bytes: string; }[]; }; v: { int: any; }; }) => {
       return completion.set(
         {
           title: hexToString(item.k.fields[0].bytes),

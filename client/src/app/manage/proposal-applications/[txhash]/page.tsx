@@ -44,6 +44,7 @@ export default function Page({ params }: PageProps) {
   const memberUtxo = members.length > 0 ? members[0] : undefined;
 
   let proposalData: ProposalData & { description?: string };
+  let proposalData: ProposalData & { description?: string };
   if (proposal && proposal.plutusData) {
     try {
       let metadata: any;

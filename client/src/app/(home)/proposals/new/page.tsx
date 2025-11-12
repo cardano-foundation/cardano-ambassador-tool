@@ -24,6 +24,10 @@ import {
   proposalMetadata,
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
+
+type ProposalFormData = ProposalData & {
+  description: string;
+};
 import { useEffect, useRef, useState } from 'react';
 import DetailsTab from './components/DetailsTab';
 import FundsTab from './components/FundsTab';
