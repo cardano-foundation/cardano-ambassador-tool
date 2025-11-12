@@ -26,7 +26,7 @@ import {
   ProposalMetadata,
   scripts,
 } from '@sidan-lab/cardano-ambassador-tool';
-import { Utxo } from '@types';
+import { ProposalItem, Utxo } from '@types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -48,16 +48,21 @@ export function copyToClipboard(text: string) {
 const blockfrostService = new BlockfrostService();
 
 // Scripts and addresses
-const allScripts = scripts({
-  oracle: {
-    txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
+const allScripts = scripts(
+  {
+    oracle: {
+      txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
+      outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
+    },
+    counter: {
+      txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
+      outputIndex: parseInt(
+        process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!,
+      ),
+    },
   },
-  counter: {
-    txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!),
-  },
-});
+  parseInt(process.env.NEXT_PUBLIC_NETWORK || '0'),
+);
 
 export const SCRIPT_ADDRESSES = {
   MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
@@ -134,7 +139,6 @@ export function parseMembershipIntentDatum(
 
     const metadataPlutus: MembershipMetadata = datum.fields[1];
 
-    // //TODO update to v0.7
     try {
       serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
@@ -204,21 +208,19 @@ export function parseMemberDatum(
     const assetName = (datum.fields[0].list[1] as ByteString).bytes;
 
     const completion: Map<ProposalData, number> = new Map();
-    datum.fields[1].map.forEach(
-      (item: { k: { fields: { bytes: string }[] }; v: { int: number } }) => {
-        return completion.set(
-          {
-            title: hexToString(item.k.fields[0].bytes),
-            url: hexToString(item.k.fields[1].bytes),
-            fundsRequested: hexToString(item.k.fields[2].bytes),
-            receiverWalletAddress: hexToString(item.k.fields[3].bytes),
-            submittedByAddress: hexToString(item.k.fields[4].bytes),
-            status: hexToString(item.k.fields[5].bytes),
-          },
-          Number(item.v.int),
-        );
-      },
-    );
+    datum.fields[1].map.forEach((item: ProposalItem) => {
+      completion.set(
+        {
+          title: hexToString(item.k.fields[0].bytes),
+          url: hexToString(item.k.fields[1].bytes),
+          fundsRequested: hexToString(item.k.fields[2].bytes),
+          receiverWalletAddress: serializeAddressObj(item.k.fields[3]),
+          submittedByAddress: serializeAddressObj(item.k.fields[4]),
+          status: hexToString(item.k.fields[5].bytes),
+        },
+        Number(item.v.int),
+      );
+    });
 
     const fundReceived = Number(datum.fields[2].int);
 
@@ -241,9 +243,7 @@ export function parseMemberDatum(
  * @param plutusData The Plutus data to validate
  * @returns The parsed ProposalDatum and ProposalData, or null if invalid
  */
-export function parseProposalDatum(
-  plutusData: string,
-): {
+export function parseProposalDatum(plutusData: string): {
   datum: ProposalDatum;
   metadata: ProposalData;
   memberIndex: number;
@@ -272,8 +272,8 @@ export function parseProposalDatum(
       title: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
       url: safeExtractString(metadataPlutus.fields[1] as ByteString),
       fundsRequested: lovelaceToAda(parseInt(fundsRequestedLovelace || '0')),
-      receiverWalletAddress: safeExtractString(metadataPlutus.fields[3]),
-      submittedByAddress: safeExtractString(metadataPlutus.fields[4]),
+      receiverWalletAddress: serializeAddressObj(metadataPlutus.fields[3]),
+      submittedByAddress: serializeAddressObj(metadataPlutus.fields[4]),
       status: hexToString((metadataPlutus.fields[5] as ByteString).bytes),
     };
     return { datum: datum as ProposalDatum, metadata, memberIndex };

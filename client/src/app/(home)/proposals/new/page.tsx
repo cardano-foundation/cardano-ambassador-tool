@@ -10,31 +10,37 @@ import { routes } from '@/config/routes';
 import { useApp } from '@/context';
 import { useMemberValidation } from '@/hooks/useMemberValidation';
 import {
+  adaToLovelace,
   dbUtxoToMeshUtxo,
   findTokenUtxoByMemberUtxo,
   getCatConstants,
   getProvider,
-  smoothScrollToElement,
-  adaToLovelace,
   parseAdaInput,
+  smoothScrollToElement,
 } from '@/utils';
+import { resolveTxHash } from '@meshsdk/core';
 import {
   ProposalData,
   proposalMetadata,
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
 
-type ProposalFormData = ProposalData & {
-  description: string;
-};
 import { useEffect, useRef, useState } from 'react';
 import DetailsTab from './components/DetailsTab';
 import FundsTab from './components/FundsTab';
 import ReviewTab from './components/ReviewTab';
-import { resolveTxHash } from '@meshsdk/core';
+
+type ProposalFormData = ProposalData & {
+  description: string;
+};
 
 export default function SubmitProposalPage() {
-  const { isAuthenticated, userWallet, memberUtxo, userAddress, showTxConfirmation } = useApp();
+  const {
+    userWallet,
+    memberUtxo,
+    userAddress,
+    showTxConfirmation,
+  } = useApp();
   const { isMember, isLoading: memberLoading } = useMemberValidation();
   const [activeTab, setActiveTab] = useState('details');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -103,7 +109,7 @@ export default function SubmitProposalPage() {
 
   const handleSubmit = async () => {
     let filename = '';
-    
+
     try {
       setIsSubmitting(true);
 
@@ -119,15 +125,19 @@ export default function SubmitProposalPage() {
 
       if (!saveResponse.ok) {
         const errorData = await saveResponse.json();
-        throw new Error(errorData.details || 'Failed to save proposal to GitHub');
+        throw new Error(
+          errorData.details || 'Failed to save proposal to GitHub',
+        );
       }
-      
+
       const saveData = await saveResponse.json();
       filename = saveData.data.filename;
       setGithubFilename(filename);
 
       if (!memberUtxo) {
-        throw new Error('No membership application UTxO found for this address');
+        throw new Error(
+          'No membership application UTxO found for this address',
+        );
       }
       const mbrUtxo = dbUtxoToMeshUtxo(memberUtxo);
       const tokenUtxo = await findTokenUtxoByMemberUtxo(mbrUtxo);
@@ -158,7 +168,7 @@ export default function SubmitProposalPage() {
       const lovelaceAmount = adaToLovelace(cleanAdaAmount);
 
       const githubUrl = `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_REPO}/blob/${process.env.NEXT_PUBLIC_GITHUB_BRANCH}/proposals-applications/content/${filename}`;
-      
+
       const metadataFormData: ProposalData = {
         title: formData.title,
         url: githubUrl,
@@ -178,12 +188,13 @@ export default function SubmitProposalPage() {
         metadata,
       );
 
-       const txHash = resolveTxHash(result.txHex);
+      const txHash = resolveTxHash(result.txHex);
 
       showTxConfirmation({
         txHash,
         title: 'Proposal Submitted',
-        description: 'Your proposal has been submitted. Please wait for blockchain confirmation.',
+        description:
+          'Your proposal has been submitted. Please wait for blockchain confirmation.',
         onConfirmed: () => {
           setShowConfirmation(true);
         },
@@ -193,24 +204,28 @@ export default function SubmitProposalPage() {
               method: 'DELETE',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ filename }),
-            }).catch(err => console.error('Failed to rollback GitHub file:', err));
+            }).catch((err) =>
+              console.error('Failed to rollback GitHub file:', err),
+            );
           }
-          
+
           setError(
             'Transaction confirmation timed out. Your proposal may still be processed.',
           );
           setShowError(true);
         },
       });
-    } catch (error:any) {
+    } catch (error: any) {
       if (filename) {
         await fetch('/api/proposal-content', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ filename }),
-        }).catch(err => console.error('Failed to rollback GitHub file:', err));
+        }).catch((err) =>
+          console.error('Failed to rollback GitHub file:', err),
+        );
       }
-      
+
       setError(error.message || 'Failed to submit proposal. Please try again.');
       setShowError(true);
     } finally {
@@ -411,7 +426,7 @@ export default function SubmitProposalPage() {
         description=" Please hold on as we do some magic"
         actions={[]}
       >
-          <CardanoLoaderSVG size={64} />
+        <CardanoLoaderSVG size={64} />
       </Modal>
     </div>
   );

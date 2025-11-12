@@ -178,7 +178,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       const address = await wallet!.getChangeAddress();
 
       // Use selected admins instead of all admins
-      const adminsPkh = selectedAdmins;
+      const adminsPkh = selectedAdmins.map((add: string) => deserializeAddress(add).pubKeyHash);
 
       const adminAction = new AdminActionTx(
         address,
@@ -186,9 +186,6 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         blockfrost,
         getCatConstants(),
       );
-
-      console.log({ counterUtxo, cd: dbUtxoToMeshUtxo(intentUtxo!) });
-      
 
       let unsignedTx;
       if (context === 'MembershipIntent') {

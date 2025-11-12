@@ -67,12 +67,10 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
     }));
 
     try {
-      // Use the existing ambassadorService
       const res = await fetch(`/api/member/${username.trim()}`);
 
       if (!res.ok) {
         const errorText = await res.text();
-        // Handle different error types
         if (res.status === 403) {
           throw new Error('Forum API authentication failed');
         } else if (res.status === 404) {
@@ -97,11 +95,10 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Verification failed';
       
-      // If it's an API authentication error, treat as unverified but don't show error
       if (errorMessage.includes('authentication failed') || errorMessage.includes('403')) {
         setVerificationState({
           isVerifying: false,
-          isValid: null, // Neutral state - not verified but not failed
+          isValid: null, 
           error: null,
           userInfo: null,
         });
@@ -120,7 +117,7 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       verifyUsername(value);
-    }, 800); // Wait 800ms after user stops typing
+    }, 800); 
 
     return () => clearTimeout(timeoutId);
   }, [value, verifyUsername]);
@@ -180,8 +177,8 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
           placeholder={placeholder}
           disabled={disabled}
           className={cn(
-            'bg-background w-full h-10 rounded-md border px-3 py-2 pr-10 text-sm transition-colors',
-            'focus:ring-opacity-20 focus:ring-2 focus:outline-none',
+            'bg-background h-10 w-full rounded-md border px-3 py-2 pr-10 text-sm transition-colors',
+            'focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50',
             getStatusColor(),
           )}
@@ -193,7 +190,7 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
       </div>
 
       {/* Status Messages */}
-      <div className="mt-2 min-h-[1.25rem]">
+      <div className="mt-2 min-h-5">
         {verificationState.isVerifying && (
           <p className="text-muted-foreground text-sm">Verifying username...</p>
         )}
@@ -230,24 +227,26 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
           </div>
         )}
 
-        {verificationState.isValid === null && value.trim() && !verificationState.isVerifying && (
-          <div className="space-y-1">
-            <p className="text-muted-foreground text-sm">
-              Forum verification temporarily unavailable
-            </p>
-            <p className="text-muted-foreground text-xs">
-              Please ensure you have an active account on{' '}
-              <a
-                href="https://forum.cardano.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline hover:no-underline"
-              >
-                forum.cardano.org
-              </a>
-            </p>
-          </div>
-        )}
+        {verificationState.isValid === null &&
+          value.trim() &&
+          !verificationState.isVerifying && (
+            <div className="space-y-1">
+              <p className="text-muted-foreground text-sm">
+                Forum verification temporarily unavailable
+              </p>
+              <p className="text-muted-foreground text-xs">
+                Please ensure you have an active account on{' '}
+                <a
+                  href="https://forum.cardano.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline hover:no-underline"
+                >
+                  forum.cardano.org
+                </a>
+              </p>
+            </div>
+          )}
 
         {verificationState.isValid === false && verificationState.error && (
           <div className="space-y-1">

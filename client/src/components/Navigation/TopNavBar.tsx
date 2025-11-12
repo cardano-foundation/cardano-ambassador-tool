@@ -2,20 +2,20 @@
 import Breadcrumb from '@/components/atoms/Breadcrumbs';
 import Button from '@/components/atoms/Button';
 import Card, { CardContent } from '@/components/atoms/Card';
-import CardanoIcon from '@/components/atoms/CardanoIcon';
 import HambugerIcon from '@/components/atoms/HumbugerIcon';
 import AppLogo from '@/components/atoms/Logo';
 import ThemeToggle from '@/components/ThemeToggle';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { useApp } from '@/context/AppContext';
 import { useNavigation } from '@/hooks/UseNavigation';
-import { shortenString } from '@/utils';
+// import { shortenString } from '@/utils';
 import { useWallet } from '@meshsdk/react';
 import { X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import UserAvatar from '../atoms/UserAvatar';
 import GlobalRefreshButton from '../GlobalRefreshButton';
+import { shortenString } from '@/utils';
 
 export default function TopNavBar() {
   const { user, isAdmin } = useApp();
@@ -31,25 +31,28 @@ export default function TopNavBar() {
         <div className="mx-auto w-full p-4 lg:p-6">
           <div className="lg:hidden">
             <div className="mb-2 flex items-center justify-between">
-              <div className="text-primary-base flex-shrink-0">
-                {/* <CardanoIcon size={40} color="currentColor" /> */}
+              <div className="text-primary-base shrink-0">
                 <AppLogo />
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="bg-background border-none p-2"
-                onClick={toggleMobileMenu}
-                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-                aria-expanded={isMobileMenuOpen}
-                aria-controls="mobile-navigation"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <HambugerIcon className="h-5 w-5" />
-                )}
-              </Button>
+
+              <div className="flex flex-row gap-2">
+                <GlobalRefreshButton />
+                <Button
+                  variant="outline"
+                  size="xs"
+                  className="bg-background border-none py-0!"
+                  onClick={toggleMobileMenu}
+                  aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                  aria-expanded={isMobileMenuOpen}
+                  aria-controls="mobile-navigation"
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="size-8" />
+                  ) : (
+                    <HambugerIcon className="h-6 w-6" />
+                  )}
+                </Button>
+              </div>
             </div>
             <div className="shrink-0">
               <Breadcrumb />
@@ -73,7 +76,7 @@ export default function TopNavBar() {
                       name={shortenString(user.address)}
                     />
                     {isAdmin && (
-                      <span className="bg-primary-base absolute -bottom-1 left-1/2 -translate-x-1/2 transform whitespace-nowrap rounded-full px-2  text-[10px] font-medium text-white shadow-md">
+                      <span className="bg-primary-base absolute -bottom-1 left-1/2 -translate-x-1/2 transform rounded-full px-2 text-[10px] font-medium whitespace-nowrap text-white shadow-md">
                         Admin
                       </span>
                     )}
@@ -129,16 +132,33 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
   return (
     <div className="bg-background flex h-screen w-full flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between lg:p-6 p-4">
+      <div className="flex items-center justify-between p-4 lg:p-6">
         <AppLogo />
-        <Button
-          variant="outline"
-          size="sm"
-          className="bg-background border-none p-2"
-          onClick={onClose}
-        >
-          <X className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <div className="border-border mx-1 h-6 border-l" />
+          {user && (
+            <>
+              <div className="relative">
+                <UserAvatar size="size-8" name={shortenString(user.address)} />
+                {isAdmin && (
+                  <span className="bg-primary-base absolute -bottom-1 left-1/2 -translate-x-1/2 transform rounded-full px-2 text-[10px] font-medium whitespace-nowrap text-white shadow-md">
+                    Admin
+                  </span>
+                )}
+              </div>
+            </>
+          )}
+          <div className="border-border mx-1 h-6 border-l" />
+          <Button
+            variant="outline"
+            size="sm"
+            className="bg-background border-none p-2"
+            onClick={onClose}
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Navigation sections */}
@@ -159,7 +179,7 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
                     onClick={onClose}
                   >
                     <div
-                      className={`flex h-5 w-5 flex-shrink-0 items-center justify-center ${
+                      className={`flex h-5 w-5 shrink-0 items-center justify-center ${
                         isActive ? 'text-primary' : 'text-muted-foreground'
                       }`}
                     >

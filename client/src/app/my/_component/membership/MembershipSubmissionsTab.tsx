@@ -252,7 +252,7 @@ export default function MembershipSubmissionsTab() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 ">
       {memberUtxo && memberData && <MemberStatusCard />}
 
       {membershipIntentUtxo ? (
