@@ -21,13 +21,16 @@ export const useAmbassadorProfile = (
       setLoading(true);
       setError(null);
 
-      const url = new URL(`/api/member/${ambassadorUsername}`, window.location.origin);
+      const url = new URL(
+        `/api/member/${ambassadorUsername}`,
+        window.location.origin,
+      );
       if (forceRefresh) {
         url.searchParams.set('forceRefresh', 'true');
       }
-      
+
       const response = await fetch(url.toString());
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('API Error:', errorText);
@@ -51,11 +54,11 @@ export const useAmbassadorProfile = (
       await fetch('/api/revalidate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          forumProfile: ambassadorUsername 
+        body: JSON.stringify({
+          forumProfile: ambassadorUsername,
         }),
       });
-      
+
       await fetchAmbassadorProfile(true);
     } catch (err) {
       console.error('Hard refresh error:', err);

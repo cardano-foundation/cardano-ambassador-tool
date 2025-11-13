@@ -154,11 +154,11 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
   }
 
   async function initSignOff(decision: string, selectedAdmins: string[]) {
-    setSubmitError(null); 
+    setSubmitError(null);
 
     try {
       const oracleUtxo = await findOracleUtxo();
-      
+
       if (!oracleUtxo) {
         throw new Error('Failed to fetch Oracle UTxO');
       }
@@ -178,7 +178,9 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       const address = await wallet!.getChangeAddress();
 
       // Use selected admins instead of all admins
-      const adminsPkh = selectedAdmins.map((add: string) => deserializeAddress(add).pubKeyHash);
+      const adminsPkh = selectedAdmins.map(
+        (add: string) => deserializeAddress(add).pubKeyHash,
+      );
 
       const adminAction = new AdminActionTx(
         address,
@@ -397,7 +399,11 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         />
 
         <div className="text-base font-medium">
-          Review the {context === 'MembershipIntent' ? 'membership application' : 'proposal'} and make a decision:
+          Review the{' '}
+          {context === 'MembershipIntent'
+            ? 'membership application'
+            : 'proposal'}{' '}
+          and make a decision:
         </div>
         <div className="flex w-full gap-4">
           <Button
@@ -406,7 +412,9 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
             disabled={isProcessing || !intentUtxo!.txHash}
             className="text-primary-base! flex-1"
           >
-            {isProcessing ? 'Processing...' : `Reject ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
+            {isProcessing
+              ? 'Processing...'
+              : `Reject ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
           </Button>
           <Button
             variant="primary"
@@ -414,7 +422,9 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
             disabled={isProcessing || !intentUtxo!.txHash}
             className="flex-1"
           >
-            {isProcessing ? 'Processing...' : `Approve ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
+            {isProcessing
+              ? 'Processing...'
+              : `Approve ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
           </Button>
         </div>
       </div>

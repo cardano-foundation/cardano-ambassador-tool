@@ -1,4 +1,3 @@
-import Paragraph from '@/components/atoms/Paragraph';
 import React from 'react';
 import { AboutSection } from './AboutSection';
 import { NetworkSection } from './NetworkSection';

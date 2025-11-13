@@ -12,10 +12,6 @@ interface Props {
 
 export default function ReviewTab({ formData, userAddress }: Props) {
   return (
-    <FormReview
-      mode="create"
-      formData={formData}
-      userAddress={userAddress}
-    />
+    <FormReview mode="create" formData={formData} userAddress={userAddress} />
   );
 }

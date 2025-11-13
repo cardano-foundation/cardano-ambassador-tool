@@ -37,7 +37,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
         <div className="space-y-3 text-sm">
           <div>
             <span className="text-neutral font-semibold">Country:</span>{' '}
-            <span className="text-muted-foreground">{profile.country || '—'}</span>
+            <span className="text-muted-foreground">
+              {profile.country || '—'}
+            </span>
           </div>
           <div>
             <span className="text-neutral font-semibold">City:</span>{' '}

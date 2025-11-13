@@ -85,9 +85,9 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       </div>
 
       {/* Right column - stat cards */}
-        <div className="grid grid-cols-2 gap-3 lg:flex lg:flex-wrap lg:gap-2">
-          <StatCardsGrid stats={stats} />
-        </div>
+      <div className="grid grid-cols-2 gap-3 lg:flex lg:flex-wrap lg:gap-2">
+        <StatCardsGrid stats={stats} />
+      </div>
     </div>
   );
 };

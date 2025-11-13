@@ -5,8 +5,8 @@ import AppLogo from '@/components/atoms/Logo';
 import SettingsIcon from '@/components/atoms/SettingsIcon';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
-import { useApp } from '@/context';
 import { routes } from '@/config/routes';
+import { useApp } from '@/context';
 import { NavigationSection } from '@types';
 import {
   BookOpenTextIcon,

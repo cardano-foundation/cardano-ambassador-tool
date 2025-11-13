@@ -1,7 +1,6 @@
 import { useApp } from '@/context';
 import { getCountryByCode } from '@/utils';
 import { Utxo } from '@types';
-import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
 import { useMemo } from 'react';
 
 interface MemberValidationResult {
@@ -19,16 +18,21 @@ interface MemberValidationResult {
 }
 
 export function useMemberValidation(): MemberValidationResult {
-  const { isMember, memberValidationLoading, memberUtxo, memberData: rawMemberData } = useApp();
+  const {
+    isMember,
+    memberValidationLoading,
+    memberUtxo,
+    memberData: rawMemberData,
+  } = useApp();
 
   // Adapt MemberData to the expected interface for components
   const memberData = useMemo(() => {
     if (!rawMemberData) return null;
-    
+
     const countryData = rawMemberData.country
       ? getCountryByCode(rawMemberData.country)
       : null;
-    
+
     return {
       name: rawMemberData.fullName || rawMemberData.displayName,
       username: rawMemberData.displayName,

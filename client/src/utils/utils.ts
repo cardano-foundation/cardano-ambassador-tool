@@ -210,15 +210,15 @@ export function parseMemberDatum(
     const completion: Map<ProposalData, number> = new Map();
 
     datum.fields[1].map.forEach((item: ProposalItem) => {
-      if (!item.k || !item.v) return null;      
+      if (!item.k || !item.v) return null;
       completion.set(
         {
-          title: hexToString(item.k.fields[0].bytes||''),
-          url: hexToString(item.k.fields[1].bytes||''),
-          fundsRequested: hexToString(item.k.fields[2].bytes||''),
+          title: hexToString(item.k.fields[0].bytes || ''),
+          url: hexToString(item.k.fields[1].bytes || ''),
+          fundsRequested: hexToString(item.k.fields[2].bytes || ''),
           receiverWalletAddress: serializeAddressObj(item.k.fields[3]),
           submittedByAddress: serializeAddressObj(item.k.fields[4]),
-          status: hexToString(item.k.fields[5].bytes||''),
+          status: hexToString(item.k.fields[5].bytes || ''),
         },
         Number(item.v.int),
       );

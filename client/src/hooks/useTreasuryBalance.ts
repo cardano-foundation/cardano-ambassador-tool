@@ -14,7 +14,9 @@ export function useTreasuryBalance() {
 
       const utxos = await provider.fetchAddressUTxOs(treasuryAddress);
       const totalBalance = utxos.reduce((sum, utxo) => {
-        const lovelace = utxo.output.amount.find((asset) => asset.unit === 'lovelace');
+        const lovelace = utxo.output.amount.find(
+          (asset) => asset.unit === 'lovelace',
+        );
         return sum + BigInt(lovelace ? lovelace.quantity : '0');
       }, BigInt(0));
 

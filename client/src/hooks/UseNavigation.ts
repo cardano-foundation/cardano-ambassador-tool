@@ -1,19 +1,30 @@
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import { useWallet } from '@meshsdk/react';
+import ProposalIcon from '@/components/atoms/ProposalIcon';
+import SettingsIcon from '@/components/atoms/SettingsIcon';
+import UsersIcon from '@/components/atoms/UsersIcon';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context/AppContext';
+import { useWallet } from '@meshsdk/react';
 import { NavigationSection } from '@types';
-import { BookOpenTextIcon, GridIcon, HomeIcon, SendIcon, UserIcon } from 'lucide-react';
-import UsersIcon from '@/components/atoms/UsersIcon';
-import SettingsIcon from '@/components/atoms/SettingsIcon';
-import ProposalIcon from '@/components/atoms/ProposalIcon';
+import {
+  BookOpenTextIcon,
+  GridIcon,
+  HomeIcon,
+  SendIcon,
+  UserIcon,
+} from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const defaultNavigationSections: NavigationSection[] = [
   {
     items: [
       { id: 'home', label: 'Home', href: routes.home, icon: HomeIcon },
-      { id: 'proposals', label: 'Proposals', href: routes.proposals, icon: ProposalIcon },
+      {
+        id: 'proposals',
+        label: 'Proposals',
+        href: routes.proposals,
+        icon: ProposalIcon,
+      },
       { id: 'about', label: 'About', href: routes.about, icon: GridIcon },
       {
         id: 'ambassador',
@@ -78,7 +89,7 @@ export const useNavigation = () => {
   const pathname = usePathname();
   const { connected } = useWallet();
   const { isNetworkValid } = useApp();
-  
+
   const [sections, setSections] = useState(defaultNavigationSections);
   const [currentActiveId, setCurrentActiveId] = useState('');
 

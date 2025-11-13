@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { Table, ColumnDef } from '@/components/Table/Table';
 import Button from '@/components/atoms/Button';
-import Link from 'next/link';
 import Chip from '@/components/atoms/Chip';
-import Title from '@/components/atoms/Title';
-import { useState } from 'react';
-import Select from '@/components/atoms/Select';
 import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
+import Select from '@/components/atoms/Select';
+import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
+import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import { ColumnDef, Table } from '@/components/Table/Table';
+import { getCurrentNetworkConfig } from '@/config/cardano';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { parseProposalDatum, formatAdaAmount, parseMemberDatum } from '@/utils';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import { formatAdaAmount, parseMemberDatum, parseProposalDatum } from '@/utils';
+import Link from 'next/link';
+import { useState } from 'react';
 
 type Proposal = {
   id: number;
@@ -62,9 +62,12 @@ const getChipVariant = (status: Proposal['status']) => {
 
 const formatStatus = (status: Proposal['status']) => {
   switch (status) {
-    case 'signoff_pending': return 'Awaiting Signoff';
-    case 'under_review': return 'Under Review';
-    default: return status.charAt(0).toUpperCase() + status.slice(1);
+    case 'signoff_pending':
+      return 'Awaiting Signoff';
+    case 'under_review':
+      return 'Under Review';
+    default:
+      return status.charAt(0).toUpperCase() + status.slice(1);
   }
 };
 
@@ -157,25 +160,28 @@ const proposalColumns: ColumnDef<Proposal>[] = [
 ];
 
 export default function ProposalsPage() {
-  const { proposals, proposalIntents, signOfApprovals, dbLoading ,members} = useApp();
-  const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>('all');
+  const { proposals, proposalIntents, signOfApprovals, dbLoading, members } =
+    useApp();
+  const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>(
+    'all',
+  );
 
   if (dbLoading) {
     return <SimpleCardanoLoader />;
   }
 
-  const completedProposals: Proposal[] = members.flatMap((mbr) => {
+  const completedProposals = members.flatMap((mbr) => {
     const parsed = parseMemberDatum(mbr.plutusData!);
     const proposalsWithValue = Array.from(
       parsed?.member.completion!,
       ([proposal, value]) => ({
         ...proposal,
         status: 'success',
-        progress : {
-            current: 1,
-            total: 3,
-            stage: 'Treasury withrawal'
-          }
+        progress: {
+          current: 1,
+          total: 3,
+          stage: 'Treasury withrawal',
+        },
       }),
     );
 
@@ -183,9 +189,6 @@ export default function ProposalsPage() {
   });
 
   console.log({ completedProposals });
-  
-
-
 
   const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
 
@@ -199,17 +202,22 @@ export default function ProposalsPage() {
 
         if (utxo.parsedMetadata) {
           try {
-            const parsed = typeof utxo.parsedMetadata === 'string' 
-              ? JSON.parse(utxo.parsedMetadata) 
-              : utxo.parsedMetadata;
+            const parsed =
+              typeof utxo.parsedMetadata === 'string'
+                ? JSON.parse(utxo.parsedMetadata)
+                : utxo.parsedMetadata;
             metadata = parsed;
             description = parsed.description || 'No description provided';
           } catch (e) {
-            const { metadata: datumMetadata } = parseProposalDatum(utxo.plutusData)!;
+            const { metadata: datumMetadata } = parseProposalDatum(
+              utxo.plutusData,
+            )!;
             metadata = datumMetadata;
           }
         } else {
-          const { metadata: datumMetadata } = parseProposalDatum(utxo.plutusData)!;
+          const { metadata: datumMetadata } = parseProposalDatum(
+            utxo.plutusData,
+          )!;
           metadata = datumMetadata;
         }
 
@@ -218,14 +226,14 @@ export default function ProposalsPage() {
         let status: Proposal['status'] = 'pending';
         let progress: Proposal['progress'] | undefined;
 
-        if (signOfApprovals.some(p => p.txHash === utxo.txHash)) {
+        if (signOfApprovals.some((p) => p.txHash === utxo.txHash)) {
           status = 'signoff_pending';
           progress = {
             current: 1,
             total: 3,
-            stage: 'Treasury Signoff'
+            stage: 'Treasury Signoff',
           };
-        } else if (proposals.some(p => p.txHash === utxo.txHash)) {
+        } else if (proposals.some((p) => p.txHash === utxo.txHash)) {
           status = 'approved';
         } else {
           status = 'pending';
@@ -249,9 +257,8 @@ export default function ProposalsPage() {
     })
     .filter(Boolean) as Proposal[];
 
-
   const uniqueProposals = proposalsData.reduce((acc, current) => {
-    const existing = acc.find(item => item.txHash === current.txHash);
+    const existing = acc.find((item) => item.txHash === current.txHash);
     if (!existing) {
       acc.push(current);
     } else {
@@ -260,7 +267,7 @@ export default function ProposalsPage() {
         submitted: 3,
         under_review: 1,
         signoff_pending: 3,
-        treasury_signoff:3,
+        treasury_signoff: 3,
         approved: 2,
         pending: 1,
       };
@@ -274,15 +281,18 @@ export default function ProposalsPage() {
   }, [] as Proposal[]);
 
   // Apply status filter
-  const filteredProposals = statusFilter === 'all' 
-    ? uniqueProposals 
-    : uniqueProposals.filter(proposal => proposal.status === statusFilter);
+  const filteredProposals =
+    statusFilter === 'all'
+      ? uniqueProposals
+      : uniqueProposals.filter((proposal) => proposal.status === statusFilter);
 
   // Count by status for display
   const statusCounts = {
-    pending: uniqueProposals.filter(p => p.status === 'pending').length,
-    approved: uniqueProposals.filter(p => p.status === 'approved').length,
-    signoff_pending: uniqueProposals.filter(p => p.status === 'signoff_pending').length,
+    pending: uniqueProposals.filter((p) => p.status === 'pending').length,
+    approved: uniqueProposals.filter((p) => p.status === 'approved').length,
+    signoff_pending: uniqueProposals.filter(
+      (p) => p.status === 'signoff_pending',
+    ).length,
   };
 
   const statusOptions = [
@@ -299,8 +309,10 @@ export default function ProposalsPage() {
         <div className="space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-2">
-              <Title level="5" className="text-foreground">Community Proposals</Title>
-              <Paragraph className="text-sm text-muted-foreground">
+              <Title level="5" className="text-foreground">
+                Community Proposals
+              </Title>
+              <Paragraph className="text-muted-foreground text-sm">
                 Browse and discover all proposals at every stage of the process.
               </Paragraph>
             </div>
@@ -310,24 +322,30 @@ export default function ProposalsPage() {
               </Button>
             </Link>
           </div>
-          
+
           {/* Status Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Filter by status:</span>
+            <span className="text-muted-foreground text-sm">
+              Filter by status:
+            </span>
             <Select
               value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}
-              options={statusOptions.map(option => ({
+              onValueChange={(value) =>
+                setStatusFilter(value as typeof statusFilter)
+              }
+              options={statusOptions.map((option) => ({
                 ...option,
-                label: option.value !== 'all' && statusCounts[option.value as keyof typeof statusCounts] > 0 
-                  ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
-                  : option.label
+                label:
+                  option.value !== 'all' &&
+                  statusCounts[option.value as keyof typeof statusCounts] > 0
+                    ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
+                    : option.label,
               }))}
               placeholder="Select status..."
               className="w-48"
             />
           </div>
-          
+
           {/* Mobile-optimized scrollable table container */}
           <div className="w-full overflow-x-auto">
             <div className="min-w-[800px]">

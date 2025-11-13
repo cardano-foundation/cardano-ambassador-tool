@@ -32,7 +32,9 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
     message: string;
     details?: string;
   } | null>(null);
-  const [adminDecision, setAdminDecision] = useState<AdminDecision | null>(null);
+  const [adminDecision, setAdminDecision] = useState<AdminDecision | null>(
+    null,
+  );
   const [currentWalletHasSigned, setCurrentWalletHasSigned] = useState(false);
   const [showAdminSelector, setShowAdminSelector] = useState(false);
   const { wallet: walletState } = useApp();
@@ -108,7 +110,9 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       const supportSign = await wallet.signTx(adminDecision.signedTx, true);
 
       if (!supportSign) {
-        throw new Error('Failed to sign transaction - wallet returned undefined');
+        throw new Error(
+          'Failed to sign transaction - wallet returned undefined',
+        );
       }
 
       const updatedData: AdminDecision = {
@@ -140,7 +144,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
 
     try {
       const oracleUtxo = await findOracleUtxo();
-      
+
       if (!oracleUtxo) {
         throw new Error('Failed to fetch Oracle UTxO');
       }
@@ -148,7 +152,9 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       const blockfrost = getProvider();
       const wallet = await walletState!.wallet;
       const address = await wallet!.getChangeAddress();
-      const adminsPkh = selectedAdmins.map((add: string) => deserializeAddress(add).pubKeyHash);
+      const adminsPkh = selectedAdmins.map(
+        (add: string) => deserializeAddress(add).pubKeyHash,
+      );
 
       const adminAction = new AdminActionTx(
         address,
@@ -166,7 +172,10 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       const firstSigTX = await wallet!.signTx(unsignedTx.txHex, true);
 
       if (!unsignedTx) throw new Error('Failed to create transaction');
-      if (!firstSigTX) throw new Error('Failed to sign transaction - wallet returned undefined');
+      if (!firstSigTX)
+        throw new Error(
+          'Failed to sign transaction - wallet returned undefined',
+        );
 
       const { txHex, ...signedTx } = unsignedTx;
 
@@ -177,7 +186,11 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
         ...signedTx,
       };
 
-      await storageApiClient.save(proposalUtxo!.txHash, data, 'signoff-submissions');
+      await storageApiClient.save(
+        proposalUtxo!.txHash,
+        data,
+        'signoff-submissions',
+      );
       setAdminDecision(data);
       await extractAndSendDecisionData(data);
     } catch (error) {
@@ -262,7 +275,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
         />
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="inline-flex items-center gap-2 rounded-full border border-green-500 bg-green-50 text-green-500 px-3 py-1.5 text-sm font-medium">
+            <div className="inline-flex items-center gap-2 rounded-full border border-green-500 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-500">
               <span className="h-2 w-2 rounded-full bg-green-500"></span>
               Signoff Approval
             </div>

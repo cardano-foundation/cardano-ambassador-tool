@@ -7,7 +7,7 @@ import { findMembershipIntentUtxo, smoothScrollToElement } from '@/utils';
 import { UTxO } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ConnectWallet from './_components/ConnectWallet';
 import IntentExists from './_components/IntentExists';
 import SelectToken from './_components/SelectToken';
@@ -35,7 +35,6 @@ function SignUp() {
     if (membershipIntent || memberData) {
       return <IntentExists goBack={() => goBack()} />;
     } else {
-      
       return walletAssets.length ? (
         <SelectToken
           goNext={() => goNext()}
@@ -105,7 +104,7 @@ function SignUp() {
     setDirection(1);
 
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-    
+
     // Smooth scroll to top of stepper
     smoothScrollToElement(scrollTargetRef);
   };
@@ -113,7 +112,7 @@ function SignUp() {
   const goBack = () => {
     setDirection(-1);
     setCurrentStep((prev) => Math.max(prev - 1, 0));
-    
+
     // Smooth scroll to top of stepper
     smoothScrollToElement(scrollTargetRef);
   };

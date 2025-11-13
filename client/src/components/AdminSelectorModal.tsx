@@ -1,14 +1,12 @@
+import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
-import { shortenString } from '@/utils';
-import { deserializeAddress } from '@meshsdk/core';
 import { User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import Button from './atoms/Button';
 import Checkbox from './atoms/Checkbox';
 import Modal from './atoms/Modal';
 import Copyable from './Copyable';
-import { getCurrentNetworkConfig } from '@/config/cardano';
 
 interface AdminInfo {
   address: string;

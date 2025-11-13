@@ -51,7 +51,6 @@ export default function ManageAmbassadorsPage() {
         }
 
         console.log(memberMetadata.walletAddress);
-        
       }
       return { ...utxo, ...decodedDatum };
     })
@@ -93,7 +92,7 @@ export default function ManageAmbassadorsPage() {
             className="mr-2 inline size-6 rounded-full"
           />
           <span className="text-neutral font-normal">
-            {getCountryByCode(value)?.name||''}
+            {getCountryByCode(value)?.name || ''}
           </span>
         </div>
       ),

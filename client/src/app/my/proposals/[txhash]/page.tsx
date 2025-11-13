@@ -10,16 +10,16 @@ import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
 import TopNav from '@/components/Navigation/TabNav';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
 import ProposalDescription from '@/components/ProposalDescription';
+import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
+import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
 import { parseProposalDatum } from '@/utils';
 import { storageApiClient } from '@/utils/storageApiClient';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { AdminDecisionData } from '@types';
-import { use, useRef, useState, useEffect } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 
 interface PageProps {
   params: Promise<{ txhash: string }>;
@@ -29,7 +29,8 @@ export default function Page({ params }: PageProps) {
   const { proposalIntents, dbLoading, userAddress } = useApp();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
-  const [adminDecisionData, setAdminDecisionData] = useState<AdminDecisionData | null>(null);
+  const [adminDecisionData, setAdminDecisionData] =
+    useState<AdminDecisionData | null>(null);
   const { txhash } = use(params);
 
   const descriptionEditorRef = useRef<any>(null);
@@ -37,7 +38,7 @@ export default function Page({ params }: PageProps) {
   useEffect(() => {
     const loadAdminDecision = async () => {
       if (!txhash) return;
-      
+
       try {
         const decision = await storageApiClient.get<AdminDecisionData>(
           txhash,
@@ -65,17 +66,22 @@ export default function Page({ params }: PageProps) {
 
       if (proposal.parsedMetadata) {
         try {
-          const parsed = typeof proposal.parsedMetadata === 'string' 
-            ? JSON.parse(proposal.parsedMetadata) 
-            : proposal.parsedMetadata;
+          const parsed =
+            typeof proposal.parsedMetadata === 'string'
+              ? JSON.parse(proposal.parsedMetadata)
+              : proposal.parsedMetadata;
           metadata = parsed;
           description = parsed.description || '';
         } catch (e) {
-          const { metadata: datumMetadata } = parseProposalDatum(proposal.plutusData)!;
+          const { metadata: datumMetadata } = parseProposalDatum(
+            proposal.plutusData,
+          )!;
           metadata = datumMetadata;
         }
       } else {
-        const { metadata: datumMetadata } = parseProposalDatum(proposal.plutusData)!;
+        const { metadata: datumMetadata } = parseProposalDatum(
+          proposal.plutusData,
+        )!;
         metadata = datumMetadata;
       }
 
@@ -138,7 +144,8 @@ export default function Page({ params }: PageProps) {
     );
   }
 
-  const isOwner = userAddress && proposalData.submittedByAddress === userAddress;
+  const isOwner =
+    userAddress && proposalData.submittedByAddress === userAddress;
 
   if (!isOwner) {
     return (
@@ -306,7 +313,7 @@ export default function Page({ params }: PageProps) {
         <Card>
           {isEditing ? (
             <>
-              <div className="border-border  border-b mx-6 mb-6">
+              <div className="border-border mx-6 mb-6 border-b">
                 <TopNav
                   tabs={tabs}
                   activeTabId={activeTab}
@@ -391,7 +398,9 @@ export default function Page({ params }: PageProps) {
                   Description
                 </Title>
                 <ProposalDescription
-                  content={proposalData.description || 'No description available'}
+                  content={
+                    proposalData.description || 'No description available'
+                  }
                   className="text-foreground"
                 />
               </div>

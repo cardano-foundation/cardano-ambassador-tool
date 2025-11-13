@@ -1,7 +1,6 @@
 'use client';
 
 import Button from '@/components/atoms/Button';
-import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import AdminMembershipTimeline from '@/components/Timelines/AdminMembershipTimeline';

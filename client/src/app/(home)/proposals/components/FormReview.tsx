@@ -1,11 +1,11 @@
+import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
-import Paragraph from '@/components/atoms/Paragraph';
 import Copyable from '@/components/Copyable';
-import { useApp } from '@/context';
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import { parseAdaInput, formatAdaAmount } from '@/utils/utils';
 import { getCurrentNetworkConfig } from '@/config/cardano';
+import { useApp } from '@/context';
+import { formatAdaAmount, parseAdaInput } from '@/utils/utils';
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 
 type ProposalFormData = ProposalData & {
   description: string;
@@ -31,7 +31,7 @@ export default function FormReview({ formData }: Props) {
     <div className="sm:px-6">
       <div className="space-y-6">
         <div className="border-border space-y-5 rounded-[10px] border border-dashed px-7 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2.5">
               <Title level="6" className="text-foreground">
                 Funds Requested
@@ -40,7 +40,7 @@ export default function FormReview({ formData }: Props) {
                 {formatFundsRequested()}
               </Paragraph>
             </div>
-            
+
             <div className="space-y-2.5">
               <Title level="6" className="text-foreground">
                 Receiver Wallet Address
@@ -71,7 +71,7 @@ export default function FormReview({ formData }: Props) {
             </Paragraph>
           </div>
         </div>
-        
+
         <div className="border-border space-y-5 rounded-[10px] border border-dashed px-7 py-6">
           <div className="space-y-2.5">
             <Title level="6" className="text-foreground">

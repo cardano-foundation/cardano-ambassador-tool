@@ -14,13 +14,12 @@ export default function EmptyMembershipState() {
           No Membership Application Submission
         </Title>
         <Paragraph className="text-muted-foreground mb-4">
-          You haven't submitted a membership application yet. Start your
-          journey to become a Cardano Ambassador by submitting your
-          application.
+          You haven't submitted a membership application yet. Start your journey
+          to become a Cardano Ambassador by submitting your application.
         </Paragraph>
-        <Paragraph className="text-muted-foreground mb-6 ">
-          Just submitted an application? Click the refresh button above
-          to check for your latest submission.
+        <Paragraph className="text-muted-foreground mb-6">
+          Just submitted an application? Click the refresh button above to check
+          for your latest submission.
         </Paragraph>
         <Link href={routes.signUp}>
           <Button variant="primary" size="lg">

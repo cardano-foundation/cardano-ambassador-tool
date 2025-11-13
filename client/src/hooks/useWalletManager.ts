@@ -147,7 +147,7 @@ export function useWalletManager(): WalletState & {
               isConnecting: false,
               error: `Auto-connect failed: Wallet is on ${walletNetworkName} but app requires ${expectedNetworkName}.`,
             }));
-            clearWalletSelection(); 
+            clearWalletSelection();
             return;
           }
 

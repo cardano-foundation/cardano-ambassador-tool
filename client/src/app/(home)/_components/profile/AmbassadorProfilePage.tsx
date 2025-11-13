@@ -76,8 +76,8 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
       const countryData = memberMetadata.country
         ? getCountryByCode(memberMetadata.country)
         : null;
-      console.log({ parsed,kk:parsed.member.fundReceived });
-      
+      console.log({ parsed, kk: parsed.member.fundReceived });
+
       return {
         name:
           memberMetadata.fullName ||
@@ -88,7 +88,9 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
         city: memberMetadata.city || '',
         bio_excerpt: memberMetadata.bio || '',
         created_at: '',
-        amount_received: formatAdaAmount(lovelaceToAda(parsed.member.fundReceived)),
+        amount_received: formatAdaAmount(
+          lovelaceToAda(parsed.member.fundReceived),
+        ),
         proposal_count: parsed.member.completion.size,
       };
     } catch {

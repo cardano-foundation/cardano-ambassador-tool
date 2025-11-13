@@ -11,6 +11,5 @@ export default function ProposalDescription({
   content,
   className = '',
 }: ProposalDescriptionProps) {
-
   return <RichTextDisplay content={content} className={className} />;
 }

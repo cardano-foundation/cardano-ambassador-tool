@@ -13,8 +13,6 @@ const RichTextDisplay = ({
   content = '',
   className = '',
 }: RichTextDisplayProps) => {
-
-
   if (!content) {
     return (
       <div className={`text-muted-foreground ${className}`}>Not specified</div>
@@ -31,8 +29,6 @@ const RichTextDisplay = ({
     [&_li]:ml-2
     [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_img]:my-4
   `;
-
-
 
   return (
     <div className={`${baseClasses} ${className}`}>

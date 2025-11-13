@@ -17,15 +17,23 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Filename required' }, { status: 400 });
     }
 
-    if (filename.length > 200 || !/^[a-zA-Z0-9_-]+\.md$/.test(filename.trim())) {
+    if (
+      filename.length > 200 ||
+      !/^[a-zA-Z0-9_-]+\.md$/.test(filename.trim())
+    ) {
       return NextResponse.json({ error: 'Invalid filename' }, { status: 400 });
     }
 
     const data = await GitContentService.readContent(filename);
     return NextResponse.json(data);
   } catch (error) {
-    const msg = error instanceof Error ? error.message : 'Failed to fetch content';
-    const status = msg.includes('not found') ? 404 : msg.includes('authentication') ? 503 : 500;
+    const msg =
+      error instanceof Error ? error.message : 'Failed to fetch content';
+    const status = msg.includes('not found')
+      ? 404
+      : msg.includes('authentication')
+        ? 503
+        : 500;
     return NextResponse.json({ error: msg }, { status });
   }
 }

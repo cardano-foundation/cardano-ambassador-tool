@@ -36,7 +36,6 @@ export default function ProgressTrackerLoading() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

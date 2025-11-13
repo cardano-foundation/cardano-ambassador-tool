@@ -4,7 +4,7 @@ import React from 'react';
 
 interface ChipProps {
   children: React.ReactNode;
-  variant?: 'default' | 'success' | 'inactive' | 'error' | 'warning' ;
+  variant?: 'default' | 'success' | 'inactive' | 'error' | 'warning';
   size?: 'sm' | 'md';
   dismissible?: boolean;
   onDismiss?: () => void;

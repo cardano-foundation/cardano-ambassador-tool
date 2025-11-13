@@ -93,12 +93,16 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
         },
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Verification failed';
-      
-      if (errorMessage.includes('authentication failed') || errorMessage.includes('403')) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Verification failed';
+
+      if (
+        errorMessage.includes('authentication failed') ||
+        errorMessage.includes('403')
+      ) {
         setVerificationState({
           isVerifying: false,
-          isValid: null, 
+          isValid: null,
           error: null,
           userInfo: null,
         });
@@ -117,7 +121,7 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       verifyUsername(value);
-    }, 800); 
+    }, 800);
 
     return () => clearTimeout(timeoutId);
   }, [value, verifyUsername]);

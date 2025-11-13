@@ -76,7 +76,7 @@ export default function Dropdown({
         }}
         className={cn(
           'inline-flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-sm transition-colors focus-visible:outline-none',
-          'bg-background border-border hover:border-primary/50 hover:cursor-pointer focus:border-primary focus:ring-primary/20 focus:ring-2',
+          'bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-primary/20 hover:cursor-pointer focus:ring-2',
           disabled && 'hover:border-border cursor-not-allowed opacity-50',
           isOpen && 'border-primary ring-primary/20 ring-2',
         )}
@@ -113,14 +113,14 @@ export default function Dropdown({
       </button>
 
       {isOpen && (
-        <div 
+        <div
           className="bg-background border-border absolute right-0 left-0 z-[9999] mt-1 max-h-60 origin-top overflow-hidden rounded-md border shadow-lg"
           role="listbox"
           aria-labelledby="dropdown-label"
         >
           <div className="max-h-60 overflow-y-auto py-1">
             {options.length === 0 ? (
-              <div 
+              <div
                 className="text-muted-foreground px-4 py-3 text-sm"
                 role="option"
                 aria-selected="false"

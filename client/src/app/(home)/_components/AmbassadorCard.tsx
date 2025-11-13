@@ -21,7 +21,12 @@ export default function AmbassadorCard({
 
   if (isListView) {
     return (
-      <Card clickable className="w-full" data-testid="ambassador-card" role="article">
+      <Card
+        clickable
+        className="w-full"
+        data-testid="ambassador-card"
+        role="article"
+      >
         <CardContent className="flex items-center space-x-3 py-3 sm:space-x-4 sm:py-4">
           <UserAvatar size="size-12" name={ambassador.name} />
           <div className="min-w-0 flex-1">
@@ -33,13 +38,20 @@ export default function AmbassadorCard({
             </Title>
             <div className="mt-1 flex items-center gap-2">
               <span className="text-xs sm:text-sm">{displayFlag}</span>
-              <Paragraph size="sm" className="text-muted-foreground truncate" aria-label={`Based in ${ambassador.country}`}>
+              <Paragraph
+                size="sm"
+                className="text-muted-foreground truncate"
+                aria-label={`Based in ${ambassador.country}`}
+              >
                 {ambassador.country}
               </Paragraph>
             </div>
           </div>
           <div className="flex-shrink-0">
-            <Link href={`/ambassadors/${ambassadorId}`} aria-label={`View profile details for ${ambassador.name}`}>
+            <Link
+              href={`/ambassadors/${ambassadorId}`}
+              aria-label={`View profile details for ${ambassador.name}`}
+            >
               <Button
                 variant={'primary'}
                 size="sm"
@@ -71,7 +83,10 @@ export default function AmbassadorCard({
             {ambassador.country}
           </Paragraph>
         </div>
-        <Link href={`/ambassadors/${ambassadorId}`} aria-label={`View profile details for ${ambassador.name}`}>
+        <Link
+          href={`/ambassadors/${ambassadorId}`}
+          aria-label={`View profile details for ${ambassador.name}`}
+        >
           <Button
             variant={'primary'}
             size="sm"

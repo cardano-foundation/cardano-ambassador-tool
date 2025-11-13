@@ -1,6 +1,6 @@
 'use client';
 import Input from '@/components/atoms/Input';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const SearchIcon = ({ className = '' }: { className?: string }) => (
   <svg
@@ -100,7 +100,10 @@ export default function AmbassadorSearch({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
@@ -149,7 +152,7 @@ export default function AmbassadorSearch({
         <div className="relative flex-1 sm:flex-none" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="dark:!bg-background border-border inline-flex w-full min-w-0 items-center justify-between gap-2.5 rounded-md border bg-neutral-50 px-2.5 py-2.5 transition-all duration-200 hover:bg-muted hover:cursor-pointer sm:w-auto sm:justify-start"
+            className="dark:!bg-background border-border hover:bg-muted inline-flex w-full min-w-0 items-center justify-between gap-2.5 rounded-md border bg-neutral-50 px-2.5 py-2.5 transition-all duration-200 hover:cursor-pointer sm:w-auto sm:justify-start"
           >
             <div className="flex min-w-0 items-center justify-start gap-1">
               <div className="text-muted-foreground flex-shrink-0 font-['Chivo'] text-sm leading-3 font-normal">
@@ -163,7 +166,7 @@ export default function AmbassadorSearch({
               {selectedRegion !== 'all' ? (
                 <button
                   onClick={handleClearRegion}
-                  className="text-sm text-slate-400 transition-colors duration-200 hover:text-slate-600 hover:cursor-pointer"
+                  className="text-sm text-slate-400 transition-colors duration-200 hover:cursor-pointer hover:text-slate-600"
                 >
                   ×
                 </button>
@@ -221,9 +224,9 @@ export default function AmbassadorSearch({
             </div>
           )}
         </div>
-        <div className="border-border inline-flex flex-shrink-0 items-center justify-center rounded-md border bg-neutral-50 dark:!bg-background px-[2px] lg:py-1 transition-all duration-200 hover:bg-muted hover:cursor-pointer">
+        <div className="border-border dark:!bg-background hover:bg-muted inline-flex flex-shrink-0 items-center justify-center rounded-md border bg-neutral-50 px-[2px] transition-all duration-200 hover:cursor-pointer lg:py-1">
           <button
-            className={`flex items-center justify-center rounded-md lg:p-1.5 p-1 transition-all duration-200 hover:cursor-pointer ${
+            className={`flex items-center justify-center rounded-md p-1 transition-all duration-200 hover:cursor-pointer lg:p-1.5 ${
               currentView === 'grid'
                 ? 'bg-muted shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)]'
                 : 'hover:bg-muted/50'
@@ -231,10 +234,10 @@ export default function AmbassadorSearch({
             onClick={() => onViewChange?.('grid')}
             title="Grid view"
           >
-            <GridIcon className="text-muted-foreground h-4 w-4 transition-colors duration-200 hover:text-foreground" />
+            <GridIcon className="text-muted-foreground hover:text-foreground h-4 w-4 transition-colors duration-200" />
           </button>
           <button
-            className={`flex items-center justify-center rounded-md lg:p-1.5 p-1 transition-all duration-200 hover:cursor-pointer ${
+            className={`flex items-center justify-center rounded-md p-1 transition-all duration-200 hover:cursor-pointer lg:p-1.5 ${
               currentView === 'list'
                 ? 'bg-muted shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)]'
                 : 'hover:bg-muted/50'
@@ -242,7 +245,7 @@ export default function AmbassadorSearch({
             onClick={() => onViewChange?.('list')}
             title="List view"
           >
-            <ListIcon className="text-muted-foreground h-4 w-4 transition-colors duration-200 hover:text-foreground" />
+            <ListIcon className="text-muted-foreground hover:text-foreground h-4 w-4 transition-colors duration-200" />
           </button>
         </div>
       </div>

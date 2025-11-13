@@ -1,4 +1,7 @@
-import { getUserProfile, getUserProfileUncached } from '@/services/ambassadorService';
+import {
+  getUserProfile,
+  getUserProfileUncached,
+} from '@/services/ambassadorService';
 import { NextResponse } from 'next/server';
 
 export async function GET(
@@ -10,13 +13,13 @@ export async function GET(
     const url = new URL(req.url);
     const forceRefresh = url.searchParams.get('forceRefresh') === 'true';
     const decodedUsername = decodeURIComponent(username);
-    
-    const data = forceRefresh 
+
+    const data = forceRefresh
       ? await getUserProfileUncached({ username: decodedUsername })
       : await getUserProfile({ username: decodedUsername });
-    return NextResponse.json(data, { 
+    return NextResponse.json(data, {
       headers: {
-        'Cache-Control': forceRefresh 
+        'Cache-Control': forceRefresh
           ? 'no-cache, no-store, must-revalidate'
           : 's-maxage=300, stale-while-revalidate=150',
       },
@@ -24,8 +27,8 @@ export async function GET(
   } catch (e: any) {
     console.error('Forum API error:', e);
     return NextResponse.json(
-      { error: e.message || 'Failed to fetch user profile' }, 
-      { status: 500 }
+      { error: e.message || 'Failed to fetch user profile' },
+      { status: 500 },
     );
   }
 }

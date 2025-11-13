@@ -35,12 +35,7 @@ type ProposalFormData = ProposalData & {
 };
 
 export default function SubmitProposalPage() {
-  const {
-    userWallet,
-    memberUtxo,
-    userAddress,
-    showTxConfirmation,
-  } = useApp();
+  const { userWallet, memberUtxo, userAddress, showTxConfirmation } = useApp();
   const { isMember, isLoading: memberLoading } = useMemberValidation();
   const [activeTab, setActiveTab] = useState('details');
   const [isSubmitting, setIsSubmitting] = useState(false);

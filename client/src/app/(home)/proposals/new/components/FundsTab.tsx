@@ -1,6 +1,6 @@
+import { useApp } from '@/context';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import FormFunds from '../../components/FormFunds';
-import { useApp } from '@/context';
 
 type ProposalFormData = ProposalData & {
   description: string;

@@ -1,15 +1,13 @@
 'use client';
 
-import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
 import Button from '@/components/atoms/Button';
 import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
-import { getCurrentNetworkConfig } from '@/config/cardano';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { parseProposalDatum, lovelaceToAda, formatAdaAmount } from '@/utils';
+import { formatAdaAmount, lovelaceToAda } from '@/utils';
 import Link from 'next/link';
 import EmptyProposalIntentState from './EmptyProposalIntentState';
 
@@ -48,7 +46,10 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
     accessor: 'description',
     sortable: false,
     cell: (value, row) => {
-      if (!value) return <span className="text-sm text-muted-foreground">No description</span>;
+      if (!value)
+        return (
+          <span className="text-muted-foreground text-sm">No description</span>
+        );
       const truncatedValue = truncateToWords(value, 8);
       return (
         <div className="max-w-[350px] text-sm">
@@ -94,21 +95,33 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
 ];
 
 export default function ProposalSubmissionsTab() {
-  const { proposalIntents, proposals, signOfApprovals, members, userAddress, dbLoading } = useApp();
-  
+  const {
+    proposalIntents,
+    proposals,
+    signOfApprovals,
+    members,
+    userAddress,
+    dbLoading,
+  } = useApp();
+
   const userMemberUtxo = members.find((m) => {
     if (!m.parsedMetadata) return false;
     try {
-      const metadata = typeof m.parsedMetadata === 'string'
-        ? JSON.parse(m.parsedMetadata)
-        : m.parsedMetadata;
+      const metadata =
+        typeof m.parsedMetadata === 'string'
+          ? JSON.parse(m.parsedMetadata)
+          : m.parsedMetadata;
       return metadata?.walletAddress === userAddress;
     } catch {
       return false;
     }
   });
-  
-  const allProposalUtxos = [...proposalIntents, ...proposals, ...signOfApprovals];
+
+  const allProposalUtxos = [
+    ...proposalIntents,
+    ...proposals,
+    ...signOfApprovals,
+  ];
 
   if (dbLoading) {
     return (
@@ -127,19 +140,20 @@ export default function ProposalSubmissionsTab() {
       if (!utxo.parsedMetadata) return null;
 
       try {
-        const metadata = typeof utxo.parsedMetadata === 'string'
-          ? JSON.parse(utxo.parsedMetadata)
-          : utxo.parsedMetadata;
+        const metadata =
+          typeof utxo.parsedMetadata === 'string'
+            ? JSON.parse(utxo.parsedMetadata)
+            : utxo.parsedMetadata;
 
         if (!metadata || metadata.submittedByAddress !== userAddress) {
           return null;
         }
 
-        const status = signOfApprovals.some(p => p.txHash === utxo.txHash)
-          ? 'approved' as const
-          : proposals.some(p => p.txHash === utxo.txHash)
-          ? 'approved' as const
-          : 'pending' as const;
+        const status = signOfApprovals.some((p) => p.txHash === utxo.txHash)
+          ? ('approved' as const)
+          : proposals.some((p) => p.txHash === utxo.txHash)
+            ? ('approved' as const)
+            : ('pending' as const);
 
         return {
           id: idx + 1,
@@ -161,7 +175,7 @@ export default function ProposalSubmissionsTab() {
   }
 
   return (
-    <div className="space-y-6 ">
+    <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <Title level="4" className="text-foreground">

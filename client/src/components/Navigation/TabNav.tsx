@@ -13,7 +13,7 @@ interface TabItem {
 interface TopNavigationTabsProps {
   tabs: TabItem[];
   activeTabId: string;
-  onTabChange: (tabId: string, tab: TabItem) => void; 
+  onTabChange: (tabId: string, tab: TabItem) => void;
   className?: string;
 }
 
@@ -33,7 +33,10 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
   return (
     <div className="w-full">
       <Tabs className={cn('w-full', className)} value={activeTabId}>
-        <TabsList className="w-full grid" style={{ gridTemplateColumns: `repeat(${tabs.length}, 1fr)` }}>
+        <TabsList
+          className="grid w-full"
+          style={{ gridTemplateColumns: `repeat(${tabs.length}, 1fr)` }}
+        >
           {tabs.map((tab) => {
             return (
               <TabsTrigger
@@ -41,7 +44,7 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
                 onClick={() => handleTabClick(tab)}
                 disabled={tab.disabled}
                 value={tab.id}
-                className="w-full flex justify-center"
+                className="flex w-full justify-center"
                 aria-label={tab.label}
                 aria-selected={activeTabId === tab.id}
                 role="tab"

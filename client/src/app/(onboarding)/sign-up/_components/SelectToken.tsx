@@ -64,7 +64,7 @@ const SelectToken = ({
               <label
                 htmlFor={asset.assetName}
                 key={asset.assetName}
-                className="group border-white-400 hover:border-primary-base/30 peer-checked:border-primary-base/30 flex w-full cursor-pointer items-start gap-4 rounded-lg border px-2 lg:px-5 py-2 lg:py-4 text-sm transition-all"
+                className="group border-white-400 hover:border-primary-base/30 peer-checked:border-primary-base/30 flex w-full cursor-pointer items-start gap-4 rounded-lg border px-2 py-2 text-sm transition-all lg:px-5 lg:py-4"
               >
                 <div className="group-peer-checked:border-primary mt-1.5 flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors">
                   <div className="group-peer-checked:bg-primary hidden size-2 rounded-full bg-white transition-colors group-peer-checked:block" />

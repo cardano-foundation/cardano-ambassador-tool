@@ -1,9 +1,9 @@
 'use client';
 
-import { countries, getCitiesForCountry } from '@/utils/locationData';
-import React from 'react';
-import { cn } from '@/utils/utils';
 import SearchableDropdown from '@/components/atoms/SearchableDropdown';
+import { countries, getCitiesForCountry } from '@/utils/locationData';
+import { cn } from '@/utils/utils';
+import React from 'react';
 
 interface LocationSelectorProps {
   countryCode?: string;
@@ -43,7 +43,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
   };
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn('space-y-4', className)}>
       <div>
         <label className="text-foreground mb-2 block text-sm font-medium">
           Country

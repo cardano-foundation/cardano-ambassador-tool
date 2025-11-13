@@ -48,7 +48,7 @@ export function useThemeManager() {
       mediaQuery.removeEventListener('change', handleSystemThemeChange);
   }, []);
 
-  // Theme control 
+  // Theme control
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
   };

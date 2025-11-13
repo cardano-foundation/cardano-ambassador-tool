@@ -4,8 +4,8 @@ import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { useApp } from '@/context';
 import { useState } from 'react';
-import ProposalSubmissionsTab from '../_component/proposals/ProposalSubmissionsTab';
 import MembershipSubmissionsTab from '../_component/membership/MembershipSubmissionsTab';
+import ProposalSubmissionsTab from '../_component/proposals/ProposalSubmissionsTab';
 export default function IntentSubmissionsPage() {
   const tabs = [
     { id: 'membership-intent', label: 'Membership Application' },

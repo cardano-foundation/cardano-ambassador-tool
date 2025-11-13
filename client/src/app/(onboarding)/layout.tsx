@@ -1,7 +1,5 @@
 'use client';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen';
-import InboxIcon from '@/components/atoms/InboxIcon';
-import LinkButton from '@/components/atoms/LinkButton';
 import AppLogo from '@/components/atoms/Logo';
 import OnboardingSvg from '@/components/atoms/onboarding';
 import Paragraph from '@/components/atoms/Paragraph';
@@ -19,7 +17,7 @@ function OnboardingContent({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AppLoadingScreen isVisible={shouldShowLoading} />
-      <div className=" flex h-screen min-h-screen w-full min-w-[320px] overflow-hidden antialiased">
+      <div className="flex h-screen min-h-screen w-full min-w-[320px] overflow-hidden antialiased">
         <div className="flex h-full w-full p-2">
           <div className="flex flex-1 flex-col items-center overflow-y-auto p-2">
             <div className="flex w-full shrink-0 justify-between p-2 lg:p-6">

@@ -12,7 +12,11 @@ import ErrorAccordion from '@/components/ErrorAccordion';
 import { toast } from '@/components/toast/toast-manager';
 import { useApp } from '@/context/AppContext';
 import { useMemberValidation } from '@/hooks/useMemberValidation';
-import { findMembershipIntentUtxo, getCatConstants, getProvider } from '@/utils';
+import {
+  findMembershipIntentUtxo,
+  getCatConstants,
+  getProvider,
+} from '@/utils';
 import {
   getFieldError,
   validateIntentForm,
@@ -82,7 +86,8 @@ const SubmitIntent = ({
     if (isMember && memberData) {
       setSubmitError({
         message: 'You are already a Cardano Ambassador member',
-        details: 'Members cannot submit new membership applications. You can view your profile at /my/submissions.',
+        details:
+          'Members cannot submit new membership applications. You can view your profile at /my/submissions.',
       });
       return;
     }
@@ -93,7 +98,8 @@ const SubmitIntent = ({
       if (existingIntent) {
         setSubmitError({
           message: 'You already have a pending membership application',
-          details: 'You can only have one membership application at a time. Check your submission status at /my/submissions.',
+          details:
+            'You can only have one membership application at a time. Check your submission status at /my/submissions.',
         });
         return;
       }
@@ -280,7 +286,7 @@ const SubmitIntent = ({
   };
 
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden">
+    <div className="w-full max-w-full space-y-6 overflow-hidden">
       {/* Error Accordion */}
       <div className="w-full max-w-full">
         <ErrorAccordion
@@ -407,8 +413,8 @@ const SubmitIntent = ({
             disabled={isSubmitting}
           >
             {isSubmitting ? (
-              <div className='flex'>
-                <Loader2 className="mr-2 h-4 w-4  animate-spin" />
+              <div className="flex">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 <span>Submitting...</span>
               </div>
             ) : (

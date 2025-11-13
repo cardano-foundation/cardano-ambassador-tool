@@ -1,6 +1,3 @@
-import { cn } from '@/utils/utils';
-import React from 'react';
-import Button from './Button';
 import {
   Dialog,
   DialogContent,
@@ -9,6 +6,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/Dialog';
+import { cn } from '@/utils/utils';
+import React from 'react';
+import Button from './Button';
 
 interface ModalAction {
   label: string;
@@ -68,7 +68,7 @@ export default function Modal({
 }: ModalProps) {
   const sizeClasses = {
     sm: 'sm:max-w-sm',
-    md: 'sm:max-w-md', 
+    md: 'sm:max-w-md',
     lg: 'sm:max-w-lg',
     xl: 'sm:max-w-xl',
     '2xl': 'sm:max-w-2xl',
@@ -83,51 +83,52 @@ export default function Modal({
   // Determine content - use children if provided, otherwise use legacy message
   const content = children || (
     <div className="text-center">
-      <p className="text-base text-foreground">
-        {message}
-      </p>
+      <p className="text-foreground text-base">{message}</p>
     </div>
   );
 
   // Determine footer - use custom footer or actions
-  const footerContent = footer || (actions.length > 0 && (
-    <div className="flex gap-3 w-full">
-      {actions.map((action, index) => (
-        <Button
-          key={index}
-          variant={action.variant || 'primary'}
-          size="md"
-          className="flex-1"
-          onClick={action.onClick}
-          disabled={action.disabled}
-        >
-          {action.label}
-        </Button>
-      ))}
-    </div>
-  ));
+  const footerContent =
+    footer ||
+    (actions.length > 0 && (
+      <div className="flex w-full gap-3">
+        {actions.map((action, index) => (
+          <Button
+            key={index}
+            variant={action.variant || 'primary'}
+            size="md"
+            className="flex-1"
+            onClick={action.onClick}
+            disabled={action.disabled}
+          >
+            {action.label}
+          </Button>
+        ))}
+      </div>
+    ));
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
-        className={cn(`${sizeClasses[size]} max-h-[90vh] overflow-hidden flex flex-col`, className)}
+        className={cn(
+          `${sizeClasses[size]} flex max-h-[90vh] flex-col overflow-hidden`,
+          className,
+        )}
         showCloseButton={showCloseButton && closable}
       >
         {(title || description) && (
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}
-            {description && <DialogDescription>{description}</DialogDescription>}
+            {description && (
+              <DialogDescription>{description}</DialogDescription>
+            )}
           </DialogHeader>
         )}
 
-        <div className="flex-1 overflow-y-auto px-1">
-          {content}
-        </div>
+        <div className="flex-1 overflow-y-auto px-1">{content}</div>
 
         {footerContent && (
-          <DialogFooter className="pt-4">
-            {footerContent}
-          </DialogFooter>
+          <DialogFooter className="pt-4">{footerContent}</DialogFooter>
         )}
       </DialogContent>
     </Dialog>

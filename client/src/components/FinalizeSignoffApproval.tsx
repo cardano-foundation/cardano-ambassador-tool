@@ -98,7 +98,9 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
     [onFinalizationComplete, txhash],
   );
 
-  const handleTransactionTimeout = (result: TransactionConfirmationResult) => {};
+  const handleTransactionTimeout = (
+    result: TransactionConfirmationResult,
+  ) => {};
 
   const handleCloseConfirmationOverlay = useCallback(() => {
     setShowConfirmationOverlay(false);
@@ -133,7 +135,8 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
       {hasAdminDecision && !signatureRequirementsMet && adminDecisionData && (
         <div className="space-y-1 text-center">
           <Paragraph size="sm" className="text-gray-500">
-            Waiting for {adminDecisionData.selectedAdmins.length - getSignedCount()} more
+            Waiting for{' '}
+            {adminDecisionData.selectedAdmins.length - getSignedCount()} more
             signature(s) before execution.
           </Paragraph>
           <Paragraph size="xs" className="text-gray-400">
@@ -172,8 +175,16 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
         onTimeout={handleTransactionTimeout}
         showNavigationOptions={isFinalized}
         navigationOptions={[
-          { label: 'Go to Treasury Signoffs', url: '/manage/treasury-signoffs', variant: 'primary' },
-          { label: 'Back to Proposals', url: '/manage/proposal-applications', variant: 'outline' }
+          {
+            label: 'Go to Treasury Signoffs',
+            url: '/manage/treasury-signoffs',
+            variant: 'primary',
+          },
+          {
+            label: 'Back to Proposals',
+            url: '/manage/proposal-applications',
+            variant: 'outline',
+          },
         ]}
       />
     </div>

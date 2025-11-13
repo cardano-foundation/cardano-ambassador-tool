@@ -10,7 +10,7 @@ export default function Breadcrumbs() {
   const pathNames = paths.split('/').filter((path) => path);
 
   return (
-    <nav className="my-4 lg:w-full text-sm overflow-clip">
+    <nav className="my-4 overflow-clip text-sm lg:w-full">
       <ol className="text-primary-base flex space-x-1 font-semibold">
         <Link
           href="/"

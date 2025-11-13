@@ -109,8 +109,6 @@ self.onmessage = async function (e) {
 
   // Fetch and store UTxOs
   async function fetchAndStoreContext(contextName) {
-
-
     const res = await fetch(`${apiBaseUrl}/api/utxos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

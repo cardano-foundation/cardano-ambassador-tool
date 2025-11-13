@@ -102,13 +102,12 @@ export default function MultisigProgressTracker({
                 ) : adminDecisionData?.decision === 'approve' ? (
                   <CheckCircleIcon className="h-4 w-4 text-green-500" />
                 ) : (
-                  <XCircleIcon className="h-4 w-4 text-primary-base" />
+                  <XCircleIcon className="text-primary-base h-4 w-4" />
                 )}
                 <span className="text-sm">
-                  {signer.signed 
+                  {signer.signed
                     ? `${adminDecisionData?.decision === 'approve' ? 'Approval' : 'Rejection'} Signed`
-                    : 'Pending Signature'
-                  }
+                    : 'Pending Signature'}
                 </span>
               </div>
             </div>
@@ -125,7 +124,7 @@ export default function MultisigProgressTracker({
       </div>
 
       {/* Progress Tracker */}
-      {totalSigners>0 && (
+      {totalSigners > 0 && (
         <div className="max-w-lg space-y-4">
           <div className="flex items-center gap-2">
             <Paragraph size="base" className="">
@@ -148,7 +147,7 @@ export default function MultisigProgressTracker({
                 className={`relative h-2 rounded-full transition-all duration-500 ease-out ${
                   isComplete
                     ? 'bg-linear-to-r from-green-400 to-green-500'
-                    : 'bg-linear-to-r from-primary-400 to-primary-base'
+                    : 'from-primary-400 to-primary-base bg-linear-to-r'
                 }`}
                 style={{ width: `${Math.min(progressPercentage, 100)}%` }}
               >
@@ -167,9 +166,7 @@ export default function MultisigProgressTracker({
                 {signedCount} of {totalSigners} required signatures
               </Paragraph>
               <span
-                className={`font-medium ${
-                  isComplete ? 'text-green-600' : ''
-                }`}
+                className={`font-medium ${isComplete ? 'text-green-600' : ''}`}
               >
                 {Math.min(Math.round(progressPercentage), 100)}%
               </span>

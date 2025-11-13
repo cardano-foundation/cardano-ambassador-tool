@@ -33,12 +33,12 @@ export default function SearchableDropdown({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
-  
+
   const selectedOption = options.find((opt) => opt.value === value);
-  
+
   // Filter options based on search query
   const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(searchQuery.toLowerCase())
+    option.label.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   useEffect(() => {

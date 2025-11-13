@@ -54,24 +54,26 @@ export interface IntentFormData {
   t_c: boolean;
 }
 
-export const validateIntentForm = (formData: IntentFormData): ValidationResult => {
+export const validateIntentForm = (
+  formData: IntentFormData,
+): ValidationResult => {
   const errors: ValidationError[] = [];
 
   // Full Name validation
   if (!isRequired(formData.fullName)) {
     errors.push({
       field: 'fullName',
-      message: 'Full name is required'
+      message: 'Full name is required',
     });
   } else if (!hasMinLength(formData.fullName, 2)) {
     errors.push({
       field: 'fullName',
-      message: 'Full name must be at least 2 characters long'
+      message: 'Full name must be at least 2 characters long',
     });
   } else if (!hasMaxLength(formData.fullName, 100)) {
     errors.push({
       field: 'fullName',
-      message: 'Full name must not exceed 100 characters'
+      message: 'Full name must not exceed 100 characters',
     });
   }
 
@@ -79,17 +81,17 @@ export const validateIntentForm = (formData: IntentFormData): ValidationResult =
   if (!isRequired(formData.email)) {
     errors.push({
       field: 'email',
-      message: 'Email address is required'
+      message: 'Email address is required',
     });
   } else if (!isValidEmail(formData.email)) {
     errors.push({
       field: 'email',
-      message: 'Please enter a valid email address'
+      message: 'Please enter a valid email address',
     });
   } else if (!hasMaxLength(formData.email, 255)) {
     errors.push({
       field: 'email',
-      message: 'Email address must not exceed 255 characters'
+      message: 'Email address must not exceed 255 characters',
     });
   }
 
@@ -97,17 +99,17 @@ export const validateIntentForm = (formData: IntentFormData): ValidationResult =
   if (!isRequired(formData.forum_username)) {
     errors.push({
       field: 'forum_username',
-      message: 'Forum username is required'
+      message: 'Forum username is required',
     });
   } else if (!hasMinLength(formData.forum_username, 3)) {
     errors.push({
       field: 'forum_username',
-      message: 'Forum username must be at least 3 characters long'
+      message: 'Forum username must be at least 3 characters long',
     });
   } else if (!hasMaxLength(formData.forum_username, 50)) {
     errors.push({
       field: 'forum_username',
-      message: 'Forum username must not exceed 50 characters'
+      message: 'Forum username must not exceed 50 characters',
     });
   }
 
@@ -115,7 +117,7 @@ export const validateIntentForm = (formData: IntentFormData): ValidationResult =
   if (!isRequired(formData.country)) {
     errors.push({
       field: 'country',
-      message: 'Country selection is required'
+      message: 'Country selection is required',
     });
   }
 
@@ -123,7 +125,7 @@ export const validateIntentForm = (formData: IntentFormData): ValidationResult =
   if (!isRequired(formData.city)) {
     errors.push({
       field: 'city',
-      message: 'City selection is required'
+      message: 'City selection is required',
     });
   }
 
@@ -131,17 +133,17 @@ export const validateIntentForm = (formData: IntentFormData): ValidationResult =
   if (!isRequired(formData.bio)) {
     errors.push({
       field: 'bio',
-      message: 'Bio is required'
+      message: 'Bio is required',
     });
   } else if (!hasMinLength(formData.bio, 10)) {
     errors.push({
       field: 'bio',
-      message: 'Bio must be at least 10 characters long'
+      message: 'Bio must be at least 10 characters long',
     });
   } else if (!hasMaxLength(formData.bio, 500)) {
     errors.push({
       field: 'bio',
-      message: 'Bio must not exceed 500 characters'
+      message: 'Bio must not exceed 500 characters',
     });
   }
 
@@ -149,13 +151,13 @@ export const validateIntentForm = (formData: IntentFormData): ValidationResult =
   if (!formData.t_c) {
     errors.push({
       field: 't_c',
-      message: 'You must accept the Terms & Conditions to continue'
+      message: 'You must accept the Terms & Conditions to continue',
     });
   }
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
 
@@ -178,23 +180,25 @@ export interface ProfileFormData {
 /**
  * Validates profile edit form data
  */
-export const validateProfileForm = (formData: ProfileFormData): ValidationResult => {
+export const validateProfileForm = (
+  formData: ProfileFormData,
+): ValidationResult => {
   const errors: ValidationError[] = [];
 
   if (!isRequired(formData.name)) {
     errors.push({
       field: 'name',
-      message: 'Full name is required'
+      message: 'Full name is required',
     });
   } else if (!hasMinLength(formData.name, 2)) {
     errors.push({
       field: 'name',
-      message: 'Full name must be at least 2 characters long'
+      message: 'Full name must be at least 2 characters long',
     });
   } else if (!hasMaxLength(formData.name, 100)) {
     errors.push({
       field: 'name',
-      message: 'Full name must not exceed 100 characters'
+      message: 'Full name must not exceed 100 characters',
     });
   }
 
@@ -202,34 +206,34 @@ export const validateProfileForm = (formData: ProfileFormData): ValidationResult
   if (!isRequired(formData.username)) {
     errors.push({
       field: 'username',
-      message: 'Forum username is required'
+      message: 'Forum username is required',
     });
   } else if (!hasMinLength(formData.username, 3)) {
     errors.push({
       field: 'username',
-      message: 'Forum username must be at least 3 characters long'
+      message: 'Forum username must be at least 3 characters long',
     });
   } else if (!hasMaxLength(formData.username, 50)) {
     errors.push({
       field: 'username',
-      message: 'Forum username must not exceed 50 characters'
+      message: 'Forum username must not exceed 50 characters',
     });
   }
 
   if (!isRequired(formData.email)) {
     errors.push({
       field: 'email',
-      message: 'Email address is required'
+      message: 'Email address is required',
     });
   } else if (!isValidEmail(formData.email)) {
     errors.push({
       field: 'email',
-      message: 'Please enter a valid email address'
+      message: 'Please enter a valid email address',
     });
   } else if (!hasMaxLength(formData.email, 255)) {
     errors.push({
       field: 'email',
-      message: 'Email address must not exceed 255 characters'
+      message: 'Email address must not exceed 255 characters',
     });
   }
 
@@ -237,12 +241,12 @@ export const validateProfileForm = (formData: ProfileFormData): ValidationResult
     if (!hasMinLength(formData.bio, 10)) {
       errors.push({
         field: 'bio',
-        message: 'Bio must be at least 10 characters long'
+        message: 'Bio must be at least 10 characters long',
       });
     } else if (!hasMaxLength(formData.bio, 500)) {
       errors.push({
         field: 'bio',
-        message: 'Bio must not exceed 500 characters'
+        message: 'Bio must not exceed 500 characters',
       });
     }
   }
@@ -250,7 +254,7 @@ export const validateProfileForm = (formData: ProfileFormData): ValidationResult
   if (formData.country && !isRequired(formData.country)) {
     errors.push({
       field: 'country',
-      message: 'Please select a valid country'
+      message: 'Please select a valid country',
     });
   }
 
@@ -258,7 +262,7 @@ export const validateProfileForm = (formData: ProfileFormData): ValidationResult
     if (!formData.city || !isRequired(formData.city)) {
       errors.push({
         field: 'city',
-        message: 'City is required when country is selected'
+        message: 'City is required when country is selected',
       });
     }
   }
@@ -267,7 +271,7 @@ export const validateProfileForm = (formData: ProfileFormData): ValidationResult
     if (!hasMaxLength(formData.github, 50)) {
       errors.push({
         field: 'github',
-        message: 'GitHub username must not exceed 50 characters'
+        message: 'GitHub username must not exceed 50 characters',
       });
     }
   }
@@ -276,7 +280,7 @@ export const validateProfileForm = (formData: ProfileFormData): ValidationResult
     if (!hasMaxLength(formData.twitter, 50)) {
       errors.push({
         field: 'twitter',
-        message: 'Twitter handle must not exceed 50 characters'
+        message: 'Twitter handle must not exceed 50 characters',
       });
     }
   }
@@ -285,7 +289,7 @@ export const validateProfileForm = (formData: ProfileFormData): ValidationResult
     if (!hasMaxLength(formData.discord, 50)) {
       errors.push({
         field: 'discord',
-        message: 'Discord username must not exceed 50 characters'
+        message: 'Discord username must not exceed 50 characters',
       });
     }
   }
@@ -294,21 +298,24 @@ export const validateProfileForm = (formData: ProfileFormData): ValidationResult
     if (!hasMaxLength(formData.spoId, 100)) {
       errors.push({
         field: 'spoId',
-        message: 'SPO ID must not exceed 100 characters'
+        message: 'SPO ID must not exceed 100 characters',
       });
     }
   }
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
 
 /**
  * Get error message for a specific field
  */
-export const getFieldError = (errors: ValidationError[], fieldName: string): string | undefined => {
-  const error = errors.find(e => e.field === fieldName);
+export const getFieldError = (
+  errors: ValidationError[],
+  fieldName: string,
+): string | undefined => {
+  const error = errors.find((e) => e.field === fieldName);
   return error?.message;
 };

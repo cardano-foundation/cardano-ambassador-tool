@@ -28,7 +28,14 @@ export default function ProfilesPage() {
   );
 
   const blockfrost = getProvider();
-  const { userWallet, syncData, wallet, memberData, isMember, showTxConfirmation } = useApp();
+  const {
+    userWallet,
+    syncData,
+    wallet,
+    memberData,
+    isMember,
+    showTxConfirmation,
+  } = useApp();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const profileData = useMemo(() => {
@@ -161,7 +168,8 @@ export default function ProfilesPage() {
           showTxConfirmation({
             txHash,
             title: 'Updating Profile',
-            description: 'Please wait while your profile is being updated on the blockchain.',
+            description:
+              'Please wait while your profile is being updated on the blockchain.',
             onConfirmed: handleTransactionConfirmed,
             onTimeout: handleTransactionTimeout,
           });
@@ -218,7 +226,6 @@ export default function ProfilesPage() {
     },
     [syncData],
   );
-
 
   // Show member-only access if user is not a member
   if (!isMember) {

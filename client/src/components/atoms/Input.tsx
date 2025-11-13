@@ -1,5 +1,5 @@
 import { cn } from '@/utils/utils';
-import { InputHTMLAttributes, forwardRef, ReactNode } from 'react';
+import { forwardRef, InputHTMLAttributes, ReactNode } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -27,36 +27,42 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   ) => {
     if (prefix) {
       return (
-        <div className="self-stretch inline-flex flex-col justify-start items-start gap-1.5">
+        <div className="inline-flex flex-col items-start justify-start gap-1.5 self-stretch">
           {label && (
-            <div className="justify-center text-neutral-500 text-sm font-normal  leading-none">
+            <div className="justify-center text-sm leading-none font-normal text-neutral-500">
               {label}
             </div>
           )}
-          <div className="self-stretch inline-flex justify-start items-start">
-            <div className={cn(
-              "h-10 pl-3 pr-[5px] py-3 rounded-tl-md rounded-bl-md border-l border-t border-b border-border flex justify-start items-center gap-2.5",
-              disabled && "opacity-50 bg-gray-100",
-              error && "border-primary-500",
-              prefixClassName
-            )}>
-              <div className={cn(
-                "justify-center text-neutral-500 text-base font-normal leading-normal",
-                'focus:!border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
-                disabled && "text-gray-400",
-                error && "text-primary-500"
-              )}>
+          <div className="inline-flex items-start justify-start self-stretch">
+            <div
+              className={cn(
+                'border-border flex h-10 items-center justify-start gap-2.5 rounded-tl-md rounded-bl-md border-t border-b border-l py-3 pr-[5px] pl-3',
+                disabled && 'bg-gray-100 opacity-50',
+                error && 'border-primary-500',
+                prefixClassName,
+              )}
+            >
+              <div
+                className={cn(
+                  'justify-center text-base leading-normal font-normal text-neutral-500',
+                  'focus:!border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
+                  disabled && 'text-gray-400',
+                  error && 'text-primary-500',
+                )}
+              >
                 {prefix}
               </div>
             </div>
-            <div className={cn(
-              "flex-1 h-10 px-3 py-3 rounded-tr-md rounded-br-md  outline-1 outline-offset-[-1px] flex justify-start items-center gap-2.5",
-              error ? 'outline-primary-base' : 'outline-border',
-              disabled && "opacity-50 bg-gray-100 cursor-not-allowed",
-              icon && "pl-10"
-            )}>
+            <div
+              className={cn(
+                'flex h-10 flex-1 items-center justify-start gap-2.5 rounded-tr-md rounded-br-md px-3 py-3 outline-1 outline-offset-[-1px]',
+                error ? 'outline-primary-base' : 'outline-border',
+                disabled && 'cursor-not-allowed bg-gray-100 opacity-50',
+                icon && 'pl-10',
+              )}
+            >
               {icon && (
-                <div className="absolute left-3 h-10 flex items-center z-10 text-muted-foreground pointer-events-none">
+                <div className="text-muted-foreground pointer-events-none absolute left-3 z-10 flex h-10 items-center">
                   {icon}
                 </div>
               )}
@@ -64,8 +70,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 ref={ref}
                 disabled={disabled}
                 className={cn(
-                  "w-full justify-center text-neutral-900 text-base font-normal font-['Chivo'] leading-normal bg-transparent border-none outline-none focus:outline-none placeholder:text-neutral-400",
-                  disabled && "cursor-not-allowed text-gray-400"
+                  "w-full justify-center border-none bg-transparent font-['Chivo'] text-base leading-normal font-normal text-neutral-900 outline-none placeholder:text-neutral-400 focus:outline-none",
+                  disabled && 'cursor-not-allowed text-gray-400',
                 )}
                 {...props}
               />
@@ -73,7 +79,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           </div>
 
           {error && errorMessage && (
-            <div className="text-primary-base text-xs font-normal mt-2">
+            <div className="text-primary-base mt-2 text-xs font-normal">
               {errorMessage}
             </div>
           )}
@@ -83,30 +89,32 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full space-y-2">
         {label && (
-          <label className={cn(
-            'block text-sm font-medium',
-            error ? 'text-primary-base' : 'text-foreground',
-            disabled && 'opacity-50'
-          )}>
+          <label
+            className={cn(
+              'block text-sm font-medium',
+              error ? 'text-primary-base' : 'text-foreground',
+              disabled && 'opacity-50',
+            )}
+          >
             {label}
           </label>
         )}
-        
+
         <div className="relative">
           {icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
+            <div className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2">
               {icon}
             </div>
           )}
-          
+
           <input
             ref={ref}
             disabled={disabled}
             className={cn(
-              'w-full h-10 px-3 py-2 rounded-md border transition-colors',
+              'h-10 w-full rounded-md border px-3 py-2 transition-colors',
               'text-sm font-normal',
               'bg-background border-border placeholder:text-muted-foreground',
-              'focus:border-primary-300 focus:ring-2 focus:ring-primary-300/20 focus:outline-none',
+              'focus:border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
               'hover:border-primary-300',
               icon && 'pl-10',
               disabled && [

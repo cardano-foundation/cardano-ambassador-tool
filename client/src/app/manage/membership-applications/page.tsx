@@ -143,8 +143,8 @@ export default function MembershipIntentPage() {
           size="base"
           className="text-muted-foreground max-w-4xl text-sm sm:text-base"
         >
-          Review and manage membership applications submitted by users who
-          wish to become recognized ambassadors.
+          Review and manage membership applications submitted by users who wish
+          to become recognized ambassadors.
         </Paragraph>
       </div>
       {/* Scrollable container */}

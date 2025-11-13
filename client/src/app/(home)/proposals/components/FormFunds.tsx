@@ -1,7 +1,6 @@
 import Input from '@/components/atoms/Input';
-import Button from '@/components/atoms/Button';
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { useApp } from '@/context';
+import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 
 type ProposalFormData = ProposalData & {
   description: string;
@@ -14,9 +13,14 @@ interface Props {
   userAddress?: string;
 }
 
-export default function FormFunds({ mode, formData, handleInputChange, userAddress }: Props) {
+export default function FormFunds({
+  mode,
+  formData,
+  handleInputChange,
+  userAddress,
+}: Props) {
   const { userAddress: connectedAddress } = useApp();
-  
+
   const handleAdaInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleInputChange('fundsRequested', e.target.value);
   };

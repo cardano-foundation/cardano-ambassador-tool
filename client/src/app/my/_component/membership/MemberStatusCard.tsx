@@ -10,13 +10,14 @@ export default function MemberStatusCard() {
     <Card>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+          <div className="h-3 w-3 animate-pulse rounded-full bg-green-500"></div>
           <div>
             <Title level="6" className="text-foreground mb-1">
               You are now a Cardano Ambassador!
             </Title>
             <Paragraph className="text-muted-foreground text-sm">
-              Your membership intent has been accepted. View your full profile for details.
+              Your membership intent has been accepted. View your full profile
+              for details.
             </Paragraph>
           </div>
         </div>

@@ -2,8 +2,8 @@
 
 import OwnerMembershipTimeline from '@/components/Timelines/OwnerMembershipTimeline';
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
-import Title from '@/components/atoms/Title';
 import Paragraph from '@/components/atoms/Paragraph';
+import Title from '@/components/atoms/Title';
 import { useApp } from '@/context';
 import { useMemberValidation } from '@/hooks/useMemberValidation';
 import {
@@ -33,7 +33,9 @@ export default function MembershipSubmissionsTab() {
   const blockfrost = getProvider();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [membershipIntentUtxo, setMembershipIntentUtxo] = useState<Utxo | null>(null);
+  const [membershipIntentUtxo, setMembershipIntentUtxo] = useState<Utxo | null>(
+    null,
+  );
   const [isTransactionPending, setIsTransactionPending] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
@@ -74,13 +76,7 @@ export default function MembershipSubmissionsTab() {
 
     setMembershipIntentUtxo(userMembershipIntent || null);
     setLoading(false);
-  }, [
-    userAddress,
-    membershipIntents,
-    dbLoading,
-    isAuthenticated,
-    isSyncing,
-  ]);
+  }, [userAddress, membershipIntents, dbLoading, isAuthenticated, isSyncing]);
 
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
     try {
@@ -89,7 +85,9 @@ export default function MembershipSubmissionsTab() {
       const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
 
       if (!membershipIntentUtxo) {
-        throw new Error('No membership application UTxO found for this address');
+        throw new Error(
+          'No membership application UTxO found for this address',
+        );
       }
 
       const tokenUtxo =
@@ -252,7 +250,7 @@ export default function MembershipSubmissionsTab() {
   }
 
   return (
-    <div className="space-y-6 ">
+    <div className="space-y-6">
       {memberUtxo && memberData && <MemberStatusCard />}
 
       {membershipIntentUtxo ? (

@@ -54,22 +54,26 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
       return {
         approveButton: 'Activate Membership',
         rejectButton: 'Execute Rejection',
-        pendingMessage: 'An admin needs to approve or reject this application first.',
-        rejectedMessage: 'This membership application has been rejected by an admin.',
+        pendingMessage:
+          'An admin needs to approve or reject this application first.',
+        rejectedMessage:
+          'This membership application has been rejected by an admin.',
         waitingMessage: 'Waiting for',
         readyMessage: '✓ All requirements met! Ready to activate membership.',
         completedMessage: '✓ Membership Activated!',
         overlayTitle: 'Activating Membership',
         overlayDescription: {
-          pending: 'Please wait while membership activation is being confirmed on the blockchain.',
-          success: 'Membership has been successfully activated! 🎉'
-        }
+          pending:
+            'Please wait while membership activation is being confirmed on the blockchain.',
+          success: 'Membership has been successfully activated! 🎉',
+        },
       };
     } else {
       return {
         approveButton: 'Execute Proposal Approval',
         rejectButton: 'Execute Proposal Rejection',
-        pendingMessage: 'An admin needs to approve or reject this proposal first.',
+        pendingMessage:
+          'An admin needs to approve or reject this proposal first.',
         rejectedMessage: 'This proposal has been rejected by an admin.',
         waitingMessage: 'Waiting for',
         readyMessage: `✓ All requirements met! Ready to ${adminDecisionData?.decision === 'approve' ? 'approve' : 'reject'} proposal.`,
@@ -77,8 +81,8 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
         overlayTitle: `${adminDecisionData?.decision === 'approve' ? 'Approving' : 'Rejecting'} Proposal`,
         overlayDescription: {
           pending: `Please wait while your proposal ${adminDecisionData?.decision === 'approve' ? 'approval' : 'rejection'} is being confirmed on the blockchain.`,
-          success: `Your proposal has been successfully ${adminDecisionData?.decision === 'approve' ? 'approved' : 'rejected'}! 🎉`
-        }
+          success: `Your proposal has been successfully ${adminDecisionData?.decision === 'approve' ? 'approved' : 'rejected'}! 🎉`,
+        },
       };
     }
   };
@@ -119,11 +123,21 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
         description: labels.overlayDescription.pending,
         onConfirmed: handleTransactionConfirmed,
         onTimeout: handleTransactionTimeout,
-        showNavigationOptions: context === 'ProposalIntent' && adminDecisionData?.decision === 'approve',
+        showNavigationOptions:
+          context === 'ProposalIntent' &&
+          adminDecisionData?.decision === 'approve',
         navigationOptions: [
-          { label: 'Go to Treasury Signoff', url: '/manage/treasury-signoffs', variant: 'primary' },
-          { label: 'Back to Proposals', url: '/manage/proposal-applications', variant: 'outline' }
-        ]
+          {
+            label: 'Go to Treasury Signoff',
+            url: '/manage/treasury-signoffs',
+            variant: 'primary',
+          },
+          {
+            label: 'Back to Proposals',
+            url: '/manage/proposal-applications',
+            variant: 'outline',
+          },
+        ],
       });
     } catch (error) {
       console.error('Failed to submit transaction:', error);
@@ -216,7 +230,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
         adminDecisionData?.decision === 'approve' &&
         !isFinalized && (
           <div className="space-y-1 text-center">
-            
             <Paragraph size="xs" className="text-green-500">
               ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
               required signatures complete)

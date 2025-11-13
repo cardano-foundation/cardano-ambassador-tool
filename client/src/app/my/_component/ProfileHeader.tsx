@@ -17,7 +17,11 @@ interface ProfileHeaderProps {
   } | null;
 }
 
-export default function ProfileHeader({ name, country, stats }: ProfileHeaderProps) {
+export default function ProfileHeader({
+  name,
+  country,
+  stats,
+}: ProfileHeaderProps) {
   return (
     <Card className="mb-8">
       <CardContent>
@@ -43,37 +47,22 @@ export default function ProfileHeader({ name, country, stats }: ProfileHeaderPro
                 <span className="rounded-full text-base">
                   {getCountryFlag(country)}
                 </span>
-                <span className="text-muted-foreground text-sm">
-                  {country}
-                </span>
+                <span className="text-muted-foreground text-sm">{country}</span>
               </div>
             </div>
           </div>
-          
+
           {stats && (
             <div className="grid grid-cols-2 gap-3 lg:flex lg:flex-wrap lg:gap-2">
-              <StatCard
-                label="Topics Created"
-                value={stats.topics_created}
-              />
-              <StatCard
-                label="Given"
-                value={stats.likes_given}
-                showHeart
-              />
+              <StatCard label="Topics Created" value={stats.topics_created} />
+              <StatCard label="Given" value={stats.likes_given} showHeart />
               <StatCard
                 label="Received"
                 value={stats.likes_received}
                 showHeart
               />
-              <StatCard
-                label="Days Visited"
-                value={stats.days_visited}
-              />
-              <StatCard
-                label="Posts Created"
-                value={stats.topics_created}
-              />
+              <StatCard label="Days Visited" value={stats.days_visited} />
+              <StatCard label="Posts Created" value={stats.topics_created} />
             </div>
           )}
         </div>
