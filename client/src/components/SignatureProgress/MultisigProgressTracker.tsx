@@ -147,8 +147,8 @@ export default function MultisigProgressTracker({
               <div
                 className={`relative h-2 rounded-full transition-all duration-500 ease-out ${
                   isComplete
-                    ? 'bg-gradient-to-r from-green-400 to-green-500'
-                    : 'bg-gradient-to-r from-primary-400 to-primary-base'
+                    ? 'bg-linear-to-r from-green-400 to-green-500'
+                    : 'bg-linear-to-r from-primary-400 to-primary-base'
                 }`}
                 style={{ width: `${Math.min(progressPercentage, 100)}%` }}
               >
@@ -168,7 +168,7 @@ export default function MultisigProgressTracker({
               </Paragraph>
               <span
                 className={`font-medium ${
-                  isComplete ? 'text-green-600' : 'text-gray-600'
+                  isComplete ? 'text-green-600' : ''
                 }`}
               >
                 {Math.min(Math.round(progressPercentage), 100)}%
@@ -178,16 +178,8 @@ export default function MultisigProgressTracker({
             {/* Additional Info */}
             <div className="space-y-1">
               {totalSigners > totalSigners && (
-                <Paragraph size="xs" className="text-gray-500">
+                <Paragraph size="xs" className="">
                   ({totalSigners} total admin signers available)
-                </Paragraph>
-              )}
-              {isComplete && adminDecisionData?.decision && (
-                <Paragraph size="xs" className="font-medium text-green-600">
-                  ✓ Threshold reached - Decision:{' '}
-                  {adminDecisionData.decision === 'approve'
-                    ? 'APPROVED'
-                    : 'REJECTED'}
                 </Paragraph>
               )}
               {!isComplete && (

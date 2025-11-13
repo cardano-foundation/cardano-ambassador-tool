@@ -30,7 +30,13 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
   const { txhash } = use(params);
 
   const proposal = signOfApprovals.find((utxo) => utxo.txHash === txhash);
-  const memberUtxo = members.length > 0 ? members[0] : undefined;
+  console.log({proposal});
+  
+  const memberUtxo = members.find((mbr)=>{
+    let memberMetadata = JSON.parse(mbr.parsedMetadata || '{}');
+    let proposalMetadata = JSON.parse(proposal?.parsedMetadata || "{}");
+    return memberMetadata.walletAddress == proposalMetadata.submittedByAddress;
+  });
 
   let proposalData: ProposalData & { description?: string };
   if (proposal && proposal.plutusData) {
@@ -68,6 +74,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
         submittedByAddress: metadata?.submittedByAddress,
         status: 'ready',
       };
+
     } catch (error) {
       console.error('Error parsing proposal datum:', error);
       proposalData = {

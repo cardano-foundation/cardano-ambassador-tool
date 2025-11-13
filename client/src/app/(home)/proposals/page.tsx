@@ -12,7 +12,7 @@ import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Copyable from '@/components/Copyable';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { parseProposalDatum, formatAdaAmount } from '@/utils';
+import { parseProposalDatum, formatAdaAmount, parseMemberDatum } from '@/utils';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 
@@ -29,7 +29,8 @@ type Proposal = {
     | 'under_review'
     | 'approved'
     | 'rejected'
-    | 'signoff_pending';
+    | 'signoff_pending'
+    | 'treasury_signoff';
   txHash: string;
   progress?: {
     current: number;
@@ -40,13 +41,22 @@ type Proposal = {
 
 const getChipVariant = (status: Proposal['status']) => {
   switch (status) {
-    case 'pending': return 'warning';
-    case 'submitted': return 'default';
-    case 'under_review': return 'default';
-    case 'approved': return 'success';
-    case 'rejected': return 'error';
-    case 'signoff_pending': return 'success';
-    default: return 'inactive';
+    case 'pending':
+      return 'warning';
+    case 'submitted':
+      return 'default';
+    case 'under_review':
+      return 'default';
+    case 'approved':
+      return 'success';
+    case 'rejected':
+      return 'error';
+    case 'signoff_pending':
+      return 'success';
+    case 'treasury_signoff':
+      return 'success';
+    default:
+      return 'inactive';
   }
 };
 
@@ -147,12 +157,33 @@ const proposalColumns: ColumnDef<Proposal>[] = [
 ];
 
 export default function ProposalsPage() {
-  const { proposals, proposalIntents, signOfApprovals, dbLoading } = useApp();
+  const { proposals, proposalIntents, signOfApprovals, dbLoading ,members} = useApp();
   const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>('all');
 
   if (dbLoading) {
     return <SimpleCardanoLoader />;
   }
+
+  const completedProposals: Proposal[] = members.flatMap((mbr) => {
+    const parsed = parseMemberDatum(mbr.plutusData!);
+    const proposalsWithValue = Array.from(
+      parsed?.member.completion!,
+      ([proposal, value]) => ({
+        ...proposal,
+        status: 'success',
+        progress : {
+            current: 1,
+            total: 3,
+            stage: 'Treasury withrawal'
+          }
+      }),
+    );
+
+    return proposalsWithValue;
+  });
+
+  console.log({ completedProposals });
+  
 
 
 
@@ -229,6 +260,7 @@ export default function ProposalsPage() {
         submitted: 3,
         under_review: 1,
         signoff_pending: 3,
+        treasury_signoff:3,
         approved: 2,
         pending: 1,
       };

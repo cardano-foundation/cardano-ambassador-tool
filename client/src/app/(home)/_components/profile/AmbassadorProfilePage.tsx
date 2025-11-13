@@ -1,7 +1,6 @@
 'use client';
 
 import Card from '@/components/atoms/Card';
-import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import TopNav from '@/components/Navigation/TabNav';
 import {
@@ -13,7 +12,7 @@ import {
 import { useApp } from '@/context';
 import { useAmbassadorProfile } from '@/hooks/useAmbassadorProfile';
 import { useDateFormatting } from '@/hooks/UseDateFormatting';
-import { parseMemberDatum } from '@/utils';
+import { formatAdaAmount, lovelaceToAda, parseMemberDatum } from '@/utils';
 import { getCountryByCode } from '@/utils/locationData';
 import React, { useMemo, useState } from 'react';
 import { ActivitySection } from './ActivitySection';
@@ -49,6 +48,8 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
       city: '',
       bio_excerpt: '',
       created_at: '',
+      amount_received: '',
+      proposal_count: 0,
     };
 
     const member = members.find((utxo) => {
@@ -75,7 +76,8 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
       const countryData = memberMetadata.country
         ? getCountryByCode(memberMetadata.country)
         : null;
-
+      console.log({ parsed,kk:parsed.member.fundReceived });
+      
       return {
         name:
           memberMetadata.fullName ||
@@ -83,9 +85,11 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
           decodedUsername,
         username: memberMetadata.displayName || decodedUsername,
         country: countryData?.name || memberMetadata.country || '',
-        city:  memberMetadata.city || '',
+        city: memberMetadata.city || '',
         bio_excerpt: memberMetadata.bio || '',
         created_at: '',
+        amount_received: formatAdaAmount(lovelaceToAda(parsed.member.fundReceived)),
+        proposal_count: parsed.member.completion.size,
       };
     } catch {
       return defaultData;
@@ -110,33 +114,41 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
     summary: {
       stats: forumLoading
         ? null
-        : profile?.summary.stats || {
-            topics_created: 0,
-            likes_given: 0,
-            likes_received: 0,
-            days_visited: 0,
-            replies_created: 0,
+        : {
+            topics_created: profile?.summary.stats.topics_created || 0,
+            proposal_count: memberData.proposal_count || 0,
+            amount_received: memberData.amount_received || '0',
+            replies_created: profile?.summary.stats.replies_created || 0,
           },
     },
   };
 
   const hasActivities = profile?.activities && profile.activities.length > 0;
-  const hasTopics = profile?.summary.top_topics && profile.summary.top_topics.length > 0;
-  const hasReplies = profile?.summary.top_replies && profile.summary.top_replies.length > 0;
+  const hasTopics =
+    profile?.summary.top_topics && profile.summary.top_topics.length > 0;
+  const hasReplies =
+    profile?.summary.top_replies && profile.summary.top_replies.length > 0;
   const hasAnyContent = hasActivities || hasTopics || hasReplies;
-  const currentTabLabel = tabs.find(tab => tab.id === activeTab)?.label || 'Content';
+  const currentTabLabel =
+    tabs.find((tab) => tab.id === activeTab)?.label || 'Content';
 
   return (
-    <div className="bg-background min-h-screen max-w-full"
+    <div
+      className="bg-background min-h-screen max-w-full"
       role="main"
-      aria-label={`Ambassador profile for ${memberData.name}`}>
+      aria-label={`Ambassador profile for ${memberData.name}`}
+    >
       <ProfileHeader profile={displayProfile} isLoading={forumLoading} />
 
-      <div className="block p-6 lg:grid lg:grid-cols-[320px_1fr] lg:items-start lg:gap-6 " aria-label="Profile content">
-        <div className="w-full lg:sticky lg:top-0 lg:z-20 lg:w-auto"
+      <div
+        className="block p-6 lg:grid lg:grid-cols-[320px_1fr] lg:items-start lg:gap-6"
+        aria-label="Profile content"
+      >
+        <div
+          className="w-full lg:sticky lg:top-0 lg:z-20 lg:w-auto"
           role="complementary"
           aria-label="Ambassador information"
-          >
+        >
           <ProfileSidebar
             profile={{
               name: memberData.name,
@@ -144,20 +156,22 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
               country: memberData.country,
               bio_excerpt: memberData.bio_excerpt,
               created_at: memberData.created_at,
-              city: memberData.city
+              city: memberData.city,
             }}
             formatDate={formatDate}
             cleanHtml={cleanHtml}
           />
         </div>
-        <div className="mt-6 flex w-full min-w-0 flex-col lg:mt-0 lg:w-auto"
+        <div
+          className="mt-6 flex w-full min-w-0 flex-col lg:mt-0 lg:w-auto"
           role="region"
           aria-label={`${currentTabLabel} section`}
-          >
-          <div className="border-border bg-background mb-4 w-full border-b lg:sticky lg:top-0 lg:z-50"
+        >
+          <div
+            className="border-border bg-background mb-4 w-full border-b lg:sticky lg:top-0 lg:z-50"
             role="navigation"
             aria-label="Profile sections"
-            >
+          >
             <div className="w-full min-w-0 px-0">
               <TopNav
                 tabs={tabs}
@@ -166,10 +180,11 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
               />
             </div>
           </div>
-          <div className="w-full max-w-full flex-1"
+          <div
+            className="w-full max-w-full flex-1"
             role="tabpanel"
             aria-labelledby={`tab-${activeTab}`}
-            >
+          >
             {activeTab === 'summary' && (
               <div className="w-full space-y-6 lg:space-y-8">
                 {forumLoading ? (
@@ -231,7 +246,9 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
                       <RepliesSection
                         replies={profile.summary.top_replies}
                         showAllReplies={showAllReplies}
-                        onToggleShowAll={() => setShowAllReplies(!showAllReplies)}
+                        onToggleShowAll={() =>
+                          setShowAllReplies(!showAllReplies)
+                        }
                         formatDate={formatDate}
                       />
                     )}
@@ -250,7 +267,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
               ) : (
                 <EmptyState message="No badges yet" />
               ))}
-            
+
             {activeTab === 'proposals' && (
               <EmptyState message="No proposals yet" />
             )}

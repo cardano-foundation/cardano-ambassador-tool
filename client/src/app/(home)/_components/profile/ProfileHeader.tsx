@@ -14,9 +14,8 @@ interface ProfileHeaderProps {
     summary: {
       stats: {
         topics_created: number;
-        likes_given: number;
-        likes_received: number;
-        days_visited: number;
+        proposal_count: number;
+        amount_received: string;
         replies_created: number;
       } | null;
     };
@@ -34,20 +33,20 @@ const StatCardsGrid: React.FC<{
         <StatCardPulse />
         <StatCardPulse />
         <StatCardPulse />
-        <StatCardPulse />
-        <StatCardPulse />
       </>
     );
   }
 
   return (
     <>
-      <StatCard label="Topics Created" value={stats.topics_created} />
-      <StatCard label="Given" value={stats.likes_given} showHeart />
-      <StatCard label="Received" value={stats.likes_received} showHeart />
-      <StatCard label="Days Visited" value={stats.days_visited} />
-      <StatCard label="Posts Created" value={stats.replies_created} />
-      <StatCard label="Proposals" value={0} />
+      <StatCard
+        label="Proposals Completed"
+        value={stats.proposal_count}
+        showHeart
+      />
+      <StatCard label="Amount Recieved" value={stats.amount_received} />
+      <StatCard label="Forum Topics" value={stats.topics_created} />
+      <StatCard label="Forum Posts" value={stats.replies_created} />
     </>
   );
 };
@@ -63,7 +62,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   } = profile;
 
   return (
-    <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[320px_1fr] lg:items-start px-6 pt-6">
+    <div className="flex flex-col gap-6 px-6 pt-6 lg:grid lg:grid-cols-[320px_1fr] lg:items-start">
       {/* Left column - user info */}
       <div className="flex h-full w-full items-start gap-6">
         <div className="relative">
@@ -86,11 +85,9 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       </div>
 
       {/* Right column - stat cards */}
-      <div className="flex h-full items-center justify-center">
-        <div className="grid w-full grid-cols-2 gap-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-3 lg:flex lg:flex-wrap lg:gap-2">
           <StatCardsGrid stats={stats} />
         </div>
-      </div>
     </div>
   );
 };

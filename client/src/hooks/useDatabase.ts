@@ -45,6 +45,9 @@ export function useDatabase() {
   const [members, setMembers] = useState<Utxo[]>([]);
   const [proposals, setProposals] = useState<Utxo[]>([]);
   const [signOfApprovals, setSignOfApprovals] = useState<Utxo[]>([]);
+  const [treasurySignSettlements, setTreasurySignSettlements] = useState<
+    Utxo[]
+  >([]);
 
   const [dbError, setDbError] = useState<string | null>(null);
 
@@ -71,11 +74,14 @@ export function useDatabase() {
             const proposals = dbManager.getUtxosByContext('proposals');
             const sign_of_approvals =
               dbManager.getUtxosByContext('sign_of_approval');
+            const treasury_payouts =
+              dbManager.getUtxosByContext('treasury_payouts');
             setMembershipIntents(memberships_intents);
             setProposalIntents(proposals_intents);
             setMembers(members);
             setProposals(proposals);
             setSignOfApprovals(sign_of_approvals);
+            setTreasurySignSettlements(treasury_payouts);
 
             if (data.isSyncOperation) {
               setIsSyncing(false);
@@ -120,6 +126,7 @@ export function useDatabase() {
         'proposals',
         'proposal_intent',
         'sign_of_approval',
+        'treasury_payouts',
       ],
     });
   }
@@ -135,6 +142,7 @@ export function useDatabase() {
         'proposals',
         'proposal_intent',
         'sign_of_approval',
+        'treasury_payouts',
       ],
       isSyncOperation: true,
     });
@@ -186,6 +194,7 @@ export function useDatabase() {
     members,
     proposals,
     signOfApprovals,
+    treasurySignSettlements,
 
     // Operations
     syncData,

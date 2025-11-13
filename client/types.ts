@@ -245,6 +245,6 @@ export type ProposalValueField = {
 };
 
 export type ProposalItem = {
-  k: ProposalKeyFields;
-  v: ProposalValueField;
+  k?: ProposalKeyFields;
+  v?: ProposalValueField;
 };

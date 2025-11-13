@@ -1,21 +1,25 @@
 'use client';
 
+import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useNetworkValidation } from '@/hooks';
 import { useAppLoading } from '@/hooks/useAppLoading';
 import { useDatabase } from '@/hooks/useDatabase';
-import { useTreasuryBalance } from '@/hooks/useTreasuryBalance';
 import { Theme, useThemeManager } from '@/hooks/useThemeManager';
+import { useTreasuryBalance } from '@/hooks/useTreasuryBalance';
 import { User, useUserAuth } from '@/hooks/useUserAuth';
 import { useWalletManager } from '@/hooks/useWalletManager';
-import { parseMemberDatum, getCountryByCode } from '@/utils';
 import { WalletContextValue } from '@/types/wallet';
+import { getCountryByCode, parseMemberDatum } from '@/utils';
 import { IWallet } from '@meshsdk/core';
 import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
-import { NetworkConfig, NetworkValidationResult, Utxo } from '@types';
+import {
+  NetworkConfig,
+  NetworkValidationResult,
+  TransactionConfirmationResult,
+  Utxo,
+} from '@types';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
-import { TransactionConfirmationResult } from '@types';
 
 // ---------- Types ----------
 interface AppContextValue {
@@ -44,6 +48,7 @@ interface AppContextValue {
   members: Utxo[];
   proposals: Utxo[];
   signOfApprovals: Utxo[];
+  treasurySignSettlements: Utxo[];
   syncData: (context: string) => void;
   syncAllData: () => void;
   query: <T = Record<string, unknown>>(sql: string, params?: any[]) => T[];
@@ -144,6 +149,7 @@ const AppContext = createContext<AppContextValue>({
   members: [],
   proposals: [],
   signOfApprovals: [],
+  treasurySignSettlements: [],
   syncData: () => {},
   syncAllData: () => {},
   query: () => [],
@@ -204,12 +210,8 @@ const AppContext = createContext<AppContextValue>({
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   // Initialize all the custom hooks
-  const {
-    isAppLoading,
-    isInitialLoad,
-    updateLoadingState,
-    shouldShowLoading,
-  } = useAppLoading();
+  const { isAppLoading, isInitialLoad, updateLoadingState, shouldShowLoading } =
+    useAppLoading();
 
   const wallet = useWalletManager();
 
@@ -226,6 +228,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     query,
     getUtxosByContext,
     findMembershipIntentUtxo,
+    treasurySignSettlements,
   } = useDatabase();
 
   const {
@@ -243,16 +246,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     isConnected: wallet.isConnected,
   });
 
-  const {
-    theme,
-    setTheme,
-    toggleTheme,
-    isThemeInitialized,
-    isDark,
-    isLight,
-  } = useThemeManager();
+  const { theme, setTheme, toggleTheme, isThemeInitialized, isDark, isLight } =
+    useThemeManager();
 
-  const { treasuryBalance, isTreasuryLoading, refreshTreasuryBalance } = useTreasuryBalance();
+  const { treasuryBalance, isTreasuryLoading, refreshTreasuryBalance } =
+    useTreasuryBalance();
 
   // Transaction confirmation state
   const [txConfirmationState, setTxConfirmationState] = useState<{
@@ -355,11 +353,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const countryData = memberMetadata.country
         ? getCountryByCode(memberMetadata.country)
         : null;
-      
       return {
         isMember: true,
         memberValidationLoading: false,
         memberUtxo: userMember,
+        completion: parsed.member.completion,
         memberData: {
           walletAddress: memberMetadata.walletAddress,
           fullName: memberMetadata.fullName || memberMetadata.displayName,
@@ -420,6 +418,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     members,
     proposals,
     signOfApprovals,
+    treasurySignSettlements,
     syncData,
     syncAllData,
     query,

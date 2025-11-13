@@ -23,7 +23,7 @@ export default function ProfileHeader({ name, country, stats }: ProfileHeaderPro
       <CardContent>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="mb-2 flex items-start gap-4">
-            <div className="relative flex-shrink-0">
+            <div className="relative shrink-0">
               <UserAvatar size="size-30" name={name} />
               <div className="absolute right-0.5 bottom-0.5 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-white bg-white">
                 <div className="text-primary-base">
