@@ -7,7 +7,6 @@ import { useCallback, useMemo, useState } from 'react';
 import Button from './atoms/Button';
 import Paragraph from './atoms/Paragraph';
 import ErrorAccordion from './ErrorAccordion';
-import TransactionConfirmationOverlay from './TransactionConfirmationOverlay';
 
 interface FinalizeDecisionProps {
   txhash?: string;
@@ -22,7 +21,7 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
   context,
   onFinalizationComplete,
 }) => {
-  const { wallet: walletState } = useApp();
+  const { wallet: walletState, showTxConfirmation } = useApp();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message: string;
@@ -38,8 +37,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
     ).length;
   }, [adminDecisionData]);
 
-  const [showConfirmationOverlay, setShowConfirmationOverlay] = useState(false);
-  const [confirmedTxHash, setConfirmedTxHash] = useState<string | null>(null);
   const [isFinalized, setIsFinalized] = useState(false);
 
   const signatureRequirementsMet = useMemo(() => {
@@ -64,8 +61,8 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
         completedMessage: '✓ Membership Activated!',
         overlayTitle: 'Activating Membership',
         overlayDescription: {
-          pending: 'Please wait while your membership activation is being confirmed on the blockchain.',
-          success: 'Your membership has been successfully activated! 🎉'
+          pending: 'Please wait while membership activation is being confirmed on the blockchain.',
+          success: 'Membership has been successfully activated! 🎉'
         }
       };
     } else {
@@ -111,17 +108,23 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
             txHash,
             adminDecisionData.counterUtxoTxIndex || 0,
           );
-          console.log(
-            'Counter UTxO updated successfully with new transaction:',
-            txHash,
-          );
         } catch (error) {
           console.error('Failed to update counter UTxO:', error);
         }
       }
 
-      setConfirmedTxHash(txHash);
-      setShowConfirmationOverlay(true);
+      showTxConfirmation({
+        txHash,
+        title: labels.overlayTitle,
+        description: labels.overlayDescription.pending,
+        onConfirmed: handleTransactionConfirmed,
+        onTimeout: handleTransactionTimeout,
+        showNavigationOptions: context === 'ProposalIntent' && adminDecisionData?.decision === 'approve',
+        navigationOptions: [
+          { label: 'Go to Treasury Signoff', url: '/manage/treasury-signoffs', variant: 'primary' },
+          { label: 'Back to Proposals', url: '/manage/proposal-applications', variant: 'outline' }
+        ]
+      });
     } catch (error) {
       console.error('Failed to submit transaction:', error);
       setSubmitError({
@@ -155,11 +158,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
   const handleTransactionTimeout = (
     result: TransactionConfirmationResult,
   ) => {};
-
-  const handleCloseConfirmationOverlay = useCallback(() => {
-    setShowConfirmationOverlay(false);
-    setConfirmedTxHash(null);
-  }, []);
 
   return (
     <div className="space-y-4">
@@ -231,25 +229,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
           {labels.completedMessage}
         </Paragraph>
       )}
-
-      <TransactionConfirmationOverlay
-        isVisible={showConfirmationOverlay}
-        txHash={confirmedTxHash || undefined}
-        title={labels.overlayTitle}
-        description={
-          isFinalized
-            ? labels.overlayDescription.success
-            : labels.overlayDescription.pending
-        }
-        onClose={handleCloseConfirmationOverlay}
-        onConfirmed={handleTransactionConfirmed}
-        onTimeout={handleTransactionTimeout}
-        showNavigationOptions={context === 'ProposalIntent' && adminDecisionData?.decision === 'approve'}
-        navigationOptions={[
-          { label: 'Go to Treasury Signoff', url: '/manage/treasury-signoffs', variant: 'primary' },
-          { label: 'Back to Proposals', url: '/manage/proposal-applications', variant: 'outline' }
-        ]}
-      />
     </div>
   );
 };

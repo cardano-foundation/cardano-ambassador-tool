@@ -29,9 +29,9 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
         cleanHtml={cleanHtml}
       />
       <NetworkSection profileName={profile.name} />
-      <Paragraph className="text-muted-foreground mt-4 text-base">
+      {/* <Paragraph className="text-muted-foreground mt-4 text-base">
         Member Since: {formatDate(profile.created_at)}
-      </Paragraph>
+      </Paragraph> */}
     </div>
   );
 };

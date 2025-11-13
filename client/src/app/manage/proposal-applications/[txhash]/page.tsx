@@ -1,4 +1,5 @@
 'use client';
+import ApproveSignoff from '@/components/ApproveSignoff';
 import Button from '@/components/atoms/Button';
 import Card, { CardContent } from '@/components/atoms/Card';
 import Chip from '@/components/atoms/Chip';
@@ -6,13 +7,12 @@ import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
-import ApproveReject from '@/components/RejectApprove';
 import FinalizeDecision from '@/components/FinalizeDecision';
-import ApproveSignoff from '@/components/ApproveSignoff';
 import FinalizeSignoffApproval from '@/components/FinalizeSignoffApproval';
-import ExecuteSignoff from '@/components/ExecuteSignoff';
+import ProposalDescription from '@/components/ProposalDescription';
+import ApproveReject from '@/components/RejectApprove';
+import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
+import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context';
 import { formatAdaAmount, parseProposalDatum } from '@/utils';
@@ -25,43 +25,71 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
-  const { proposalIntents, proposals, signOfApprovals, members, dbLoading } = useApp();
-  const [adminDecisionData, setAdminDecisionData] = useState<AdminDecisionData | null>(null);
-  const [signoffDecisionData, setSignoffDecisionData] = useState<AdminDecisionData | null>(null);
+  const { proposalIntents, proposals, signOfApprovals, members, dbLoading } =
+    useApp();
+  const [adminDecisionData, setAdminDecisionData] =
+    useState<AdminDecisionData | null>(null);
+  const [signoffDecisionData, setSignoffDecisionData] =
+    useState<AdminDecisionData | null>(null);
   const [isFinalized, setIsFinalized] = useState(false);
   const [isSignoffFinalized, setIsSignoffFinalized] = useState(false);
   const { txhash } = use(params);
 
-
   const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
   const proposal = allProposals.find((utxo) => utxo.txHash === txhash);
 
-  const signoffApprovalUtxo = signOfApprovals.find((utxo) => utxo.txHash === txhash);
-  const memberUtxo = members.length > 0 ? members[0] : undefined;
+  const signoffApprovalUtxo = signOfApprovals.find(
+    (utxo) => utxo.txHash === txhash,
+  );
 
-  let proposalData: ProposalData;
+  let proposalData: ProposalData & { description?: string };
+
   if (proposal && proposal.plutusData) {
     try {
-      const { metadata } = parseProposalDatum(proposal.plutusData)!;
+      let metadata: any;
+      let description = 'No description provided';
+
+      if (proposal.parsedMetadata) {
+        try {
+          const parsed =
+            typeof proposal.parsedMetadata === 'string'
+              ? JSON.parse(proposal.parsedMetadata)
+              : proposal.parsedMetadata;
+          metadata = parsed;
+          description = parsed.description || 'No description provided';
+        } catch (e) {
+          const { metadata: datumMetadata } = parseProposalDatum(
+            proposal.plutusData,
+          )!;
+          metadata = datumMetadata;
+        }
+      } else {
+        const { metadata: datumMetadata } = parseProposalDatum(
+          proposal.plutusData,
+        )!;
+        metadata = datumMetadata;
+      }
 
       proposalData = {
         title: metadata?.title,
-        description: metadata?.description,
+        url: metadata?.url,
+        description,
         fundsRequested: metadata?.fundsRequested || '0',
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
-        status: signOfApprovals.some(p => p.txHash === txhash)
+        status: signOfApprovals.some((p) => p.txHash === txhash)
           ? 'signoff_pending'
-          : proposals.some(p => p.txHash === txhash)
-          ? 'approved'
-          : 'pending',
+          : proposals.some((p) => p.txHash === txhash)
+            ? 'approved'
+            : 'pending',
       };
     } catch (error) {
       console.error('Error parsing proposal datum:', error);
-      const isApproved = proposals.some(p => p.txHash === txhash);
+      const isApproved = proposals.some((p) => p.txHash === txhash);
       proposalData = {
         title: 'Error Loading Proposal',
-        description: 'Could not parse proposal data',
+        url: '',
+        description: 'No description provided',
         fundsRequested: '0',
         receiverWalletAddress: '',
         submittedByAddress: '',
@@ -71,7 +99,8 @@ export default function Page({ params }: PageProps) {
   } else {
     proposalData = {
       title: 'Error Loading Proposal',
-      description: 'Could not parse proposal data',
+      url: '',
+      description: 'No description provided',
       fundsRequested: '0',
       receiverWalletAddress: '',
       submittedByAddress: '',
@@ -132,12 +161,13 @@ export default function Page({ params }: PageProps) {
   const handleSignoffFinalizationComplete = () => {
     setIsSignoffFinalized(true);
   };
-  const statusLabel = proposalData.status === 'signoff_pending' 
-    ? 'Awaiting Signoff' 
-    : proposalData.status.replace('_', ' ');
+  const statusLabel =
+    proposalData.status === 'signoff_pending'
+      ? 'Awaiting Signoff'
+      : proposalData.status.replace('_', ' ');
   return (
     <div className="container px-4 py-2 pb-8 sm:px-6">
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <Title level="5" className="text-foreground">
             {proposalData.title}
@@ -186,29 +216,29 @@ export default function Page({ params }: PageProps) {
                   </Paragraph>
                 )}
               </div>
-            </div>
-            <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  Submitted by
+                  Submitted By
                 </Paragraph>
-                <div className="flex flex-wrap items-start gap-1.5">
-                  {proposalData.submittedByAddress ? (
-                    <Copyable
-                      withKey={false}
-                      link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
-                      value={proposalData.submittedByAddress}
-                      keyLabel={''}
-                    />
-                  ) : (
-                    !proposalData.submittedByAddress && (
-                      <Paragraph size="sm" className="text-foreground">
-                        Not specified
-                      </Paragraph>
-                    )
-                  )}
-                </div>
+                {proposalData.submittedByAddress ? (
+                  <Copyable
+                    withKey={false}
+                    link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
+                    value={proposalData.submittedByAddress}
+                    keyLabel={''}
+                  />
+                ) : (
+                  <Paragraph
+                    size="sm"
+                    className="text-foreground"
+                    aria-label="Submitter address not specified"
+                  >
+                    Not specified
+                  </Paragraph>
+                )}
               </div>
+            </div>
+            <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
                   Funds Requested
@@ -220,7 +250,7 @@ export default function Page({ params }: PageProps) {
             </div>
           </CardContent>
         </Card>
-        <div role="region" aria-label="Proposal overview">
+        <div role="region" aria-label="Proposal overview" className="space-y-4">
           <Title level="5" className="text-foreground">
             Overview
           </Title>
@@ -239,8 +269,10 @@ export default function Page({ params }: PageProps) {
                 <Title level="6" className="text-foreground">
                   Description
                 </Title>
-                <RichTextDisplay
-                  content={proposalData.description}
+                <ProposalDescription
+                  content={
+                    proposalData.description || 'No description available'
+                  }
                   className="text-foreground"
                 />
               </div>

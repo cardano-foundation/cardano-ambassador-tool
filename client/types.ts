@@ -1,4 +1,10 @@
-import { IWallet, Quantity, Unit } from '@meshsdk/core';
+import {
+  IWallet,
+  PubKeyAddress,
+  Quantity,
+  ScriptAddress,
+  Unit,
+} from '@meshsdk/core';
 import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
 
 export interface MembershipIntentPayoad {
@@ -42,6 +48,7 @@ export interface Utxo {
   dataHash: string | null;
   plutusData: string | null;
   context: string;
+  parsedMetadata?: string | null;
 }
 
 export type Ambassador = {
@@ -199,7 +206,6 @@ export interface TransactionConfirmationResult {
   error?: string;
 }
 
-
 /**
  * Interface for transaction confirmation result
  */
@@ -211,10 +217,34 @@ export interface AdminDecision {
   signedTx: string;
 }
 
-
 export type AdminDecisionData = AdminDecision & {
   signers: string[];
   selectedAdmins: string[];
   minRequiredSigners: number;
   totalSigners: number;
-}
+};
+
+export type GithubProposalData = {
+  title: string;
+  description: string;
+};
+
+export type ProposalKeyFields = {
+  fields: [
+    { bytes: string }, // title
+    { bytes: string }, // url
+    { bytes: string }, // fundsRequested
+    PubKeyAddress | ScriptAddress, // receiverWalletAddress
+    PubKeyAddress | ScriptAddress, // submittedByAddress
+    { bytes: string }, // status
+  ];
+};
+
+export type ProposalValueField = {
+  int: number | bigint;
+};
+
+export type ProposalItem = {
+  k: ProposalKeyFields;
+  v: ProposalValueField;
+};

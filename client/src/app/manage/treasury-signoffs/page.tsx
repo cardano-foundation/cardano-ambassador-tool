@@ -17,8 +17,7 @@ import Link from 'next/link';
 type ProposalIntent = {
   id: number;
   title: string;
-  description: string;
-  submittedByAddress: string;
+  url: string;
   receiverWalletAddress: string;
   createdAt?: string;
   status:
@@ -83,32 +82,26 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
   },
   {
     header: 'Project details',
-    accessor: 'description',
+    accessor: 'url',
     sortable: false,
     cell: (value) => {
-      const truncatedValue = truncateToWords(value, 6);
+      if (!value) return <span className="text-sm text-muted-foreground">No details</span>;
       return (
         <div className="max-w-[300px] text-sm">
-          <RichTextDisplay
-            content={truncatedValue}
-            className="prose-sm [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_p]:mb-1 [&_strong]:font-semibold"
-          />
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-base hover:underline flex items-center gap-1"
+          >
+            See more
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
         </div>
       );
     },
-  },
-  {
-    header: 'Submitted by',
-    accessor: 'submittedByAddress',
-    sortable: true,
-    cell: (value: string) => (
-      <Copyable
-        withKey={false}
-        link={`${getCurrentNetworkConfig().explorerUrl}/address/${value}`}
-        value={value}
-        keyLabel={''}
-      />
-    ),
   },
   {
     header: 'Funds requested',
@@ -118,19 +111,6 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
       <span className="text-sm">
         {value && value !== '0' ? formatAdaAmount(value) : 'N/A'}
       </span>
-    ),
-  },
-  {
-    header: 'Receiver Address',
-    accessor: 'receiverWalletAddress',
-    sortable: true,
-    cell: (value: string) => (
-      <Copyable
-        withKey={false}
-        link={`${getCurrentNetworkConfig().explorerUrl}/address/${value}`}
-        value={value}
-        keyLabel={''}
-      />
     ),
   },
   {
@@ -172,10 +152,9 @@ export default function TreasurySignOffsPage() {
   const decodedUtxos = signOfApprovals.map((utxo, idx) => {
     const decodedDatum: ProposalIntent = {
       title: '',
-      description: '',
+      url: '',
       fundsRequested: '0',
       receiverWalletAddress: '',
-      submittedByAddress: '',
       status: 'ready',
       id: 0,
       txHash: utxo.txHash,
@@ -186,10 +165,9 @@ export default function TreasurySignOffsPage() {
 
       if (metadata) {
         decodedDatum['title'] = metadata.title!;
-        decodedDatum['description'] = metadata.description!;
+        decodedDatum['url'] = metadata.url!;
         decodedDatum['fundsRequested'] = metadata.fundsRequested || '0';
         decodedDatum['receiverWalletAddress'] = metadata.receiverWalletAddress!;
-        decodedDatum['submittedByAddress'] = metadata.submittedByAddress!;
         decodedDatum['id'] = idx + 1;
       }
     }

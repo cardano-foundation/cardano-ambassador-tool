@@ -2,7 +2,7 @@ import React from 'react';
 
 interface XIconProps {
   className?: string;
-  size?: number;
+  size?: number | string;
   color?: string;
 }
 
@@ -13,17 +13,16 @@ const XIcon: React.FC<XIconProps> = ({
 }) => {
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      viewBox="0 0 24 24"
       width={size}
       height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      fill={color}
       className={className}
     >
-      <path
-        d="M14.095 10.316L22.286 1h-1.940L13.23 9.088L7.551 1H1l8.589 12.231L1 23h1.940l7.51-8.543L16.449 23H23l-8.905-12.684zm-2.658 3.022l-.872-1.218L3.64 2.432h2.98l5.59 7.821.869 1.219 7.265 10.166h-2.982l-5.926-8.3z"
-        fill={color}
-      />
+      <title>X</title>
+      <path d="M18.901 0h3.308l-7.24 8.272L24 24h-7.356l-5.265-8.368L5.408 24H2.1l7.707-8.812L0 0h7.478l4.74 7.533L18.901 0zm-1.161 21.58h1.833L6.433 2.326H4.47l13.27 19.254z" />
     </svg>
   );
 };

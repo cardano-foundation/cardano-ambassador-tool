@@ -125,6 +125,10 @@ export default function MembershipSubmissionsTab() {
         bio: userMetadata.bio || '',
         country: userMetadata.country || '',
         city: userMetadata.city || '',
+        x_handle: userMetadata.x_handle || '',
+        github: userMetadata.github || '',
+        discord: userMetadata.discord || '',
+        spo_id: userMetadata.spo_id || '',
       });
 
       const result = await userAction.updateMembershipIntentMetadata(
@@ -248,7 +252,7 @@ export default function MembershipSubmissionsTab() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 ">
       {memberUtxo && memberData && <MemberStatusCard />}
 
       {membershipIntentUtxo ? (

@@ -2,8 +2,10 @@ import { BlockfrostProvider, UTxO } from '@meshsdk/core';
 import { scripts } from '@sidan-lab/cardano-ambassador-tool';
 import { NextRequest, NextResponse } from 'next/server';
 import { unstable_cache, revalidateTag } from 'next/cache';
+import { parseProposalDatum, parseMembershipIntentDatum, parseMemberDatum } from '@/utils/utils';
+import { getCurrentNetworkConfig } from '@/config/cardano';
 
-// Validate required environment variables
+
 if (!process.env.BLOCKFROST_API_KEY_PREPROD) {
   throw new Error(
     'BLOCKFROST_API_KEY_PREPROD environment variable is required',
@@ -14,16 +16,21 @@ const blockfrost = new BlockfrostProvider(
   process.env.BLOCKFROST_API_KEY_PREPROD,
 );
 
-const allScripts = scripts({
-  oracle: {
-    txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
+const allScripts = scripts(
+  {
+    oracle: {
+      txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
+      outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
+    },
+    counter: {
+      txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
+      outputIndex: parseInt(
+        process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!,
+      ),
+    },
   },
-  counter: {
-    txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!),
-  },
-});
+  getCurrentNetworkConfig().networkId,
+);
 
 const SCRIPT_ADDRESSES = {
   MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
@@ -33,9 +40,7 @@ const SCRIPT_ADDRESSES = {
   SIGN_OFF_APPROVAL: allScripts.signOffApproval.spend.address,
 } as const;
 
-const POLICY_IDS = {
-  MEMBER_NFT: allScripts.member.mint.hash,
-} as const;
+
 
 const actionData = {
   sign_of_approval: {
@@ -103,7 +108,63 @@ export async function POST(req: NextRequest): Promise<
         ? utxos
         : utxos.filter((utxo) => utxo.output.plutusData);
 
-    return NextResponse.json(validUtxos, { status: 200 });
+    const utxosWithMetadata = await Promise.all(
+      validUtxos.map(async (utxo) => {
+        if (!utxo.output.plutusData) return utxo;
+        
+        try {
+          if (['proposals', 'proposal_intent', 'sign_of_approval'].includes(context)) {
+            const parsed = parseProposalDatum(utxo.output.plutusData);
+            if (parsed?.metadata) {
+              const filename = parsed.metadata.url?.split('/').pop();
+              let description = null;
+              
+              if (filename) {
+                try {
+                  const response = await fetch(
+                    `${req.nextUrl.origin}/api/proposal-content?filename=${encodeURIComponent(filename)}`,
+                    { next: { revalidate: 3600 } }
+                  );
+                  if (response.ok) {
+                    const data = await response.json();
+                    description = data.content;
+                  }
+                } catch (err) {
+                  console.error('Error fetching description:', err);
+                }
+              }
+              
+              return {
+                ...utxo,
+                parsedMetadata: { ...parsed.metadata, description, memberIndex: parsed.memberIndex },
+              };
+            }
+          } else if (context === 'membership_intent') {
+            const parsed = parseMembershipIntentDatum(utxo.output.plutusData);
+            if (parsed?.metadata) {
+              return {
+                ...utxo,
+                parsedMetadata: parsed.metadata,
+              };
+            }
+          } else if (context === 'members') {
+            const parsed = parseMemberDatum(utxo.output.plutusData);
+            if (parsed?.member) {
+              return {
+                ...utxo,
+                parsedMetadata: parsed.member.metadata,
+              };
+            }
+          }
+        } catch (error) {
+          console.error('Error parsing UTxO metadata:', error);
+        }
+        
+        return utxo;
+      })
+    );
+
+    return NextResponse.json(utxosWithMetadata, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },

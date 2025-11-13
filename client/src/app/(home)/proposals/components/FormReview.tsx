@@ -7,9 +7,13 @@ import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { parseAdaInput, formatAdaAmount } from '@/utils/utils';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 
+type ProposalFormData = ProposalData & {
+  description: string;
+};
+
 interface Props {
   mode: 'create' | 'edit';
-  formData: ProposalData;
+  formData: ProposalFormData;
   userAddress?: string;
   proposalId?: string;
 }

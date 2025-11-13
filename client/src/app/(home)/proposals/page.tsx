@@ -23,7 +23,13 @@ type Proposal = {
   receiverWalletAddress: string;
   submittedByAddress: string;
   fundsRequested: string;
-  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'signoff_pending' ;
+  status:
+    | 'pending'
+    | 'submitted'
+    | 'under_review'
+    | 'approved'
+    | 'rejected'
+    | 'signoff_pending';
   txHash: string;
   progress?: {
     current: number;
@@ -97,7 +103,9 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     accessor: 'fundsRequested',
     sortable: true,
     cell: (value) => (
-      <span className="text-sm">{value && value !== '0' ? formatAdaAmount(value) : 'N/A'}</span>
+      <span className="text-sm">
+        {value && value !== '0' ? formatAdaAmount(value) : 'N/A'}
+      </span>
     ),
   },
   {
@@ -119,7 +127,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     sortable: true,
     cell: (value, row) => (
       <div className="space-y-1">
-        <Chip variant={getChipVariant(value)} className='text-nowrap'>
+        <Chip variant={getChipVariant(value)} className="text-nowrap">
           {formatStatus(value)}
         </Chip>
       </div>
@@ -155,10 +163,26 @@ export default function ProposalsPage() {
       if (!utxo.plutusData) return null;
 
       try {
-        const { metadata } = parseProposalDatum(utxo.plutusData)!;
+        let metadata: any;
+        let description = 'No description provided';
+
+        if (utxo.parsedMetadata) {
+          try {
+            const parsed = typeof utxo.parsedMetadata === 'string' 
+              ? JSON.parse(utxo.parsedMetadata) 
+              : utxo.parsedMetadata;
+            metadata = parsed;
+            description = parsed.description || 'No description provided';
+          } catch (e) {
+            const { metadata: datumMetadata } = parseProposalDatum(utxo.plutusData)!;
+            metadata = datumMetadata;
+          }
+        } else {
+          const { metadata: datumMetadata } = parseProposalDatum(utxo.plutusData)!;
+          metadata = datumMetadata;
+        }
 
         if (!metadata) return null;
-
 
         let status: Proposal['status'] = 'pending';
         let progress: Proposal['progress'] | undefined;
@@ -179,7 +203,7 @@ export default function ProposalsPage() {
         return {
           id: idx + 1,
           title: metadata.title || 'Untitled Proposal',
-          details: metadata.description || 'No description provided',
+          details: description,
           receiverWalletAddress: metadata.receiverWalletAddress || '',
           submittedByAddress: metadata.submittedByAddress || '',
           fundsRequested: metadata.fundsRequested || '0',

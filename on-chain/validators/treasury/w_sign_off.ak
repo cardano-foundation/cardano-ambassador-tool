@@ -23,6 +23,7 @@ validator treasury(oracle_nft: PolicyId) {
       ..
     } = oracle_input_datum
 
+    trace @"111"
     expect [approval_input] =
       inputs_at_with_policy(
         inputs,
@@ -32,10 +33,14 @@ validator treasury(oracle_nft: PolicyId) {
     expect approval_input_datum: ProposalDatum =
       output_inline_datum(approval_input.output)
 
+    trace @"222"
+
     let ProposalDatum { fund_requested, receiver, member, .. } =
       approval_input_datum
     expect Some((_, proposal_asset_name, _)) =
       value_policy_info(approval_input.output.value, sign_off_approval_token)
+
+    trace @"333"
 
     expect [member_input] =
       inputs_at_with(
@@ -46,7 +51,7 @@ validator treasury(oracle_nft: PolicyId) {
       )
     expect member_input_datum: MemberDatum =
       output_inline_datum(member_input.output)
-
+    trace @"444"
     expect [member_output] =
       outputs_at_with(
         outputs,
@@ -54,8 +59,10 @@ validator treasury(oracle_nft: PolicyId) {
         member_token,
         convert_int_to_bytes(member),
       )
+
     let is_member_output_value_clean = value_length(member_output.value) == 2
     expect member_output_datum: MemberDatum = output_inline_datum(member_output)
+    trace @"555"
     let correct_member_output_datum =
       updated_member_datum(member_input_datum, approval_input_datum)
     let is_member_output_datum_correct =
@@ -63,6 +70,7 @@ validator treasury(oracle_nft: PolicyId) {
 
     expect [fund_output] = outputs_at(outputs, receiver)
 
+    trace @"666"
     let lovelace_from_treasury =
       get_all_value_from(inputs, treasury_address) |> lovelace_of()
     let lovelace_to_treasury =

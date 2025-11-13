@@ -3,14 +3,13 @@
 import { useApp } from '@/context';
 import { RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import Button from './atoms/Button';
 
 interface GlobalRefreshButtonProps {
-  size?: number;
   className?: string;
 }
 
 export default function GlobalRefreshButton({
-  size = 20,
   className = '',
 }: GlobalRefreshButtonProps) {
   const { syncData, isSyncing, refreshTreasuryBalance } = useApp();
@@ -58,29 +57,23 @@ export default function GlobalRefreshButton({
   }, [handleRefresh]);
 
   const isLoading = isRefreshing || isSyncing;
-  const tooltipText = isLoading ? 'Refreshing...' : 'Refresh utxos';
 
   return (
-    <div className="group item-center relative flex justify-center">
-      <button
-        onClick={handleRefresh}
-        disabled={isLoading}
-        className={`hover:bg-muted inline-flex items-center justify-center rounded-lg transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-        aria-label={tooltipText}
-      >
-        <RefreshCw
-          size={size}
-          color="#777E90"
-          className={`transition-transform duration-200 ${isLoading ? 'animate-spin' : 'group-hover:text-primary'} mx-auto`}
-        />
-      </button>
-
-      {/* Tooltip */}
-      <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 transform opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-        <div className="bg-card outline-border text-muted-foreground rounded border px-2 py-1 text-xs whitespace-nowrap shadow-md">
-          {tooltipText}
-        </div>
-      </div>
-    </div>
+    <Button
+      variant="outline"
+      size="xs"
+      onClick={handleRefresh}
+      disabled={isLoading}
+      className={`appearance-none ${className}`}
+      aria-label={isLoading ? 'Syncing...' : 'Sync'}
+    >
+      <RefreshCw
+        size={16}
+        className={`text-primary-base transition-transform duration-200 ${isLoading ? 'animate-spin' : ''}`}
+      />
+      <span className="text-primary-base">
+        {isLoading ? 'Syncing...' : 'Sync'}
+      </span>
+    </Button>
   );
 }

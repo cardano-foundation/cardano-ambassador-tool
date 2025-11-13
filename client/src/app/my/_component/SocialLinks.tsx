@@ -1,5 +1,6 @@
 import DiscordIcon from '@/components/atoms/DiscordIcon';
-import { ExternalLink, GithubIcon, XIcon } from 'lucide-react';
+import GithubIcon from '@/components/atoms/GithubIcon';
+import XIcon from '@/components/atoms/XIcon';
 import Link from 'next/link';
 import ProfileField from './ProfileField';
 
@@ -9,7 +10,11 @@ interface SocialLinksProps {
   discord?: string;
 }
 
-export default function SocialLinks({ github, twitter, discord }: SocialLinksProps) {
+export default function SocialLinks({
+  github,
+  twitter,
+  discord,
+}: SocialLinksProps) {
   if (!github && !twitter && !discord) {
     return null;
   }
@@ -18,49 +23,37 @@ export default function SocialLinks({ github, twitter, discord }: SocialLinksPro
     <>
       {github && (
         <ProfileField label="Github">
-          <div className="flex items-start gap-2 sm:gap-3">
+          <Link
+            href={`https://github.com/${github}`}
+            className="text-foreground hover:text-primary-base break-all"
+            target="_blank"
+          >
             <GithubIcon size={15} />
-            <span className="break-all">
-              {github}
-            </span>
-            <Link
-              href={`https://github.com/${github}`}
-              className="text-foreground hover:text-primary-base break-all"
-              target="_blank"
-            >
-              <ExternalLink />
-            </Link>
-          </div>
+          </Link>
         </ProfileField>
       )}
 
       {twitter && (
-        <ProfileField label="X">
-          <div className="flex items-center gap-2 sm:gap-3">
+        <ProfileField label="X formally twitter">
+          <Link
+            href={`https://twitter.com/${twitter}`}
+            className="text-foreground hover:text-primary-base break-all"
+            target="_blank"
+          >
             <XIcon size={15} />
-            <span className="break-all">
-              {twitter}
-            </span>
-            <Link
-              href={`https://twitter.com/${twitter}`}
-              className="text-foreground hover:text-primary-base break-all"
-              target="_blank"
-            >
-              <ExternalLink />
-            </Link>
-          </div>
+          </Link>
         </ProfileField>
       )}
 
       {discord && (
         <ProfileField label="Discord">
-          <div className="flex items-center gap-2 sm:gap-1">
+          <Link
+            href={`https://twitter.com/${twitter}`}
+            className="text-foreground hover:text-primary-base break-all"
+            target="_blank"
+          >
             <DiscordIcon size={15} />
-            <span className="break-all">
-              {discord}
-            </span>
-            <ExternalLink />
-          </div>
+          </Link>
         </ProfileField>
       )}
     </>

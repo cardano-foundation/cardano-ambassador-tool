@@ -1,13 +1,19 @@
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import FormFunds from '../../components/FormFunds';
+import { useApp } from '@/context';
 
-interface Props {
-  formData: ProposalData;
-  handleInputChange: (field: keyof ProposalData, value: string) => void;
-  userAddress?: string;
-}
+type ProposalFormData = ProposalData & {
+  description: string;
+};
 
-export default function FundsTab({ formData, handleInputChange, userAddress }: Props) {
+export default function FundsTab({
+  formData,
+  handleInputChange,
+}: {
+  formData: ProposalFormData;
+  handleInputChange: (field: keyof ProposalFormData, value: string) => void;
+}) {
+  const { userAddress } = useApp();
   return (
     <FormFunds
       mode="create"
