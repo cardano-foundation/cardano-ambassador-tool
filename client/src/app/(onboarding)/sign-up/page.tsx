@@ -2,7 +2,7 @@
 
 import { SingleRowStepper } from '@/components/atoms/Stepper';
 import { useApp } from '@/context/AppContext';
-import { useMemberValidation } from '@/hooks/useMemberValidation';
+import { useMemberValidation } from '@/hooks';
 import { findMembershipIntentUtxo, smoothScrollToElement } from '@/utils';
 import { UTxO } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';

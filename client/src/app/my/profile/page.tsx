@@ -1,6 +1,6 @@
 'use client';
 import { useApp } from '@/context';
-import { useAmbassadorProfile } from '@/hooks/useAmbassadorProfile';
+import { useAmbassadorProfile } from '@/hooks';
 import {
   findMemberUtxo,
   findTokenUtxoByMemberUtxo,

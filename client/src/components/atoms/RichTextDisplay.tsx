@@ -60,7 +60,6 @@ const RichTextDisplay = ({
           br: () => <br />,
 
           img: ({ node, ...props }) => {
-            console.log('Image component called:', props);
             return (
               <img
                 {...props}

@@ -229,6 +229,25 @@ export type GithubProposalData = {
   description: string;
 };
 
+export type Proposal = {
+  id: number;
+  title: string;
+  description: string;
+  receiverWalletAddress: string;
+  submittedByAddress: string;
+  fundsRequested: string;
+  status:
+    | 'pending'
+    | 'submitted'
+    | 'under_review'
+    | 'approved'
+    | 'rejected'
+    | 'signoff_pending'
+    | 'paid_out';
+  txHash?: string;
+  url?: string;
+};
+
 export type ProposalKeyFields = {
   fields: [
     { bytes: string }, // title

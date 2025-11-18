@@ -158,7 +158,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
       if (txhash) {
         try {
           await storageApiClient.delete(txhash, 'submissions');
-          console.log('Admin decision data cleaned up successfully');
         } catch (error) {
           console.error('Failed to clean up admin decision data:', error);
         }

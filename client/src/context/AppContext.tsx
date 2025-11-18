@@ -2,16 +2,20 @@
 
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useNetworkValidation } from '@/hooks';
-import { useAppLoading } from '@/hooks/useAppLoading';
-import { useDatabase } from '@/hooks/useDatabase';
-import { Theme, useThemeManager } from '@/hooks/useThemeManager';
-import { useTreasuryBalance } from '@/hooks/useTreasuryBalance';
-import { User, useUserAuth } from '@/hooks/useUserAuth';
-import { useWalletManager } from '@/hooks/useWalletManager';
+import {
+  Theme,
+  useThemeManager,
+  useNetworkValidation,
+  useTreasuryBalance,
+  User,
+  useUserAuth,
+  useWalletManager,
+  useAppLoading,
+  useDatabase,
+} from '@/hooks';
 import { WalletContextValue } from '@/types/wallet';
 import { getCountryByCode, parseMemberDatum } from '@/utils';
-import { IWallet } from '@meshsdk/core';
+import { IWallet, TransactionInfo } from '@meshsdk/core';
 import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
 import {
   NetworkConfig,
@@ -48,7 +52,7 @@ interface AppContextValue {
   members: Utxo[];
   proposals: Utxo[];
   signOfApprovals: Utxo[];
-  treasurySignSettlements: Utxo[];
+  treasuryPayouts: TransactionInfo[];
   syncData: (context: string) => void;
   syncAllData: () => void;
   query: <T = Record<string, unknown>>(sql: string, params?: any[]) => T[];
@@ -57,6 +61,7 @@ interface AppContextValue {
 
   // Treasury state
   treasuryBalance: bigint;
+  totalPayouts: bigint;
   isTreasuryLoading: boolean;
   refreshTreasuryBalance: () => Promise<void>;
 
@@ -149,7 +154,7 @@ const AppContext = createContext<AppContextValue>({
   members: [],
   proposals: [],
   signOfApprovals: [],
-  treasurySignSettlements: [],
+  treasuryPayouts: [],
   syncData: () => {},
   syncAllData: () => {},
   query: () => [],
@@ -158,6 +163,7 @@ const AppContext = createContext<AppContextValue>({
 
   // Treasury defaults
   treasuryBalance: BigInt(0),
+  totalPayouts: BigInt(0),
   isTreasuryLoading: true,
   refreshTreasuryBalance: async () => {},
 
@@ -228,7 +234,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     query,
     getUtxosByContext,
     findMembershipIntentUtxo,
-    treasurySignSettlements,
+    treasuryPayouts,
   } = useDatabase();
 
   const {
@@ -249,7 +255,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const { theme, setTheme, toggleTheme, isThemeInitialized, isDark, isLight } =
     useThemeManager();
 
-  const { treasuryBalance, isTreasuryLoading, refreshTreasuryBalance } =
+  const { treasuryBalance, isTreasuryLoading, refreshTreasuryBalance, totalPayouts } =
     useTreasuryBalance();
 
   // Transaction confirmation state
@@ -418,7 +424,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     members,
     proposals,
     signOfApprovals,
-    treasurySignSettlements,
+    treasuryPayouts,
     syncData,
     syncAllData,
     query,
@@ -442,6 +448,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     // Treasury
     treasuryBalance,
+    totalPayouts,
     isTreasuryLoading,
     refreshTreasuryBalance,
 

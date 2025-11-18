@@ -2,24 +2,19 @@
 
 import { ColumnDef, Table } from '@/components/Table/Table';
 import Button from '@/components/atoms/Button';
+import Chip from '@/components/atoms/Chip';
+import Empty from '@/components/atoms/Empty';
 import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
+import Select from '@/components/atoms/Select';
 import Title from '@/components/atoms/Title';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { formatAdaAmount, lovelaceToAda } from '@/utils';
+import useProposals from '@/hooks/useProposals';
+import { formatAdaAmount } from '@/utils';
+import { Proposal } from '@types';
 import Link from 'next/link';
-import EmptyProposalIntentState from './EmptyProposalIntentState';
-
-type UserProposal = {
-  id: number;
-  title: string;
-  description: string;
-  receiverWalletAddress: string;
-  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected';
-  fundsRequested: string;
-  txHash: string;
-};
+import { useState } from 'react';
 
 const truncateToWords = (text: string, wordCount: number = 6) => {
   if (!text) return 'No description';
@@ -28,7 +23,28 @@ const truncateToWords = (text: string, wordCount: number = 6) => {
   return words.slice(0, wordCount).join(' ') + '...';
 };
 
-const userProposalColumns: ColumnDef<UserProposal>[] = [
+const getChipVariant = (status: Proposal['status']) => {
+  switch (status) {
+    case 'pending':
+      return 'default';
+    case 'submitted':
+      return 'warning';
+    case 'under_review':
+      return 'default';
+    case 'approved':
+      return 'success';
+    case 'signoff_pending':
+      return 'success';
+    case 'paid_out':
+      return 'success';
+    case 'rejected':
+      return 'error';
+    default:
+      return 'inactive';
+  }
+};
+
+const userProposalColumns: ColumnDef<Proposal>[] = [
   {
     header: '#',
     accessor: 'id',
@@ -66,9 +82,7 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
     accessor: 'fundsRequested',
     sortable: true,
     cell: (value) => (
-      <span className="text-sm">
-        {value ? formatAdaAmount(lovelaceToAda(value)) : 'N/A'}
-      </span>
+      <span className="text-sm">{value ? formatAdaAmount(value) : 'N/A'}</span>
     ),
   },
   {
@@ -76,54 +90,51 @@ const userProposalColumns: ColumnDef<UserProposal>[] = [
     accessor: 'status',
     sortable: true,
     cell: (value) => (
-      <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
-        {value}
-      </span>
+      <Chip variant={getChipVariant(value)} className="text-nowrap">
+        {value === 'signoff_pending'
+          ? 'Awaiting Signoff'
+          : value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
+      </Chip>
     ),
   },
   {
     header: 'Action',
     sortable: false,
-    cell: (value, row) => (
-      <Link href={routes.my.proposals(row.txHash)}>
-        <Button variant="primary" size="sm">
-          View
-        </Button>
-      </Link>
-    ),
+    cell: (value, row) =>
+      row.txHash ? (
+        <Link href={routes.my.proposals(row.txHash)}>
+          <Button variant="primary" size="sm">
+            View
+          </Button>
+        </Link>
+      ) : (
+        ''
+      ),
   },
 ];
 
-export default function ProposalSubmissionsTab() {
-  const {
-    proposalIntents,
-    proposals,
-    signOfApprovals,
-    members,
-    userAddress,
-    dbLoading,
-  } = useApp();
+export default function ProposalSubmissionsTab({
+  address,
+}: {
+  address?: string;
+}) {
+  const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>(
+    'all',
+  );
+  const { userAddress } = useApp();
 
-  const userMemberUtxo = members.find((m) => {
-    if (!m.parsedMetadata) return false;
-    try {
-      const metadata =
-        typeof m.parsedMetadata === 'string'
-          ? JSON.parse(m.parsedMetadata)
-          : m.parsedMetadata;
-      return metadata?.walletAddress === userAddress;
-    } catch {
-      return false;
-    }
-  });
+  const { allProposals, loading } = useProposals();
 
-  const allProposalUtxos = [
-    ...proposalIntents,
-    ...proposals,
-    ...signOfApprovals,
+  const statusOptions = [
+    { value: 'all', label: 'All Statuses' },
+    { value: 'paid_out', label: 'Paid Out' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'signoff_pending', label: 'Awaiting Signoff' },
+    { value: 'rejected', label: 'Rejected' },
   ];
 
-  if (dbLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-center">
@@ -135,69 +146,85 @@ export default function ProposalSubmissionsTab() {
     );
   }
 
-  const userProposals = allProposalUtxos
-    .map((utxo, idx) => {
-      if (!utxo.parsedMetadata) return null;
-
-      try {
-        const metadata =
-          typeof utxo.parsedMetadata === 'string'
-            ? JSON.parse(utxo.parsedMetadata)
-            : utxo.parsedMetadata;
-
-        if (!metadata || metadata.submittedByAddress !== userAddress) {
-          return null;
-        }
-
-        const status = signOfApprovals.some((p) => p.txHash === utxo.txHash)
-          ? ('approved' as const)
-          : proposals.some((p) => p.txHash === utxo.txHash)
-            ? ('approved' as const)
-            : ('pending' as const);
-
-        return {
-          id: idx + 1,
-          title: metadata.title || '',
-          description: metadata.description || '',
-          fundsRequested: metadata.fundsRequested || '0',
-          receiverWalletAddress: metadata.receiverWalletAddress || '',
-          status,
-          txHash: utxo.txHash,
-        };
-      } catch (error) {
-        return null;
-      }
+  const userProposals = allProposals
+    .filter((proposal) => {
+      return proposal.submittedByAddress === (address || userAddress);
     })
-    .filter(Boolean) as UserProposal[];
+    .map((proposal, index) => ({
+      ...proposal,
+      id: index + 1,
+    }));
+
+  // Apply status filter
+  const filteredProposals =
+    statusFilter === 'all'
+      ? userProposals
+      : userProposals.filter((proposal) => proposal.status === statusFilter);
+
+  // Count by status for display
+  const statusCounts = {
+    pending: userProposals.filter((p) => p.status === 'pending').length,
+    approved: userProposals.filter((p) => p.status === 'approved').length,
+    signoff_pending: userProposals.filter((p) => p.status === 'signoff_pending')
+      .length,
+    paid_out: userProposals.filter((p) => p.status === 'paid_out').length,
+  };
 
   if (userProposals.length === 0) {
-    return <EmptyProposalIntentState />;
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center">
+        <Empty />
+        <div className="mt-6 max-w-md text-center">
+          <Title level="6" className="text-foreground mb-3">
+            No Proposal Submissions
+          </Title>
+          <Paragraph className="text-muted-foreground mb-6">
+            You haven't submitted any proposals yet. Share your ideas and
+            contribute to the Cardano ecosystem by submitting a proposal.
+          </Paragraph>
+          <div className="flex flex-col justify-center gap-3 sm:flex-row">
+            <Link href={routes.newProposal}>
+              <Button variant="primary">Submit Proposal</Button>
+            </Link>
+            <Link href={routes.proposals}>
+              <Button variant="outline" className="text-primary-base!">
+                Browse Proposals
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <Title level="4" className="text-foreground">
-            Your Proposal Submissions
-          </Title>
-          <Paragraph className="text-muted-foreground text-sm">
-            Track the status of your submitted proposals
-            {userProposals.length > 0 && ` - ${userProposals.length} found`}
-          </Paragraph>
-        </div>
-        <Link href={routes.newProposal} className="w-full sm:w-auto">
-          <Button variant="primary" size="md" className="w-full sm:w-auto">
-            New Proposal
-          </Button>
-        </Link>
+      {/* Status Filter */}
+      <div className="flex items-center gap-2">
+        <span className="text-muted-foreground text-sm">Filter by status:</span>
+        <Select
+          value={statusFilter}
+          onValueChange={(value) =>
+            setStatusFilter(value as typeof statusFilter)
+          }
+          options={statusOptions.map((option) => ({
+            ...option,
+            label:
+              option.value !== 'all' &&
+              statusCounts[option.value as keyof typeof statusCounts] > 0
+                ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
+                : option.label,
+          }))}
+          placeholder="Select status..."
+          className="w-48"
+        />
       </div>
 
       {/* Mobile-optimized scrollable table container */}
       <div className="w-full overflow-x-auto">
         <div className="min-w-[800px]">
           <Table
-            data={userProposals}
+            data={filteredProposals}
             columns={userProposalColumns}
             pageSize={10}
             searchable={true}

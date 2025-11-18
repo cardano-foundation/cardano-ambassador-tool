@@ -11,7 +11,7 @@ import TextArea from '@/components/atoms/TextArea';
 import ErrorAccordion from '@/components/ErrorAccordion';
 import { toast } from '@/components/toast/toast-manager';
 import { useApp } from '@/context/AppContext';
-import { useMemberValidation } from '@/hooks/useMemberValidation';
+import { useMemberValidation } from '@/hooks';
 import {
   findMembershipIntentUtxo,
   getCatConstants,

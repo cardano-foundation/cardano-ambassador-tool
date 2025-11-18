@@ -87,7 +87,6 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
       if (txhash) {
         try {
           await storageApiClient.delete(txhash, 'signoff-submissions');
-          console.log('Signoff approval data cleaned up successfully');
         } catch (error) {
           console.error('Failed to clean up signoff approval data:', error);
         }

@@ -10,8 +10,7 @@ import {
   TopicsPulse,
 } from '@/components/PulseLoader';
 import { useApp } from '@/context';
-import { useAmbassadorProfile } from '@/hooks/useAmbassadorProfile';
-import { useDateFormatting } from '@/hooks/UseDateFormatting';
+import { useAmbassadorProfile, useDateFormatting } from '@/hooks';
 import { formatAdaAmount, lovelaceToAda, parseMemberDatum } from '@/utils';
 import { getCountryByCode } from '@/utils/locationData';
 import React, { useMemo, useState } from 'react';
@@ -22,6 +21,7 @@ import { ProfileHeader } from './ProfileHeader';
 import { ProfileSidebar } from './ProfileSidebar';
 import { RepliesSection } from './RepliesSection';
 import { TopicsSection } from './TopicsSection';
+import ProposalSubmissionsTab from '@/app/my/_component/proposals/ProposalSubmissionsTab';
 
 interface AmbassadorProfilePageProps {
   ambassadorUsername: string;
@@ -44,6 +44,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
     const defaultData = {
       name: decodedUsername,
       username: decodedUsername,
+      walletAddress: '',
       country: '',
       city: '',
       bio_excerpt: '',
@@ -76,7 +77,6 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
       const countryData = memberMetadata.country
         ? getCountryByCode(memberMetadata.country)
         : null;
-      console.log({ parsed, kk: parsed.member.fundReceived });
 
       return {
         name:
@@ -92,6 +92,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
           lovelaceToAda(parsed.member.fundReceived),
         ),
         proposal_count: parsed.member.completion.size,
+        walletAddress: memberMetadata.walletAddress || '',
       };
     } catch {
       return defaultData;
@@ -132,7 +133,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
     profile?.summary.top_replies && profile.summary.top_replies.length > 0;
   const hasAnyContent = hasActivities || hasTopics || hasReplies;
   const currentTabLabel =
-    tabs.find((tab) => tab.id === activeTab)?.label || 'Content';
+    tabs.find((tab) => tab.id === activeTab)?.label || 'Content';    
 
   return (
     <div
@@ -271,7 +272,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
               ))}
 
             {activeTab === 'proposals' && (
-              <EmptyState message="No proposals yet" />
+               <ProposalSubmissionsTab address={memberData.walletAddress} />
             )}
           </div>
         </div>

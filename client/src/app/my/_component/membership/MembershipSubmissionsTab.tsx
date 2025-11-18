@@ -5,7 +5,7 @@ import TransactionConfirmationOverlay from '@/components/TransactionConfirmation
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import { useApp } from '@/context';
-import { useMemberValidation } from '@/hooks/useMemberValidation';
+import { useMemberValidation } from '@/hooks';
 import {
   findMembershipIntentUtxo,
   findTokenUtxoByMembershipIntentUtxo,

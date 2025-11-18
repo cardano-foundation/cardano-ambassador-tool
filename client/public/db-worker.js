@@ -1,3 +1,4 @@
+
 self.importScripts('sql-wasm.js');
 
 self.onmessage = async function (e) {
@@ -30,23 +31,25 @@ self.onmessage = async function (e) {
 
     db.run(`CREATE INDEX IF NOT EXISTS idx_txHash ON utxos(txHash);`);
 
-    // Ambassadors table
     db.run(`
-      CREATE TABLE IF NOT EXISTS ambassadors (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        href TEXT,
-        username TEXT,
-        name TEXT,
-        bio_excerpt TEXT,
-        country TEXT,
-        flag TEXT,
-        avatar TEXT,
-        created_at TEXT,
-        summary TEXT,
-        activities TEXT,
-        badges TEXT
-      );
+      CREATE TABLE IF NOT EXISTS treasury_payout_txs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      block TEXT,
+      deposit TEXT,
+      slot TEXT,
+      fees TEXT,
+      hash TEXT,
+      invalidAfter TEXT,
+      invalidBefore TEXT,
+      size INTEGER,
+      inputs TEXT,
+      outputs TEXT,
+      blockHeight INTEGER,
+      blockTime INTEGER
+    );
     `);
+
+    
   }
   createTables();
 
@@ -78,24 +81,27 @@ self.onmessage = async function (e) {
   }
 
   // Insert Ambassador
-  function insertAmbassador(amb) {
+  function insertPayOutTxs(tx) {
+    console.log({tx});
+    
     const stmt = db.prepare(`
-      INSERT INTO ambassadors (href, username, name, bio_excerpt, country, flag, avatar, created_at, summary, activities, badges)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO treasury_payout_txs (block, deposit, fees, hash, invalidAfter, invalidBefore, size, inputs, outputs, blockHeight, blockTime, slot)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run([
-      amb.href,
-      amb.username,
-      amb.name,
-      amb.bio_excerpt,
-      amb.country,
-      amb.flag,
-      amb.avatar,
-      amb.created_at,
-      JSON.stringify(amb.summary || {}),
-      JSON.stringify(amb.activities || []),
-      JSON.stringify(amb.badges || []),
+      tx.block,
+      tx.deposit,
+      tx.fees,
+      tx.hash,
+      tx.invalidAfter,
+      tx.invalidBefore,
+      tx.size,
+      JSON.stringify(tx.inputs || []),
+      JSON.stringify(tx.outputs || []),
+      tx.blockHeight,
+      tx.blockTime,
+      tx.slot
     ]);
 
     stmt.free();
@@ -109,6 +115,10 @@ self.onmessage = async function (e) {
 
   // Fetch and store UTxOs
   async function fetchAndStoreContext(contextName) {
+    if (contextName === 'treasury_payouts') {
+      return fetchStorePayoutTxs();
+    }
+
     const res = await fetch(`${apiBaseUrl}/api/utxos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -121,6 +131,21 @@ self.onmessage = async function (e) {
       utxos.forEach((utxo) => insertUtxo(utxo, contextName));
     }
   }
+
+  async function fetchStorePayoutTxs() {
+    const res = await fetch(`${apiBaseUrl}/api/txs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ forceRefresh: false })
+    });
+
+    const txs = await res.json();
+
+    if (Array.isArray(txs)) {
+      txs.forEach((tx) => insertPayOutTxs(tx));
+    }
+  }
+
 
   /**
    * -------------------------

@@ -1,4 +1,5 @@
-import { Ambassador, Utxo } from '@types';
+import { TransactionInfo } from '@meshsdk/core';
+import { Utxo } from '@types';
 import initSqlJs, { Database } from 'sql.js';
 import initSqlJsLocal from '../context/sql-wasm.js';
 
@@ -90,8 +91,8 @@ export class DatabaseManager {
     ]);
   }
 
-  getAmbasaddors(): Ambassador[] {
-    return this.query<Ambassador>('SELECT * FROM ambassadors');
+  getPayoutUtxos(): TransactionInfo[] {
+    return this.query<TransactionInfo>('SELECT * FROM treasury_payout_txs');
   }
 
   isReady(): boolean {
@@ -106,17 +107,5 @@ export class DatabaseManager {
       error: this.initializationError,
       lastSyncTime: this.lastSyncTime,
     };
-  }
-
-  // Helper method to get table information
-  getTableInfo(tableName: string) {
-    if (!this.db) return null;
-
-    try {
-      const result = this.query(`SELECT COUNT(*) as count FROM ${tableName}`);
-      return result[0];
-    } catch (error) {
-      return null;
-    }
   }
 }

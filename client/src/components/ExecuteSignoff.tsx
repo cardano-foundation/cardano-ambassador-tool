@@ -96,7 +96,6 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       const signoffApprovalMesh = dbUtxoToMeshUtxo(signoffApprovalUtxo);
       const memberMesh = dbUtxoToMeshUtxo(memberUtxo);
 
-      console.log({ oracleUtxo, signoffApprovalMesh, memberMesh });
 
       const unsignedTx = await adminAction.SignOff(
         oracleUtxo,
@@ -107,7 +106,6 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       if (!unsignedTx) {
         throw new Error('Failed to create SignOff transaction');
       }
-      console.log({ unsignedTx });
 
       const signedTx = await wallet!.signTx(unsignedTx.txHex, true);
 

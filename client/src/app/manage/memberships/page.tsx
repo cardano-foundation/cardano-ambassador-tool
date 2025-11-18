@@ -6,6 +6,7 @@ import Title from '@/components/atoms/Title';
 import UserAvatar from '@/components/atoms/UserAvatar';
 import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
+import { getCurrentNetworkConfig } from '@/config/cardano';
 import { useApp } from '@/context/AppContext';
 import { getCountryByCode, parseMemberDatum } from '@/utils';
 import Link from 'next/link';
@@ -48,9 +49,7 @@ export default function ManageAmbassadorsPage() {
           decodedDatum['country'] = memberMetadata.country!;
           decodedDatum['address'] = memberMetadata.walletAddress!;
           decodedDatum['utxoHash'] = utxo?.txHash!;
-        }
-
-        console.log(memberMetadata.walletAddress);
+        }        
       }
       return { ...utxo, ...decodedDatum };
     })
@@ -102,7 +101,11 @@ export default function ManageAmbassadorsPage() {
       accessor: 'utxoHash',
       sortable: false,
       cell: (value: string) => (
-        <Copyable withKey={false} value={value} keyLabel={''} />
+        <Copyable
+          withKey={false}
+          value={value}
+          link={`${getCurrentNetworkConfig().explorerUrl}/transaction/${value}`}
+        />
       ),
     },
     {

@@ -1,8 +1,11 @@
 import { getCatConstants, getProvider } from '@/utils';
 import { useCallback, useEffect, useState } from 'react';
+import useProposals from './useProposals';
 
 export function useTreasuryBalance() {
+  const {allProposals}= useProposals();
   const [treasuryBalance, setTreasuryBalance] = useState<bigint>(BigInt(0));
+   const [totalPayouts, setTotalpayouts] = useState<bigint>(BigInt(0));
   const [isTreasuryLoading, setIsTreasuryLoading] = useState(true);
 
   const fetchTreasuryBalance = useCallback(async () => {
@@ -12,6 +15,12 @@ export function useTreasuryBalance() {
       const catConstants = getCatConstants();
       const treasuryAddress = catConstants.scripts.treasury.spend.address;
 
+      const payouts = allProposals.reduce((sum, proposal) => {
+        const lovelace = proposal.fundsRequested
+        return sum + BigInt(lovelace ? lovelace : '0');
+      }, BigInt(0));
+
+      setTotalpayouts(payouts);
       const utxos = await provider.fetchAddressUTxOs(treasuryAddress);
       const totalBalance = utxos.reduce((sum, utxo) => {
         const lovelace = utxo.output.amount.find(
@@ -56,6 +65,7 @@ export function useTreasuryBalance() {
   return {
     treasuryBalance,
     isTreasuryLoading,
+    totalPayouts,
     refreshTreasuryBalance,
   };
 }

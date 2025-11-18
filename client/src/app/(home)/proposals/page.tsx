@@ -11,33 +11,11 @@ import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { ColumnDef, Table } from '@/components/Table/Table';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context';
-import { formatAdaAmount, parseMemberDatum, parseProposalDatum } from '@/utils';
+import useProposals from '@/hooks/useProposals';
+import { formatAdaAmount } from '@/utils';
+import { Proposal } from '@types';
 import Link from 'next/link';
 import { useState } from 'react';
-
-type Proposal = {
-  id: number;
-  title: string;
-  details: string;
-  receiverWalletAddress: string;
-  submittedByAddress: string;
-  fundsRequested: string;
-  status:
-    | 'pending'
-    | 'submitted'
-    | 'under_review'
-    | 'approved'
-    | 'rejected'
-    | 'signoff_pending'
-    | 'treasury_signoff';
-  txHash: string;
-  progress?: {
-    current: number;
-    total: number;
-    stage: string;
-  };
-};
 
 const getChipVariant = (status: Proposal['status']) => {
   switch (status) {
@@ -53,7 +31,7 @@ const getChipVariant = (status: Proposal['status']) => {
       return 'error';
     case 'signoff_pending':
       return 'success';
-    case 'treasury_signoff':
+    case 'paid_out':
       return 'success';
     default:
       return 'inactive';
@@ -61,14 +39,7 @@ const getChipVariant = (status: Proposal['status']) => {
 };
 
 const formatStatus = (status: Proposal['status']) => {
-  switch (status) {
-    case 'signoff_pending':
-      return 'Awaiting Signoff';
-    case 'under_review':
-      return 'Under Review';
-    default:
-      return status.charAt(0).toUpperCase() + status.slice(1);
-  }
+  return status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
 };
 
 const truncateToWords = (text: string, wordCount: number = 8) => {
@@ -97,7 +68,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
   },
   {
     header: 'Proposal details',
-    accessor: 'details',
+    accessor: 'description',
     sortable: false,
     cell: (value) => {
       const truncatedValue = truncateToWords(value, 10);
@@ -149,158 +120,51 @@ const proposalColumns: ColumnDef<Proposal>[] = [
   {
     header: 'Action',
     sortable: false,
-    cell: (value, row) => (
-      <Link href={routes.proposal(row.txHash)}>
-        <Button variant="primary" size="sm">
-          View
-        </Button>
-      </Link>
-    ),
+    cell: (value, row) =>
+      row.txHash ? (
+        <Link href={routes.proposal(row.txHash)}>
+          <Button variant="primary" size="sm">
+            View
+          </Button>
+        </Link>
+      ) : (
+        ''
+      ),
   },
 ];
 
 export default function ProposalsPage() {
-  const { proposals, proposalIntents, signOfApprovals, dbLoading, members } =
-    useApp();
+  const { allProposals, loading } = useProposals();
   const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>(
     'all',
   );
 
-  if (dbLoading) {
+  if (loading) {
     return <SimpleCardanoLoader />;
   }
-
-  const completedProposals = members.flatMap((mbr) => {
-    const parsed = parseMemberDatum(mbr.plutusData!);
-    const proposalsWithValue = Array.from(
-      parsed?.member.completion!,
-      ([proposal, value]) => ({
-        ...proposal,
-        status: 'success',
-        progress: {
-          current: 1,
-          total: 3,
-          stage: 'Treasury withrawal',
-        },
-      }),
-    );
-
-    return proposalsWithValue;
-  });
-
-  console.log({ completedProposals });
-
-  const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
-
-  const proposalsData: Proposal[] = allProposals
-    .map((utxo, idx) => {
-      if (!utxo.plutusData) return null;
-
-      try {
-        let metadata: any;
-        let description = 'No description provided';
-
-        if (utxo.parsedMetadata) {
-          try {
-            const parsed =
-              typeof utxo.parsedMetadata === 'string'
-                ? JSON.parse(utxo.parsedMetadata)
-                : utxo.parsedMetadata;
-            metadata = parsed;
-            description = parsed.description || 'No description provided';
-          } catch (e) {
-            const { metadata: datumMetadata } = parseProposalDatum(
-              utxo.plutusData,
-            )!;
-            metadata = datumMetadata;
-          }
-        } else {
-          const { metadata: datumMetadata } = parseProposalDatum(
-            utxo.plutusData,
-          )!;
-          metadata = datumMetadata;
-        }
-
-        if (!metadata) return null;
-
-        let status: Proposal['status'] = 'pending';
-        let progress: Proposal['progress'] | undefined;
-
-        if (signOfApprovals.some((p) => p.txHash === utxo.txHash)) {
-          status = 'signoff_pending';
-          progress = {
-            current: 1,
-            total: 3,
-            stage: 'Treasury Signoff',
-          };
-        } else if (proposals.some((p) => p.txHash === utxo.txHash)) {
-          status = 'approved';
-        } else {
-          status = 'pending';
-        }
-
-        return {
-          id: idx + 1,
-          title: metadata.title || 'Untitled Proposal',
-          details: description,
-          receiverWalletAddress: metadata.receiverWalletAddress || '',
-          submittedByAddress: metadata.submittedByAddress || '',
-          fundsRequested: metadata.fundsRequested || '0',
-          status,
-          txHash: utxo.txHash,
-          progress,
-        };
-      } catch (error) {
-        console.error('Error parsing proposal datum:', error);
-        return null;
-      }
-    })
-    .filter(Boolean) as Proposal[];
-
-  const uniqueProposals = proposalsData.reduce((acc, current) => {
-    const existing = acc.find((item) => item.txHash === current.txHash);
-    if (!existing) {
-      acc.push(current);
-    } else {
-      const statusPriority = {
-        rejected: 1,
-        submitted: 3,
-        under_review: 1,
-        signoff_pending: 3,
-        treasury_signoff: 3,
-        approved: 2,
-        pending: 1,
-      };
-
-      if (statusPriority[current.status] > statusPriority[existing.status]) {
-        const index = acc.indexOf(existing);
-        acc[index] = current;
-      }
-    }
-    return acc;
-  }, [] as Proposal[]);
 
   // Apply status filter
   const filteredProposals =
     statusFilter === 'all'
-      ? uniqueProposals
-      : uniqueProposals.filter((proposal) => proposal.status === statusFilter);
+      ? allProposals
+      : allProposals.filter((proposal) => proposal.status === statusFilter);
 
   // Count by status for display
   const statusCounts = {
-    pending: uniqueProposals.filter((p) => p.status === 'pending').length,
-    approved: uniqueProposals.filter((p) => p.status === 'approved').length,
-    signoff_pending: uniqueProposals.filter(
-      (p) => p.status === 'signoff_pending',
-    ).length,
+    pending: allProposals.filter((p) => p.status === 'pending').length,
+    approved: allProposals.filter((p) => p.status === 'approved').length,
+    signoff_pending: allProposals.filter((p) => p.status === 'signoff_pending')
+      .length,
+    paid_out: allProposals.filter((p) => p.status === 'paid_out').length,
   };
 
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
-    { value: 'pending', label: 'Pending' },
+    { value: 'paid_out', label: 'Paid Out' },
     { value: 'approved', label: 'Approved' },
+    { value: 'pending', label: 'Pending' },
     { value: 'signoff_pending', label: 'Awaiting Signoff' },
-    // { value: 'rejected', label: 'Rejected' },
+    { value: 'rejected', label: 'Rejected' },
   ];
 
   return (

@@ -6,12 +6,12 @@ import {
   onUtxoWorkerMessage,
   sendUtxoWorkerMessage,
 } from '@/lib/utxoWorkerClient';
-import { getProvider } from '@/utils';
 import {
   deserializeDatum,
   PubKeyAddress,
   ScriptAddress,
   serializeAddressObj,
+  TransactionInfo,
 } from '@meshsdk/core';
 import {
   MembershipIntentDatum,
@@ -30,8 +30,6 @@ const queryDb = <T = Record<string, unknown>>(
   return dbManager.query<T>(sql, params);
 };
 
-const blockfrostService = getProvider();
-
 const getUtxosByContext = (contextName: string): Utxo[] => {
   return dbManager.getUtxosByContext(contextName);
 };
@@ -45,9 +43,7 @@ export function useDatabase() {
   const [members, setMembers] = useState<Utxo[]>([]);
   const [proposals, setProposals] = useState<Utxo[]>([]);
   const [signOfApprovals, setSignOfApprovals] = useState<Utxo[]>([]);
-  const [treasurySignSettlements, setTreasurySignSettlements] = useState<
-    Utxo[]
-  >([]);
+  const [treasuryPayouts, setTreasuryPayouts] = useState<TransactionInfo[]>([]);
 
   const [dbError, setDbError] = useState<string | null>(null);
 
@@ -74,14 +70,15 @@ export function useDatabase() {
             const proposals = dbManager.getUtxosByContext('proposals');
             const sign_of_approvals =
               dbManager.getUtxosByContext('sign_of_approval');
-            const treasury_payouts =
-              dbManager.getUtxosByContext('treasury_payouts');
+              const treasury_payouts =
+                dbManager.getPayoutUtxos();
+                
             setMembershipIntents(memberships_intents);
             setProposalIntents(proposals_intents);
             setMembers(members);
             setProposals(proposals);
             setSignOfApprovals(sign_of_approvals);
-            setTreasurySignSettlements(treasury_payouts);
+            setTreasuryPayouts(treasury_payouts)
 
             if (data.isSyncOperation) {
               setIsSyncing(false);
@@ -194,8 +191,8 @@ export function useDatabase() {
     members,
     proposals,
     signOfApprovals,
-    treasurySignSettlements,
-
+    treasuryPayouts,
+    setTreasuryPayouts,
     // Operations
     syncData,
     syncAllData,

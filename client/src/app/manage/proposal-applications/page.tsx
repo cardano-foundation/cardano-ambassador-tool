@@ -7,30 +7,13 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Select from '@/components/atoms/Select';
 import Title from '@/components/atoms/Title';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context';
-import { formatAdaAmount, parseProposalDatum } from '@/utils';
+import useProposals from '@/hooks/useProposals';
+import { formatAdaAmount } from '@/utils';
+import { Proposal } from '@types';
 import Link from 'next/link';
 import { useState } from 'react';
 
-type ProposalIntent = {
-  id: number;
-  title: string;
-  url: string;
-  receiverWalletAddress: string;
-  createdAt?: string;
-  status:
-    | 'pending'
-    | 'submitted'
-    | 'under_review'
-    | 'approved'
-    | 'rejected'
-    | 'signoff_pending';
-  fundsRequested?: string;
-  txHash: string;
-  outputIndex?: number;
-};
-
-const getChipVariant = (status: ProposalIntent['status']) => {
+const getChipVariant = (status: Proposal['status']) => {
   switch (status) {
     case 'pending':
       return 'default';
@@ -42,6 +25,8 @@ const getChipVariant = (status: ProposalIntent['status']) => {
       return 'success';
     case 'signoff_pending':
       return 'success';
+    case 'paid_out':
+      return 'success';
     case 'rejected':
       return 'error';
     default:
@@ -49,14 +34,7 @@ const getChipVariant = (status: ProposalIntent['status']) => {
   }
 };
 
-const truncateToWords = (text: string, wordCount: number = 6) => {
-  if (!text) return 'No description';
-  const words = text.split(' ');
-  if (words.length <= wordCount) return text;
-  return words.slice(0, wordCount).join(' ') + '...';
-};
-
-const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
+const proposalIntentColumns: ColumnDef<Proposal>[] = [
   {
     header: '#',
     accessor: 'id',
@@ -130,115 +108,55 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
   {
     header: 'Action',
     sortable: false,
-    cell: (value, row) => (
-      <Link href={routes.manage.proposal(row.txHash)} prefetch={true}>
-        <Button variant="primary" size="md">
-          View
-        </Button>
-      </Link>
-    ),
+    cell: (value, row) =>
+      row.txHash ? (
+        <Link href={routes.manage.proposal(row.txHash)} prefetch={true}>
+          <Button variant="primary" size="md">
+            View
+          </Button>
+        </Link>
+      ) : (
+        ''
+      ),
   },
 ];
 
 export default function ProposalIntentsPage() {
-  const { proposalIntents, proposals, signOfApprovals, dbLoading } = useApp();
-  const [statusFilter, setStatusFilter] = useState<
-    'all' | ProposalIntent['status']
-  >('all');
+  const { allProposals, loading } = useProposals();
+  const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>(
+    'all',
+  );
 
-  if (dbLoading) {
+  if (loading) {
     return <div className="p-4">Loading proposals...</div>;
   }
 
   // Combine all proposal stages
-  const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
 
   if (!allProposals.length) {
     return <div className="p-4">No proposals found.</div>;
   }
 
-  const decodedUtxos = allProposals.map((utxo, idx) => {
-    const decodedDatum: ProposalIntent = {
-      title: '',
-      url: '',
-      fundsRequested: '0',
-      receiverWalletAddress: '',
-      status: 'pending',
-      id: 0,
-      txHash: utxo.txHash,
-    };
-
-    if (utxo.plutusData) {
-      try {
-        const { metadata } = parseProposalDatum(utxo.plutusData)!;
-
-        if (metadata) {
-          decodedDatum['title'] = metadata.title || 'Untitled Proposal';
-          decodedDatum['url'] = metadata.url || '';
-          decodedDatum['fundsRequested'] = metadata.fundsRequested || '0';
-          decodedDatum['receiverWalletAddress'] =
-            metadata.receiverWalletAddress || '';
-          decodedDatum['id'] = idx + 1;
-
-          decodedDatum['status'] = signOfApprovals.some(
-            (p) => p.txHash === utxo.txHash,
-          )
-            ? 'signoff_pending'
-            : proposals.some((p) => p.txHash === utxo.txHash)
-              ? 'approved'
-              : 'pending';
-        }
-      } catch (error) {
-        console.error('Error parsing proposal datum:', error);
-        decodedDatum['title'] = 'Error parsing proposal';
-        decodedDatum['url'] = '';
-      }
-    }
-
-    return decodedDatum;
-  });
-
-  // Remove duplicates based on txHash (keep the most advanced status)
-  const uniqueProposals = decodedUtxos.reduce((acc, current) => {
-    const existing = acc.find((item) => item.txHash === current.txHash);
-    if (!existing) {
-      acc.push(current);
-    } else {
-      const statusPriority = {
-        rejected: 1,
-        submitted: 3,
-        under_review: 1,
-        signoff_pending: 3,
-        approved: 2,
-        pending: 1,
-      };
-      if (statusPriority[current.status] > statusPriority[existing.status]) {
-        const index = acc.indexOf(existing);
-        acc[index] = current;
-      }
-    }
-    return acc;
-  }, [] as ProposalIntent[]);
-
   // Apply status filter
   const filteredProposals =
     statusFilter === 'all'
-      ? uniqueProposals
-      : uniqueProposals.filter((proposal) => proposal.status === statusFilter);
+      ? allProposals
+      : allProposals.filter((proposal) => proposal.status === statusFilter);
 
   // Count by status for display
   const statusCounts = {
-    pending: uniqueProposals.filter((p) => p.status === 'pending').length,
-    approved: uniqueProposals.filter((p) => p.status === 'approved').length,
-    signoff_pending: uniqueProposals.filter(
-      (p) => p.status === 'signoff_pending',
-    ).length,
+    pending: allProposals.filter((p) => p.status === 'pending').length,
+    approved: allProposals.filter((p) => p.status === 'approved').length,
+    signoff_pending: allProposals.filter((p) => p.status === 'signoff_pending')
+      .length,
+    paid_out: allProposals.filter((p) => p.status === 'paid_out').length,
   };
 
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
-    { value: 'pending', label: 'Pending' },
+    { value: 'paid_out', label: 'Paid Out' },
     { value: 'approved', label: 'Approved' },
+    { value: 'pending', label: 'Pending' },
     { value: 'signoff_pending', label: 'Awaiting Signoff' },
     { value: 'rejected', label: 'Rejected' },
   ];

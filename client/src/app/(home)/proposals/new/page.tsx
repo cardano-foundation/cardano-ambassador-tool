@@ -8,7 +8,7 @@ import TopNav from '@/components/Navigation/TabNav';
 import CardanoLoaderSVG from '@/components/ui/CardanoLoaderSVG';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
-import { useMemberValidation } from '@/hooks/useMemberValidation';
+import { useMemberValidation } from '@/hooks';
 import {
   adaToLovelace,
   dbUtxoToMeshUtxo,
@@ -163,6 +163,9 @@ export default function SubmitProposalPage() {
       const lovelaceAmount = adaToLovelace(cleanAdaAmount);
 
       const githubUrl = `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_REPO}/blob/${process.env.NEXT_PUBLIC_GITHUB_BRANCH}/proposals-applications/content/${filename}`;
+
+      console.log({ githubUrl });
+      
 
       const metadataFormData: ProposalData = {
         title: formData.title,

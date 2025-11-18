@@ -1,4 +1,5 @@
 import { getCurrentNetworkConfig } from '@/config/cardano';
+import { getCatConstants } from '@/utils';
 import {
   parseMemberDatum,
   parseMembershipIntentDatum,
@@ -19,28 +20,16 @@ const blockfrost = new BlockfrostProvider(
   process.env.BLOCKFROST_API_KEY_PREPROD,
 );
 
-const allScripts = scripts(
-  {
-    oracle: {
-      txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
-      outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
-    },
-    counter: {
-      txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!,
-      ),
-    },
-  },
-  getCurrentNetworkConfig().networkId,
-);
+
+const catConstants = getCatConstants();
 
 const SCRIPT_ADDRESSES = {
-  MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
-  MEMBER_NFT: allScripts.member.spend.address,
-  PROPOSE_INTENT: allScripts.proposeIntent.spend.address,
-  PROPOSAL: allScripts.proposal.spend.address,
-  SIGN_OFF_APPROVAL: allScripts.signOffApproval.spend.address,
+  MEMBERSHIP_INTENT: catConstants.scripts.membershipIntent.spend.address,
+  MEMBER_NFT: catConstants.scripts.member.spend.address,
+  PROPOSE_INTENT: catConstants.scripts.proposeIntent.spend.address,
+  PROPOSAL: catConstants.scripts.proposal.spend.address,
+  SIGN_OFF_APPROVAL: catConstants.scripts.signOffApproval.spend.address,
+  TREASURY_PAYOUTS: catConstants.scripts.treasury.spend.address,
 } as const;
 
 const actionData = {
@@ -67,6 +56,10 @@ const actionData = {
   specific_address_utxos: {
     errorContext: 'Address',
     address: '',
+  },
+  treasury_payouts: {
+    errorContext: 'Treasury Payout',
+    address: SCRIPT_ADDRESSES.TREASURY_PAYOUTS,
   },
 } as const;
 
@@ -105,9 +98,11 @@ export async function POST(req: NextRequest): Promise<
     const utxos = await fetchAddressUTxOs(userAddress);
 
     const validUtxos =
-      context == 'specific_address_utxos'
+      context == 'specific_address_utxos' 
         ? utxos
         : utxos.filter((utxo) => utxo.output.plutusData);
+
+    console.log({ context, validUtxos: validUtxos.length, userAddress });
 
     const utxosWithMetadata = await Promise.all(
       validUtxos.map(async (utxo) => {
@@ -123,6 +118,7 @@ export async function POST(req: NextRequest): Promise<
             if (parsed?.metadata) {
               const filename = parsed.metadata.url?.split('/').pop();
               let description = null;
+              console.log({ filename });
 
               if (filename) {
                 try {
@@ -164,6 +160,8 @@ export async function POST(req: NextRequest): Promise<
                 parsedMetadata: parsed.member.metadata,
               };
             }
+          } else {
+            return utxo;
           }
         } catch (error) {
           console.error('Error parsing UTxO metadata:', error);

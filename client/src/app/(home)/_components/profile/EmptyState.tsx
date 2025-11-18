@@ -1,3 +1,4 @@
+import Empty from '@/components/atoms/Empty';
 import NoNotificationsIcon from '@/components/atoms/NoNotificationsIcon';
 import Paragraph from '@/components/atoms/Paragraph';
 import React from 'react';
@@ -23,7 +24,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   }
 
   return (
-    <div className="py-12 text-center">
+    <div className="flex flex-col items-center py-12 text-center gap-4">
+      <Empty />
       <Paragraph size="sm" className="text-muted-foreground">
         {message}
       </Paragraph>

@@ -76,10 +76,6 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
           txHash,
           adminDecisionData.counterUtxoTxIndex || 0,
         );
-        console.log(
-          'Counter UTxO updated successfully with new transaction:',
-          txHash,
-        );
       } catch (error) {
         console.error('Failed to update counter UTxO:', error);
       }
@@ -105,7 +101,6 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
       if (txhash) {
         try {
           await storageApiClient.delete(txhash, 'submissions');
-          console.log('Admin decision data cleaned up successfully');
         } catch (error) {
           console.error('Failed to clean up admin decision data:', error);
         }
