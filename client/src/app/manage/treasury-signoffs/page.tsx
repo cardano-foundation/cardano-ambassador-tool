@@ -261,7 +261,7 @@ export default function TreasurySignOffsPage() {
             <Card className="border-orange-200 bg-orange-50">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-orange-400 text-xs font-bold text-white">
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-400 text-xs font-bold text-white">
                     !
                   </div>
                   <div className="space-y-1">

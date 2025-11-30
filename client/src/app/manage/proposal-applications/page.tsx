@@ -10,6 +10,7 @@ import { routes } from '@/config/routes';
 import useProposals from '@/hooks/useProposals';
 import { formatAdaAmount } from '@/utils';
 import { Proposal } from '@types';
+import { ArrowUpLeftFromSquare } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -65,19 +66,7 @@ const proposalIntentColumns: ColumnDef<Proposal>[] = [
             className="text-primary-base flex items-center gap-1 hover:underline"
           >
             See more
-            <svg
-              className="h-3 w-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
+            <ArrowUpLeftFromSquare className="size-4" />
           </a>
         </div>
       );
@@ -108,16 +97,26 @@ const proposalIntentColumns: ColumnDef<Proposal>[] = [
   {
     header: 'Action',
     sortable: false,
-    cell: (value, row) =>
-      row.txHash ? (
-        <Link href={routes.manage.proposal(row.txHash)} prefetch={true}>
-          <Button variant="primary" size="md">
-            View
-          </Button>
-        </Link>
-      ) : (
-        ''
-      ),
+    cell: (value, row) => {
+      if (row.txHash) {
+        return (
+          <Link href={routes.manage.proposal(row.txHash)} prefetch={true}>
+            <Button variant="primary" size="md">
+              View
+            </Button>
+          </Link>
+        );
+      } else if (row.status === 'paid_out' && row.slug) {
+        return (
+          <Link href={routes.completedProposal(row.slug)} prefetch={true}>
+            <Button variant="primary" size="md">
+              View
+            </Button>
+          </Link>
+        );
+      }
+      return '';
+    },
   },
 ];
 
@@ -131,11 +130,11 @@ export default function ProposalIntentsPage() {
     return <div className="p-4">Loading proposals...</div>;
   }
 
-  // Combine all proposal stages
-
   if (!allProposals.length) {
     return <div className="p-4">No proposals found.</div>;
   }
+
+  console.log({ allProposals });
 
   // Apply status filter
   const filteredProposals =

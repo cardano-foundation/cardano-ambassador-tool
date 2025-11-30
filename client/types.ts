@@ -245,6 +245,7 @@ export type Proposal = {
     | 'signoff_pending'
     | 'paid_out';
   txHash?: string;
+  slug?: string;
   url?: string;
 };
 

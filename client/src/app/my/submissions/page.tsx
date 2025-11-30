@@ -2,7 +2,10 @@
 
 import TopNav from '@/components/Navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import Button from '@/components/atoms/Button';
+import { routes } from '@/config/routes';
 import { useApp } from '@/context';
+import Link from 'next/link';
 import { useState } from 'react';
 import MembershipSubmissionsTab from '../_component/membership/MembershipSubmissionsTab';
 import ProposalSubmissionsTab from '../_component/proposals/ProposalSubmissionsTab';

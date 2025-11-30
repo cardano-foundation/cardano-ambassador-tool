@@ -30,6 +30,10 @@ export default function Breadcrumbs() {
             return;
           }
 
+            if (link == 'completed') {
+            return;
+          }
+
           let href = `/${pathNames.slice(0, index + 1).join('/')}`;
 
           if (link == 'ambassadors') {

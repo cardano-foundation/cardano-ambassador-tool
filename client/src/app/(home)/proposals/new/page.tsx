@@ -163,8 +163,8 @@ export default function SubmitProposalPage() {
       const lovelaceAmount = adaToLovelace(cleanAdaAmount);
 
       const githubUrl = `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_REPO}/blob/${process.env.NEXT_PUBLIC_GITHUB_BRANCH}/proposals-applications/content/${filename}`;
-
-      console.log({ githubUrl });
+      
+      console.log({ filename, githubUrl });
       
 
       const metadataFormData: ProposalData = {

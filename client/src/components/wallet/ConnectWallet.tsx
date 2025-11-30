@@ -61,6 +61,17 @@ const ConnectWallet = () => {
 
         <div className="flex h-full w-full flex-col gap-6 p-6">
           <WalletList />
+          
+          <div className="flex justify-center">
+            <Button
+              variant="primary"
+              disabled={!isConnected}
+              onClick={() => setOpen(false)}
+              className="min-w-20"
+            >
+              Done
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

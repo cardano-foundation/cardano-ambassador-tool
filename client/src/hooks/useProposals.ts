@@ -4,13 +4,8 @@ import { Proposal } from '@types';
 import { useEffect, useMemo, useState } from 'react';
 
 const useProposals = () => {
-  const {
-    proposals,
-    proposalIntents,
-    signOfApprovals,
-    dbLoading,
-    members,
-  } = useApp();
+  const { proposals, proposalIntents, signOfApprovals, dbLoading, members } =
+    useApp();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,13 +33,26 @@ const useProposals = () => {
     return members.flatMap((mbr) => {
       const parsed = parseMemberDatum(mbr.plutusData!);
       if (!parsed) return [];
-      return Array.from(parsed.member.completion!, ([proposal, value]) => ({
-        ...proposal,
-        status: 'paid_out' as Proposal['status'],
-        fundsRequested: lovelaceToAda(value),
-        txHash: undefined,
-        description: 'No description provided',
-      }));
+      return Array.from(parsed.member.completion!, ([proposal, value]) => {
+        // Create a consistent slug from title and receiver address
+        const titleSlug = proposal.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')
+          .substring(0, 50);
+        const addressSlug = proposal.receiverWalletAddress.substring(0, 8);
+        const slug = `${titleSlug}-${addressSlug}`;
+
+        return {
+          ...proposal,
+          status: 'paid_out' as Proposal['status'],
+          fundsRequested: lovelaceToAda(value),
+          txHash: undefined,
+          slug,
+          description: 'No description provided',
+        };
+      });
     });
   }, [members]);
 
@@ -101,6 +109,8 @@ const useProposals = () => {
             fundsRequested: metadata.fundsRequested || '0',
             status,
             txHash: utxo.txHash,
+            slug: undefined,
+            url: metadata.url || undefined,
           };
         } catch (e) {
           console.error('Error parsing proposal datum:', e);

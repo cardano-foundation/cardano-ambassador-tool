@@ -19,6 +19,15 @@ const RichTextDisplay = ({
     );
   }
 
+  // Debug logging for image content
+  if (content.includes('data:image')) {
+    console.log('Content contains base64 images:', {
+      contentLength: content.length,
+      imageCount: (content.match(/!\[.*?\]\(data:image/g) || []).length,
+      preview: content.substring(0, 200) + '...'
+    });
+  }
+
   const looksLikeHTML = /<\/?[a-z][\s\S]*>/i.test(content);
 
   const baseClasses = `
@@ -60,12 +69,58 @@ const RichTextDisplay = ({
           br: () => <br />,
 
           img: ({ node, ...props }) => {
+            const { src, alt, ...restProps } = props;
+            
+
+            console.log('Rendering image:', {
+              src: src?.substring(0, 100) + (src?.length > 100 ? '...' : ''),
+              alt,
+              isDataURL: src?.startsWith('data:')
+            });
+            
             return (
               <img
-                {...props}
-                className="my-4 h-auto max-w-full rounded-lg"
-                alt={props.alt || 'Image'}
-                style={{ maxWidth: '100%', height: 'auto' }}
+                {...restProps}
+                src={src}
+                className="my-4 h-auto max-w-full rounded-lg border"
+                alt={alt || 'Image'}
+                style={{ 
+                  maxWidth: '100%', 
+                  height: 'auto',
+                  display: 'block'
+                }}
+                onLoad={(e) => {
+                  console.log('Image loaded successfully:', src?.substring(0, 50));
+                }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  console.error('Image failed to load:', {
+                    src: src?.substring(0, 100),
+                    alt,
+                    error: e
+                  });
+                  
+                  
+                  // Show a placeholder for failed images
+                  target.style.border = '2px dashed #e5e7eb';
+                  target.style.background = '#f9fafb';
+                  target.style.padding = '2rem';
+                  target.style.textAlign = 'center';
+                  target.style.color = '#6b7280';
+                  target.style.minHeight = '100px';
+                  target.style.display = 'flex';
+                  target.style.alignItems = 'center';
+                  target.style.justifyContent = 'center';
+                  
+                  // Create a text node showing the error
+                  const errorDiv = document.createElement('div');
+                  errorDiv.innerHTML = `<div style="text-align: center;"><div>🖼️</div><div style="margin-top: 8px; font-size: 14px;">Image failed to load</div><div style="margin-top: 4px; font-size: 12px; opacity: 0.7;">${alt || 'No alt text'}</div></div>`;
+                  target.style.display = 'none';
+                  target.parentNode?.insertBefore(errorDiv, target);
+                }}
+                loading="lazy"
+
+                {...(!src?.startsWith('data:') && { crossOrigin: 'anonymous' })}
               />
             );
           },

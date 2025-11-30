@@ -67,17 +67,37 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     ),
   },
   {
-    header: 'Proposal details',
-    accessor: 'description',
+    header: 'Project details',
+    accessor: 'url',
     sortable: false,
     cell: (value) => {
-      const truncatedValue = truncateToWords(value, 10);
+      if (!value)
+        return (
+          <span className="text-muted-foreground text-sm">No details</span>
+        );
       return (
-        <div className="max-w-[400px] text-sm">
-          <RichTextDisplay
-            content={truncatedValue}
-            className="prose-sm [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_p]:mb-1 [&_strong]:font-semibold"
-          />
+        <div className="max-w-[300px] text-sm">
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-base flex items-center gap-1 hover:underline"
+          >
+            See more
+            <svg
+              className="h-3 w-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </a>
         </div>
       );
     },
@@ -120,16 +140,26 @@ const proposalColumns: ColumnDef<Proposal>[] = [
   {
     header: 'Action',
     sortable: false,
-    cell: (value, row) =>
-      row.txHash ? (
-        <Link href={routes.proposal(row.txHash)}>
-          <Button variant="primary" size="sm">
-            View
-          </Button>
-        </Link>
-      ) : (
-        ''
-      ),
+    cell: (value, row) => {
+      if (row.txHash) {
+        return (
+          <Link href={routes.proposal(row.txHash)}>
+            <Button variant="primary" size="sm">
+              View
+            </Button>
+          </Link>
+        );
+      } else if (row.status === 'paid_out' && row.slug) {
+        return (
+          <Link href={routes.completedProposal(row.slug)}>
+            <Button variant="primary" size="sm">
+              View
+            </Button>
+          </Link>
+        );
+      }
+      return '';
+    },
   },
 ];
 

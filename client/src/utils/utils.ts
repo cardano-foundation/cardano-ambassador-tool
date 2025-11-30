@@ -29,6 +29,7 @@ import {
 import { ProposalItem, Utxo } from '@types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { getCatConstants } from './constants';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -47,33 +48,18 @@ export function copyToClipboard(text: string) {
 
 const blockfrostService = new BlockfrostService();
 
-// Scripts and addresses
-const allScripts = scripts(
-  {
-    oracle: {
-      txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
-      outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
-    },
-    counter: {
-      txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
-      outputIndex: parseInt(
-        process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!,
-      ),
-    },
-  },
-  parseInt(process.env.NEXT_PUBLIC_NETWORK || '0'),
-);
+const catConstants = getCatConstants();
 
 export const SCRIPT_ADDRESSES = {
-  MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
-  MEMBER_NFT: allScripts.member.spend.address,
-  PROPOSE_INTENT: allScripts.proposeIntent.spend.address,
-  PROPOSAL: allScripts.proposal.spend.address,
-  SIGN_OFF_APPROVAL: allScripts.signOffApproval.spend.address,
+  MEMBERSHIP_INTENT: catConstants.scripts.membershipIntent.spend.address,
+  MEMBER_NFT: catConstants.scripts.member.spend.address,
+  PROPOSE_INTENT: catConstants.scripts.proposeIntent.spend.address,
+  PROPOSAL: catConstants.scripts.proposal.spend.address,
+  SIGN_OFF_APPROVAL: catConstants.scripts.signOffApproval.spend.address,
 } as const;
 
 export const POLICY_IDS = {
-  MEMBER_NFT: allScripts.member.mint.hash,
+  MEMBER_NFT: catConstants.scripts.member.mint.hash,
 } as const;
 
 // ============================================================================
@@ -400,9 +386,10 @@ export async function findMembershipIntentUtxo(
     const utxos = await blockfrostService.fetchAddressUTxOs(
       SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     );
+    console.log({ utxos });
+    
     const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) => {
-      try {
         if (!utxo.output.plutusData) return false;
         const datum: MembershipIntentDatum = deserializeDatum(
           utxo.output.plutusData,
@@ -410,10 +397,6 @@ export async function findMembershipIntentUtxo(
         const metadataPluts: MembershipMetadata = datum.fields[1];
         const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
         return walletAddress === address;
-      } catch (error) {
-        console.error('Error processing UTxO:', error);
-        return false;
-      }
     });
     return matchingUtxo || null;
   } catch (error) {

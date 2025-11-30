@@ -102,8 +102,6 @@ export async function POST(req: NextRequest): Promise<
         ? utxos
         : utxos.filter((utxo) => utxo.output.plutusData);
 
-    console.log({ context, validUtxos: validUtxos.length, userAddress });
-
     const utxosWithMetadata = await Promise.all(
       validUtxos.map(async (utxo) => {
         if (!utxo.output.plutusData) return utxo;
@@ -116,11 +114,18 @@ export async function POST(req: NextRequest): Promise<
           ) {
             const parsed = parseProposalDatum(utxo.output.plutusData);
             if (parsed?.metadata) {
-              const filename = parsed.metadata.url?.split('/').pop();
+              let filename = null;
               let description = null;
-              console.log({ filename });
-
-              if (filename) {
+              
+              if (parsed.metadata.url) {
+                if (parsed.metadata.url.includes('|')) {
+                  filename = parsed.metadata.url.split('|')[1];
+                } else {
+                  filename = parsed.metadata.url.split('/').pop();
+                }
+              }
+              
+              if (filename && filename.endsWith('.md')) {
                 try {
                   const response = await fetch(
                     `${req.nextUrl.origin}/api/proposal-content?filename=${encodeURIComponent(filename)}`,

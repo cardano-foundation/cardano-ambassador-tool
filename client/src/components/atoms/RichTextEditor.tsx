@@ -11,19 +11,12 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
-  File,
   Image as ImageIcon,
   Italic,
-  Link2 as LinkIcon,
   List,
   ListOrdered,
-  Redo,
   Smile,
-  Strikethrough,
   Underline as UnderlineIcon,
-  Undo,
-  Video,
-  X,
 } from 'lucide-react';
 import {
   forwardRef,
@@ -41,7 +34,7 @@ interface RichTextEditorProps {
 }
 
 const RichTextEditor = forwardRef(
-  ({ value, onChange, placeholder }: RichTextEditorProps, ref) => {
+  ({ value, onChange }: RichTextEditorProps, ref) => {
     const [mounted, setMounted] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showLinkInput, setShowLinkInput] = useState(false);
@@ -125,34 +118,6 @@ const RichTextEditor = forwardRef(
       setShowEmojiPicker(false);
     };
 
-    const addLink = () => {
-      if (linkUrl) {
-        let formattedUrl = linkUrl.trim();
-
-        if (
-          !formattedUrl.startsWith('http://') &&
-          !formattedUrl.startsWith('https://')
-        ) {
-          if (formattedUrl.includes('@') && formattedUrl.includes('.')) {
-            formattedUrl = `mailto:${formattedUrl}`;
-          } else {
-            formattedUrl = `https://${formattedUrl}`;
-          }
-        }
-
-        editor?.commands.setLink({
-          href: formattedUrl,
-          target: '_blank',
-          rel: 'noopener noreferrer',
-        });
-        setLinkUrl('');
-        setShowLinkInput(false);
-      }
-    };
-
-    const removeLink = () => {
-      editor?.commands.unsetLink();
-    };
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -171,63 +136,7 @@ const RichTextEditor = forwardRef(
       reader.readAsDataURL(file);
       event.target.value = '';
     };
-    const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
 
-      if (!file.type.startsWith('video/')) {
-        alert('Please select a video file');
-        event.target.value = '';
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        editor?.commands.insertContent(`
-        <div class="video-container my-4" contenteditable="false">
-          <video controls class="max-w-full rounded-lg border">
-            <source src="${result}" type="${file.type}">
-            Your browser does not support the video tag.
-          </video>
-          <p class="text-xs text-gray-500 mt-1">${file.name}</p>
-        </div>
-      `);
-      };
-      reader.readAsDataURL(file);
-      event.target.value = '';
-    };
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        if (file.type.startsWith('image/')) {
-          editor?.commands.setImage({ src: result });
-        } else {
-          const fileName = file.name;
-          editor?.commands.insertContent(`
-          <div class="file-attachment my-2" contenteditable="false">
-            <a href="${result}" download="${fileName}" class="flex items-center gap-2 p-3 border rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-              <File className="w-4 h-4" />
-              <span class="text-sm font-medium">${fileName}</span>
-              <span class="text-xs text-gray-500 ml-auto">${formatFileSize(file.size)}</span>
-            </a>
-          </div>
-        `);
-        }
-      };
-      reader.readAsDataURL(file);
-      event.target.value = '';
-    };
-    const formatFileSize = (bytes: number) => {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    };
     const handleUndo = () => {
       editor?.commands.undo();
     };
@@ -333,14 +242,7 @@ const RichTextEditor = forwardRef(
           >
             <UnderlineIcon className="h-4 w-4" />
           </button>
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            className={`hover:bg-muted rounded p-2 ${editor.isActive('strike') ? 'bg-muted' : ''}`}
-            title="Strike Through"
-          >
-            <Strikethrough className="h-4 w-4" />
-          </button>
+
           <div className="emoji-picker-container relative">
             <button
               type="button"
@@ -404,46 +306,7 @@ const RichTextEditor = forwardRef(
           >
             <ListOrdered className="h-4 w-4" />
           </button>
-          <div className="link-input-container relative">
-            <button
-              type="button"
-              onClick={() => setShowLinkInput(!showLinkInput)}
-              className={`hover:bg-muted rounded p-2 ${editor.isActive('link') ? 'bg-muted' : ''}`}
-              title="Add Link"
-            >
-              <LinkIcon className="h-4 w-4" />
-            </button>
 
-            {showLinkInput && (
-              <div className="bg-background border-border absolute top-full left-0 z-50 mt-1 min-w-64 rounded-lg border p-3 shadow-lg">
-                <div className="mb-2 flex items-center gap-2">
-                  <input
-                    type="url"
-                    value={linkUrl}
-                    onChange={(e) => setLinkUrl(e.target.value)}
-                    placeholder="Enter URL"
-                    className="border-border flex-1 rounded border px-2 py-1 text-sm"
-                    onKeyPress={(e) => e.key === 'Enter' && addLink()}
-                  />
-                  <button
-                    onClick={addLink}
-                    className="bg-primary-base text-white-500 rounded px-2 py-1 text-sm"
-                  >
-                    Add
-                  </button>
-                </div>
-                {editor.isActive('link') && (
-                  <button
-                    onClick={removeLink}
-                    className="text-primary-base flex items-center gap-1 rounded px-2 py-1 text-sm"
-                  >
-                    <X className="h-3 w-3" />
-                    Remove Link
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
           <input
             type="file"
             id="image-upload"
@@ -458,62 +321,11 @@ const RichTextEditor = forwardRef(
           >
             <ImageIcon className="h-4 w-4" />
           </label>
-          <input
-            type="file"
-            id="video-upload"
-            onChange={handleVideoUpload}
-            className="hidden"
-            accept="video/*"
-          />
-          <label
-            htmlFor="video-upload"
-            className="hover:bg-muted cursor-pointer rounded p-2"
-            title="Upload Video"
-          >
-            <Video className="h-4 w-4" />
-          </label>
-          <input
-            type="file"
-            id="file-upload"
-            onChange={handleFileUpload}
-            className="hidden"
-            accept=".pdf,.doc,.docx,.txt"
-          />
-          <label
-            htmlFor="file-upload"
-            className="hover:bg-muted cursor-pointer rounded p-2"
-            title="Upload Document"
-          >
-            <File className="h-4 w-4" />
-          </label>
-          <button
-            type="button"
-            onClick={handleUndo}
-            disabled={!editor.can().undo()}
-            className={`hover:bg-muted rounded p-2 ${
-              !editor.can().undo() ? 'cursor-not-allowed opacity-50' : ''
-            }`}
-            title="Undo (Ctrl+Z)"
-          >
-            <Undo className="h-4 w-4" />
-          </button>
-
-          <button
-            type="button"
-            onClick={handleRedo}
-            disabled={!editor.can().redo()}
-            className={`hover:bg-muted rounded p-2 ${
-              !editor.can().redo() ? 'cursor-not-allowed opacity-50' : ''
-            }`}
-            title="Redo (Ctrl+Shift+Z)"
-          >
-            <Redo className="h-4 w-4" />
-          </button>
         </div>
 
         <EditorContent
           editor={editor}
-          className="min-h-[750px] w-full p-3 text-sm break-words whitespace-pre-wrap focus:outline-none [&_pre]:overflow-x-auto [&_pre]:break-words [&_pre]:whitespace-pre-wrap"
+          className="min-h-[750px] w-full p-3 text-sm wrap-break-word whitespace-pre-wrap focus:outline-none [&_pre]:overflow-x-auto [&_pre]:break-words [&_pre]:whitespace-pre-wrap"
         />
       </div>
     );

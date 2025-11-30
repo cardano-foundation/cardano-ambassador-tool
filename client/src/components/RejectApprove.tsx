@@ -189,6 +189,13 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         getCatConstants(),
       );
 
+      console.log({
+        oracleUtxo,
+        counterUtxo,
+        kk: dbUtxoToMeshUtxo(intentUtxo!),
+        adminsPkh,
+      });
+
       let unsignedTx;
       if (context === 'MembershipIntent') {
         if (decision === 'approve') {

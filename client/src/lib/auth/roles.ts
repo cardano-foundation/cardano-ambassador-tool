@@ -11,23 +11,23 @@ import { revalidateTag, unstable_cache } from 'next/cache';
 
 const blockfrost = new BlockfrostService();
 
-function getAdminPubKeyHashes(): string[] {
-  const adminList = Object.keys(process.env)
-    .filter((key) => key.startsWith('ADMIN_WALLET'))
-    .map((key) => {
-      try {
-        const address = process.env[key];
-        if (!address) return null;
-        return deserializeAddress(address).pubKeyHash;
-      } catch (error) {
-        console.error(`Error deserializing admin address ${key}:`, error);
-        return null;
-      }
-    })
-    .filter(Boolean) as string[];
+// function getAdminPubKeyHashes(): string[] {
+//   const adminList = Object.keys(process.env)
+//     .filter((key) => key.startsWith('ADMIN_WALLET'))
+//     .map((key) => {
+//       try {
+//         const address = process.env[key];
+//         if (!address) return null;
+//         return deserializeAddress(address).pubKeyHash;
+//       } catch (error) {
+//         console.error(`Error deserializing admin address ${key}:`, error);
+//         return null;
+//       }
+//     })
+//     .filter(Boolean) as string[];
 
-  return adminList;
-}
+//   return adminList;
+// }
 
 export async function resolveRoles(address: string): Promise<
   {
@@ -38,13 +38,10 @@ export async function resolveRoles(address: string): Promise<
 
   try {
     // Get admin pub key hashes from environment
-    const adminsPubKeyHashes = getAdminPubKeyHashes();
-
-    // Get user's pub key hash
-    const userPubKeyHash = deserializeAddress(address).pubKeyHash;
+    const admins = await  fetchAdminsFromOracle();    
 
     // Check if user is admin
-    if (adminsPubKeyHashes.includes(userPubKeyHash)) {
+    if (admins?.adminAddresses.includes(address)) {
       roles.push({ role: 'admin' });
     } else {
     }

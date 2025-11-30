@@ -1,7 +1,6 @@
 import { GithubProposalData } from '@types';
-import axios from 'axios';
-
-const GITHUB_API = 'https://api.github.com';
+import { Octokit } from 'octokit';
+import crypto from 'crypto';
 
 const GitContentService = {
   async saveContent({
@@ -9,55 +8,49 @@ const GitContentService = {
     description,
     submitterAddress,
   }: GithubProposalData & { submitterAddress?: string }) {
-    if (!process.env.GITHUB_TOKEN || !process.env.NEXT_PUBLIC_GITHUB_REPO) {
-      throw new Error('GitHub credentials missing in environment variables');
-    }
-
-    const { repo, branch, token } = loadGitCred();
-    const slug = formatFilename(title);
-    const filename = submitterAddress
-      ? `${slug}-${submitterAddress}.md`
-      : `${slug}.md`;
+    const { owner, repo, branch, octokit } = await getOctokit();
+    
+    const contentHash = crypto.createHash('md5')
+      .update(`${title}-${submitterAddress || 'anonymous'}`)
+      .digest('hex')
+      .substring(0, 8);
+    
+    const filename = `proposal-${contentHash}.md`;
     const path = `proposals-applications/content/${filename}`;
 
-    let sha;
     try {
-      const existing = await axios.get(
-        `${GITHUB_API}/repos/${repo}/contents/${path}`,
-        {
-          headers: { Authorization: `token ${token}` },
-          params: { ref: branch },
-        },
-      );
-      sha = existing.data.sha;
-    } catch (error: any) {
-      if (error.response?.status !== 404) {
-        console.error('Error checking existing file:', error.response?.data);
-        throw error;
+      let sha;
+      try {
+        const { data: existing } = await octokit.rest.repos.getContent({
+          owner,
+          repo,
+          path,
+          ref: branch,
+        });
+        if ('sha' in existing) {
+          sha = existing.sha;
+        }
+      } catch (error: any) {
+        if (error.status !== 404) {
+          throw error;
+        }
       }
-    }
 
-    try {
-      const res = await axios.put(
-        `${GITHUB_API}/repos/${repo}/contents/${path}`,
-        {
-          message: sha ? `Update ${filename}` : `Create ${filename}`,
-          content: Buffer.from(description).toString('base64'),
-          branch,
-          ...(sha && { sha }),
-        },
-        {
-          headers: { Authorization: `token ${token}` },
-        },
-      );
+      const { data } = await octokit.rest.repos.createOrUpdateFileContents({
+        owner,
+        repo,
+        path,
+        message: sha ? `Update ${filename}` : `Create ${filename}`,
+        content: Buffer.from(description).toString('base64'),
+        branch,
+        ...(sha && { sha }),
+      });
 
-      return { ...res.data, filename };
+      return { ...data, filename };
     } catch (error: any) {
       console.error('GitHub API Error:', {
-        status: error.response?.status,
-        message: error.response?.data?.message,
-        details: error.response?.data,
-        repo,
+        status: error.status,
+        message: error.message,
         path,
       });
       throw error;
@@ -69,79 +62,78 @@ const GitContentService = {
       throw new Error('Invalid filename format');
     }
 
-    const { repo, branch, token } = loadGitCred();
+    const { owner, repo, branch, octokit } = await getOctokit();
     const path = `proposals-applications/content/${filename.trim()}`;
 
     try {
-      const res = await axios.get(
-        `${GITHUB_API}/repos/${repo}/contents/${path}`,
-        {
-          headers: { Authorization: `token ${token}` },
-          params: { ref: branch },
-        },
-      );
+      const { data } = await octokit.rest.repos.getContent({
+        owner,
+        repo,
+        path,
+        ref: branch,
+      });
 
-      return {
-        filename: filename.trim(),
-        content: Buffer.from(res.data.content, 'base64').toString('utf-8'),
-      };
+      if ('content' in data) {
+        return {
+          filename: filename.trim(),
+          content: Buffer.from(data.content, 'base64').toString('utf-8'),
+        };
+      }
+      throw new Error('File content not available');
     } catch (error: any) {
-      const status = error.response?.status;
-      if (status === 404) throw new Error('Proposal file not found');
-      if (status === 401 || status === 403)
+      if (error.status === 404) throw new Error('Proposal file not found');
+      if (error.status === 401 || error.status === 403)
         throw new Error('GitHub authentication failed');
       throw new Error('Failed to read content from GitHub');
     }
   },
 
   async deleteContent(filename: string) {
-    const { repo, branch, token } = loadGitCred();
-
+    const { owner, repo, branch, octokit } = await getOctokit();
     const path = `proposals-applications/content/${filename}`;
 
-    const existing = await axios.get(
-      `${GITHUB_API}/repos/${repo}/contents/${path}`,
-      {
-        headers: { Authorization: `token ${token}` },
-        params: { ref: branch },
-      },
-    );
-    const sha = existing.data.sha;
+    try {
+      const { data: existing } = await octokit.rest.repos.getContent({
+        owner,
+        repo,
+        path,
+        ref: branch,
+      });
 
-    const res = await axios.delete(
-      `${GITHUB_API}/repos/${repo}/contents/${path}`,
-      {
-        headers: { Authorization: `token ${token}` },
-        data: {
+      if ('sha' in existing) {
+        await octokit.rest.repos.deleteFile({
+          owner,
+          repo,
+          path,
           message: `Delete proposal ${filename}`,
-          sha,
+          sha: existing.sha,
           branch,
-        },
-      },
-    );
-
-    return true;
+        });
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      if (error.status === 404) return false;
+      throw error;
+    }
   },
 };
 
-const formatFilename = (title: string) => {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '');
-};
-
-const loadGitCred = () => {
+const getOctokit = async () => {
   const {
     GITHUB_TOKEN,
     NEXT_PUBLIC_GITHUB_REPO,
     NEXT_PUBLIC_GITHUB_BRANCH = 'main',
   } = process.env;
-  const repo = NEXT_PUBLIC_GITHUB_REPO;
-  const token = GITHUB_TOKEN;
-  const branch = NEXT_PUBLIC_GITHUB_BRANCH;
 
-  return { repo, token, branch };
+  if (!GITHUB_TOKEN || !NEXT_PUBLIC_GITHUB_REPO) {
+    throw new Error('GitHub credentials missing in environment variables');
+  }
+
+  const [owner, repo] = NEXT_PUBLIC_GITHUB_REPO.split('/');
+  const octokit = new Octokit({ auth: GITHUB_TOKEN });
+  
+  return { owner, repo, branch: NEXT_PUBLIC_GITHUB_BRANCH, octokit };
 };
 
 export default GitContentService;

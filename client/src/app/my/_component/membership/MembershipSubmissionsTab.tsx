@@ -80,8 +80,9 @@ export default function MembershipSubmissionsTab() {
 
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
     try {
-      const userAddress = await userWallet!.getChangeAddress();
-
+      if (!userAddress) {
+        return;
+      }
       const membershipIntentUtxo = await findMembershipIntentUtxo(userAddress);
 
       if (!membershipIntentUtxo) {

@@ -81,9 +81,7 @@ self.onmessage = async function (e) {
   }
 
   // Insert Ambassador
-  function insertPayOutTxs(tx) {
-    console.log({tx});
-    
+  function insertPayOutTxs(tx) {    
     const stmt = db.prepare(`
       INSERT INTO treasury_payout_txs (block, deposit, fees, hash, invalidAfter, invalidBefore, size, inputs, outputs, blockHeight, blockTime, slot)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

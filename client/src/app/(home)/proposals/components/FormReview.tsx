@@ -19,13 +19,12 @@ interface Props {
 }
 
 export default function FormReview({ formData }: Props) {
-  const { userAddress } = useApp();
-
   const formatFundsRequested = () => {
     if (!formData.fundsRequested) return 'Not specified';
     const cleanAmount = parseAdaInput(formData.fundsRequested);
     return cleanAmount ? formatAdaAmount(cleanAmount) : 'Invalid amount';
   };
+  
 
   return (
     <div className="sm:px-6">

@@ -5,7 +5,6 @@ import Button from '@/components/atoms/Button';
 import Chip from '@/components/atoms/Chip';
 import Empty from '@/components/atoms/Empty';
 import Paragraph from '@/components/atoms/Paragraph';
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Select from '@/components/atoms/Select';
 import Title from '@/components/atoms/Title';
 import { routes } from '@/config/routes';
@@ -13,6 +12,7 @@ import { useApp } from '@/context';
 import useProposals from '@/hooks/useProposals';
 import { formatAdaAmount } from '@/utils';
 import { Proposal } from '@types';
+import { ArrowUpLeftFromSquare } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -59,20 +59,24 @@ const userProposalColumns: ColumnDef<Proposal>[] = [
   },
   {
     header: 'Project details',
-    accessor: 'description',
+    accessor: 'url',
     sortable: false,
-    cell: (value, row) => {
+    cell: (value) => {
       if (!value)
         return (
-          <span className="text-muted-foreground text-sm">No description</span>
+          <span className="text-muted-foreground text-sm">No details</span>
         );
-      const truncatedValue = truncateToWords(value, 8);
       return (
-        <div className="max-w-[350px] text-sm">
-          <RichTextDisplay
-            content={truncatedValue}
-            className="prose-sm [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_p]:mb-1 [&_strong]:font-semibold"
-          />
+        <div className="max-w-[300px] text-sm">
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-base flex items-center gap-1 hover:underline"
+          >
+            See more
+            <ArrowUpLeftFromSquare className="size-4" />
+          </a>
         </div>
       );
     },
@@ -100,16 +104,26 @@ const userProposalColumns: ColumnDef<Proposal>[] = [
   {
     header: 'Action',
     sortable: false,
-    cell: (value, row) =>
-      row.txHash ? (
-        <Link href={routes.my.proposals(row.txHash)}>
-          <Button variant="primary" size="sm">
-            View
-          </Button>
-        </Link>
-      ) : (
-        ''
-      ),
+    cell: (value, row) => {
+      if (row.txHash) {
+        return (
+          <Link href={routes.my.proposals(row.txHash)}>
+            <Button variant="primary" size="sm">
+              View
+            </Button>
+          </Link>
+        );
+      } else if (row.status === 'paid_out' && row.slug) {
+        return (
+          <Link href={routes.completedProposal(row.slug)}>
+            <Button variant="primary" size="sm">
+              View
+            </Button>
+          </Link>
+        );
+      }
+      return '';
+    },
   },
 ];
 
@@ -199,25 +213,34 @@ export default function ProposalSubmissionsTab({
 
   return (
     <div className="space-y-6">
-      {/* Status Filter */}
-      <div className="flex items-center gap-2">
-        <span className="text-muted-foreground text-sm">Filter by status:</span>
-        <Select
-          value={statusFilter}
-          onValueChange={(value) =>
-            setStatusFilter(value as typeof statusFilter)
-          }
-          options={statusOptions.map((option) => ({
-            ...option,
-            label:
-              option.value !== 'all' &&
-              statusCounts[option.value as keyof typeof statusCounts] > 0
-                ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
-                : option.label,
-          }))}
-          placeholder="Select status..."
-          className="w-48"
-        />
+      {/* Header with filter and New Proposal button */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground text-sm">
+            Filter by status:
+          </span>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) =>
+              setStatusFilter(value as typeof statusFilter)
+            }
+            options={statusOptions.map((option) => ({
+              ...option,
+              label:
+                option.value !== 'all' &&
+                statusCounts[option.value as keyof typeof statusCounts] > 0
+                  ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
+                  : option.label,
+            }))}
+            placeholder="Select status..."
+            className="w-48"
+          />
+        </div>
+        <Link href={routes.newProposal}>
+          <Button variant="primary" size="sm">
+            New Proposal
+          </Button>
+        </Link>
       </div>
 
       {/* Mobile-optimized scrollable table container */}
