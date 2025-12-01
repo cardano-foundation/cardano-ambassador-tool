@@ -138,10 +138,7 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
             {adminDecisionData.selectedAdmins.length - getSignedCount()} more
             signature(s) before execution.
           </Paragraph>
-          <Paragraph size="xs" className="text-gray-400">
-            ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
-            required signatures)
-          </Paragraph>
+       
         </div>
       )}
 

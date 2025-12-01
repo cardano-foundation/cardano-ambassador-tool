@@ -32,6 +32,8 @@ const useProposals = () => {
   const completedProposals = useMemo(() => {
     return members.flatMap((mbr) => {
       const parsed = parseMemberDatum(mbr.plutusData!);
+      console.log({ parsed });
+      
       if (!parsed) return [];
       return Array.from(parsed.member.completion!, ([proposal, value]) => {
         // Create a consistent slug from title and receiver address
@@ -51,6 +53,7 @@ const useProposals = () => {
           txHash: undefined,
           slug,
           description: 'No description provided',
+          url: proposal.url || undefined,
         };
       });
     });
@@ -133,7 +136,7 @@ const useProposals = () => {
 
     setAllProposals(merged);
   }, [proposalsData, completedProposals]);
-
+  
   return { allProposals, loading, error };
 };
 

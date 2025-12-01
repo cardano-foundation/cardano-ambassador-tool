@@ -168,10 +168,6 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
               {adminDecisionData.selectedAdmins.length - getSignedCount()} more
               signature(s) before activation.
             </Paragraph>
-            <Paragraph size="xs" className="text-gray-400">
-              ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
-              required signatures)
-            </Paragraph>
           </div>
         )}
 

@@ -218,10 +218,7 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
               {adminDecisionData.selectedAdmins.length - getSignedCount()} more
               signature(s) before finalization.
             </Paragraph>
-            <Paragraph size="xs" className="text-gray-400">
-              ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
-              required signatures)
-            </Paragraph>
+      
           </div>
         )}
 

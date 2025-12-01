@@ -4,9 +4,11 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Copyable from '@/components/Copyable';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
 import { AdminDecisionData } from '@types';
+import { deserializeAddress } from '@meshsdk/core';
 import { CheckCircleIcon, Hourglass, XCircleIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProgressTrackerLoading from './ProgressTrackerLoading';
+import { getCurrentNetworkConfig } from '@/config/cardano';
 
 interface SignerStatus {
   address: string;
@@ -16,6 +18,20 @@ interface ProgressTrackerClientProps {
   txhash?: string;
   adminDecisionData?: AdminDecisionData | null;
 }
+  const findAddressByPubKeyHash = (pubKeyHash: string, adminAddresses: string[]): string => {
+    for (const address of adminAddresses) {
+      try {
+        const addressInfo = deserializeAddress(address);
+        if (addressInfo.pubKeyHash === pubKeyHash) {
+          return address;
+        }
+      } catch (error) {
+        console.error(`Error deserializing address ${address}:`, error);
+      }
+    }
+    return pubKeyHash;
+  };
+
 export default function MultisigProgressTracker({
   txhash,
   adminDecisionData,
@@ -28,6 +44,7 @@ export default function MultisigProgressTracker({
     const loadSigners = async () => {
       try {
         const adminData = await findAdminsFromOracle();
+        const adminAddresses = adminData?.adminAddresses || [];
         setMinRequiredSigners(Number(adminData!.minsigners));
 
         if (
@@ -36,10 +53,11 @@ export default function MultisigProgressTracker({
           adminDecisionData.selectedAdmins.length > 0
         ) {
           const signersWithStatus: SignerStatus[] =
-            adminDecisionData.selectedAdmins.map((pubKey: string) => {
+            adminDecisionData.selectedAdmins.map((pubKeyHash: string) => {
+              const address = findAddressByPubKeyHash(pubKeyHash, adminAddresses);
               return {
-                address: pubKey,
-                signed: adminDecisionData.signers.includes(pubKey),
+                address: address,
+                signed: adminDecisionData.signers.includes(pubKeyHash),
               };
             });
           setSigners(signersWithStatus);
@@ -50,9 +68,10 @@ export default function MultisigProgressTracker({
         ) {
           const uniqueSigners = [...new Set([...adminDecisionData.signers])];
           const signersWithStatus: SignerStatus[] = uniqueSigners.map(
-            (pubKey) => {
+            (pubKeyHash) => {
+              const address = findAddressByPubKeyHash(pubKeyHash, adminAddresses);
               return {
-                address: pubKey,
+                address: address,
                 signed: true,
               };
             },
@@ -92,7 +111,12 @@ export default function MultisigProgressTracker({
               key={signer.address}
               className="flex w-full justify-between py-2"
             >
-              <Copyable withKey={false} value={signer.address} keyLabel={''} />
+              <Copyable
+                withKey={false}
+                value={signer.address}
+                keyLabel={''}
+                link={`${getCurrentNetworkConfig().explorerUrl}/address/${signer.address}`}
+              />
               <div className="flex items-center gap-2">
                 {!signer.signed ? (
                   <Hourglass

@@ -197,6 +197,8 @@ export function parseMemberDatum(
 
     datum.fields[1].map.forEach((item: ProposalItem) => {
       if (!item.k || !item.v) return null;
+      console.log({ item });
+      
       completion.set(
         {
           title: hexToString(item.k.fields[0].bytes || ''),

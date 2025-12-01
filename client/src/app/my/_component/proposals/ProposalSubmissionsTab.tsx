@@ -12,7 +12,7 @@ import { useApp } from '@/context';
 import useProposals from '@/hooks/useProposals';
 import { formatAdaAmount } from '@/utils';
 import { Proposal } from '@types';
-import { ArrowUpLeftFromSquare } from 'lucide-react';
+import { ArrowUpLeftFromSquare, ArrowUpRightFromSquare } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -75,7 +75,7 @@ const userProposalColumns: ColumnDef<Proposal>[] = [
             className="text-primary-base flex items-center gap-1 hover:underline"
           >
             See more
-            <ArrowUpLeftFromSquare className="size-4" />
+            <ArrowUpRightFromSquare className="size-4" />
           </a>
         </div>
       );
