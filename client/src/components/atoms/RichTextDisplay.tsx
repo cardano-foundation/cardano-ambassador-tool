@@ -28,8 +28,6 @@ const RichTextDisplay = ({
     });
   }
 
-  const looksLikeHTML = /<\/?[a-z][\s\S]*>/i.test(content);
-
   const baseClasses = `
     prose prose-sm max-w-none break-words whitespace-normal text-sm font-normal text-foreground
     [overflow-wrap:anywhere] [word-break:break-word]
@@ -70,13 +68,7 @@ const RichTextDisplay = ({
 
           img: ({ node, ...props }) => {
             const { src, alt, ...restProps } = props;
-            
-
-            console.log('Rendering image:', {
-              src: src?.substring(0, 100) + (src?.length > 100 ? '...' : ''),
-              alt,
-              isDataURL: src?.startsWith('data:')
-            });
+  
             
             return (
               <img
@@ -89,16 +81,10 @@ const RichTextDisplay = ({
                   height: 'auto',
                   display: 'block'
                 }}
-                onLoad={(e) => {
-                  console.log('Image loaded successfully:', src?.substring(0, 50));
-                }}
+           
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  console.error('Image failed to load:', {
-                    src: src?.substring(0, 100),
-                    alt,
-                    error: e
-                  });
+          
                   
                   
                   // Show a placeholder for failed images
@@ -120,7 +106,7 @@ const RichTextDisplay = ({
                 }}
                 loading="lazy"
 
-                {...(!src?.startsWith('data:') && { crossOrigin: 'anonymous' })}
+                {...(typeof src === 'string' && !src.startsWith('data:') && { crossOrigin: 'anonymous' })}
               />
             );
           },
