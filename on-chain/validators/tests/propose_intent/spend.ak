@@ -9,6 +9,7 @@ use tests/utils.{
   mock_input_oracle_datum, mock_new_admins, mock_oracle_address, mock_oracle_nft,
   mock_propose_intent_address, mock_propose_intent_token,
 }
+use types.{ProcessProposalIntent}
 
 type ProcessIntentTestCase {
   is_oracle_inputed: Bool,
@@ -60,7 +61,7 @@ test s4_spend_success_process_intent() {
   propose_intent_spend.propose_intent.spend(
     mock_oracle_nft,
     None,
-    None,
+    ProcessProposalIntent,
     mock_utxo_ref(0, 0),
     tx,
   )
@@ -79,7 +80,7 @@ test s4_spend_fail_process_intent_with_no_oracle_inputed() fail {
   !propose_intent_spend.propose_intent.spend(
     mock_oracle_nft,
     None,
-    None,
+    ProcessProposalIntent,
     mock_utxo_ref(0, 0),
     tx,
   )
@@ -98,7 +99,7 @@ test s4_spend_fail_process_intent_with_incorrect_oracle_inputed() fail {
   !propose_intent_spend.propose_intent.spend(
     mock_oracle_nft,
     None,
-    None,
+    ProcessProposalIntent,
     mock_utxo_ref(0, 0),
     tx,
   )
@@ -117,7 +118,7 @@ test s4_spend_fail_process_intent_with_no_intent_burnt() {
   !propose_intent_spend.propose_intent.spend(
     mock_oracle_nft,
     None,
-    None,
+    ProcessProposalIntent,
     mock_utxo_ref(0, 0),
     tx,
   )

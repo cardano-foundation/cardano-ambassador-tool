@@ -106,6 +106,11 @@ pub type ProposalDatum {
   metadata: Data,
 }
 
+pub type ProposalIntentSpendRedeemer {
+  ProcessProposalIntent
+  UpdateProposalIntentMetadata
+}
+
 // 5 - Proposal
 
 pub type ProposalMintRedeemer {

@@ -21,7 +21,13 @@ import {
   MembershipMetadata,
   ProposalMetadata,
 } from "../lib";
-import { hexToString, IWallet, UTxO } from "@meshsdk/core";
+import {
+  deserializeAddress,
+  hexToString,
+  IWallet,
+  mConStr1,
+  UTxO,
+} from "@meshsdk/core";
 
 export class UserActionTx extends Layer1Tx {
   constructor(
@@ -400,6 +406,86 @@ export class UserActionTx extends Layer1Tx {
         proposeIntentUtxoTxIndex: 0,
         tokenUtxoTxIndex: 1,
       };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+
+  /**
+   *
+   * @param oracleUtxo
+   * @param tokenUtxo
+   * @param memberAssetName the counter value of memberToken
+   * @param fundRequested value in lovelace
+   * @param receiver address in bech32
+   * @param metadata
+   * @returns
+   */
+  updateProposalIntentMetadata = async (
+    oracleUtxo: UTxO,
+    proposalIntentUtxo: UTxO,
+    memberAssetName: number,
+    fundRequested: number,
+    receiver: string,
+    metadata: ProposalMetadata
+  ) => {
+    const updatedIntentDatum: ProposalDatum = proposalDatum(
+      fundRequested,
+      receiver,
+      Number(memberAssetName),
+      metadata
+    );
+
+    const proposeIntentAssetName = getTokenAssetNameByPolicyId(
+      proposalIntentUtxo,
+      this.catConstant.scripts.proposeIntent.mint.hash
+    );
+
+    try {
+      const txBuilder = await this.newValidationTx();
+      txBuilder
+        .readOnlyTxInReference(
+          oracleUtxo.input.txHash,
+          oracleUtxo.input.outputIndex,
+          0
+        )
+        .spendingPlutusScriptV3()
+        .txIn(
+          proposalIntentUtxo.input.txHash,
+          proposalIntentUtxo.input.outputIndex,
+          proposalIntentUtxo.output.amount,
+          proposalIntentUtxo.output.address,
+          0
+        )
+        .txInRedeemerValue(mConStr1([]), "Mesh")
+        .spendingTxInReference(
+          this.catConstant.refTxInScripts.proposeIntent.spend.txHash,
+          this.catConstant.refTxInScripts.proposeIntent.spend.outputIndex,
+          (
+            this.catConstant.scripts.proposeIntent.spend.cbor.length / 2
+          ).toString(),
+          this.catConstant.scripts.proposeIntent.spend.hash
+        )
+        .txInInlineDatumPresent()
+
+        .txOut(this.catConstant.scripts.proposeIntent.spend.address, [
+          {
+            unit:
+              this.catConstant.scripts.proposeIntent.mint.hash +
+              proposeIntentAssetName,
+            quantity: "1",
+          },
+        ])
+        .txOutInlineDatumValue(updatedIntentDatum, "JSON")
+        .requiredSignerHash(deserializeAddress(receiver).pubKeyHash);
+
+      const txHex = await txBuilder.complete();
+
+      const signedTx = await this.wallet.signTx(txHex, true);
+      await this.wallet.submitTx(signedTx);
+
+      return { txHex, proposalIntentUtxoTxIndex: 0 };
     } catch (e) {
       console.error(e);
       throw e;

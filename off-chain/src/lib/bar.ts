@@ -386,3 +386,11 @@ export type SignOffApprovalMintRedeemer = MintSignOffApproval | ProcessSignOff;
 export type MintSignOffApproval = ConStr0<[]>;
 
 export type ProcessSignOff = ConStr1<[]>;
+
+export type ProposalIntentSpendRedeemer =
+  | ProcessProposalIntent
+  | UpdateProposalIntentMetadata;
+
+export type ProcessProposalIntent = ConStr0<[]>;
+
+export type UpdateProposalIntentMetadata = ConStr1<[]>;

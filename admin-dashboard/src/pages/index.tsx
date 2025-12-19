@@ -385,7 +385,7 @@ export default function Home() {
             url: "abc.com",
             fundsRequested: "100000000",
             receiverWalletAddress:
-              "addr_test1qrt4eqny7x5p3ef2p564amsqkpq8xymt3qrhj753njk9knarp2tyv20ff79pqmw3rkg656f67t3m76drluak83ggd69qqleqsc",
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
             submittedByAddress:
               "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
             status: "ok",
@@ -396,7 +396,54 @@ export default function Home() {
             tokenUtxo,
             memberUtxo,
             Number(100000000),
-            "addr_test1qrt4eqny7x5p3ef2p564amsqkpq8xymt3qrhj753njk9knarp2tyv20ff79pqmw3rkg656f67t3m76drluak83ggd69qqleqsc",
+            "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            metadata
+          );
+          setResult(JSON.stringify(result, null, 2));
+          break;
+        }
+
+        case "updateProject": {
+          // Find member UTxO by wallet address
+          const userAddress = await wallet.getChangeAddress();
+
+          // Find token UTxO by member UTxO
+          const intentUtxos = await import("@/utils/utils").then((utils) =>
+            utils.fetchProposeIntentUtxos()
+          );
+
+          // Find oracle UTxO
+          const oracleUtxos = await blockfrost.fetchUTxOs(
+            ORACLE_TX_HASH,
+            ORACLE_OUTPUT_INDEX
+          );
+          const oracleUtxo = oracleUtxos[0];
+          if (!oracleUtxo) {
+            throw new Error("Failed to fetch required oracle UTxO");
+          }
+          const userAction = new UserActionTx(
+            userAddress,
+            wallet,
+            blockfrost,
+            getCatConstants()
+          );
+          const metadata = proposalMetadata({
+            title: "test update",
+            url: "def.com",
+            fundsRequested: "100000000",
+            receiverWalletAddress:
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            submittedByAddress:
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            status: "ok",
+          });
+
+          const result = await userAction.updateProposalIntentMetadata(
+            oracleUtxo,
+            intentUtxos[0],
+            0,
+            Number(100000000),
+            "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
             metadata
           );
           setResult(JSON.stringify(result, null, 2));
@@ -846,6 +893,31 @@ export default function Home() {
                 }
               >
                 Propose Project
+              </button>
+            </div>
+
+            {/* Update Project */}
+            <div className="bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">Update Project</h4>
+              {renderInputField(
+                "Fund Requested",
+                fundRequested,
+                setFundRequested,
+                "number"
+              )}
+              {renderInputField("Receiver", receiver, setReceiver)}
+              {renderInputField("Project Details", projectUrl, setProjectUrl)}
+              <button
+                className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
+                onClick={() =>
+                  handleAction("updateProject", {
+                    fundRequested,
+                    receiver,
+                    projectUrl,
+                  })
+                }
+              >
+                Update Project
               </button>
             </div>
           </div>

@@ -39,7 +39,7 @@ import {
   getOracleAdmins,
   processMembershipIntent,
 } from "../lib";
-import { IWallet, stringToHex, UTxO } from "@meshsdk/core";
+import { IWallet, mConStr0, stringToHex, UTxO } from "@meshsdk/core";
 
 export class AdminActionTx extends Layer1Tx {
   constructor(
@@ -345,7 +345,7 @@ export class AdminActionTx extends Layer1Tx {
           proposeIntentUtxo.output.address,
           0
         )
-        .txInRedeemerValue("", "Mesh")
+        .txInRedeemerValue(mConStr0([]), "Mesh")
         .spendingTxInReference(
           this.catConstant.refTxInScripts.proposeIntent.spend.txHash,
           this.catConstant.refTxInScripts.proposeIntent.spend.outputIndex,
@@ -453,7 +453,7 @@ export class AdminActionTx extends Layer1Tx {
         proposeIntentUtxo.output.address,
         0
       )
-      .txInRedeemerValue("", "Mesh")
+      .txInRedeemerValue(mConStr0([]), "Mesh")
       .spendingTxInReference(
         this.catConstant.refTxInScripts.proposeIntent.spend.txHash,
         this.catConstant.refTxInScripts.proposeIntent.spend.outputIndex,
