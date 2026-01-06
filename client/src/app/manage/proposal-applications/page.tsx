@@ -134,7 +134,6 @@ export default function ProposalIntentsPage() {
     return <div className="p-4">No proposals found.</div>;
   }
 
-  console.log({ allProposals });
 
   // Apply status filter
   const filteredProposals =

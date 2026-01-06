@@ -9,7 +9,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
-import TopNav from '@/components/Navigation/TabNav';
+import TopNav from '@/components/navigation/TabNav';
 import ProposalDescription from '@/components/ProposalDescription';
 import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';

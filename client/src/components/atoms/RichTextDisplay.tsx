@@ -19,15 +19,6 @@ const RichTextDisplay = ({
     );
   }
 
-  // Debug logging for image content
-  if (content.includes('data:image')) {
-    console.log('Content contains base64 images:', {
-      contentLength: content.length,
-      imageCount: (content.match(/!\[.*?\]\(data:image/g) || []).length,
-      preview: content.substring(0, 200) + '...'
-    });
-  }
-
   const baseClasses = `
     prose prose-sm max-w-none break-words whitespace-normal text-sm font-normal text-foreground
     [overflow-wrap:anywhere] [word-break:break-word]

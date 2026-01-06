@@ -197,7 +197,6 @@ export function parseMemberDatum(
 
     datum.fields[1].map.forEach((item: ProposalItem) => {
       if (!item.k || !item.v) return null;
-      console.log({ item });
       
       completion.set(
         {
@@ -388,7 +387,6 @@ export async function findMembershipIntentUtxo(
     const utxos = await blockfrostService.fetchAddressUTxOs(
       SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     );
-    console.log({ utxos });
     
     const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) => {
@@ -537,7 +535,6 @@ export async function findTokenUtxoByMembershipIntentUtxo(
     return tokenUtxo;
   } catch (error) {
     throw error;
-    return null;
   }
 }
 

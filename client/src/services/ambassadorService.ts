@@ -54,7 +54,6 @@ async function tryMultipleUsernameFormats(
         return result; // Return the valid result
       }
     } catch (error) {
-      console.log(`Username variation "${variation}" failed, trying next...`);
       continue;
     }
   }
@@ -81,7 +80,6 @@ async function getUserProfileUncached(
   } catch (error: any) {
     // If it's a 404, try different username formats
     if (error.response?.status === 404) {
-      console.log(`User "${username}" not found, trying variations...`);
       return tryMultipleUsernameFormats(username);
     }
     // Re-throw other errors (network issues, auth problems, etc.)

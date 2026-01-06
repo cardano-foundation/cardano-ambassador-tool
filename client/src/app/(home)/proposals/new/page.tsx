@@ -4,7 +4,7 @@ import MemberOnlyAccessCard from '@/app/my/_component/MemberOnlyAccessCard';
 import Button from '@/components/atoms/Button';
 import Modal from '@/components/atoms/Modal';
 import Title from '@/components/atoms/Title';
-import TopNav from '@/components/Navigation/TabNav';
+import TopNav from '@/components/navigation/TabNav';
 import CardanoLoaderSVG from '@/components/ui/CardanoLoaderSVG';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context';
@@ -164,7 +164,6 @@ export default function SubmitProposalPage() {
 
       const githubUrl = `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_REPO}/blob/${process.env.NEXT_PUBLIC_GITHUB_BRANCH}/proposals-applications/content/${filename}`;
       
-      console.log({ filename, githubUrl });
       
 
       const metadataFormData: ProposalData = {

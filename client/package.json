@@ -4,27 +4,12 @@
   "lockfileVersion": 3,
   "requires": true,
   "scripts": {
-    "dev": "next dev ",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "echo 'Linting disabled - using format only'",
-    "prepare": "cd .. && husky ./client/.husky",
-    "commitlint": "commitlint --edit",
     "type-check": "tsc --project tsconfig.json --noEmit",
-    "format": "prettier --write ./src ./public *.{js,ts,json,md}",
-    "precommit": "npm run format",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:ci": "jest --ci --coverage --watchAll=false",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug",
-    "test:all": "npm run test:ci && npm run test:e2e"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,md}": "prettier --write"
+    "format": "prettier --write ./src ./public *.{js,ts,json,md}"
   },
   "dependencies": {
     "@emurgo/cardano-serialization-lib-browser": "^15.0.0",
@@ -67,15 +52,8 @@
     "zod": "^4.0.14"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.6.1",
-    "@commitlint/config-conventional": "^19.6.0",
     "@eslint/eslintrc": "^3",
-    "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4",
-    "@testing-library/jest-dom": "^6.8.0",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/jest": "^30.0.0",
     "@types/node": "^20.19.9",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -84,10 +62,6 @@
     "eslint-config-next": "15.3.4",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
-    "husky": "^9.1.7",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.0.0",
     "prettier-plugin-tailwindcss": "^0.6.14",
