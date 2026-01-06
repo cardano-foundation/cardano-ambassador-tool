@@ -2,9 +2,14 @@
 
 import { toast } from '@/components/toast/toast-manager';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context/AppContext';
 import { useAppSelector } from '@/lib/redux/hooks';
 import { selectIsConnected, selectIsWalletReady } from '@/lib/redux/features/wallet';
+import {
+  selectIsAdmin,
+  selectIsAuthLoading,
+  selectIsAuthenticated,
+  selectIsHydrated,
+} from '@/lib/redux/features/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -25,11 +30,15 @@ export function ProtectedRoute({
   const isConnected = useAppSelector(selectIsConnected);
   const isWalletReady = useAppSelector(selectIsWalletReady);
 
-  // User state from Context (will move to Redux in Phase 7)
-  const { isAdmin, isLoading, user } = useApp();
+  // Auth state from Redux
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isAdmin = useAppSelector(selectIsAdmin);
+  const isAuthLoading = useAppSelector(selectIsAuthLoading);
+  const isHydrated = useAppSelector(selectIsHydrated);
+
   const router = useRouter();
 
-  const isUserReady = !isLoading;
+  const isUserReady = isHydrated && !isAuthLoading;
   const isFullyReady = isWalletReady && isUserReady;
 
   useEffect(() => {
@@ -47,8 +56,8 @@ export function ProtectedRoute({
       return;
     }
 
-    // Check admin requirements - only check if we have a user (not during loading)
-    if (requireAdmin && user && isAdmin === false) {
+    // Check admin requirements - only check if user is authenticated
+    if (requireAdmin && isAuthenticated && isAdmin === false) {
       toast.error(
         'Admin Access Required',
         'You need admin privileges to access this page',
@@ -56,7 +65,7 @@ export function ProtectedRoute({
       router.push(routes.unauthorized);
       return;
     }
-  }, [isFullyReady, isConnected, user, isAdmin, requireAuth, requireAdmin, router, redirectTo]);
+  }, [isFullyReady, isConnected, isAuthenticated, isAdmin, requireAuth, requireAdmin, router, redirectTo]);
 
   // Show loading while initializing
   if (!isFullyReady) {
@@ -77,7 +86,7 @@ export function ProtectedRoute({
     return null;
   }
 
-  if (requireAdmin && user && isAdmin === false) {
+  if (requireAdmin && isAuthenticated && isAdmin === false) {
     return null;
   }
 

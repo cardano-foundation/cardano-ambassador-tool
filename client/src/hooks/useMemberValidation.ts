@@ -1,4 +1,9 @@
-import { useApp } from '@/context';
+import { useAppSelector } from '@/lib/redux/hooks';
+import {
+  selectParsedCurrentUserMember,
+  selectMemberValidationLoading,
+} from '@/lib/redux/features/auth';
+import { selectDbLoading } from '@/lib/redux/features/data';
 import { getCountryByCode } from '@/utils';
 import { Utxo } from '@types';
 import { useMemo } from 'react';
@@ -17,18 +22,20 @@ interface MemberValidationResult {
   } | null;
 }
 
+/**
+ * Member validation hook - now delegates to Redux for state management.
+ * Maintains backward compatibility with existing consumers.
+ */
 export function useMemberValidation(): MemberValidationResult {
-  const {
-    isMember,
-    memberValidationLoading,
-    memberUtxo,
-    memberData: rawMemberData,
-  } = useApp();
+  // Use the memoized selector that joins members + wallet address
+  const parsedMember = useAppSelector(selectParsedCurrentUserMember);
+  const dbLoading = useAppSelector(selectDbLoading);
 
   // Adapt MemberData to the expected interface for components
   const memberData = useMemo(() => {
-    if (!rawMemberData) return null;
+    if (!parsedMember.memberData) return null;
 
+    const rawMemberData = parsedMember.memberData;
     const countryData = rawMemberData.country
       ? getCountryByCode(rawMemberData.country)
       : null;
@@ -41,12 +48,12 @@ export function useMemberValidation(): MemberValidationResult {
       city: rawMemberData.city || '',
       bio: rawMemberData.bio || '',
     };
-  }, [rawMemberData]);
+  }, [parsedMember.memberData]);
 
   return {
-    isMember,
-    isLoading: memberValidationLoading,
-    memberUtxo,
+    isMember: parsedMember.isMember,
+    isLoading: dbLoading,
+    memberUtxo: parsedMember.memberUtxo,
     memberData,
   };
 }
