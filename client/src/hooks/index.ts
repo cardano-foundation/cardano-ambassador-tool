@@ -7,6 +7,6 @@ export * from './useAmbassadorProfile';
 export * from './useTreasuryBalance';
 export * from './useUtxoSync';
 export * from './useWalletManager';
-export * from './UseNavigation';
-export * from './UseDateFormatting';
+export * from './useNavigation';
+export * from './useDateFormatting';
 export * from './useMemberValidation';

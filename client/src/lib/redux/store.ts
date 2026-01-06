@@ -2,12 +2,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import { uiReducer } from './features/ui';
 import { walletReducer } from './features/wallet';
 import { dataReducer } from './features/data';
+import { treasuryReducer } from './features/treasury';
 
 // Store will be populated incrementally as we migrate from Context
 // Phase 2: ui slice (theme, loading, tx confirmation) - DONE
 // Phase 3: wallet slice (connection, network) - DONE
 // Phase 4: data slice (members, proposals, intents) - DONE
-// Phase 5: treasury slice
+// Phase 5: treasury slice - DONE
 // Phase 7: auth slice
 
 export const makeStore = () => {
@@ -16,6 +17,7 @@ export const makeStore = () => {
       ui: uiReducer,
       wallet: walletReducer,
       data: dataReducer,
+      treasury: treasuryReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
