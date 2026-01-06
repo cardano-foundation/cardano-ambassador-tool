@@ -21,7 +21,6 @@ import {
   ConStr0,
   List,
   PubKeyAddress,
-  PubKeyAddress,
 } from "@meshsdk/core";
 import {
   AddMember,
@@ -347,7 +346,6 @@ export const memberDatum = (
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
   const completionItems: [ProposalMetadata, Integer][] = Array.from(
     completion.entries()
-  ).map(([key, value]) => [proposalMetadata(key), integer(value)]);
   ).map(([key, value]) => [proposalMetadata(key), integer(value)]);
 
   const completionPluts: Pairs<ProposalMetadata, Integer> = pairs<
