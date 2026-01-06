@@ -21,6 +21,7 @@ import {
   ConStr0,
   List,
   PubKeyAddress,
+  PubKeyAddress,
 } from "@meshsdk/core";
 import {
   AddMember,
@@ -189,6 +190,11 @@ export type MembershipMetadata = ConStr0<
     ByteString | List<ByteString>, // displayName
     ByteString | List<ByteString>, // emailAddress
     ByteString | List<ByteString>, // bio
+    PubKeyAddress, // WalletAddress
+    ByteString | List<ByteString>, // fullName
+    ByteString | List<ByteString>, // displayName
+    ByteString | List<ByteString>, // emailAddress
+    ByteString | List<ByteString>, // bio
     ByteString | List<ByteString>, // country
     ByteString | List<ByteString>, // city
     ByteString | List<ByteString>, // x_handle
@@ -284,6 +290,11 @@ export const membershipMetadata = (
     handleString(jsonData.displayName || ""),
     handleString(jsonData.emailAddress || ""),
     handleString(jsonData.bio || ""),
+    addrBech32ToPlutusDataObj(jsonData.walletAddress!),
+    handleString(jsonData.fullName || ""),
+    handleString(jsonData.displayName || ""),
+    handleString(jsonData.emailAddress || ""),
+    handleString(jsonData.bio || ""),
     handleString(jsonData.country || ""),
     handleString(jsonData.city || ""),
     handleString(jsonData.x_handle || ""),
@@ -336,6 +347,7 @@ export const memberDatum = (
   const token = tuple(policyId(tokenPolicyId), assetName(tokenAssetName));
   const completionItems: [ProposalMetadata, Integer][] = Array.from(
     completion.entries()
+  ).map(([key, value]) => [proposalMetadata(key), integer(value)]);
   ).map(([key, value]) => [proposalMetadata(key), integer(value)]);
 
   const completionPluts: Pairs<ProposalMetadata, Integer> = pairs<
