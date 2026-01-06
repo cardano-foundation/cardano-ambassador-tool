@@ -1,60 +1,42 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import {
+  selectTheme,
+  selectIsThemeInitialized,
+  selectIsDark,
+  selectIsLight,
+  setTheme as setThemeAction,
+  toggleTheme as toggleThemeAction,
+} from '@/lib/redux/features/ui';
+import { useThemeSync } from '@/lib/redux/features/ui/useThemeSync';
 
+// Re-export type for backward compatibility
 export type Theme = 'light' | 'dark';
 
+/**
+ * Theme manager hook - now delegates to Redux.
+ * Maintains backward compatibility with existing consumers.
+ */
 export function useThemeManager() {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme') as Theme;
-      if (saved && ['light', 'dark'].includes(saved)) {
-        return saved;
-      }
-      return window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
-    }
-    return 'light';
-  });
+  const dispatch = useAppDispatch();
 
-  const [isThemeInitialized, setIsThemeInitialized] = useState(false);
+  // Initialize theme sync (hydration, localStorage, DOM updates)
+  useThemeSync();
 
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-    root.offsetHeight;
+  // Read from Redux
+  const theme = useAppSelector(selectTheme);
+  const isThemeInitialized = useAppSelector(selectIsThemeInitialized);
+  const isDark = useAppSelector(selectIsDark);
+  const isLight = useAppSelector(selectIsLight);
 
-    localStorage.setItem('theme', theme);
-
-    if (!isThemeInitialized) {
-      setIsThemeInitialized(true);
-    }
-  }, [theme, isThemeInitialized]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
-      const hasExplicitTheme = localStorage.getItem('theme');
-      if (!hasExplicitTheme) {
-        setThemeState(e.matches ? 'dark' : 'light');
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleSystemThemeChange);
-    return () =>
-      mediaQuery.removeEventListener('change', handleSystemThemeChange);
-  }, []);
-
-  // Theme control
+  // Theme control - dispatch to Redux
   const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
+    dispatch(setThemeAction(newTheme));
   };
 
   const toggleTheme = () => {
-    setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'));
+    dispatch(toggleThemeAction());
   };
 
   return {
@@ -62,8 +44,7 @@ export function useThemeManager() {
     setTheme,
     toggleTheme,
     isThemeInitialized,
-    // Helper computed values
-    isDark: theme === 'dark',
-    isLight: theme === 'light',
+    isDark,
+    isLight,
   };
 }
