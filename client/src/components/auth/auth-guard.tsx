@@ -1,33 +1,41 @@
 'use client';
 
+import { useAppSelector } from '@/lib/redux/hooks';
+import {
+  selectIsConnected,
+  selectIsWalletReady,
+} from '@/lib/redux/features/wallet';
 import { toast } from '@/components/toast/toast-manager';
 import { routes } from '@/config/routes';
 import { useApp } from '@/context/AppContext';
-import { useAppSelector } from '@/lib/redux/hooks';
-import { selectIsConnected, selectIsWalletReady } from '@/lib/redux/features/wallet';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-interface ProtectedRouteProps {
+interface AuthGuardProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
   requireAuth?: boolean;
   redirectTo?: string;
 }
 
-export function ProtectedRoute({
+/**
+ * Auth guard component that protects routes based on wallet connection and admin status.
+ * Uses Redux for wallet state and AppContext for user/admin state (until Phase 7).
+ */
+export function AuthGuard({
   children,
   requireAdmin = false,
   requireAuth = true,
   redirectTo = '/',
-}: ProtectedRouteProps) {
+}: AuthGuardProps) {
+  const router = useRouter();
+
   // Wallet state from Redux
   const isConnected = useAppSelector(selectIsConnected);
   const isWalletReady = useAppSelector(selectIsWalletReady);
 
   // User state from Context (will move to Redux in Phase 7)
   const { isAdmin, isLoading, user } = useApp();
-  const router = useRouter();
 
   const isUserReady = !isLoading;
   const isFullyReady = isWalletReady && isUserReady;
@@ -83,3 +91,5 @@ export function ProtectedRoute({
 
   return <>{children}</>;
 }
+
+export default AuthGuard;
