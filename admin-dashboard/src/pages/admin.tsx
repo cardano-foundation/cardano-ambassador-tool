@@ -343,7 +343,7 @@ const Admin = () => {
                 if (utxo.output.plutusData) {
                   const parsed = parseProposalDatum(utxo.output.plutusData);
                   if (parsed && parsed.metadata) {
-                    projectDetails = parsed.metadata.projectDetails;
+                    projectDetails = parsed.metadata.url;
                   }
                 }
                 return (
@@ -614,7 +614,7 @@ const Admin = () => {
                 if (utxo.output.plutusData) {
                   const parsed = parseProposalDatum(utxo.output.plutusData);
                   if (parsed && parsed.metadata) {
-                    projectDetails = parsed.metadata.projectDetails;
+                    projectDetails = parsed.metadata.url;
                   }
                 }
                 return (
@@ -734,7 +734,7 @@ const Admin = () => {
                           {entries.map(([proj, value], i) => (
                             <li key={i}>
                               <span className="font-semibold">
-                                {proj.projectDetails}:
+                                {proj.url}:
                               </span>{" "}
                               {value}
                             </li>

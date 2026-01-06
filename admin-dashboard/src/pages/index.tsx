@@ -6,7 +6,6 @@ import Layout from "@/components/Layout";
 
 import { getProvider } from "@/utils/utils";
 
-import { deserializeAddress, stringToHex } from "@meshsdk/core";
 import {
   CATConstants,
   SetupTx,
@@ -481,13 +480,20 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const metadata = membershipMetadata(
-            params.walletAddress,
-            stringToHex(params.fullName),
-            stringToHex(params.displayName),
-            stringToHex(params.emailAddress),
-            stringToHex(params.bio)
-          );
+          const metadata = membershipMetadata({
+            walletAddress: params.walletAddress,
+            fullName: params.fullName,
+            displayName: params.displayName,
+            emailAddress: params.emailAddress,
+            bio: params.bio,
+            country: "",
+            city: "",
+            x_handle: "",
+            github: "",
+            discord: "",
+            spo_id: "",
+            drep_id: "",
+          });
           const result = await userAction.updateMembershipIntentMetadata(
             oracleUtxo,
             tokenUtxo,
@@ -529,13 +535,20 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const metadata = membershipMetadata(
-            params.walletAddress,
-            stringToHex(params.fullName),
-            stringToHex(params.displayName),
-            stringToHex(params.emailAddress),
-            stringToHex(params.bio)
-          );
+          const metadata = membershipMetadata({
+            walletAddress: params.walletAddress,
+            fullName: params.fullName,
+            displayName: params.displayName,
+            emailAddress: params.emailAddress,
+            bio: params.bio,
+            country: "",
+            city: "",
+            x_handle: "",
+            github: "",
+            discord: "",
+            spo_id: "",
+            drep_id: "",
+          });
           const result = await userAction.updateMemberMetadata(
             oracleUtxo,
             memberUtxo,

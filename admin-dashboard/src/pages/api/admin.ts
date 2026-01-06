@@ -9,7 +9,6 @@ import {
 // Environment variables (server-side only)
 const ADMIN_MNEMONIC_1 = process.env.ADMIN_MNEMONIC_1 || "";
 const ADMIN_MNEMONIC_2 = process.env.ADMIN_MNEMONIC_2 || "";
-const ADMIN_MNEMONIC_3 = process.env.ADMIN_MNEMONIC_3 || "";
 const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
 const ORACLE_OUTPUT_INDEX = parseInt(
   process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0"
@@ -35,15 +34,10 @@ const getWallet = (mnemonic: string): MeshWallet => {
 const getAdminWalletsAndPkh = async () => {
   const admin1 = getWallet(ADMIN_MNEMONIC_1);
   const admin2 = getWallet(ADMIN_MNEMONIC_2);
-  const admin3 = getWallet(ADMIN_MNEMONIC_3);
   const addr1 = await admin1.getChangeAddress();
   const pkh1 = deserializeAddress(addr1).pubKeyHash;
-  const addr2 = await admin2.getChangeAddress();
-  const pkh2 = deserializeAddress(addr2).pubKeyHash;
-  const addr3 = await admin3.getChangeAddress();
-  const pkh3 = deserializeAddress(addr3).pubKeyHash;
   const adminsPkh = [pkh1];
-  return { admin1, admin2, admin3, adminsPkh };
+  return { admin1, admin2, adminsPkh };
 };
 
 const getOracleUtxo = async () => {
@@ -56,9 +50,7 @@ const getOracleUtxo = async () => {
 
 const multiSignAndSubmit = async (
   unsignedTx: any, // Could be more specific if you have a type for unsignedTx
-  admin1: MeshWallet,
-  admin2: MeshWallet,
-  admin3: MeshWallet
+  admin1: MeshWallet
 ) => {
   const admin1SignedTx = await admin1.signTx(unsignedTx.txHex);
 
@@ -188,8 +180,7 @@ export default async function handler(
       case "approveMember": {
         const { membershipIntentUtxo, counterUtxoHash, counterUtxoIndex } =
           params;
-        const { admin1, admin2, admin3, adminsPkh } =
-          await getAdminWalletsAndPkh();
+        const { admin1, admin2, adminsPkh } = await getAdminWalletsAndPkh();
         const oracleUtxo = await getOracleUtxo();
         const counterUtxos = await blockfrost.fetchUTxOs(
           counterUtxoHash,
@@ -213,18 +204,12 @@ export default async function handler(
           adminsPkh
         );
         if (!unsignedTx) throw new Error("Failed to create transaction");
-        const result = await multiSignAndSubmit(
-          unsignedTx,
-          admin1,
-          admin2,
-          admin3
-        );
+        const result = await multiSignAndSubmit(unsignedTx, admin1);
         return res.status(200).json({ result });
       }
       case "approveProposal": {
         const { proposeIntentUtxo } = params;
-        const { admin1, admin2, admin3, adminsPkh } =
-          await getAdminWalletsAndPkh();
+        const { admin1, admin2, adminsPkh } = await getAdminWalletsAndPkh();
         const oracleUtxo = await getOracleUtxo();
         if (!oracleUtxo) throw new Error("Failed to fetch required UTxOs");
         const address = await admin2.getChangeAddress();
@@ -240,18 +225,12 @@ export default async function handler(
           adminsPkh
         );
         if (!unsignedTx) throw new Error("Failed to create transaction");
-        const result = await multiSignAndSubmit(
-          unsignedTx,
-          admin1,
-          admin2,
-          admin3
-        );
+        const result = await multiSignAndSubmit(unsignedTx, admin1);
         return res.status(200).json({ result });
       }
       case "rejectProposal": {
         const { proposeIntentUtxo } = params;
-        const { admin1, admin2, admin3, adminsPkh } =
-          await getAdminWalletsAndPkh();
+        const { admin1, admin2, adminsPkh } = await getAdminWalletsAndPkh();
         const oracleUtxo = await getOracleUtxo();
         if (!oracleUtxo) throw new Error("Failed to fetch required UTxOs");
         const address = await admin2.getChangeAddress();
@@ -267,18 +246,12 @@ export default async function handler(
           adminsPkh
         );
         if (!unsignedTx) throw new Error("Failed to create transaction");
-        const result = await multiSignAndSubmit(
-          unsignedTx,
-          admin1,
-          admin2,
-          admin3
-        );
+        const result = await multiSignAndSubmit(unsignedTx, admin1);
         return res.status(200).json({ result });
       }
       case "approveSignOff": {
         const { proposalUtxo } = params;
-        const { admin1, admin2, admin3, adminsPkh } =
-          await getAdminWalletsAndPkh();
+        const { admin1, admin2, adminsPkh } = await getAdminWalletsAndPkh();
         const oracleUtxo = await getOracleUtxo();
         if (!oracleUtxo) throw new Error("Failed to fetch required UTxOs");
         const address = await admin2.getChangeAddress();
@@ -294,19 +267,14 @@ export default async function handler(
           adminsPkh
         );
         if (!unsignedTx) throw new Error("Failed to create transaction");
-        const result = await multiSignAndSubmit(
-          unsignedTx,
-          admin1,
-          admin2,
-          admin3
-        );
+        const result = await multiSignAndSubmit(unsignedTx, admin1);
         return res.status(200).json({ result });
       }
       case "SignOff": {
         console.log(getCatConstants().scripts.treasury.spend.address);
 
         const { signOffApprovalUtxo, memberUtxo } = params;
-        const { admin1, admin2, admin3 } = await getAdminWalletsAndPkh();
+        const { admin1, admin2 } = await getAdminWalletsAndPkh();
         const oracleUtxo = await getOracleUtxo();
         if (!oracleUtxo) throw new Error("Failed to fetch required UTxOs");
         const address = await admin2.getChangeAddress();
@@ -322,17 +290,12 @@ export default async function handler(
           memberUtxo
         );
         if (!unsignedTx) throw new Error("Failed to create transaction");
-        const result = await multiSignAndSubmit(
-          unsignedTx,
-          admin1,
-          admin2,
-          admin3
-        );
+        const result = await multiSignAndSubmit(unsignedTx, admin1);
         return res.status(200).json({ result });
       }
       case "removeMember": {
         const { memberUtxo } = params;
-        const { admin1, admin2, admin3 } = await getAdminWalletsAndPkh();
+        const { admin1, admin2 } = await getAdminWalletsAndPkh();
         const oracleUtxo = await getOracleUtxo();
         if (!oracleUtxo) throw new Error("Failed to fetch required UTxOs");
         const address = await admin2.getChangeAddress();
@@ -347,12 +310,7 @@ export default async function handler(
           memberUtxo
         );
         if (!unsignedTx) throw new Error("Failed to create transaction");
-        const result = await multiSignAndSubmit(
-          unsignedTx,
-          admin1,
-          admin2,
-          admin3
-        );
+        const result = await multiSignAndSubmit(unsignedTx, admin1);
         return res.status(200).json({ result });
       }
       // ... other cases ...
