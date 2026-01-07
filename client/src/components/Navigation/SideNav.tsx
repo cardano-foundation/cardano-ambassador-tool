@@ -6,7 +6,7 @@ import SettingsIcon from '@/components/atoms/SettingsIcon';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context';
+import { useNetworkValidation, useUserAuth, useWalletManager } from '@/hooks';
 import { NavigationSection } from '@types';
 import {
   BookOpenTextIcon,
@@ -91,7 +91,16 @@ const adminToolsSection: NavigationSection = {
 };
 
 const SideNav = () => {
-  const { user, isAdmin, wallet, isNetworkValid, userRoles } = useApp();
+  const wallet = useWalletManager();
+  const { user, isAdmin, userRoles } = useUserAuth({
+    wallet: wallet.wallet,
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+  });
+  const { isNetworkValid } = useNetworkValidation({
+    wallet: wallet.wallet,
+    isConnected: wallet.isConnected,
+  });
   const pathname = usePathname();
   const [sections, setSections] = useState(defaultNavigationSections);
 

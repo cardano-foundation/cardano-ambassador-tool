@@ -1,5 +1,5 @@
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useApp } from '@/context';
+import { useUserAuth, useWalletManager } from '@/hooks';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
 import { User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -33,7 +33,12 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
   const [loading, setLoading] = useState(true);
   const [minRequiredSigners, setMinRequiredSigners] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const { userAddress } = useApp();
+  const wallet = useWalletManager();
+  const { userAddress } = useUserAuth({
+    wallet: wallet.wallet,
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+  });
 
   useEffect(() => {
     const loadAdmins = async () => {

@@ -1,14 +1,13 @@
 'use client';
 
-import MemberOnlyAccessCard from '@/app/my/_component/MemberOnlyAccessCard';
+import MemberOnlyAccessCard from '@/app/my/_components/MemberOnlyAccessCard';
 import Button from '@/components/atoms/Button';
 import Modal from '@/components/atoms/Modal';
 import Title from '@/components/atoms/Title';
 import TopNav from '@/components/navigation/TabNav';
 import CardanoLoaderSVG from '@/components/ui/CardanoLoaderSVG';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context';
-import { useMemberValidation } from '@/hooks';
+import { useMemberValidation, useTxConfirmation, useWalletManager } from '@/hooks';
 import {
   adaToLovelace,
   dbUtxoToMeshUtxo,
@@ -26,17 +25,18 @@ import {
 } from '@sidan-lab/cardano-ambassador-tool';
 
 import { useEffect, useRef, useState } from 'react';
-import DetailsTab from './components/DetailsTab';
-import FundsTab from './components/FundsTab';
-import ReviewTab from './components/ReviewTab';
+import DetailsTab from './_components/DetailsTab';
+import FundsTab from './_components/FundsTab';
+import ReviewTab from './_components/ReviewTab';
 
 type ProposalFormData = ProposalData & {
   description: string;
 };
 
 export default function SubmitProposalPage() {
-  const { userWallet, memberUtxo, userAddress, showTxConfirmation } = useApp();
-  const { isMember, isLoading: memberLoading } = useMemberValidation();
+  const { wallet: userWallet, address: userAddress } = useWalletManager();
+  const { isMember, memberValidationLoading: memberLoading, memberUtxo } = useMemberValidation();
+  const { showTxConfirmation } = useTxConfirmation();
   const [activeTab, setActiveTab] = useState('details');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [markdownData, setMarkdownData] = useState<any>({});

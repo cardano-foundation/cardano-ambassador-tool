@@ -6,8 +6,7 @@ import HambugerIcon from '@/components/atoms/HumbugerIcon';
 import AppLogo from '@/components/atoms/Logo';
 import ThemeToggle from '@/components/ThemeToggle';
 import ConnectWallet from '@/components/wallet/ConnectWallet';
-import { useApp } from '@/context/AppContext';
-import { useNavigation } from '@/hooks';
+import { useNavigation, useUserAuth, useWalletManager } from '@/hooks';
 import { shortenString } from '@/utils';
 import { useWallet } from '@meshsdk/react';
 import { X } from 'lucide-react';
@@ -17,7 +16,12 @@ import UserAvatar from '../atoms/UserAvatar';
 import GlobalRefreshButton from '../GlobalRefreshButton';
 
 export default function TopNavBar() {
-  const { user, isAdmin } = useApp();
+  const wallet = useWalletManager();
+  const { user, isAdmin } = useUserAuth({
+    wallet: wallet.wallet,
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -111,7 +115,12 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
     adminToolsSection,
   } = useNavigation();
   const { connected } = useWallet();
-  const { user, isAdmin, userRoles } = useApp();
+  const wallet = useWalletManager();
+  const { user, isAdmin, userRoles } = useUserAuth({
+    wallet: wallet.wallet,
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+  });
 
   const [sections, setSections] = useState(defaultNavigationSections);
   useEffect(() => {

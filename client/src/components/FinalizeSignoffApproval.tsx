@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { emitGlobalRefreshWithDelay } from '@/utils';
 import { storageApiClient } from '@/utils/storageApiClient';
 import { AdminDecisionData, TransactionConfirmationResult } from '@types';
@@ -20,7 +20,7 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
   adminDecisionData,
   onFinalizationComplete,
 }) => {
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message: string;
@@ -59,7 +59,9 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
     setSubmitError(null);
 
     try {
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
 
       if (!adminDecisionData.signedTx) {
         throw new Error('No signed transaction found in admin decision data');

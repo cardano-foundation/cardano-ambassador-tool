@@ -1,27 +1,25 @@
-'use client';
-
+import { useWalletManager } from '@/hooks';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import FormDetails from '../../components/FormDetails';
+import FormFunds from '../../_components/FormFunds';
 
 type ProposalFormData = ProposalData & {
   description: string;
 };
 
-export default function DetailsTab({
+export default function FundsTab({
   formData,
   handleInputChange,
-  descriptionEditorRef,
 }: {
   formData: ProposalFormData;
   handleInputChange: (field: keyof ProposalFormData, value: string) => void;
-  descriptionEditorRef: any;
 }) {
+  const { address: userAddress } = useWalletManager();
   return (
-    <FormDetails
+    <FormFunds
       mode="create"
       formData={formData}
       handleInputChange={handleInputChange}
-      descriptionEditorRef={descriptionEditorRef}
+      userAddress={userAddress ?? undefined}
     />
   );
 }

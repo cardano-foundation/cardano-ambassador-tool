@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
 import {
   dbUtxoToMeshUtxo,
@@ -37,17 +37,16 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
   );
   const [currentWalletHasSigned, setCurrentWalletHasSigned] = useState(false);
   const [showAdminSelector, setShowAdminSelector] = useState(false);
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
 
   const checkCurrentWalletSigned = async (adminDecision: AdminDecision) => {
     try {
-      if (!walletState || !adminDecision.signedTx) {
+      if (!wallet || !adminDecision.signedTx) {
         setCurrentWalletHasSigned(false);
         return;
       }
 
-      const wallet = await walletState.wallet;
-      const currentAddress = await wallet!.getChangeAddress();
+      const currentAddress = await wallet.getChangeAddress();
       const currentPubKeyHash = deserializeAddress(currentAddress).pubKeyHash;
       const signers = extractWitnesses(adminDecision.signedTx);
       const hasSigned = signers?.includes(currentPubKeyHash) || false;
@@ -98,13 +97,8 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
     setSubmitError(null);
 
     try {
-      if (!walletState || !adminDecision) {
+      if (!wallet || !adminDecision) {
         throw new Error('Wallet or admin decision not available');
-      }
-
-      const wallet = await walletState.wallet;
-      if (!wallet) {
-        throw new Error('Wallet not connected');
       }
 
       const supportSign = await wallet.signTx(adminDecision.signedTx, true);
@@ -150,15 +144,17 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       }
 
       const blockfrost = getProvider();
-      const wallet = await walletState!.wallet;
-      const address = await wallet!.getChangeAddress();
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
+      const address = await wallet.getChangeAddress();
       const adminsPkh = selectedAdmins.map(
         (add: string) => deserializeAddress(add).pubKeyHash,
       );
 
       const adminAction = new AdminActionTx(
         address,
-        wallet!,
+        wallet,
         blockfrost,
         getCatConstants(),
       );
@@ -169,7 +165,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
         adminsPkh,
       );
 
-      const firstSigTX = await wallet!.signTx(unsignedTx.txHex, true);
+      const firstSigTX = await wallet.signTx(unsignedTx.txHex, true);
 
       if (!unsignedTx) throw new Error('Failed to create transaction');
       if (!firstSigTX)

@@ -5,7 +5,7 @@ import KeyValue from '@/components/atoms/KeyValue';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
-import { useApp } from '@/context/AppContext';
+import { useWalletManager } from '@/hooks';
 import { shortenString } from '@/utils';
 import { hexToString } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
@@ -25,8 +25,7 @@ const SelectToken = ({
   setSelectedAssetName: (name: string | null) => void;
   selectedAssetName: string | null;
 }) => {
-  const { wallet } = useApp();
-  const { address } = wallet;
+  const { address } = useWalletManager();
 
   return (
     <>

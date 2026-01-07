@@ -4,8 +4,7 @@ import OwnerMembershipTimeline from '@/components/Timelines/OwnerMembershipTimel
 import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
-import { useApp } from '@/context';
-import { useMemberValidation } from '@/hooks';
+import { useDatabase, useMemberValidation, useWalletManager } from '@/hooks';
 import {
   findMembershipIntentUtxo,
   findTokenUtxoByMembershipIntentUtxo,
@@ -39,19 +38,12 @@ export default function MembershipSubmissionsTab() {
   const [isTransactionPending, setIsTransactionPending] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
-  const {
-    membershipIntents,
-    dbLoading,
-    isSyncing,
-    userAddress,
-    isAuthenticated,
-    userWallet,
-    syncData,
-  } = useApp();
+  const { address: userAddress, wallet: userWallet, isConnected } = useWalletManager();
+  const { membershipIntents, dbLoading, isSyncing, syncData } = useDatabase();
   const { memberUtxo, memberData } = useMemberValidation();
 
   useEffect(() => {
-    if (dbLoading || !isAuthenticated) {
+    if (dbLoading || !isConnected) {
       return;
     }
 
@@ -76,7 +68,7 @@ export default function MembershipSubmissionsTab() {
 
     setMembershipIntentUtxo(userMembershipIntent || null);
     setLoading(false);
-  }, [userAddress, membershipIntents, dbLoading, isAuthenticated, isSyncing]);
+  }, [userAddress, membershipIntents, dbLoading, isConnected, isSyncing]);
 
   const handleMetadataUpdate = async (userMetadata: MemberData) => {
     try {

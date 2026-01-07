@@ -21,8 +21,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@types": ["./types.ts"],
-      "@css": ["./src/app.css"]
+      "@types": ["./src/types"]
     }
   },
   "include": [

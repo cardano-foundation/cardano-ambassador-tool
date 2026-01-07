@@ -1,5 +1,5 @@
 import Input from '@/components/atoms/Input';
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 
 type ProposalFormData = ProposalData & {
@@ -19,7 +19,7 @@ export default function FormFunds({
   handleInputChange,
   userAddress,
 }: Props) {
-  const { userAddress: connectedAddress } = useApp();
+  const { address: connectedAddress } = useWalletManager();
 
   const handleAdaInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleInputChange('fundsRequested', e.target.value);

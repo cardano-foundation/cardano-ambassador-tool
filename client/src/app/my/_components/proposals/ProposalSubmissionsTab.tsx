@@ -8,7 +8,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Select from '@/components/atoms/Select';
 import Title from '@/components/atoms/Title';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import useProposals from '@/hooks/useProposals';
 import { formatAdaAmount } from '@/utils';
 import { Proposal } from '@types';
@@ -135,7 +135,7 @@ export default function ProposalSubmissionsTab({
   const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>(
     'all',
   );
-  const { userAddress } = useApp();
+  const { address: userAddress } = useWalletManager();
 
   const { allProposals, loading } = useProposals();
 

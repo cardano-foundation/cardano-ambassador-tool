@@ -10,7 +10,7 @@ import ExecuteSignoff from '@/components/ExecuteSignoff';
 import ProposalDescription from '@/components/ProposalDescription';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useApp } from '@/context';
+import { useDatabase, useTreasuryBalance } from '@/hooks';
 import { getCatConstants, parseProposalDatum } from '@/utils';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { use } from 'react';
@@ -20,13 +20,8 @@ interface PageProps {
 }
 
 export default function TreasurySignoffDetailsPage({ params }: PageProps) {
-  const {
-    signOfApprovals,
-    members,
-    dbLoading,
-    treasuryBalance,
-    isTreasuryLoading,
-  } = useApp();
+  const { signOfApprovals, members, dbLoading } = useDatabase();
+  const { treasuryBalance, isTreasuryLoading } = useTreasuryBalance();
   const { txhash } = use(params);
 
   const proposal = signOfApprovals.find((utxo) => utxo.txHash === txhash);

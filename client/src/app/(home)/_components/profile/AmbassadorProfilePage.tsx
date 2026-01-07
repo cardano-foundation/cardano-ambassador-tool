@@ -9,8 +9,7 @@ import {
   RepliesPulse,
   TopicsPulse,
 } from '@/components/PulseLoader';
-import { useApp } from '@/context';
-import { useAmbassadorProfile, useDateFormatting } from '@/hooks';
+import { useAmbassadorProfile, useDatabase, useDateFormatting } from '@/hooks';
 import { formatAdaAmount, lovelaceToAda, parseMemberDatum } from '@/utils';
 import { getCountryByCode } from '@/utils/locationData';
 import React, { useMemo, useState } from 'react';
@@ -21,7 +20,7 @@ import { ProfileHeader } from './ProfileHeader';
 import { ProfileSidebar } from './ProfileSidebar';
 import { RepliesSection } from './RepliesSection';
 import { TopicsSection } from './TopicsSection';
-import ProposalSubmissionsTab from '@/app/my/_component/proposals/ProposalSubmissionsTab';
+import ProposalSubmissionsTab from '@/app/my/_components/proposals/ProposalSubmissionsTab';
 
 interface AmbassadorProfilePageProps {
   ambassadorUsername: string;
@@ -36,7 +35,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
   const [showAllReplies, setShowAllReplies] = useState(false);
   const [showAllActivities, setShowAllActivities] = useState(false);
 
-  const { members } = useApp();
+  const { members } = useDatabase();
   const { formatDate, getRelativeTime, cleanHtml } = useDateFormatting();
   const decodedUsername = decodeURIComponent(ambassadorUsername);
 

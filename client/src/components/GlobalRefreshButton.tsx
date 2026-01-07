@@ -1,6 +1,6 @@
 'use client';
 
-import { useApp } from '@/context';
+import { useDatabase, useTreasuryBalance } from '@/hooks';
 import { RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import Button from './atoms/Button';
@@ -12,7 +12,8 @@ interface GlobalRefreshButtonProps {
 export default function GlobalRefreshButton({
   className = '',
 }: GlobalRefreshButtonProps) {
-  const { syncData, isSyncing, refreshTreasuryBalance } = useApp();
+  const { syncData, isSyncing } = useDatabase();
+  const { refreshTreasuryBalance } = useTreasuryBalance();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {

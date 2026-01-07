@@ -1,11 +1,11 @@
-import { useApp } from '@/context';
+import { useDatabase } from '@/hooks';
 import { lovelaceToAda, parseMemberDatum, parseProposalDatum } from '@/utils';
 import { Proposal } from '@types';
 import { useEffect, useMemo, useState } from 'react';
 
 const useProposals = () => {
   const { proposals, proposalIntents, signOfApprovals, dbLoading, members } =
-    useApp();
+    useDatabase();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

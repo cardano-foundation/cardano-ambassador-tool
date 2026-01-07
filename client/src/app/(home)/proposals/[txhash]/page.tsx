@@ -9,7 +9,7 @@ import Copyable from '@/components/Copyable';
 import ProposalDescription from '@/components/ProposalDescription';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useApp } from '@/context';
+import { useDatabase } from '@/hooks';
 import { formatAdaAmount } from '@/utils';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { use } from 'react';
@@ -19,7 +19,7 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
-  const { proposals, proposalIntents, signOfApprovals, dbLoading } = useApp();
+  const { proposals, proposalIntents, signOfApprovals, dbLoading } = useDatabase();
   const { txhash } = use(params);
 
   const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];

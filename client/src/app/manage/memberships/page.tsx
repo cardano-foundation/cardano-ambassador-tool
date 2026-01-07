@@ -7,12 +7,12 @@ import UserAvatar from '@/components/atoms/UserAvatar';
 import Copyable from '@/components/Copyable';
 import { ColumnDef, Table } from '@/components/Table/Table';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useApp } from '@/context/AppContext';
+import { useDatabase } from '@/hooks';
 import { getCountryByCode, parseMemberDatum } from '@/utils';
 import Link from 'next/link';
 
 export default function ManageAmbassadorsPage() {
-  const { members, dbLoading } = useApp();
+  const { members, dbLoading } = useDatabase();
 
   if (dbLoading) {
     return <div className="p-4">Loading ambassadors...</div>;

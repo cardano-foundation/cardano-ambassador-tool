@@ -1,6 +1,11 @@
 'use client';
-import { useApp } from '@/context';
-import { useAmbassadorProfile } from '@/hooks';
+import {
+  useAmbassadorProfile,
+  useDatabase,
+  useMemberValidation,
+  useTxConfirmation,
+  useWalletManager,
+} from '@/hooks';
 import {
   findMemberUtxo,
   findTokenUtxoByMemberUtxo,
@@ -15,11 +20,11 @@ import {
 } from '@sidan-lab/cardano-ambassador-tool';
 import { TransactionConfirmationResult } from '@types';
 import { useCallback, useMemo, useState } from 'react';
-import DashboardHeader from '../_component/DashboardHeader';
-import MemberOnlyAccessCard from '../_component/MemberOnlyAccessCard';
-import ProfileDetails from '../_component/ProfileDetails';
-import ProfileEditModal from '../_component/ProfileEditModal';
-import ProfileHeader from '../_component/ProfileHeader';
+import DashboardHeader from '../_components/DashboardHeader';
+import MemberOnlyAccessCard from '../_components/MemberOnlyAccessCard';
+import ProfileDetails from '../_components/ProfileDetails';
+import ProfileEditModal from '../_components/ProfileEditModal';
+import ProfileHeader from '../_components/ProfileHeader';
 
 export default function ProfilesPage() {
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
@@ -28,14 +33,10 @@ export default function ProfilesPage() {
   );
 
   const blockfrost = getProvider();
-  const {
-    userWallet,
-    syncData,
-    wallet,
-    memberData,
-    isMember,
-    showTxConfirmation,
-  } = useApp();
+  const { wallet, address } = useWalletManager();
+  const { syncData } = useDatabase();
+  const { isMember, memberData } = useMemberValidation();
+  const { showTxConfirmation } = useTxConfirmation();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const profileData = useMemo(() => {
@@ -104,7 +105,7 @@ export default function ProfilesPage() {
 
   const handleSaveProfile = async (updatedProfile: any): Promise<void> => {
     try {
-      const userAddress = await userWallet!.getChangeAddress();
+      const userAddress = await wallet!.getChangeAddress();
 
       const membershipUtxo = await findMemberUtxo(userAddress);
 
@@ -131,7 +132,7 @@ export default function ProfilesPage() {
 
       const userAction = new UserActionTx(
         userAddress!,
-        userWallet!,
+        wallet!,
         blockfrost,
         getCatConstants(),
       );
@@ -251,7 +252,7 @@ export default function ProfilesPage() {
 
         <ProfileDetails
           profile={displayProfile}
-          walletAddress={wallet?.address!}
+          walletAddress={address!}
           onWithdrawRole={handleWithdrawRole}
           onEditProfile={handleEditProfile}
         />

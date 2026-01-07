@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { emitGlobalRefreshWithDelay, saveCounterUtxo } from '@/utils';
 import { storageApiClient } from '@/utils/storageApiClient';
 import { AdminDecisionData, TransactionConfirmationResult } from '@types';
@@ -20,7 +20,7 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
   adminDecisionData,
   onActivationComplete,
 }) => {
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message: string;
@@ -63,13 +63,15 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
     setSubmitError(null);
 
     try {
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
 
       if (!adminDecisionData.signedTx) {
         throw new Error('No signed transaction found in admin decision data');
       }
 
-      const txHash = await wallet!.submitTx(adminDecisionData.signedTx);
+      const txHash = await wallet.submitTx(adminDecisionData.signedTx);
 
       try {
         await saveCounterUtxo(

@@ -10,8 +10,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import TextArea from '@/components/atoms/TextArea';
 import ErrorAccordion from '@/components/ErrorAccordion';
 import { toast } from '@/components/toast/toast-manager';
-import { useApp } from '@/context/AppContext';
-import { useMemberValidation } from '@/hooks';
+import { useMemberValidation, useWalletManager } from '@/hooks';
 import {
   findMembershipIntentUtxo,
   getCatConstants,
@@ -40,8 +39,7 @@ const SubmitIntent = ({
   goNext?: () => void;
   goBack?: () => void;
 }) => {
-  const { wallet: walletState } = useApp();
-  const { address, wallet } = walletState;
+  const { address, wallet } = useWalletManager();
   const { isMember, memberData } = useMemberValidation();
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(

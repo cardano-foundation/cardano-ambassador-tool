@@ -1,59 +1,35 @@
+'use client';
+
 import { useAppSelector } from '@/lib/redux/hooks';
-import {
-  selectParsedCurrentUserMember,
-  selectMemberValidationLoading,
-} from '@/lib/redux/features/auth';
+import { selectParsedCurrentUserMember } from '@/lib/redux/features/auth';
 import { selectDbLoading } from '@/lib/redux/features/data';
-import { getCountryByCode } from '@/utils';
+import { selectWalletAddress } from '@/lib/redux/features/wallet';
+import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
 import { Utxo } from '@types';
-import { useMemo } from 'react';
 
 interface MemberValidationResult {
   isMember: boolean;
-  isLoading: boolean;
+  memberValidationLoading: boolean;
   memberUtxo: Utxo | null;
-  memberData: {
-    name: string;
-    username: string;
-    email: string;
-    country: string;
-    city: string;
-    bio: string;
-  } | null;
+  memberData: MemberData | null;
 }
 
 /**
- * Member validation hook - now delegates to Redux for state management.
- * Maintains backward compatibility with existing consumers.
+ * Member validation hook - delegates to Redux selectors.
+ * Provides member status and data for the current wallet address.
  */
 export function useMemberValidation(): MemberValidationResult {
-  // Use the memoized selector that joins members + wallet address
   const parsedMember = useAppSelector(selectParsedCurrentUserMember);
   const dbLoading = useAppSelector(selectDbLoading);
+  const walletAddress = useAppSelector(selectWalletAddress);
 
-  // Adapt MemberData to the expected interface for components
-  const memberData = useMemo(() => {
-    if (!parsedMember.memberData) return null;
-
-    const rawMemberData = parsedMember.memberData;
-    const countryData = rawMemberData.country
-      ? getCountryByCode(rawMemberData.country)
-      : null;
-
-    return {
-      name: rawMemberData.fullName || rawMemberData.displayName,
-      username: rawMemberData.displayName,
-      email: rawMemberData.emailAddress,
-      country: countryData?.name || rawMemberData.country || '',
-      city: rawMemberData.city || '',
-      bio: rawMemberData.bio || '',
-    };
-  }, [parsedMember.memberData]);
+  // Loading if db is loading or no wallet address yet
+  const memberValidationLoading = dbLoading || !walletAddress;
 
   return {
     isMember: parsedMember.isMember,
-    isLoading: dbLoading,
+    memberValidationLoading,
     memberUtxo: parsedMember.memberUtxo,
-    memberData,
+    memberData: parsedMember.memberData,
   };
 }

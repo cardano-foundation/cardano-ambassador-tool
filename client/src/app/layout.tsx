@@ -1,6 +1,6 @@
 'use client';
 
-import { AppProvider } from '@/context/AppContext';
+import { TxConfirmationProvider } from '@/components/TxConfirmationProvider';
 import ReduxProvider from '@/lib/redux/client-provider';
 
 import './app.css';
@@ -45,7 +45,7 @@ export default function RootLayout({
       </head>
       <body className="flex h-screen min-h-screen w-screen min-w-[320px] overflow-hidden antialiased">
         <ReduxProvider>
-          <AppProvider>{children}</AppProvider>
+          <TxConfirmationProvider>{children}</TxConfirmationProvider>
         </ReduxProvider>
       </body>
     </html>

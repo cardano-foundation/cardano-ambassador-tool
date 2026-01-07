@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useTreasuryBalance, useWalletManager } from '@/hooks';
 import {
   dbUtxoToMeshUtxo,
   emitGlobalRefreshWithDelay,
@@ -25,7 +25,8 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
   signoffApprovalUtxo,
   memberUtxo,
 }) => {
-  const { wallet: walletState, treasuryBalance, isTreasuryLoading } = useApp();
+  const { wallet } = useWalletManager();
+  const { treasuryBalance, isTreasuryLoading } = useTreasuryBalance();
   const [isExecuting, setIsExecuting] = useState(false);
   const [isExecuted, setIsExecuted] = useState(false);
   const [submitError, setSubmitError] = useState<{
@@ -83,7 +84,9 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       }
 
       const blockfrost = getProvider();
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
       const address = await wallet!.getChangeAddress();
 
       const adminAction = new AdminActionTx(

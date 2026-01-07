@@ -3,7 +3,6 @@ import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useApp } from '@/context';
 import { formatAdaAmount, parseAdaInput } from '@/utils/utils';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 

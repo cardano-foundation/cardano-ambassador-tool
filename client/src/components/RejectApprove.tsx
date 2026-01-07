@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
 import {
   dbUtxoToMeshUtxo,
@@ -42,18 +42,17 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
   const [pendingDecision, setPendingDecision] = useState<
     'approve' | 'reject' | null
   >(null);
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
 
   // Function to check if current wallet has already signed
   const checkCurrentWalletSigned = async (adminDecision: AdminDecision) => {
     try {
-      if (!walletState || !adminDecision.signedTx) {
+      if (!wallet || !adminDecision.signedTx) {
         setCurrentWalletHasSigned(false);
         return;
       }
 
-      const wallet = await walletState.wallet;
-      const currentAddress = await wallet!.getChangeAddress();
+      const currentAddress = await wallet.getChangeAddress();
       const currentPubKeyHash = deserializeAddress(currentAddress).pubKeyHash;
       const signers = extractWitnesses(adminDecision.signedTx);
       const hasSigned = signers?.includes(currentPubKeyHash) || false;
@@ -109,13 +108,8 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
     setSubmitError(null);
 
     try {
-      if (!walletState || !adminDecision) {
+      if (!wallet || !adminDecision) {
         throw new Error('Wallet or admin decision not available');
-      }
-
-      const wallet = await walletState.wallet;
-      if (!wallet) {
-        throw new Error('Wallet not connected');
       }
 
       // Use partial signing (true) to combine with existing signatures
@@ -173,9 +167,11 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
       const blockfrost = getProvider();
 
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
 
-      const address = await wallet!.getChangeAddress();
+      const address = await wallet.getChangeAddress();
 
       // Use selected admins instead of all admins
       const adminsPkh = selectedAdmins.map(
@@ -184,7 +180,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
       const adminAction = new AdminActionTx(
         address,
-        wallet!,
+        wallet,
         blockfrost,
         getCatConstants(),
       );

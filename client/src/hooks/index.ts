@@ -2,6 +2,7 @@ export * from './useAppLoading';
 export * from './useDatabase';
 export * from './useNetworkValidation';
 export * from './useThemeManager';
+export * from './useTxConfirmation';
 export * from './useUserAuth';
 export * from './useAmbassadorProfile';
 export * from './useTreasuryBalance';

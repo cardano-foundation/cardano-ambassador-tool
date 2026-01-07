@@ -1,8 +1,7 @@
 'use client';
 
 import { SingleRowStepper } from '@/components/atoms/Stepper';
-import { useApp } from '@/context/AppContext';
-import { useMemberValidation } from '@/hooks';
+import { useMemberValidation, useWalletManager } from '@/hooks';
 import { findMembershipIntentUtxo, smoothScrollToElement } from '@/utils';
 import { UTxO } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
@@ -19,8 +18,7 @@ function SignUp() {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(0);
   const [asset, setAsset] = useState<MemberTokenDetail | undefined>(undefined);
-  const { wallet: walletState } = useApp();
-  const { address, wallet } = walletState;
+  const { address, wallet } = useWalletManager();
   const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
   const [walletAssets, setWalletAssets] = useState<MemberTokenDetail[]>([]);
   const [selectedAssetName, setSelectedAssetName] = useState<string | null>(

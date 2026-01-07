@@ -4,11 +4,11 @@ import TopNav from '@/components/navigation/TabNav';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import Button from '@/components/atoms/Button';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context';
+import { useDatabase, useWalletManager } from '@/hooks';
 import Link from 'next/link';
 import { useState } from 'react';
-import MembershipSubmissionsTab from '../_component/membership/MembershipSubmissionsTab';
-import ProposalSubmissionsTab from '../_component/proposals/ProposalSubmissionsTab';
+import MembershipSubmissionsTab from '../_components/membership/MembershipSubmissionsTab';
+import ProposalSubmissionsTab from '../_components/proposals/ProposalSubmissionsTab';
 export default function IntentSubmissionsPage() {
   const tabs = [
     { id: 'membership-intent', label: 'Membership Application' },
@@ -16,9 +16,10 @@ export default function IntentSubmissionsPage() {
   ];
 
   const [activeTab, setActiveTab] = useState('membership-intent');
-  const { dbLoading, isAuthenticated } = useApp();
+  const { dbLoading } = useDatabase();
+  const { isConnected } = useWalletManager();
 
-  if (dbLoading || !isAuthenticated) {
+  if (dbLoading || !isConnected) {
     return <SimpleCardanoLoader />;
   }
 

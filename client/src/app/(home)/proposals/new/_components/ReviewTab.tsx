@@ -1,5 +1,5 @@
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import FormReview from '../../components/FormReview';
+import FormReview from '../../_components/FormReview';
 
 type ProposalFormData = ProposalData & {
   description: string;

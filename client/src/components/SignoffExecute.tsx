@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
 import {
   dbUtxoToMeshUtxo,
@@ -39,18 +39,17 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
   );
   const [currentWalletHasSigned, setCurrentWalletHasSigned] = useState(false);
   const [showAdminSelector, setShowAdminSelector] = useState(false);
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
 
   const storageBucket = 'signoff-execute';
 
   const checkCurrentWalletSigned = async (decision: AdminDecision) => {
     try {
-      if (!walletState || !decision.signedTx) {
+      if (!wallet || !decision.signedTx) {
         setCurrentWalletHasSigned(false);
         return;
       }
-      const wallet = await walletState.wallet;
-      const currentAddress = await wallet!.getChangeAddress();
+      const currentAddress = await wallet.getChangeAddress();
       const currentPubKeyHash = deserializeAddress(currentAddress).pubKeyHash;
       const signers = extractWitnesses(decision.signedTx);
       setCurrentWalletHasSigned(signers?.includes(currentPubKeyHash) || false);
@@ -91,10 +90,8 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
   async function secondDecision() {
     setSubmitError(null);
     try {
-      if (!walletState || !adminDecision)
+      if (!wallet || !adminDecision)
         throw new Error('Wallet or admin decision not available');
-      const wallet = await walletState.wallet;
-      if (!wallet) throw new Error('Wallet not connected');
       const supportSign = await wallet.signTx(adminDecision.signedTx, true);
       if (!supportSign)
         throw new Error(
@@ -129,12 +126,14 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
       const oracleUtxo = await findOracleUtxo();
       if (!oracleUtxo) throw new Error('Failed to fetch Oracle UTxO');
       const blockfrost = getProvider();
-      const wallet = await walletState!.wallet;
-      const address = await wallet!.getChangeAddress();
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
+      const address = await wallet.getChangeAddress();
 
       const adminAction = new AdminActionTx(
         address,
-        wallet!,
+        wallet,
         blockfrost,
         getCatConstants(),
       );
@@ -144,7 +143,7 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
         dbUtxoToMeshUtxo(memberUtxo),
       );
 
-      const firstSig = await wallet!.signTx(unsignedTx.txHex, true);
+      const firstSig = await wallet.signTx(unsignedTx.txHex, true);
       if (!unsignedTx) throw new Error('Failed to create transaction');
       if (!firstSig)
         throw new Error(

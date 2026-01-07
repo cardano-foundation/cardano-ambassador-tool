@@ -2,8 +2,7 @@ import ProposalIcon from '@/components/atoms/ProposalIcon';
 import SettingsIcon from '@/components/atoms/SettingsIcon';
 import UsersIcon from '@/components/atoms/UsersIcon';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context/AppContext';
-import { useWallet } from '@meshsdk/react';
+import { useNetworkValidation, useUserAuth, useWalletManager } from '@/hooks';
 import { NavigationSection } from '@types';
 import {
   BookOpenTextIcon,
@@ -85,10 +84,17 @@ const adminToolsSection: NavigationSection = {
 };
 
 export const useNavigation = () => {
-  const { user, isAdmin } = useApp();
+  const wallet = useWalletManager();
+  const { user, isAdmin } = useUserAuth({
+    wallet: wallet.wallet,
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+  });
+  const { isNetworkValid } = useNetworkValidation({
+    wallet: wallet.wallet,
+    isConnected: wallet.isConnected,
+  });
   const pathname = usePathname();
-  const { connected } = useWallet();
-  const { isNetworkValid } = useApp();
 
   const [sections, setSections] = useState(defaultNavigationSections);
   const [currentActiveId, setCurrentActiveId] = useState('');
@@ -102,7 +108,7 @@ export const useNavigation = () => {
     ];
     const match = allItems.find((item) => item.href === pathname);
     if (match) setCurrentActiveId(match.id);
-  }, [pathname, connected]);
+  }, [pathname, wallet.isConnected]);
 
   // Update sections when roles change
   useEffect(() => {
@@ -122,7 +128,7 @@ export const useNavigation = () => {
     }
 
     setSections(updated);
-  }, [user, isAdmin, connected, isNetworkValid]);
+  }, [user, isAdmin, wallet.isConnected, isNetworkValid]);
 
   return {
     sections,

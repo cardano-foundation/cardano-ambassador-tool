@@ -9,7 +9,7 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context';
+import { useDatabase, useTreasuryBalance } from '@/hooks';
 import { formatAdaAmount, getCatConstants, parseProposalDatum } from '@/utils';
 import { ArrowUpRightFromSquare } from 'lucide-react';
 import Link from 'next/link';
@@ -140,8 +140,8 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
 ];
 
 export default function TreasurySignOffsPage() {
-  const { signOfApprovals, dbLoading, treasuryBalance, isTreasuryLoading } =
-    useApp();
+  const { signOfApprovals, dbLoading } = useDatabase();
+  const { treasuryBalance, isTreasuryLoading } = useTreasuryBalance();
 
   // Convert BigInt treasury balance to ADA
   const treasuryBalanceAda = Math.floor(Number(treasuryBalance) / 1_000_000);
