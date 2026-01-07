@@ -5,12 +5,12 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import Footer from '@/components/Footer';
 import SideNav from '@/components/navigation/SideNav';
 import TopNavBar from '@/components/navigation/TopNavBar';
-import ToastContainer from '@/components/toast/toast';
-import { useApp } from '@/context';
+import ToastContainer from '@/components/toast/Toast';
+import { useAppLoading } from '@/hooks';
 import React from 'react';
 
 function ManageContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useApp();
+  const { shouldShowLoading } = useAppLoading();
 
   return (
     <>

@@ -11,10 +11,10 @@ import FinalizeDecision from '@/components/FinalizeDecision';
 import FinalizeSignoffApproval from '@/components/FinalizeSignoffApproval';
 import ProposalDescription from '@/components/ProposalDescription';
 import ApproveReject from '@/components/RejectApprove';
-import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
+import MultisigProgressTracker from '@/components/signature-progress/MultisigProgressTracker';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useApp } from '@/context';
+import { useDatabase } from '@/hooks';
 import { formatAdaAmount, parseProposalDatum } from '@/utils';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { AdminDecisionData } from '@types';
@@ -26,7 +26,7 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const { proposalIntents, proposals, signOfApprovals, members, dbLoading } =
-    useApp();
+    useDatabase();
   const [adminDecisionData, setAdminDecisionData] =
     useState<AdminDecisionData | null>(null);
   const [signoffDecisionData, setSignoffDecisionData] =

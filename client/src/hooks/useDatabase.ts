@@ -18,7 +18,7 @@ import {
   dbInitializationFailed,
   startSync,
 } from '@/lib/redux/features/data';
-import { DatabaseManager } from '@/lib/DbManager';
+import { DatabaseManager } from '@/lib/dbManager';
 import {
   initUtxoWorker,
   onUtxoWorkerMessage,

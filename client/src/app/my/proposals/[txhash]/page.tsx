@@ -1,7 +1,7 @@
 'use client';
-import FormDetails from '@/app/(home)/proposals/components/FormDetails';
-import FormFunds from '@/app/(home)/proposals/components/FormFunds';
-import FormReview from '@/app/(home)/proposals/components/FormReview';
+import FormDetails from '@/app/(home)/proposals/_components/FormDetails';
+import FormFunds from '@/app/(home)/proposals/_components/FormFunds';
+import FormReview from '@/app/(home)/proposals/_components/FormReview';
 import Button from '@/components/atoms/Button';
 import Card, { CardContent } from '@/components/atoms/Card';
 import Chip from '@/components/atoms/Chip';
@@ -11,10 +11,10 @@ import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
 import TopNav from '@/components/navigation/TabNav';
 import ProposalDescription from '@/components/ProposalDescription';
-import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
+import MultisigProgressTracker from '@/components/signature-progress/MultisigProgressTracker';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useApp } from '@/context';
+import { useDatabase, useWalletManager } from '@/hooks';
 import { parseProposalDatum } from '@/utils';
 import { storageApiClient } from '@/utils/storageApiClient';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
@@ -26,7 +26,8 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
-  const { proposalIntents, dbLoading, userAddress } = useApp();
+  const { address: userAddress } = useWalletManager();
+  const { proposalIntents, dbLoading } = useDatabase();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
   const [adminDecisionData, setAdminDecisionData] =

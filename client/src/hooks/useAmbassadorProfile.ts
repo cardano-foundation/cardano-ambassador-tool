@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AmbassadorProfile } from '../types/AmbassadorProfile';
+import { AmbassadorProfile } from '../types/ambassadorProfile';
 
 interface UseAmbassadorProfileReturn {
   profile: AmbassadorProfile | null;

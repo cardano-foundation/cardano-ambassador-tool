@@ -1,6 +1,6 @@
 'use client';
 
-import { AmbassadorProfile } from '@/types/AmbassadorProfile';
+import { AmbassadorProfile } from '@/types/ambassadorProfile';
 import { cn } from '@/utils/utils';
 import {
   CheckCircle,

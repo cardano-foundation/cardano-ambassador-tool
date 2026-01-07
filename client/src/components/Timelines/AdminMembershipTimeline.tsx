@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import Title from '../atoms/Title';
 import FinalizeDecision from '../FinalizeDecision';
 import ApproveReject from '../RejectApprove';
-import MultisigProgressTracker from '../SignatureProgress/MultisigProgressTracker';
+import MultisigProgressTracker from '../signature-progress/MultisigProgressTracker';
 
 type ExtendedMemberData = MemberData & {
   txHash?: string;

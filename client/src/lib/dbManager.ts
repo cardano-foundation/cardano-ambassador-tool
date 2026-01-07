@@ -1,7 +1,7 @@
 import { TransactionInfo } from '@meshsdk/core';
 import { Utxo } from '@types';
 import initSqlJs, { Database } from 'sql.js';
-import initSqlJsLocal from '../context/sql-wasm.js';
+import initSqlJsLocal from './sql-wasm.js';
 
 // ---------- Database Manager Class ----------
 export class DatabaseManager {

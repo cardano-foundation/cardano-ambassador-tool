@@ -5,13 +5,13 @@ import OnboardingSvg from '@/components/atoms/onboarding';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Footer from '@/components/Footer';
-import ToastContainer from '@/components/toast/toast';
-import { useApp } from '@/context/AppContext';
+import ToastContainer from '@/components/toast/Toast';
+import { useAppLoading } from '@/hooks';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 function OnboardingContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useApp();
+  const { shouldShowLoading } = useAppLoading();
   const pathname = usePathname();
 
   return (
