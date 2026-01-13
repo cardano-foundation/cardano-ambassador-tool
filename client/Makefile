@@ -40,7 +40,7 @@ setup-hooks:
 
 # Start S3 server using Docker
 s3-up:
-	docker compose up -d
+	docker-compose --env-file .env.local up -d
 
 # Start development
 dev: 
@@ -49,7 +49,7 @@ dev:
 
 # Stop S3 server (Docker)
 down:
-	docker compose down
+	docker-compose --env-file .env.local down
 
 # Build
 build:
