@@ -38,8 +38,13 @@ setup-hooks:
 	@chmod +x .husky/pre-commit .husky/commit-msg
 	@echo "Git hooks ready!"
 
+# Start s3 local server
+s3-up:
+	docker compose up -d
+
 # Start development
-dev:
+dev: 
+	$(MAKE) s3-up
 	npm run dev
 
 # Build
@@ -63,3 +68,6 @@ clean:
 	rm -rf .next
 	rm -f *.tsbuildinfo
 
+# Stopping docker-compose for local S3
+down:
+	docker compose down

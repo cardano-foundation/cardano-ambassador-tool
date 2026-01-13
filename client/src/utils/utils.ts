@@ -92,10 +92,10 @@ export function getProvider(network = 'preprod'): BlockfrostProvider {
 /**
  * Helper function to safely extract readable string from ByteString | List<ByteString>
  */
-const safeExtractString = (field: any, fieldName?: string): string => {  
+const safeExtractString = (field: any, fieldName?: string): string => {
   try {
     if (field?.list) {
-      const hexResult = plutusBSArrayToString(field);      
+      const hexResult = plutusBSArrayToString(field);
       return hexToString(hexResult);
     }
     if (field?.bytes) {
@@ -127,7 +127,7 @@ export function parseMembershipIntentDatum(
       !datum.fields ||
       !datum.fields[0]?.list ||
       !datum.fields[1]?.fields ||
-      datum.fields[1].fields.length < 7
+      datum.fields[1]?.fields?.length < 7
     ) {
       return null;
     }
@@ -250,20 +250,18 @@ export function parseProposalDatum(
     }
 
     const metadataPlutus: ProposalMetadata = datum.fields[3];
-    
+
     const metadata: ProposalData = {
       title: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
-      description: safeExtractString(
-        (metadataPlutus.fields[1] as ByteString),
-      ),
+      description: safeExtractString(metadataPlutus.fields[1] as ByteString),
       fundsRequested: hexToString(
         (metadataPlutus.fields[2] as ByteString).bytes,
       ),
       receiverWalletAddress: safeExtractString(
-        (metadataPlutus.fields[3] as ByteString),
+        metadataPlutus.fields[3] as ByteString,
       ),
       submittedByAddress: safeExtractString(
-        (metadataPlutus.fields[4] as ByteString),
+        metadataPlutus.fields[4] as ByteString,
       ),
       status: hexToString((metadataPlutus.fields[5] as ByteString).bytes),
     };
@@ -588,7 +586,7 @@ export function findAdmins(): string[] | null {
     .map((key) => deserializeAddress(process.env[key]!).pubKeyHash)
     .filter(Boolean);
 
-  if (!adminList.length) {
+  if (!adminList?.length) {
     return null;
   }
 
@@ -710,7 +708,7 @@ export async function getCounterUtxo(): Promise<UTxO | null> {
 
     if (!response.ok) {
       if (response.status === 404) {
-        return null; 
+        return null;
       }
       throw new Error('Failed to fetch counter UTxO');
     }
@@ -767,8 +765,25 @@ export function formatTimestamp(timestamp: Date) {
 
 export async function fetchTransactionTimestamp(txHash: string) {
   try {
+    // Validate transaction hash
+    if (!txHash || typeof txHash !== 'string') {
+      throw new Error('Transaction hash is required');
+    }
+
+    // Remove any whitespace
+    const cleanHash = txHash.trim();
+
+    // Validate hash format (should be 64 hex chars, optionally with 0x prefix)
+    const hashWithoutPrefix = cleanHash.startsWith('0x')
+      ? cleanHash.slice(2)
+      : cleanHash;
+
+    if (!/^[0-9a-fA-F]{64}$/.test(hashWithoutPrefix)) {
+      throw new Error(`Invalid transaction hash format: ${txHash}`);
+    }
+
     const blockfrost = getProvider();
-    const txDetails = await blockfrost.fetchTxInfo(txHash);
+    const txDetails = await blockfrost.fetchTxInfo(hashWithoutPrefix);
     const blockDetails = await blockfrost.fetchBlockInfo(txDetails.block);
 
     if (blockDetails && blockDetails.time) {
@@ -778,6 +793,7 @@ export async function fetchTransactionTimestamp(txHash: string) {
 
     return null;
   } catch (error) {
-    throw new Error('Error fetching transaction timestamp:' + error);
+    console.error('Error fetching transaction timestamp:', error);
+    throw new Error('Error fetching transaction timestamp: ' + error);
   }
 }

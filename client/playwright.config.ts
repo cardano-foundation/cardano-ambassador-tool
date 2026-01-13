@@ -1,8 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
-
+import dotenv from 'dotenv';
+import path from 'path/win32';
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
+dotenv.config({ path: path.resolve(__dirname, '.env.local') });
+
 export default defineConfig({
   testDir: './e2e',
   /* Run tests in files in parallel */
