@@ -1,74 +1,171 @@
-import fs from 'fs/promises';
-import path from 'path';
+// @/utils/storageApiClient.ts
+import { config } from 'dotenv';
+import { resolve } from 'path';
 
-const STORAGE_ROOT = path.join(process.cwd(), 'storage');
+// Load environment variables
+config({ path: resolve(process.cwd(), '.env.local') });
+config({ path: resolve(process.cwd(), '.env') });
 
-interface StorageOptions {
-  filename: string;
-  content: Record<string, any>;
-  subfolder?: string;
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, ListObjectsV2Command, HeadObjectCommand } from '@aws-sdk/client-s3';
+
+export class StorageApiError extends Error {
+  constructor(message: string, public status?: number) {
+    super(message);
+    this.name = 'StorageApiError';
+  }
 }
 
-export const storageService = {
+class S3StorageService {
+  private s3Client: S3Client;
+  private bucketName: string;
+
+  constructor(s3Client: S3Client, bucketName: string) {
+    this.s3Client = s3Client;
+    this.bucketName = bucketName;
+  }
+
+  private getKey(filename: string, subfolder?: string): string {
+    return subfolder ? `${subfolder}/${filename}` : filename;
+  }
+
   async save(
     filename: string,
     content: Record<string, any>,
-    subfolder: string,
+    subfolder: string
   ): Promise<void> {
-    const dir = subfolder ? path.join(STORAGE_ROOT, subfolder) : STORAGE_ROOT;
-    const filepath = path.join(dir, `${filename}.json`);
+    try {
+      const key = this.getKey(filename, subfolder);
+      const command = new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+        Body: JSON.stringify(content),
+        ContentType: 'application/json',
+      });
 
-    await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(filepath, JSON.stringify(content, null, 2));
-  },
+      await this.s3Client.send(command);
+    } catch (error) {
+      throw new StorageApiError(
+        `Failed to save file: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        500
+      );
+    }
+  }
 
   async get<T>(filename: string, subfolder?: string): Promise<T | null> {
-    const dir = subfolder ? path.join(STORAGE_ROOT, subfolder) : STORAGE_ROOT;
-
-    const filepath = path.join(dir, `${filename}.json`);
-
     try {
-      const data = await fs.readFile(filepath, 'utf-8');
-      return JSON.parse(data);
-    } catch {
-      return null;
+      const key = this.getKey(filename, subfolder);
+      const command = new GetObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+
+      const response = await this.s3Client.send(command);
+      const body = await response.Body?.transformToString();
+      
+      if (!body) {
+        return null;
+      }
+
+      return JSON.parse(body) as T;
+    } catch (error: any) {
+      if (error.name === 'NoSuchKey' || error.$metadata?.httpStatusCode === 404) {
+        return null;
+      }
+      throw new StorageApiError(
+        `Failed to get file: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        500
+      );
     }
-  },
+  }
 
   async exists(filename: string, subfolder?: string): Promise<boolean> {
-    const dir = subfolder ? path.join(STORAGE_ROOT, subfolder) : STORAGE_ROOT;
-    const filepath = path.join(dir, `${filename}.json`);
-
     try {
-      await fs.access(filepath);
+      const key = this.getKey(filename, subfolder);
+      const command = new HeadObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+
+      await this.s3Client.send(command);
       return true;
-    } catch {
-      return false;
+    } catch (error: any) {
+      if (error.name === 'NotFound' || error.$metadata?.httpStatusCode === 404) {
+        return false;
+      }
+      throw new StorageApiError(
+        `Failed to check file existence: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        500
+      );
     }
-  },
+  }
 
   async delete(filename: string, subfolder?: string): Promise<boolean> {
-    const dir = subfolder ? path.join(STORAGE_ROOT, subfolder) : STORAGE_ROOT;
-    const filepath = path.join(dir, `${filename}.json`);
-
     try {
-      await fs.unlink(filepath);
+      const key = this.getKey(filename, subfolder);
+      const command = new DeleteObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+
+      await this.s3Client.send(command);
       return true;
-    } catch {
-      return false;
+    } catch (error) {
+      throw new StorageApiError(
+        `Failed to delete file: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        500
+      );
     }
-  },
+  }
 
   async list(subfolder?: string): Promise<string[]> {
-    const dir = subfolder ? path.join(STORAGE_ROOT, subfolder) : STORAGE_ROOT;
-
     try {
-      const files = await fs.readdir(dir);
-      return files
-        .filter((f) => f.endsWith('.json'))
-        .map((f) => f.replace('.json', ''));
-    } catch {
-      return [];
+      const command = new ListObjectsV2Command({
+        Bucket: this.bucketName,
+        Prefix: subfolder ? `${subfolder}/` : undefined,
+      });
+
+      const response = await this.s3Client.send(command);
+      
+      if (!response.Contents) {
+        return [];
+      }
+
+      return response.Contents
+        .map(item => item.Key)
+        .filter((key): key is string => key !== undefined)
+        .map(key => {
+          if (subfolder && key.startsWith(`${subfolder}/`)) {
+            return key.substring(subfolder.length + 1);
+          }
+          return key;
+        });
+    } catch (error) {
+      throw new StorageApiError(
+        `Failed to list files: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        500
+      );
     }
-  },
-};
+  }
+}
+
+const s3Client = new S3Client({
+  region: process.env.S3_REGION || process.env.AWS_REGION || 'us-east-1',
+  endpoint: process.env.S3_ENDPOINT, 
+  forcePathStyle: !!process.env.S3_ENDPOINT, 
+  credentials: process.env.S3_ACCESS_KEY && process.env.S3_SECRET_KEY
+    ? {
+        accessKeyId: process.env.S3_ACCESS_KEY,
+        secretAccessKey: process.env.S3_SECRET_KEY,
+      }
+    : process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
+    ? {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      }
+    : undefined,
+});
+
+export const storageService = new S3StorageService(
+  s3Client,
+  process.env.NEXT_PUBLIC_S3_BUCKET_NAME || process.env.S3_BUCKET_NAME || 'your-bucket-name'
+);
