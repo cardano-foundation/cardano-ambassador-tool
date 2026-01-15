@@ -2,6 +2,8 @@ import { BlockfrostService } from '@/services/blockfrostService';
 import { storageService } from '@/services/storageService';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 type CounterUtxoData = {
   txHash: string;
   outputIndex: number;
@@ -21,7 +23,7 @@ const blockfrost = new BlockfrostService();
 export async function GET(req: NextRequest) {
   try {
     const counter = await storageService.get<CounterUtxoData>(
-      'counter_utxo',
+      'counter_utxo.json',
       'counter',
     );
 
@@ -84,7 +86,7 @@ export async function POST(req: NextRequest) {
 
     // Step 1: Backup existing counter_utxo (if any)
     const existing = await storageService.get<CounterUtxoData>(
-      'counter_utxo',
+      'counter_utxo.json',
       'counter',
     );
 
@@ -96,7 +98,7 @@ export async function POST(req: NextRequest) {
 
     // Step 2: Attempt to save the new UTxO
     await storageService.save(
-      'counter_utxo',
+      'counter_utxo.json',
       { txHash, outputIndex },
       'counter',
     );
@@ -116,7 +118,7 @@ export async function POST(req: NextRequest) {
     // Step 3: Rollback to last backup if something goes wrong
     if (backupData) {
       try {
-        await storageService.save('counter_utxo', backupData, 'counter');
+        await storageService.save('counter_utxo.json', backupData, 'counter');
       } catch (rollbackError) {
         console.error('Failed to rollback counter UTxO:', rollbackError);
       }
@@ -145,9 +147,11 @@ export async function DELETE(req: NextRequest) {
   try {
     // Create a backup before deleting
     const existing = await storageService.get<CounterUtxoData>(
-      'counter_utxo',
+      'counter_utxo.json',
       'counter',
     );
+
+    console.log({ existing });
 
     if (existing) {
       const backupKey = `counter_utxo_deleted_${Date.now()}`;

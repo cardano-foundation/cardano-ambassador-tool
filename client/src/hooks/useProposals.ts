@@ -32,7 +32,6 @@ const useProposals = () => {
   const completedProposals = useMemo(() => {
     return members.flatMap((mbr) => {
       const parsed = parseMemberDatum(mbr.plutusData!);
-      console.log({ parsed });
       
       if (!parsed) return [];
       return Array.from(parsed.member.completion!, ([proposal, value]) => {

@@ -169,6 +169,35 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         if (!counterUtxo) {
           throw new Error('Failed to fetch Counter UTxO');
         }
+
+        const constants = getCatConstants();
+        if (
+          counterUtxo.output.address !== constants.scripts.counter.spend.address
+        ) {
+          console.error('Counter UTxO mismatch:', {
+            expected: constants.scripts.counter.spend.address,
+            received: counterUtxo.output.address,
+            utxo: counterUtxo,
+          });
+          throw new Error(
+            `Counter UTxO address mismatch. Check console for details.`,
+          );
+        }
+
+        const counterNftPolicyId = constants.scripts.counter.mint.hash;
+        const hasCounterNft = counterUtxo.output.amount.some((asset) =>
+          asset.unit.startsWith(counterNftPolicyId),
+        );
+
+        if (!hasCounterNft) {
+          console.error('Counter UTxO missing NFT:', {
+            policyId: counterNftPolicyId,
+            assets: counterUtxo.output.amount,
+          });
+          throw new Error(
+            `Counter UTxO does not contain the Counter NFT. Check console for details.`,
+          );
+        }
       }
 
       const blockfrost = getProvider();
