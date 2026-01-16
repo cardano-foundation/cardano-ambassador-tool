@@ -1,13 +1,12 @@
 'use client';
 
 import { SingleRowStepper } from '@/components/atoms/Stepper';
-import { useApp } from '@/context/AppContext';
-import { useMemberValidation } from '@/hooks/useMemberValidation';
+import { useMemberValidation, useWalletManager } from '@/hooks';
 import { findMembershipIntentUtxo, smoothScrollToElement } from '@/utils';
 import { UTxO } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ConnectWallet from './_components/ConnectWallet';
 import IntentExists from './_components/IntentExists';
 import SelectToken from './_components/SelectToken';
@@ -19,8 +18,7 @@ function SignUp() {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(0);
   const [asset, setAsset] = useState<MemberTokenDetail | undefined>(undefined);
-  const { wallet: walletState } = useApp();
-  const { address, wallet } = walletState;
+  const { address, wallet } = useWalletManager();
   const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
   const [walletAssets, setWalletAssets] = useState<MemberTokenDetail[]>([]);
   const [selectedAssetName, setSelectedAssetName] = useState<string | null>(
@@ -35,7 +33,6 @@ function SignUp() {
     if (membershipIntent || memberData) {
       return <IntentExists goBack={() => goBack()} />;
     } else {
-      
       return walletAssets.length ? (
         <SelectToken
           goNext={() => goNext()}
@@ -105,7 +102,7 @@ function SignUp() {
     setDirection(1);
 
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-    
+
     // Smooth scroll to top of stepper
     smoothScrollToElement(scrollTargetRef);
   };
@@ -113,7 +110,7 @@ function SignUp() {
   const goBack = () => {
     setDirection(-1);
     setCurrentStep((prev) => Math.max(prev - 1, 0));
-    
+
     // Smooth scroll to top of stepper
     smoothScrollToElement(scrollTargetRef);
   };
@@ -177,7 +174,7 @@ function SignUp() {
   }
 
   return (
-    <div className="h-full w-full gap-8 p-6 lg:p-24">
+    <div className="h-full w-full gap-8 p-3 lg:p-24">
       <div ref={scrollTargetRef} className="mb-6 flex justify-center">
         <SingleRowStepper
           currentStep={currentStep}
@@ -190,7 +187,7 @@ function SignUp() {
       </div>
 
       {/* Slide transition wrapper */}
-      <div className="relative min-h-[400px] w-full overflow-hidden px-2">
+      <div className="relative min-h-[400px] w-full overflow-hidden lg:px-2">
         <AnimatePresence custom={direction} mode="wait" initial={false}>
           <motion.div
             key={currentStep}

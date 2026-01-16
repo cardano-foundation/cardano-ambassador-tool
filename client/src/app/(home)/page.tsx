@@ -3,7 +3,7 @@ import AmbassadorSearchBar from '@/components/AmbassadorSearchBar';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import { Pagination } from '@/components/Pagination';
-import { useApp } from '@/context';
+import { useDatabase } from '@/hooks';
 import { parseMemberDatum } from '@/utils';
 import { getCountryByCode } from '@/utils/locationData';
 import { Ambassador } from '@types';
@@ -16,7 +16,7 @@ export default function HomePage() {
   const [currentView, setCurrentView] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const { members } = useApp();
+  const { members } = useDatabase();
 
   const parsedMembers = useMemo(() => {
     return members

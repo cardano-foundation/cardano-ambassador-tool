@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { emitGlobalRefreshWithDelay, saveCounterUtxo } from '@/utils';
 import { storageApiClient } from '@/utils/storageApiClient';
 import { AdminDecisionData, TransactionConfirmationResult } from '@types';
@@ -20,7 +20,7 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
   adminDecisionData,
   onActivationComplete,
 }) => {
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message: string;
@@ -63,22 +63,20 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
     setSubmitError(null);
 
     try {
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
 
       if (!adminDecisionData.signedTx) {
         throw new Error('No signed transaction found in admin decision data');
       }
 
-      const txHash = await wallet!.submitTx(adminDecisionData.signedTx);
+      const txHash = await wallet.submitTx(adminDecisionData.signedTx);
 
       try {
         await saveCounterUtxo(
           txHash,
           adminDecisionData.counterUtxoTxIndex || 0,
-        );
-        console.log(
-          'Counter UTxO updated successfully with new transaction:',
-          txHash,
         );
       } catch (error) {
         console.error('Failed to update counter UTxO:', error);
@@ -105,7 +103,6 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
       if (txhash) {
         try {
           await storageApiClient.delete(txhash, 'submissions');
-          console.log('Admin decision data cleaned up successfully');
         } catch (error) {
           console.error('Failed to clean up admin decision data:', error);
         }
@@ -173,10 +170,6 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
               {adminDecisionData.selectedAdmins.length - getSignedCount()} more
               signature(s) before activation.
             </Paragraph>
-            <Paragraph size="xs" className="text-gray-400">
-              ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
-              required signatures)
-            </Paragraph>
           </div>
         )}
 
@@ -213,6 +206,15 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}
+        showNavigationOptions={isActivated}
+        navigationOptions={[
+          { label: 'View Members', url: '/', variant: 'primary' },
+          {
+            label: 'Back to Applications',
+            url: '/manage/membership-applications',
+            variant: 'outline',
+          },
+        ]}
       />
     </div>
   );

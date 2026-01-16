@@ -1,5 +1,6 @@
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
+use cocktail.{address_payment_key}
 use member/mint as member_mint
 use mocktail.{
   complete, mint, mock_policy_id, mock_tx_hash, mocktail_tx, ref_tx_in,
@@ -110,9 +111,18 @@ fn mock_add_member_tx(test_case: AddMemberTestCase) -> Transaction {
           |> add(mock_policy_id(999), "", 1),
       )
     |> tx_out_inline_datum(is_member_output_datum_correct, correct_member_datum)
-    |> tx_out_inline_datum(!is_member_output_datum_correct, incorrect_member_datum)
-    |> required_signer_hash(is_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_admins_signed, mock_third_admin)
+    |> tx_out_inline_datum(
+        !is_member_output_datum_correct,
+        incorrect_member_datum,
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_third_admin),
+      )
     |> complete()
 }
 
@@ -315,9 +325,18 @@ fn mock_remove_member_tx(test_case: RemoveMemberTestCase) -> Transaction {
       )
     |> tx_in(True, mock_tx_hash(0), 0, input_value, mock_member_address)
     |> mint(is_member_burnt, -1, mock_member_token, mock_counter_count)
-    |> required_signer_hash(is_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_admins_signed, mock_second_admin)
-    |> required_signer_hash(is_admins_signed, mock_third_admin)
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_second_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_third_admin),
+      )
     |> complete()
 }
 

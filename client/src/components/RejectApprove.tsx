@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { findAdminsFromOracle } from '@/lib/auth/roles';
 import {
   dbUtxoToMeshUtxo,
@@ -42,18 +42,17 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
   const [pendingDecision, setPendingDecision] = useState<
     'approve' | 'reject' | null
   >(null);
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
 
   // Function to check if current wallet has already signed
   const checkCurrentWalletSigned = async (adminDecision: AdminDecision) => {
     try {
-      if (!walletState || !adminDecision.signedTx) {
+      if (!wallet || !adminDecision.signedTx) {
         setCurrentWalletHasSigned(false);
         return;
       }
 
-      const wallet = await walletState.wallet;
-      const currentAddress = await wallet!.getChangeAddress();
+      const currentAddress = await wallet.getChangeAddress();
       const currentPubKeyHash = deserializeAddress(currentAddress).pubKeyHash;
       const signers = extractWitnesses(adminDecision.signedTx);
       const hasSigned = signers?.includes(currentPubKeyHash) || false;
@@ -109,13 +108,8 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
     setSubmitError(null);
 
     try {
-      if (!walletState || !adminDecision) {
+      if (!wallet || !adminDecision) {
         throw new Error('Wallet or admin decision not available');
-      }
-
-      const wallet = await walletState.wallet;
-      if (!wallet) {
-        throw new Error('Wallet not connected');
       }
 
       // Use partial signing (true) to combine with existing signatures
@@ -154,11 +148,11 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
   }
 
   async function initSignOff(decision: string, selectedAdmins: string[]) {
-    setSubmitError(null); 
+    setSubmitError(null);
 
     try {
       const oracleUtxo = await findOracleUtxo();
-      
+
       if (!oracleUtxo) {
         throw new Error('Failed to fetch Oracle UTxO');
       }
@@ -173,16 +167,20 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
       const blockfrost = getProvider();
 
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
 
-      const address = await wallet!.getChangeAddress();
+      const address = await wallet.getChangeAddress();
 
       // Use selected admins instead of all admins
-      const adminsPkh = selectedAdmins;
+      const adminsPkh = selectedAdmins.map(
+        (add: string) => deserializeAddress(add).pubKeyHash,
+      );
 
       const adminAction = new AdminActionTx(
         address,
-        wallet!,
+        wallet,
         blockfrost,
         getCatConstants(),
       );
@@ -242,7 +240,6 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
       setAdminDecision(data);
 
-      // Extract and send decision data to parent (this also checks signature status)
       await extractAndSendDecisionData(data);
     } catch (error) {
       console.error('Error creating decision:', error);
@@ -258,7 +255,6 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
   useEffect(() => {
     async function loadAdminDecision() {
       try {
-        // Reset signature status when loading new decision
         setCurrentWalletHasSigned(false);
 
         const decision = await storageApiClient.get<AdminDecision>(
@@ -267,7 +263,6 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         );
         setAdminDecision(decision);
 
-        // If we have an existing decision, extract and send data to parent
         if (decision) {
           await extractAndSendDecisionData(decision);
         }
@@ -400,7 +395,11 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         />
 
         <div className="text-base font-medium">
-          Review the {context === 'MembershipIntent' ? 'membership application' : 'proposal'} and make a decision:
+          Review the{' '}
+          {context === 'MembershipIntent'
+            ? 'membership application'
+            : 'proposal'}{' '}
+          and make a decision:
         </div>
         <div className="flex w-full gap-4">
           <Button
@@ -409,7 +408,9 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
             disabled={isProcessing || !intentUtxo!.txHash}
             className="text-primary-base! flex-1"
           >
-            {isProcessing ? 'Processing...' : `Reject ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
+            {isProcessing
+              ? 'Processing...'
+              : `Reject ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
           </Button>
           <Button
             variant="primary"
@@ -417,7 +418,9 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
             disabled={isProcessing || !intentUtxo!.txHash}
             className="flex-1"
           >
-            {isProcessing ? 'Processing...' : `Approve ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
+            {isProcessing
+              ? 'Processing...'
+              : `Approve ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
           </Button>
         </div>
       </div>

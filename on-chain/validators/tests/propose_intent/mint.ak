@@ -2,6 +2,7 @@ use aiken/cbor
 use aiken/crypto.{blake2b_256}
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
+use cocktail.{address_payment_key}
 use mocktail.{
   complete, mint, mock_policy_id, mock_tx_hash, mocktail_tx, ref_tx_in,
   ref_tx_in_inline_datum, required_signer_hash, tx_in, tx_out,
@@ -85,7 +86,13 @@ fn mock_propose_project_tx(test_case: ProposeProjectTestCase) -> Transaction {
         mock_propose_intent_token,
         cbor.serialise(mock_metadata) |> blake2b_256(),
       )
-    |> tx_in(is_token_inputed, mock_tx_hash(0), 0, input_value, mock_user_address)
+    |> tx_in(
+        is_token_inputed,
+        mock_tx_hash(0),
+        0,
+        input_value,
+        mock_user_address,
+      )
     |> ref_tx_in(
         is_member_inputed,
         mock_tx_hash(1),
@@ -577,8 +584,14 @@ fn mock_reject_proposal_tx(test_case: RejectProposalTestCase) -> Transaction {
         mock_propose_intent_token,
         cbor.serialise(mock_metadata) |> blake2b_256(),
       )
-    |> required_signer_hash(is_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_admins_signed, mock_third_admin)
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_third_admin),
+      )
     |> complete()
 }
 

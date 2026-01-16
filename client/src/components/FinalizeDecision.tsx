@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useTxConfirmation, useWalletManager } from '@/hooks';
 import { emitGlobalRefreshWithDelay, saveCounterUtxo } from '@/utils';
 import { storageApiClient } from '@/utils/storageApiClient';
 import { AdminDecisionData, TransactionConfirmationResult } from '@types';
@@ -7,7 +7,6 @@ import { useCallback, useMemo, useState } from 'react';
 import Button from './atoms/Button';
 import Paragraph from './atoms/Paragraph';
 import ErrorAccordion from './ErrorAccordion';
-import TransactionConfirmationOverlay from './TransactionConfirmationOverlay';
 
 interface FinalizeDecisionProps {
   txhash?: string;
@@ -22,7 +21,8 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
   context,
   onFinalizationComplete,
 }) => {
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
+  const { showTxConfirmation } = useTxConfirmation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message: string;
@@ -38,8 +38,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
     ).length;
   }, [adminDecisionData]);
 
-  const [showConfirmationOverlay, setShowConfirmationOverlay] = useState(false);
-  const [confirmedTxHash, setConfirmedTxHash] = useState<string | null>(null);
   const [isFinalized, setIsFinalized] = useState(false);
 
   const signatureRequirementsMet = useMemo(() => {
@@ -57,22 +55,26 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
       return {
         approveButton: 'Activate Membership',
         rejectButton: 'Execute Rejection',
-        pendingMessage: 'An admin needs to approve or reject this application first.',
-        rejectedMessage: 'This membership application has been rejected by an admin.',
+        pendingMessage:
+          'An admin needs to approve or reject this application first.',
+        rejectedMessage:
+          'This membership application has been rejected by an admin.',
         waitingMessage: 'Waiting for',
         readyMessage: '✓ All requirements met! Ready to activate membership.',
         completedMessage: '✓ Membership Activated!',
         overlayTitle: 'Activating Membership',
         overlayDescription: {
-          pending: 'Please wait while your membership activation is being confirmed on the blockchain.',
-          success: 'Your membership has been successfully activated! 🎉'
-        }
+          pending:
+            'Please wait while membership activation is being confirmed on the blockchain.',
+          success: 'Membership has been successfully activated! 🎉',
+        },
       };
     } else {
       return {
         approveButton: 'Execute Proposal Approval',
         rejectButton: 'Execute Proposal Rejection',
-        pendingMessage: 'An admin needs to approve or reject this proposal first.',
+        pendingMessage:
+          'An admin needs to approve or reject this proposal first.',
         rejectedMessage: 'This proposal has been rejected by an admin.',
         waitingMessage: 'Waiting for',
         readyMessage: `✓ All requirements met! Ready to ${adminDecisionData?.decision === 'approve' ? 'approve' : 'reject'} proposal.`,
@@ -80,8 +82,8 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
         overlayTitle: `${adminDecisionData?.decision === 'approve' ? 'Approving' : 'Rejecting'} Proposal`,
         overlayDescription: {
           pending: `Please wait while your proposal ${adminDecisionData?.decision === 'approve' ? 'approval' : 'rejection'} is being confirmed on the blockchain.`,
-          success: `Your proposal has been successfully ${adminDecisionData?.decision === 'approve' ? 'approved' : 'rejected'}! 🎉`
-        }
+          success: `Your proposal has been successfully ${adminDecisionData?.decision === 'approve' ? 'approved' : 'rejected'}! 🎉`,
+        },
       };
     }
   };
@@ -97,7 +99,9 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
     setSubmitError(null);
 
     try {
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
 
       if (!adminDecisionData.signedTx) {
         throw new Error('No signed transaction found in admin decision data');
@@ -111,17 +115,33 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
             txHash,
             adminDecisionData.counterUtxoTxIndex || 0,
           );
-          console.log(
-            'Counter UTxO updated successfully with new transaction:',
-            txHash,
-          );
         } catch (error) {
           console.error('Failed to update counter UTxO:', error);
         }
       }
 
-      setConfirmedTxHash(txHash);
-      setShowConfirmationOverlay(true);
+      showTxConfirmation({
+        txHash,
+        title: labels.overlayTitle,
+        description: labels.overlayDescription.pending,
+        onConfirmed: handleTransactionConfirmed,
+        onTimeout: handleTransactionTimeout,
+        showNavigationOptions:
+          context === 'ProposalIntent' &&
+          adminDecisionData?.decision === 'approve',
+        navigationOptions: [
+          {
+            label: 'Go to Treasury Signoff',
+            url: '/manage/treasury-signoffs',
+            variant: 'primary',
+          },
+          {
+            label: 'Back to Proposals',
+            url: '/manage/proposal-applications',
+            variant: 'outline',
+          },
+        ],
+      });
     } catch (error) {
       console.error('Failed to submit transaction:', error);
       setSubmitError({
@@ -141,7 +161,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
       if (txhash) {
         try {
           await storageApiClient.delete(txhash, 'submissions');
-          console.log('Admin decision data cleaned up successfully');
         } catch (error) {
           console.error('Failed to clean up admin decision data:', error);
         }
@@ -155,11 +174,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
   const handleTransactionTimeout = (
     result: TransactionConfirmationResult,
   ) => {};
-
-  const handleCloseConfirmationOverlay = useCallback(() => {
-    setShowConfirmationOverlay(false);
-    setConfirmedTxHash(null);
-  }, []);
 
   return (
     <div className="space-y-4">
@@ -207,10 +221,7 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
               {adminDecisionData.selectedAdmins.length - getSignedCount()} more
               signature(s) before finalization.
             </Paragraph>
-            <Paragraph size="xs" className="text-gray-400">
-              ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
-              required signatures)
-            </Paragraph>
+      
           </div>
         )}
 
@@ -218,7 +229,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
         adminDecisionData?.decision === 'approve' &&
         !isFinalized && (
           <div className="space-y-1 text-center">
-            
             <Paragraph size="xs" className="text-green-500">
               ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
               required signatures complete)
@@ -231,20 +241,6 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
           {labels.completedMessage}
         </Paragraph>
       )}
-
-      <TransactionConfirmationOverlay
-        isVisible={showConfirmationOverlay}
-        txHash={confirmedTxHash || undefined}
-        title={labels.overlayTitle}
-        description={
-          isFinalized
-            ? labels.overlayDescription.success
-            : labels.overlayDescription.pending
-        }
-        onClose={handleCloseConfirmationOverlay}
-        onConfirmed={handleTransactionConfirmed}
-        onTimeout={handleTransactionTimeout}
-      />
     </div>
   );
 };

@@ -14,7 +14,7 @@ import { AdminDecision, AdminDecisionData, TimelineStep, Utxo } from '@types';
 import { useEffect, useState } from 'react';
 import Paragraph from '../atoms/Paragraph';
 import Title from '../atoms/Title';
-import MultisigProgressTracker from '../SignatureProgress/MultisigProgressTracker';
+import MultisigProgressTracker from '../signature-progress/MultisigProgressTracker';
 
 type ExtendedMemberData = MemberData & {
   txHash?: string;

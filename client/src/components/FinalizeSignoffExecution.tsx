@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { emitGlobalRefreshWithDelay } from '@/utils';
 import { storageApiClient } from '@/utils/storageApiClient';
 import { AdminDecisionData, TransactionConfirmationResult } from '@types';
@@ -20,7 +20,7 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
   adminDecisionData,
   onFinalizationComplete,
 }) => {
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message: string;
@@ -54,7 +54,9 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
     setIsSubmitting(true);
     setSubmitError(null);
     try {
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
       if (!adminDecisionData.signedTx) {
         throw new Error('No signed transaction found in admin decision data');
       }
@@ -122,16 +124,12 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
         </Paragraph>
       )}
 
-      {hasAdminDecision && !signatureRequirementsMet && (
+      {hasAdminDecision && !signatureRequirementsMet && adminDecisionData && (
         <div className="space-y-1 text-center">
           <Paragraph size="sm" className="text-gray-500">
             Waiting for{' '}
-            {adminDecisionData!.selectedAdmins.length - getSignedCount()} more
+            {adminDecisionData.selectedAdmins.length - getSignedCount()} more
             signature(s) before execution.
-          </Paragraph>
-          <Paragraph size="xs" className="text-gray-400">
-            ({getSignedCount()} of {adminDecisionData!.selectedAdmins.length}{' '}
-            required signatures)
           </Paragraph>
         </div>
       )}
@@ -163,6 +161,19 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}
+        showNavigationOptions={isFinalized}
+        navigationOptions={[
+          {
+            label: 'View Treasury',
+            url: '/manage/treasury-signoffs',
+            variant: 'primary',
+          },
+          {
+            label: 'View All Proposals',
+            url: '/proposals',
+            variant: 'outline',
+          },
+        ]}
       />
     </div>
   );

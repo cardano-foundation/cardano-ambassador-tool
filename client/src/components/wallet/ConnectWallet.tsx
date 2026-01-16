@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/Dialog';
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { shortenString } from '@/utils';
 import { useState } from 'react';
 import { toast } from '../toast/toast-manager';
@@ -17,7 +17,7 @@ import WalletList from './WalletList';
 
 const ConnectWallet = () => {
   const [open, setOpen] = useState(false);
-  const { wallet } = useApp();
+  const wallet = useWalletManager();
 
   const { isConnected, address, disconnectWallet, clearError } = wallet;
 
@@ -61,6 +61,17 @@ const ConnectWallet = () => {
 
         <div className="flex h-full w-full flex-col gap-6 p-6">
           <WalletList />
+          
+          <div className="flex justify-center">
+            <Button
+              variant="primary"
+              disabled={!isConnected}
+              onClick={() => setOpen(false)}
+              className="min-w-20"
+            >
+              Done
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -43,7 +43,10 @@ const ErrorAccordion = ({
 
   if (!isVisible) {
     return (
-      <div className="overflow-hidden transition-all duration-300 ease-out" style={{ maxHeight: 0, opacity: 0 }} />
+      <div
+        className="overflow-hidden transition-all duration-300 ease-out"
+        style={{ maxHeight: 0, opacity: 0 }}
+      />
     );
   }
 
@@ -55,8 +58,8 @@ const ErrorAccordion = ({
   const shouldShowToggle = hasDetails && details !== message;
 
   const baseClasses = cn(
-    'w-full border rounded-lg p-4 shadow-md transition-all duration-300 ease-out',
-    'transform translate-y-0 opacity-100',
+    'w-full max-w-full border rounded-lg p-4 shadow-md transition-all duration-300 ease-out',
+    'transform translate-y-0 opacity-100 overflow-hidden',
     variant === 'error'
       ? 'bg-red-50 border-red-200 text-red-800'
       : 'bg-yellow-50 border-yellow-200 text-yellow-800',
@@ -64,9 +67,12 @@ const ErrorAccordion = ({
   );
 
   return (
-    <div className="w-full transition-all duration-300 ease-out overflow-hidden" style={{ maxHeight: '500px' }}>
+    <div
+      className="w-full max-w-full overflow-hidden transition-all duration-300 ease-out"
+      style={{ maxHeight: '500px' }}
+    >
       <div className={baseClasses}>
-        <div className="flex items-start gap-3">
+        <div className="flex min-w-0 items-start gap-3">
           {/* Error Icon */}
           <div className="mt-0.5 flex-shrink-0">
             <AlertTriangle
@@ -78,10 +84,12 @@ const ErrorAccordion = ({
           </div>
 
           {/* Content */}
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 overflow-hidden">
             {/* Main Message */}
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-sm leading-5 font-medium">{message}</p>
+            <div className="flex min-w-0 items-start justify-between gap-2">
+              <p className="overflow-wrap-anywhere min-w-0 flex-1 text-sm leading-5 font-medium break-words">
+                {message}
+              </p>
 
               {/* Dismiss Button */}
               {onDismiss && (
@@ -130,13 +138,13 @@ const ErrorAccordion = ({
               >
                 <div
                   className={cn(
-                    'max-h-40 overflow-auto rounded-md p-3 font-mono text-xs',
+                    'max-h-40 w-full overflow-auto rounded-md p-3 font-mono text-xs',
                     variant === 'error'
                       ? 'bg-red-100 text-red-700'
                       : 'bg-yellow-100 text-yellow-700',
                   )}
                 >
-                  <pre className="break-words whitespace-pre-wrap">
+                  <pre className="overflow-wrap-anywhere word-break w-full max-w-full break-words break-all whitespace-pre-wrap">
                     {details}
                   </pre>
                 </div>

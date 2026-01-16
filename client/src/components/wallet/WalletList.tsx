@@ -1,6 +1,6 @@
 'use client';
 
-import { useApp } from '@/context';
+import { useNetworkValidation, useUserAuth, useWalletManager } from '@/hooks';
 import { shortenString } from '@/utils';
 import { AlertTriangle, X } from 'lucide-react';
 import Image from 'next/image';
@@ -9,7 +9,16 @@ import Button from '../atoms/Button';
 import { toast } from '../toast/toast-manager';
 
 const WalletList = () => {
-  const { wallet, isNetworkValid, logout } = useApp();
+  const wallet = useWalletManager();
+  const { isNetworkValid } = useNetworkValidation({
+    wallet: wallet.wallet,
+    isConnected: wallet.isConnected,
+  });
+  const { logout } = useUserAuth({
+    wallet: wallet.wallet,
+    address: wallet.address,
+    isConnected: wallet.isConnected,
+  });
 
   const {
     availableWallets,

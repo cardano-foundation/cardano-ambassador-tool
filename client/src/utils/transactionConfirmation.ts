@@ -2,8 +2,11 @@
 // Transaction Confirmation Utilities
 // ============================================================================
 
-import { TransactionConfirmationOptions, TransactionConfirmationResult } from "@types";
-import { getProvider } from "./utils";
+import {
+  TransactionConfirmationOptions,
+  TransactionConfirmationResult,
+} from '@types';
+import { getProvider } from './utils';
 
 /**
  * Polls Blockfrost to check if a transaction is confirmed on-chain

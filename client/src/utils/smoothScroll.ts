@@ -6,25 +6,21 @@ import { RefObject } from 'react';
  * @param options - Optional scroll behavior configuration
  */
 export const smoothScrollToElement = (
-  targetRef: RefObject<HTMLElement|null>,
+  targetRef: RefObject<HTMLElement | null>,
   options: {
     delay?: number;
     behavior?: ScrollBehavior;
     block?: ScrollLogicalPosition;
-  } = {}
+  } = {},
 ) => {
-  const {
-    delay = 100,
-    behavior = 'smooth',
-    block = 'start'
-  } = options;
+  const { delay = 100, behavior = 'smooth', block = 'start' } = options;
 
   requestAnimationFrame(() => {
     setTimeout(() => {
       if (targetRef.current) {
-        targetRef.current.scrollIntoView({ 
-          behavior, 
-          block 
+        targetRef.current.scrollIntoView({
+          behavior,
+          block,
         });
       }
     }, delay);
@@ -39,18 +35,15 @@ export const smoothScrollToTop = (
   options: {
     delay?: number;
     behavior?: ScrollBehavior;
-  } = {}
+  } = {},
 ) => {
-  const {
-    delay = 100,
-    behavior = 'smooth'
-  } = options;
+  const { delay = 100, behavior = 'smooth' } = options;
 
   requestAnimationFrame(() => {
     setTimeout(() => {
       window.scrollTo({
         top: 0,
-        behavior
+        behavior,
       });
     }, delay);
   });

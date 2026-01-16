@@ -1,5 +1,6 @@
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
+use cocktail.{address_payment_key}
 use mocktail.{
   complete, mint, mock_policy_id, mock_tx_hash, mocktail_tx, ref_tx_in,
   ref_tx_in_inline_datum, required_signer_hash, tx_in, tx_in_inline_datum,
@@ -93,8 +94,14 @@ fn mock_add_proposal_tx(test_case: MintProposalTestCase) -> Transaction {
         !is_proposal_output_datum_correct,
         incorrect_proposal_datum,
       )
-    |> required_signer_hash(is_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_admins_signed, mock_third_admin)
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_third_admin),
+      )
     |> complete()
 }
 

@@ -16,7 +16,7 @@ export const MapsIcon: React.FC<MapsIconProps> = ({
   backgroundColor = '#ef4444',
   className = '',
   cardanoIconSize = 30,
-  cardanoIconColor = "#ffffff",
+  cardanoIconColor = '#ffffff',
 }) => {
   const height = Math.round(size * (76 / 66));
   const scale = size / 66;
@@ -24,8 +24,8 @@ export const MapsIcon: React.FC<MapsIconProps> = ({
   const circleCenterX = 33;
   const circleCenterY = 33;
 
-  const iconX = circleCenterX - (cardanoIconSize / 2);
-  const iconY = circleCenterY - (cardanoIconSize / 2);
+  const iconX = circleCenterX - cardanoIconSize / 2;
+  const iconY = circleCenterY - cardanoIconSize / 2;
 
   return (
     <svg
@@ -50,12 +50,9 @@ export const MapsIcon: React.FC<MapsIconProps> = ({
           fill={pinColor}
         />
       </g>
-      
+
       <g transform={`translate(${iconX}, ${iconY})`}>
-        <CardanoIcon 
-          size={cardanoIconSize} 
-          color={cardanoIconColor}
-        />
+        <CardanoIcon size={cardanoIconSize} color={cardanoIconColor} />
       </g>
 
       <defs>

@@ -1,40 +1,46 @@
-"use client";
+'use client';
 
-import { Table, ColumnDef } from '@/components/Table/Table';
 import Button from '@/components/atoms/Button';
-import Link from 'next/link';
 import Chip from '@/components/atoms/Chip';
-import Title from '@/components/atoms/Title';
-import { useState } from 'react';
 import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
+import Select from '@/components/atoms/Select';
+import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
-import { routes } from '@/config/routes';
-import { useApp } from '@/context';
-import { parseProposalDatum } from '@/utils';
-import { getCurrentNetworkConfig } from '@/config/cardano';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-
-type Proposal = {
-  id: number;
-  title: string;
-  details: string;
-  receiverWalletAddress: string;
-  submittedByAddress: string;
-  fundsRequested: number;
-  status: 'pending' | 'submitted' | 'under_review' | 'approved' | 'rejected';
-  txHash: string;
-};
+import { ColumnDef, Table } from '@/components/Table/Table';
+import { getCurrentNetworkConfig } from '@/config/cardano';
+import { routes } from '@/config/routes';
+import useProposals from '@/hooks/useProposals';
+import { formatAdaAmount } from '@/utils';
+import { Proposal } from '@types';
+import { ArrowUpRightFromSquare } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 const getChipVariant = (status: Proposal['status']) => {
   switch (status) {
-    case 'pending': return 'warning';
-    case 'submitted': return 'default';
-    case 'under_review': return 'default';
-    case 'approved': return 'success';
-    case 'rejected': return 'error';
-    default: return 'inactive';
+    case 'pending':
+      return 'warning';
+    case 'submitted':
+      return 'default';
+    case 'under_review':
+      return 'default';
+    case 'approved':
+      return 'success';
+    case 'rejected':
+      return 'error';
+    case 'signoff_pending':
+      return 'success';
+    case 'paid_out':
+      return 'success';
+    default:
+      return 'inactive';
   }
+};
+
+const formatStatus = (status: Proposal['status']) => {
+  return status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
 };
 
 const truncateToWords = (text: string, wordCount: number = 8) => {
@@ -62,17 +68,25 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     ),
   },
   {
-    header: 'Proposal details',
-    accessor: 'details',
+    header: 'Project details',
+    accessor: 'url',
     sortable: false,
     cell: (value) => {
-      const truncatedValue = truncateToWords(value, 10);
+      if (!value)
+        return (
+          <span className="text-muted-foreground text-sm">No details</span>
+        );
       return (
-        <div className="max-w-[400px] text-sm">
-          <RichTextDisplay 
-            content={truncatedValue} 
-            className="prose-sm [&_p]:mb-1 [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_strong]:font-semibold" 
-          />
+        <div className="max-w-[300px] text-sm">
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-base flex items-center gap-1 hover:underline"
+          >
+            See more
+            <ArrowUpRightFromSquare className="size-4" />
+          </a>
         </div>
       );
     },
@@ -83,7 +97,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     sortable: true,
     cell: (value) => (
       <span className="text-sm">
-        {value ? `$${value.toLocaleString()}` : 'N/A'}
+        {value && value !== '0' ? formatAdaAmount(value) : 'N/A'}
       </span>
     ),
   },
@@ -104,57 +118,73 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     header: 'Status',
     accessor: 'status',
     sortable: true,
-    cell: (value) => (
-      <Chip variant={getChipVariant(value)}>
-        {value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
-      </Chip>
+    cell: (value, row) => (
+      <div className="space-y-1">
+        <Chip variant={getChipVariant(value)} className="text-nowrap">
+          {formatStatus(value)}
+        </Chip>
+      </div>
     ),
   },
   {
     header: 'Action',
     sortable: false,
-    cell: (value, row) => (
-      <Link href={routes.proposal(row.txHash)}>
-        <Button variant="primary" size="sm">
-          View
-        </Button>
-      </Link>
-    ),
+    cell: (value, row) => {
+      if (row.txHash) {
+        return (
+          <Link href={routes.proposal(row.txHash)}>
+            <Button variant="primary" size="sm">
+              View
+            </Button>
+          </Link>
+        );
+      } else if (row.status === 'paid_out' && row.slug) {
+        return (
+          <Link href={routes.completedProposal(row.slug)}>
+            <Button variant="primary" size="sm">
+              View
+            </Button>
+          </Link>
+        );
+      }
+      return '';
+    },
   },
 ];
 
 export default function ProposalsPage() {
-  const { proposals, dbLoading } = useApp();
+  const { allProposals, loading } = useProposals();
+  const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>(
+    'all',
+  );
 
-  if (dbLoading) {
+  if (loading) {
     return <SimpleCardanoLoader />;
   }
 
-  const proposalsData: Proposal[] = proposals
-    .map((utxo, idx) => {
-      if (!utxo.plutusData) return null;
+  // Apply status filter
+  const filteredProposals =
+    statusFilter === 'all'
+      ? allProposals
+      : allProposals.filter((proposal) => proposal.status === statusFilter);
 
-      try {
-        const { metadata } = parseProposalDatum(utxo.plutusData)!;
+  // Count by status for display
+  const statusCounts = {
+    pending: allProposals.filter((p) => p.status === 'pending').length,
+    approved: allProposals.filter((p) => p.status === 'approved').length,
+    signoff_pending: allProposals.filter((p) => p.status === 'signoff_pending')
+      .length,
+    paid_out: allProposals.filter((p) => p.status === 'paid_out').length,
+  };
 
-        if (!metadata) return null;
-
-        return {
-          id: idx + 1,
-          title: metadata.title || 'Untitled Proposal',
-          details: metadata.description || 'No description provided',
-          receiverWalletAddress: metadata.receiverWalletAddress || '',
-          submittedByAddress: metadata.submittedByAddress || '',
-          fundsRequested: parseInt(metadata.fundsRequested || '0'),
-          status: 'approved' as const,
-          txHash: utxo.txHash,
-        };
-      } catch (error) {
-        console.error('Error parsing proposal datum:', error);
-        return null;
-      }
-    })
-    .filter(Boolean) as Proposal[];
+  const statusOptions = [
+    { value: 'all', label: 'All Statuses' },
+    { value: 'paid_out', label: 'Paid Out' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'signoff_pending', label: 'Awaiting Signoff' },
+    { value: 'rejected', label: 'Rejected' },
+  ];
 
   return (
     <div className="bg-background min-h-screen">
@@ -162,10 +192,11 @@ export default function ProposalsPage() {
         <div className="space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-2">
-              <Title level="5" className="text-foreground">Community Proposals</Title>
-              <Paragraph className="text-sm text-muted-foreground">
-                Browse and discover proposals submitted by Cardano ambassadors
-                {proposalsData.length > 0 && ` - ${proposalsData.length} found`}
+              <Title level="5" className="text-foreground">
+                Community Proposals
+              </Title>
+              <Paragraph className="text-muted-foreground text-sm">
+                Browse and discover all proposals at every stage of the process.
               </Paragraph>
             </div>
             <Link href={routes.newProposal} className="w-full sm:w-auto">
@@ -174,12 +205,35 @@ export default function ProposalsPage() {
               </Button>
             </Link>
           </div>
-          
+
+          {/* Status Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground text-sm">
+              Filter by status:
+            </span>
+            <Select
+              value={statusFilter}
+              onValueChange={(value) =>
+                setStatusFilter(value as typeof statusFilter)
+              }
+              options={statusOptions.map((option) => ({
+                ...option,
+                label:
+                  option.value !== 'all' &&
+                  statusCounts[option.value as keyof typeof statusCounts] > 0
+                    ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
+                    : option.label,
+              }))}
+              placeholder="Select status..."
+              className="w-48"
+            />
+          </div>
+
           {/* Mobile-optimized scrollable table container */}
           <div className="w-full overflow-x-auto">
             <div className="min-w-[800px]">
               <Table
-                data={proposalsData}
+                data={filteredProposals}
                 columns={proposalColumns}
                 pageSize={10}
                 searchable={true}

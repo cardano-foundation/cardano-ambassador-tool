@@ -6,7 +6,6 @@ import Layout from "@/components/Layout";
 
 import { getProvider } from "@/utils/utils";
 
-import { deserializeAddress, stringToHex } from "@meshsdk/core";
 import {
   CATConstants,
   SetupTx,
@@ -235,10 +234,10 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const adminPk = admins.map((add: string) => deserializeAddress(add).pubKeyHash);
+
           const result = await setup.mintSpendOracleNFT(
             paramUtxo,
-            adminPk,
+            admins,
             adminTenure,
             Number(multiSigThreshold)
           );
@@ -314,13 +313,21 @@ export default function Home() {
             getCatConstants()
           );
 
-          const metadata: MembershipMetadata = membershipMetadata(
-            userData.walletAddress,
-            stringToHex(userData.fullName),
-            stringToHex(userData.displayName),
-            stringToHex(userData.emailAddress),
-            stringToHex(userData.bio)
-          );
+          const metadata: MembershipMetadata = membershipMetadata({
+            walletAddress:
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            fullName: "ken",
+            displayName: "kensidan",
+            emailAddress: "ken@a.com",
+            bio: "bio",
+            country: "hk",
+            city: "hk",
+            x_handle: "kkk",
+            github: "a",
+            discord: "ksss",
+            spo_id: "",
+            drep_id: "",
+          });
 
           console.log({
             oracleUtxo,
@@ -333,8 +340,8 @@ export default function Home() {
           const result = await userAction.applyMembership(
             oracleUtxo,
             tokenUtxo,
-            userData.tokenPolicyId,
-            userData.tokenAssetName,
+            "c76c35088ac826c8a0e6947c8ff78d8d4495789bc729419b3a334305",
+            "32323274657374696e6732",
             metadata
           );
           setResult(JSON.stringify(result, null, 2));
@@ -372,14 +379,70 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const metadata = proposalMetadata(stringToHex(params.projectUrl));
-          
+          const metadata = proposalMetadata({
+            title: "test 100",
+            url: "abc.com",
+            fundsRequested: "100000000",
+            receiverWalletAddress:
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            submittedByAddress:
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            status: "ok",
+          });
+
           const result = await userAction.proposeProject(
             oracleUtxo,
             tokenUtxo,
             memberUtxo,
-            Number(params.fundRequested),
-            params.receiver,
+            Number(100000000),
+            "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            metadata
+          );
+          setResult(JSON.stringify(result, null, 2));
+          break;
+        }
+
+        case "updateProject": {
+          // Find member UTxO by wallet address
+          const userAddress = await wallet.getChangeAddress();
+
+          // Find token UTxO by member UTxO
+          const intentUtxos = await import("@/utils/utils").then((utils) =>
+            utils.fetchProposeIntentUtxos()
+          );
+
+          // Find oracle UTxO
+          const oracleUtxos = await blockfrost.fetchUTxOs(
+            ORACLE_TX_HASH,
+            ORACLE_OUTPUT_INDEX
+          );
+          const oracleUtxo = oracleUtxos[0];
+          if (!oracleUtxo) {
+            throw new Error("Failed to fetch required oracle UTxO");
+          }
+          const userAction = new UserActionTx(
+            userAddress,
+            wallet,
+            blockfrost,
+            getCatConstants()
+          );
+          const metadata = proposalMetadata({
+            title: "test update",
+            url: "def.com",
+            fundsRequested: "100000000",
+            receiverWalletAddress:
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            submittedByAddress:
+              "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
+            status: "ok",
+          });
+
+          const result = await userAction.updateProposalIntentMetadata(
+            oracleUtxo,
+            intentUtxos[0],
+            0,
+            Number(100000000),
+            "addr_test1qr77kjlsarq8wy22g4flrcznjh5lkug5mvth7qhhkewgmezwvc8hnnjzy82j5twzf8dfy5gjk04yd09t488ys9605dvq4ymc4x",
             metadata
           );
           setResult(JSON.stringify(result, null, 2));
@@ -417,13 +480,20 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const metadata = membershipMetadata(
-            params.walletAddress,
-            stringToHex(params.fullName),
-            stringToHex(params.displayName),
-            stringToHex(params.emailAddress),
-            stringToHex(params.bio)
-          );
+          const metadata = membershipMetadata({
+            walletAddress: params.walletAddress,
+            fullName: params.fullName,
+            displayName: params.displayName,
+            emailAddress: params.emailAddress,
+            bio: params.bio,
+            country: "",
+            city: "",
+            x_handle: "",
+            github: "",
+            discord: "",
+            spo_id: "",
+            drep_id: "",
+          });
           const result = await userAction.updateMembershipIntentMetadata(
             oracleUtxo,
             tokenUtxo,
@@ -465,13 +535,20 @@ export default function Home() {
             blockfrost,
             getCatConstants()
           );
-          const metadata = membershipMetadata(
-            params.walletAddress,
-            stringToHex(params.fullName),
-            stringToHex(params.displayName),
-            stringToHex(params.emailAddress),
-            stringToHex(params.bio)
-          );
+          const metadata = membershipMetadata({
+            walletAddress: params.walletAddress,
+            fullName: params.fullName,
+            displayName: params.displayName,
+            emailAddress: params.emailAddress,
+            bio: params.bio,
+            country: "",
+            city: "",
+            x_handle: "",
+            github: "",
+            discord: "",
+            spo_id: "",
+            drep_id: "",
+          });
           const result = await userAction.updateMemberMetadata(
             oracleUtxo,
             memberUtxo,
@@ -829,6 +906,31 @@ export default function Home() {
                 }
               >
                 Propose Project
+              </button>
+            </div>
+
+            {/* Update Project */}
+            <div className="bg-gray-700 p-4 rounded">
+              <h4 className="text-lg font-medium mb-2">Update Project</h4>
+              {renderInputField(
+                "Fund Requested",
+                fundRequested,
+                setFundRequested,
+                "number"
+              )}
+              {renderInputField("Receiver", receiver, setReceiver)}
+              {renderInputField("Project Details", projectUrl, setProjectUrl)}
+              <button
+                className="bg-green-500 hover:bg-green-600 p-2 rounded w-full"
+                onClick={() =>
+                  handleAction("updateProject", {
+                    fundRequested,
+                    receiver,
+                    projectUrl,
+                  })
+                }
+              >
+                Update Project
               </button>
             </div>
           </div>

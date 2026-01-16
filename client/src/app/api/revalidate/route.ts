@@ -11,7 +11,7 @@ type RevalidateRequestBody = {
   forumProfile?: string;
 };
 
-/** 
+/**
  * Manual cache invalidation endpoint
  *
  */
@@ -19,7 +19,15 @@ export async function POST(req: NextRequest) {
   try {
     const body: RevalidateRequestBody = await req.json();
 
-    const { tags, allUtxos, oracleAdmins, oracleUtxo, allOracle, allForumProfiles, forumProfile } = body;
+    const {
+      tags,
+      allUtxos,
+      oracleAdmins,
+      oracleUtxo,
+      allOracle,
+      allForumProfiles,
+      forumProfile,
+    } = body;
 
     const revalidated: string[] = [];
 

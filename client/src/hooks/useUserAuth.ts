@@ -1,13 +1,20 @@
 'use client';
 
-import { resolveRoles } from '@/lib/auth/roles';
-import {
-  createClientSession,
-  destroyClientSession,
-  getClientSession,
-} from '@/lib/auth/session';
+import { useCallback, useEffect } from 'react';
 import { IWallet } from '@meshsdk/core';
-import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import {
+  hydrateFromSession,
+  resolveUserRoles,
+  clearAuth,
+  selectIsAuthenticated,
+  selectIsAdmin,
+  selectAuthAddress,
+  selectAuthRoles,
+  selectIsAuthLoading,
+  selectIsHydrated,
+} from '@/lib/redux/features/auth';
+import { selectWallet } from '@/lib/redux/features/wallet';
 
 export type User = {
   wallet: IWallet;
@@ -21,73 +28,75 @@ interface UseUserAuthProps {
   isConnected: boolean;
 }
 
+/**
+ * User auth hook - now delegates to Redux for state management.
+ * Maintains backward compatibility with existing consumers.
+ */
 export function useUserAuth({
   wallet,
   address,
   isConnected,
 }: UseUserAuthProps) {
-  const [user, setUserState] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+
+  // Read from Redux
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isAdmin = useAppSelector(selectIsAdmin);
+  const authAddress = useAppSelector(selectAuthAddress);
+  const roles = useAppSelector(selectAuthRoles);
+  const isLoading = useAppSelector(selectIsAuthLoading);
+  const isHydrated = useAppSelector(selectIsHydrated);
+  const reduxWallet = useAppSelector(selectWallet);
+
+  // Hydrate from session on mount
+  useEffect(() => {
+    if (!isHydrated) {
+      dispatch(hydrateFromSession());
+    }
+  }, [dispatch, isHydrated]);
 
   // Handle wallet connection and session management
   useEffect(() => {
-    async function handleWalletConnection() {
-      if (!isConnected || !wallet || !address) {
-        setUserState(null);
-        destroyClientSession();
-        return;
-      }
+    if (!isHydrated) return;
 
-      // Check for existing session
-      const existingSession = getClientSession();
-      if (existingSession && existingSession.address === address) {
-        setUserState({
-          wallet,
-          roles: existingSession.roles.map((r: { role: string }) => r.role),
-          address: existingSession.address,
-        });
-        return;
+    if (!isConnected || !wallet || !address) {
+      // Only clear if we were previously authenticated
+      if (isAuthenticated) {
+        dispatch(clearAuth());
       }
-
-      // Resolve roles for new connection
-      setIsLoading(true);
-      try {
-        const roles = await resolveRoles(address);
-        createClientSession(address, roles);
-        setUserState({
-          wallet,
-          roles: roles.map((r) => r.role),
-          address,
-        });
-      } catch (error) {
-        setUserState(null);
-        destroyClientSession();
-      } finally {
-        setIsLoading(false);
-      }
+      return;
     }
 
-    handleWalletConnection();
-  }, [address, wallet, isConnected]);
-
-  const logout = async () => {
-    try {
-      localStorage.removeItem('user_session');
-      setUserState(null);
-    } catch (error) {
-      console.error('Failed to logout:', error);
+    // If already authenticated with same address, skip
+    if (isAuthenticated && authAddress === address) {
+      return;
     }
-  };
+
+    // Resolve roles for new connection
+    dispatch(resolveUserRoles(address));
+  }, [address, wallet, isConnected, isHydrated, isAuthenticated, authAddress, dispatch]);
+
+  const logout = useCallback(() => {
+    dispatch(clearAuth());
+  }, [dispatch]);
+
+  // Construct user object for backward compatibility
+  const user: User = isAuthenticated && authAddress && (wallet || reduxWallet)
+    ? {
+        wallet: (wallet || reduxWallet) as IWallet,
+        roles,
+        address: authAddress,
+      }
+    : null;
 
   return {
     user,
     isLoading,
     logout,
-    // Helper computed values
-    isAuthenticated: !!user && !!user.address,
-    userAddress: user?.address,
-    userRoles: user?.roles || [],
-    userWallet: user?.wallet,
-    isAdmin: user?.roles.includes('admin') || false,
+    isAuthenticated,
+    userAddress: authAddress || undefined,
+    userRoles: roles,
+    userWallet: wallet || reduxWallet || undefined,
+    isAdmin,
   };
 }

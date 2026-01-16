@@ -26,9 +26,10 @@ import {
   ProposalMetadata,
   scripts,
 } from '@sidan-lab/cardano-ambassador-tool';
-import { Utxo } from '@types';
+import { ProposalItem, Utxo } from '@types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { getCatConstants } from './constants';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -47,28 +48,18 @@ export function copyToClipboard(text: string) {
 
 const blockfrostService = new BlockfrostService();
 
-// Scripts and addresses
-const allScripts = scripts({
-  oracle: {
-    txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
-  },
-  counter: {
-    txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!),
-  },
-});
+const catConstants = getCatConstants();
 
 export const SCRIPT_ADDRESSES = {
-  MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
-  MEMBER_NFT: allScripts.member.spend.address,
-  PROPOSE_INTENT: allScripts.proposeIntent.spend.address,
-  PROPOSAL: allScripts.proposal.spend.address,
-  SIGN_OFF_APPROVAL: allScripts.signOffApproval.spend.address,
+  MEMBERSHIP_INTENT: catConstants.scripts.membershipIntent.spend.address,
+  MEMBER_NFT: catConstants.scripts.member.spend.address,
+  PROPOSE_INTENT: catConstants.scripts.proposeIntent.spend.address,
+  PROPOSAL: catConstants.scripts.proposal.spend.address,
+  SIGN_OFF_APPROVAL: catConstants.scripts.signOffApproval.spend.address,
 } as const;
 
 export const POLICY_IDS = {
-  MEMBER_NFT: allScripts.member.mint.hash,
+  MEMBER_NFT: catConstants.scripts.member.mint.hash,
 } as const;
 
 // ============================================================================
@@ -92,10 +83,10 @@ export function getProvider(network = 'preprod'): BlockfrostProvider {
 /**
  * Helper function to safely extract readable string from ByteString | List<ByteString>
  */
-const safeExtractString = (field: any, fieldName?: string): string => {  
+const safeExtractString = (field: any, fieldName?: string): string => {
   try {
     if (field?.list) {
-      const hexResult = plutusBSArrayToString(field);      
+      const hexResult = plutusBSArrayToString(field);
       return hexToString(hexResult);
     }
     if (field?.bytes) {
@@ -134,7 +125,6 @@ export function parseMembershipIntentDatum(
 
     const metadataPlutus: MembershipMetadata = datum.fields[1];
 
-    // //TODO update to v0.7
     try {
       serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
@@ -153,6 +143,10 @@ export function parseMembershipIntentDatum(
       bio: safeExtractString(metadataPlutus.fields[4]),
       country: safeExtractString(metadataPlutus.fields[5]),
       city: safeExtractString(metadataPlutus.fields[6]),
+      x_handle: safeExtractString(metadataPlutus.fields[7]),
+      github: safeExtractString(metadataPlutus.fields[8]),
+      discord: safeExtractString(metadataPlutus.fields[9]),
+      spo_id: safeExtractString(metadataPlutus.fields[10]),
     };
 
     return { datum: datum as MembershipIntentDatum, metadata };
@@ -190,27 +184,32 @@ export function parseMemberDatum(
       bio: safeExtractString(metadataPlutus.fields[4]),
       country: safeExtractString(metadataPlutus.fields[5]),
       city: safeExtractString(metadataPlutus.fields[6]),
+      x_handle: safeExtractString(metadataPlutus.fields[7]),
+      github: safeExtractString(metadataPlutus.fields[8]),
+      discord: safeExtractString(metadataPlutus.fields[9]),
+      spo_id: safeExtractString(metadataPlutus.fields[10]),
     };
 
     const policyId = (datum.fields[0].list[0] as ByteString).bytes;
     const assetName = (datum.fields[0].list[1] as ByteString).bytes;
 
     const completion: Map<ProposalData, number> = new Map();
-    datum.fields[1].map.forEach(
-      (item: { k: { fields: { bytes: string }[] }; v: { int: number } }) => {
-        return completion.set(
-          {
-            title: hexToString(item.k.fields[0].bytes),
-            description: hexToString(item.k.fields[1].bytes),
-            fundsRequested: hexToString(item.k.fields[2].bytes),
-            receiverWalletAddress: hexToString(item.k.fields[3].bytes),
-            submittedByAddress: hexToString(item.k.fields[4].bytes),
-            status: hexToString(item.k.fields[5].bytes),
-          },
-          Number(item.v.int),
-        );
-      },
-    );
+
+    datum.fields[1].map.forEach((item: ProposalItem) => {
+      if (!item.k || !item.v) return null;
+      
+      completion.set(
+        {
+          title: hexToString(item.k.fields[0].bytes || ''),
+          url: hexToString(item.k.fields[1].bytes || ''),
+          fundsRequested: hexToString(item.k.fields[2].bytes || ''),
+          receiverWalletAddress: serializeAddressObj(item.k.fields[3]),
+          submittedByAddress: serializeAddressObj(item.k.fields[4]),
+          status: hexToString(item.k.fields[5].bytes || ''),
+        },
+        Number(item.v.int),
+      );
+    });
 
     const fundReceived = Number(datum.fields[2].int);
 
@@ -233,9 +232,11 @@ export function parseMemberDatum(
  * @param plutusData The Plutus data to validate
  * @returns The parsed ProposalDatum and ProposalData, or null if invalid
  */
-export function parseProposalDatum(
-  plutusData: string,
-): { datum: ProposalDatum; metadata: ProposalData } | null {
+export function parseProposalDatum(plutusData: string): {
+  datum: ProposalDatum;
+  metadata: ProposalData;
+  memberIndex: number;
+} | null {
   try {
     const datum = deserializeDatum(plutusData);
     if (
@@ -249,25 +250,22 @@ export function parseProposalDatum(
       return null;
     }
 
+    const memberIndex = Number(datum.fields[2].int);
     const metadataPlutus: ProposalMetadata = datum.fields[3];
-    
+
+    const fundsRequestedLovelace = hexToString(
+      (metadataPlutus.fields[2] as ByteString).bytes,
+    );
+
     const metadata: ProposalData = {
       title: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
-      description: safeExtractString(
-        (metadataPlutus.fields[1] as ByteString),
-      ),
-      fundsRequested: hexToString(
-        (metadataPlutus.fields[2] as ByteString).bytes,
-      ),
-      receiverWalletAddress: safeExtractString(
-        (metadataPlutus.fields[3] as ByteString),
-      ),
-      submittedByAddress: safeExtractString(
-        (metadataPlutus.fields[4] as ByteString),
-      ),
+      url: safeExtractString(metadataPlutus.fields[1] as ByteString),
+      fundsRequested: lovelaceToAda(parseInt(fundsRequestedLovelace || '0')),
+      receiverWalletAddress: serializeAddressObj(metadataPlutus.fields[3]),
+      submittedByAddress: serializeAddressObj(metadataPlutus.fields[4]),
       status: hexToString((metadataPlutus.fields[5] as ByteString).bytes),
     };
-    return { datum: datum as ProposalDatum, metadata };
+    return { datum: datum as ProposalDatum, metadata, memberIndex };
   } catch (error) {
     console.error('Error parsing proposal datum:', error);
     return null;
@@ -389,9 +387,9 @@ export async function findMembershipIntentUtxo(
     const utxos = await blockfrostService.fetchAddressUTxOs(
       SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     );
+    
     const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) => {
-      try {
         if (!utxo.output.plutusData) return false;
         const datum: MembershipIntentDatum = deserializeDatum(
           utxo.output.plutusData,
@@ -399,10 +397,6 @@ export async function findMembershipIntentUtxo(
         const metadataPluts: MembershipMetadata = datum.fields[1];
         const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
         return walletAddress === address;
-      } catch (error) {
-        console.error('Error processing UTxO:', error);
-        return false;
-      }
     });
     return matchingUtxo || null;
   } catch (error) {
@@ -541,7 +535,6 @@ export async function findTokenUtxoByMembershipIntentUtxo(
     return tokenUtxo;
   } catch (error) {
     throw error;
-    return null;
   }
 }
 
@@ -676,6 +669,15 @@ export function shortenString(text: string, length = 8) {
  * @returns The converted MeshJS UTxO
  */
 export function dbUtxoToMeshUtxo(dbUtxo: Utxo): UTxO {
+  let amount;
+  if (typeof dbUtxo.amount === 'string') {
+    amount = JSON.parse(dbUtxo.amount || '[]');
+  } else if (Array.isArray(dbUtxo.amount)) {
+    amount = dbUtxo.amount;
+  } else {
+    amount = [];
+  }
+
   return {
     input: {
       txHash: dbUtxo.txHash,
@@ -683,7 +685,7 @@ export function dbUtxoToMeshUtxo(dbUtxo: Utxo): UTxO {
     },
     output: {
       address: dbUtxo.address,
-      amount: JSON.parse(dbUtxo.amount || '[]'),
+      amount: amount,
       dataHash: dbUtxo.dataHash || undefined,
       plutusData: dbUtxo.plutusData || undefined,
     },
@@ -710,7 +712,7 @@ export async function getCounterUtxo(): Promise<UTxO | null> {
 
     if (!response.ok) {
       if (response.status === 404) {
-        return null; 
+        return null;
       }
       throw new Error('Failed to fetch counter UTxO');
     }
@@ -780,4 +782,68 @@ export async function fetchTransactionTimestamp(txHash: string) {
   } catch (error) {
     throw new Error('Error fetching transaction timestamp:' + error);
   }
+}
+
+// ============================================================================
+// ADA/Lovelace Conversion Utilities
+// ============================================================================
+
+/**
+ * Converts ADA to Lovelace (multiplies by 1,000,000)
+ * @param ada The amount in ADA (can be string or number)
+ * @returns The amount in Lovelace
+ */
+export function adaToLovelace(ada: string | number): number {
+  const adaValue =
+    typeof ada === 'string' ? parseFloat(ada.replace(/[^0-9.-]/g, '')) : ada;
+  if (isNaN(adaValue)) {
+    throw new Error('Invalid ADA value');
+  }
+  return Math.round(adaValue * 1_000_000);
+}
+
+/**
+ * Converts Lovelace to ADA (divides by 1,000,000)
+ * @param lovelace The amount in Lovelace
+ * @returns The amount in ADA as a string with proper formatting
+ */
+export function lovelaceToAda(lovelace: number | string): string {
+  const lovelaceValue =
+    typeof lovelace === 'string' ? parseFloat(lovelace) : lovelace;
+  if (isNaN(lovelaceValue)) {
+    return '0';
+  }
+  const ada = lovelaceValue / 1_000_000;
+  return ada.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 6,
+  });
+}
+
+/**
+ * Formats ADA amount for display with ₳ symbol
+ * @param ada The amount in ADA (string or number)
+ * @returns Formatted string with ₳ symbol
+ */
+export function formatAdaAmount(ada: string | number): string {
+  const adaValue = typeof ada === 'string' ? ada : ada.toString();
+  return `₳ ${adaValue}`;
+}
+
+/**
+ * Parses user input that might contain 'ADA' text and extracts the numeric value
+ * @param input User input string that might contain 'ADA'
+ * @returns Clean numeric string or the original input if no 'ADA' found
+ */
+export function parseAdaInput(input: string): string {
+  if (!input) return '';
+
+  // Remove 'ADA', '₳', and extra whitespace, keep only numbers and decimal points
+  const cleaned = input
+    .replace(/ADA/gi, '')
+    .replace(/₳/g, '')
+    .replace(/[^0-9.-]/g, '')
+    .trim();
+
+  return cleaned || '';
 }

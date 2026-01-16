@@ -1,46 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback } from 'react';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import {
+  selectIsAppLoading,
+  selectIsInitialLoad,
+  selectShouldShowLoading,
+  updateLoadingState as updateLoadingStateAction,
+} from '@/lib/redux/features/ui';
 
+/**
+ * App loading hook - now delegates to Redux.
+ * Maintains backward compatibility with existing consumers.
+ */
 export function useAppLoading() {
-  const [isAppLoading, setIsAppLoading] = useState(true);
-  const [isInitialLoad] = useState(() => {
-    // Only show initial loading on full page reload, not on navigation
-    if (typeof window !== 'undefined') {
-      const timing = performance.getEntriesByType(
-        'navigation',
-      )[0] as PerformanceNavigationTiming;
-      return timing?.type === 'navigate' || timing?.type === 'reload';
-    }
-    return true;
-  });
+  const dispatch = useAppDispatch();
 
-  // App loading control - depends on external loading states
-  const updateLoadingState = (
-    dbLoading: boolean,
-    isThemeInitialized: boolean,
-    authLoading: boolean,
-  ) => {
-    if (!isInitialLoad) {
-      // Skip loading screen for navigation
-      setIsAppLoading(false);
-      return;
-    }
+  // Read from Redux
+  const isAppLoading = useAppSelector(selectIsAppLoading);
+  const isInitialLoad = useAppSelector(selectIsInitialLoad);
+  const shouldShowLoading = useAppSelector(selectShouldShowLoading);
 
-    // check if all resources are ready
-    if (!dbLoading && isThemeInitialized && !authLoading) {
-      setIsAppLoading(false);
+  // App loading control - dispatch to Redux
+  const updateLoadingState = useCallback(
+    (dbLoading: boolean, isThemeInitialized: boolean, authLoading: boolean) => {
+      dispatch(
+        updateLoadingStateAction({
+          dbLoading,
+          isThemeInitialized,
+          authLoading,
+        }),
+      );
       return null;
-    }
-
-    return null;
-  };
+    },
+    [dispatch],
+  );
 
   return {
     isAppLoading,
     isInitialLoad,
     updateLoadingState,
-    // Helper values
-    shouldShowLoading: isAppLoading && isInitialLoad,
+    shouldShowLoading,
   };
 }

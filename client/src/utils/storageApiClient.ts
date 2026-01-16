@@ -8,7 +8,10 @@ interface StorageApiResponse<T = any> {
 }
 
 export class StorageApiError extends Error {
-  constructor(message: string, public status?: number) {
+  constructor(
+    message: string,
+    public status?: number,
+  ) {
     super(message);
     this.name = 'StorageApiError';
   }
@@ -16,7 +19,7 @@ export class StorageApiError extends Error {
 
 async function makeStorageRequest<T = any>(
   action: string,
-  params: Record<string, any>
+  params: Record<string, any>,
 ): Promise<StorageApiResponse<T>> {
   const response = await fetch('/api/storage', {
     method: 'POST',
@@ -32,7 +35,10 @@ async function makeStorageRequest<T = any>(
   const result = await response.json();
 
   if (!response.ok) {
-    throw new StorageApiError(result.error || 'Storage API request failed', response.status);
+    throw new StorageApiError(
+      result.error || 'Storage API request failed',
+      response.status,
+    );
   }
 
   return result;
@@ -42,7 +48,7 @@ export const storageApiClient = {
   async save(
     filename: string,
     content: Record<string, any>,
-    subfolder: string
+    subfolder: string,
   ): Promise<void> {
     await makeStorageRequest('save', {
       filename,

@@ -1,7 +1,7 @@
 'use client';
 
 import { ImageUp } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import TextLink from './TextLink';
 
 interface ImageUploadProps {
@@ -13,13 +13,13 @@ interface ImageUploadProps {
   acceptedTypes?: string[];
 }
 
-export default function ImageUpload({ 
-  onImageUpload, 
-  onDisconnect, 
+export default function ImageUpload({
+  onImageUpload,
+  onDisconnect,
   currentImage,
   className = '',
   maxSize = 5 * 1024 * 1024,
-  acceptedTypes = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/gif']
+  acceptedTypes = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/gif'],
 }: ImageUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,36 +59,29 @@ export default function ImageUpload({
   };
 
   return (
-    <div 
-      className={`
-        self-stretch px-3 py-5 rounded-md border border-border 
-        inline-flex justify-center items-center gap-2.5 relative 
-        transition-colors duration-200
-        ${isDragging ? 'border-primary-base bg-primary-50' : ''}
-        ${currentImage ? 'min-h-[120px]' : ''}
-        ${className}
-      `}
+    <div
+      className={`border-border relative inline-flex items-center justify-center gap-2.5 self-stretch rounded-md border px-3 py-5 transition-colors duration-200 ${isDragging ? 'border-primary-base bg-primary-50' : ''} ${currentImage ? 'min-h-[120px]' : ''} ${className} `}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
       {currentImage ? (
-        <div className="w-full inline-flex flex-col justify-center items-center gap-5">
-          <img 
-            src={currentImage} 
-            alt="Upload preview" 
-            className="max-h-20 max-w-20 object-cover rounded"
+        <div className="inline-flex w-full flex-col items-center justify-center gap-5">
+          <img
+            src={currentImage}
+            alt="Upload preview"
+            className="max-h-20 max-w-20 rounded object-cover"
           />
-          <div className="inline-flex flex-col justify-center items-center gap-[5px]">
-            <div className="inline-flex justify-center items-center gap-1.5">
-              <button 
+          <div className="inline-flex flex-col items-center justify-center gap-[5px]">
+            <div className="inline-flex items-center justify-center gap-1.5">
+              <button
                 onClick={onDisconnect}
-                className="flex justify-start items-start gap-2.5"
+                className="flex items-start justify-start gap-2.5"
                 type="button"
               >
-                <TextLink 
-                  href="#" 
-                  variant='dotted'
+                <TextLink
+                  href="#"
+                  variant="dotted"
                   onClick={(e) => e.preventDefault()}
                   // className="pb-[5px] border-b border-rose-500 no-underline hover:no-underline font-['Chivo']"
                   size="sm"
@@ -96,19 +89,19 @@ export default function ImageUpload({
                   Disconnect
                 </TextLink>
               </button>
-              <div className="text-center text-neutral-500 text-sm font-normal font-['Chivo'] leading-none">
+              <div className="text-center font-['Chivo'] text-sm leading-none font-normal text-neutral-500">
                 or drag and drop
               </div>
             </div>
-            <div className="text-center text-neutral-500 text-sm font-normal font-['Chivo'] leading-none">
+            <div className="text-center font-['Chivo'] text-sm leading-none font-normal text-neutral-500">
               SVG, PNG, JPG or GIF (max. 800x400px)
             </div>
           </div>
         </div>
       ) : (
-        <div className="w-full inline-flex flex-col justify-center items-center gap-5">
-          <ImageUp className="w-11 h-11 text-muted-foreground" />
-          <div className="text-center space-y-1">
+        <div className="inline-flex w-full flex-col items-center justify-center gap-5">
+          <ImageUp className="text-muted-foreground h-11 w-11" />
+          <div className="space-y-1 text-center">
             <div className="text-sm text-neutral-600">
               Click to upload or drag and drop
             </div>
@@ -118,11 +111,11 @@ export default function ImageUpload({
           </div>
         </div>
       )}
-      
+
       <input
         ref={fileInputRef}
         type="file"
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
         accept={acceptedTypes.join(',')}
         onChange={handleFileChange}
       />
