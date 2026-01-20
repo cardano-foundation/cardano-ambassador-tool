@@ -848,69 +848,11 @@ export function formatAdaAmount(ada: string | number): string {
   return `₳ ${adaValue}`;
 }
 
-/**
- * Parses user input that might contain 'ADA' text and extracts the numeric value
- * @param input User input string that might contain 'ADA'
- * @returns Clean numeric string or the original input if no 'ADA' found
- */
-export function parseAdaInput(input: string): string {
-  if (!input) return '';
-
-  // Remove 'ADA', '₳', and extra whitespace, keep only numbers and decimal points
-  const cleaned = input
-    .replace(/ADA/gi, '')
-    .replace(/₳/g, '')
-    .replace(/[^0-9.-]/g, '')
-    .trim();
-
-  return cleaned || '';
-}
 
 // ============================================================================
 // ADA/Lovelace Conversion Utilities
 // ============================================================================
 
-/**
- * Converts ADA to Lovelace (multiplies by 1,000,000)
- * @param ada The amount in ADA (can be string or number)
- * @returns The amount in Lovelace
- */
-export function adaToLovelace(ada: string | number): number {
-  const adaValue =
-    typeof ada === 'string' ? parseFloat(ada.replace(/[^0-9.-]/g, '')) : ada;
-  if (isNaN(adaValue)) {
-    throw new Error('Invalid ADA value');
-  }
-  return Math.round(adaValue * 1_000_000);
-}
-
-/**
- * Converts Lovelace to ADA (divides by 1,000,000)
- * @param lovelace The amount in Lovelace
- * @returns The amount in ADA as a string with proper formatting
- */
-export function lovelaceToAda(lovelace: number | string): string {
-  const lovelaceValue =
-    typeof lovelace === 'string' ? parseFloat(lovelace) : lovelace;
-  if (isNaN(lovelaceValue)) {
-    return '0';
-  }
-  const ada = lovelaceValue / 1_000_000;
-  return ada.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 6,
-  });
-}
-
-/**
- * Formats ADA amount for display with ₳ symbol
- * @param ada The amount in ADA (string or number)
- * @returns Formatted string with ₳ symbol
- */
-export function formatAdaAmount(ada: string | number): string {
-  const adaValue = typeof ada === 'string' ? ada : ada.toString();
-  return `₳ ${adaValue}`;
-}
 
 /**
  * Parses user input that might contain 'ADA' text and extracts the numeric value
