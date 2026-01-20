@@ -1,9 +1,15 @@
+import { getCurrentNetworkConfig } from '@/config/cardano';
+import { getCatConstants } from '@/utils';
+import {
+  parseMemberDatum,
+  parseMembershipIntentDatum,
+  parseProposalDatum,
+} from '@/utils/utils';
 import { BlockfrostProvider, UTxO } from '@meshsdk/core';
 import { scripts } from '@sidan-lab/cardano-ambassador-tool';
+import { revalidateTag, unstable_cache } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
-import { unstable_cache, revalidateTag } from 'next/cache';
 
-// Validate required environment variables
 if (!process.env.BLOCKFROST_API_KEY_PREPROD) {
   throw new Error(
     'BLOCKFROST_API_KEY_PREPROD environment variable is required',
@@ -14,27 +20,16 @@ const blockfrost = new BlockfrostProvider(
   process.env.BLOCKFROST_API_KEY_PREPROD,
 );
 
-const allScripts = scripts({
-  oracle: {
-    txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
-  },
-  counter: {
-    txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!),
-  },
-});
+
+const catConstants = getCatConstants();
 
 const SCRIPT_ADDRESSES = {
-  MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
-  MEMBER_NFT: allScripts.member.spend.address,
-  PROPOSE_INTENT: allScripts.proposeIntent.spend.address,
-  PROPOSAL: allScripts.proposal.spend.address,
-  SIGN_OFF_APPROVAL: allScripts.signOffApproval.spend.address,
-} as const;
-
-const POLICY_IDS = {
-  MEMBER_NFT: allScripts.member.mint.hash,
+  MEMBERSHIP_INTENT: catConstants.scripts.membershipIntent.spend.address,
+  MEMBER_NFT: catConstants.scripts.member.spend.address,
+  PROPOSE_INTENT: catConstants.scripts.proposeIntent.spend.address,
+  PROPOSAL: catConstants.scripts.proposal.spend.address,
+  SIGN_OFF_APPROVAL: catConstants.scripts.signOffApproval.spend.address,
+  TREASURY_PAYOUTS: catConstants.scripts.treasury.spend.address,
 } as const;
 
 const actionData = {
@@ -62,6 +57,10 @@ const actionData = {
     errorContext: 'Address',
     address: '',
   },
+  treasury_payouts: {
+    errorContext: 'Treasury Payout',
+    address: SCRIPT_ADDRESSES.TREASURY_PAYOUTS,
+  },
 } as const;
 
 type ContextType = keyof typeof actionData;
@@ -69,7 +68,7 @@ type ContextType = keyof typeof actionData;
 type HandlerRequestBody = {
   context: ContextType;
   address: string;
-  forceRefresh?: boolean; 
+  forceRefresh?: boolean;
 };
 
 export async function POST(req: NextRequest): Promise<
@@ -96,14 +95,88 @@ export async function POST(req: NextRequest): Promise<
       revalidateTag('all-utxos');
     }
 
-    const utxos = await fetchAddressUTxOs(userAddress);    
+    const utxos = await fetchAddressUTxOs(userAddress);
 
     const validUtxos =
-      context == 'specific_address_utxos'
+      context == 'specific_address_utxos' 
         ? utxos
         : utxos.filter((utxo) => utxo.output.plutusData);
 
-    return NextResponse.json(validUtxos, { status: 200 });
+    const utxosWithMetadata = await Promise.all(
+      validUtxos.map(async (utxo) => {
+        if (!utxo.output.plutusData) return utxo;
+
+        try {
+          if (
+            ['proposals', 'proposal_intent', 'sign_of_approval'].includes(
+              context,
+            )
+          ) {
+            const parsed = parseProposalDatum(utxo.output.plutusData);
+            if (parsed?.metadata) {
+              let filename = null;
+              let description = null;
+              
+              if (parsed.metadata.url) {
+                if (parsed.metadata.url.includes('|')) {
+                  filename = parsed.metadata.url.split('|')[1];
+                } else {
+                  filename = parsed.metadata.url.split('/').pop();
+                }
+              }
+              
+              if (filename && filename.endsWith('.md')) {
+                try {
+                  const response = await fetch(
+                    `${req.nextUrl.origin}/api/proposal-content?filename=${encodeURIComponent(filename)}`,
+                    { next: { revalidate: 3600 } },
+                  );
+                  if (response.ok) {
+                    const data = await response.json();
+                    description = data.content;
+                  }
+                } catch (err) {
+                  console.error('Error fetching description:', err);
+                }
+              }
+
+              return {
+                ...utxo,
+                parsedMetadata: {
+                  ...parsed.metadata,
+                  description,
+                  memberIndex: parsed.memberIndex,
+                },
+              };
+            }
+          } else if (context === 'membership_intent') {
+            const parsed = parseMembershipIntentDatum(utxo.output.plutusData);
+            if (parsed?.metadata) {
+              return {
+                ...utxo,
+                parsedMetadata: parsed.metadata,
+              };
+            }
+          } else if (context === 'members') {
+            const parsed = parseMemberDatum(utxo.output.plutusData);
+            if (parsed?.member) {
+              return {
+                ...utxo,
+                parsedMetadata: parsed.member.metadata,
+              };
+            }
+          } else {
+            return utxo;
+          }
+        } catch (error) {
+          console.error('Error parsing UTxO metadata:', error);
+        }
+
+        return utxo;
+      }),
+    );
+
+    return NextResponse.json(utxosWithMetadata, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -127,11 +200,9 @@ async function fetchAddressUTxOsUncached(address: string): Promise<UTxO[]> {
 const fetchAddressUTxOs = (address: string) =>
   unstable_cache(
     async () => fetchAddressUTxOsUncached(address),
-    ['address-utxos', address], 
+    ['address-utxos', address],
     {
-      revalidate: 3600, // Cache for 1 hour 
-      tags: [`utxos-${address}`, 'all-utxos'], 
-    }
+      revalidate: 3600, // Cache for 1 hour
+      tags: [`utxos-${address}`, 'all-utxos'],
+    },
   )();
-
-

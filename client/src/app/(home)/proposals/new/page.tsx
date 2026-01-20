@@ -1,44 +1,49 @@
 'use client';
 
-import MemberOnlyAccessCard from '@/app/my/_component/MemberOnlyAccessCard';
+import MemberOnlyAccessCard from '@/app/my/_components/MemberOnlyAccessCard';
 import Button from '@/components/atoms/Button';
 import Modal from '@/components/atoms/Modal';
 import Title from '@/components/atoms/Title';
-import TopNav from '@/components/Navigation/TabNav';
-import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
+import TopNav from '@/components/navigation/TabNav';
 import CardanoLoaderSVG from '@/components/ui/CardanoLoaderSVG';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context';
-import { useMemberValidation } from '@/hooks/useMemberValidation';
+import { useMemberValidation, useTxConfirmation, useWalletManager } from '@/hooks';
 import {
+  adaToLovelace,
   dbUtxoToMeshUtxo,
   findTokenUtxoByMemberUtxo,
   getCatConstants,
   getProvider,
+  parseAdaInput,
   smoothScrollToElement,
 } from '@/utils';
+import { resolveTxHash } from '@meshsdk/core';
 import {
   ProposalData,
   proposalMetadata,
   UserActionTx,
 } from '@sidan-lab/cardano-ambassador-tool';
+
 import { useEffect, useRef, useState } from 'react';
-import DetailsTab from './components/DetailsTab';
-import FundsTab from './components/FundsTab';
-import ReviewTab from './components/ReviewTab';
-import { resolveTxHash } from '@meshsdk/core';
+import DetailsTab from './_components/DetailsTab';
+import FundsTab from './_components/FundsTab';
+import ReviewTab from './_components/ReviewTab';
+
+type ProposalFormData = ProposalData & {
+  description: string;
+};
 
 export default function SubmitProposalPage() {
-  const { isAuthenticated, userWallet, memberUtxo, userAddress } = useApp();
-  const { isMember, isLoading: memberLoading } = useMemberValidation();
+  const { wallet: userWallet, address: userAddress } = useWalletManager();
+  const { isMember, memberValidationLoading: memberLoading, memberUtxo } = useMemberValidation();
+  const { showTxConfirmation } = useTxConfirmation();
   const [activeTab, setActiveTab] = useState('details');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [markdownData, setMarkdownData] = useState<any>({});
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [showTxConfirmation, setShowTxConfirmation] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [txHash, setTxHash] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [githubFilename, setGithubFilename] = useState<string>('');
   const descriptionEditorRef = useRef<any>(null);
   const impactEditorRef = useRef<any>(null);
   const objectivesEditorRef = useRef<any>(null);
@@ -52,9 +57,10 @@ export default function SubmitProposalPage() {
   );
 
   const blockfrost = getProvider();
-  const [formData, setFormData] = useState<ProposalData>({
+  const [formData, setFormData] = useState<ProposalFormData>({
     title: '',
     description: '',
+    url: '',
     fundsRequested: '',
     receiverWalletAddress: '',
     submittedByAddress: userAddress || '',
@@ -89,7 +95,7 @@ export default function SubmitProposalPage() {
     );
   }
 
-  const handleInputChange = (field: keyof ProposalData, value: string) => {
+  const handleInputChange = (field: keyof ProposalFormData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -97,11 +103,36 @@ export default function SubmitProposalPage() {
   };
 
   const handleSubmit = async () => {
+    let filename = '';
+
     try {
       setIsSubmitting(true);
 
+      const saveResponse = await fetch('/api/proposal-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          submitterAddress: userAddress,
+        }),
+      });
+
+      if (!saveResponse.ok) {
+        const errorData = await saveResponse.json();
+        throw new Error(
+          errorData.details || 'Failed to save proposal to GitHub',
+        );
+      }
+
+      const saveData = await saveResponse.json();
+      filename = saveData.data.filename;
+      setGithubFilename(filename);
+
       if (!memberUtxo) {
-        throw new Error('No membership application UTxO found for this address');
+        throw new Error(
+          'No membership application UTxO found for this address',
+        );
       }
       const mbrUtxo = dbUtxoToMeshUtxo(memberUtxo);
       const tokenUtxo = await findTokenUtxoByMemberUtxo(mbrUtxo);
@@ -128,22 +159,70 @@ export default function SubmitProposalPage() {
         getCatConstants(),
       );
 
-      const metadata = proposalMetadata(formData);
+      const cleanAdaAmount = parseAdaInput(formData.fundsRequested);
+      const lovelaceAmount = adaToLovelace(cleanAdaAmount);
+
+      const githubUrl = `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_REPO}/blob/${process.env.NEXT_PUBLIC_GITHUB_BRANCH}/proposals-applications/content/${filename}`;
+      
+      
+
+      const metadataFormData: ProposalData = {
+        title: formData.title,
+        url: githubUrl,
+        fundsRequested: lovelaceAmount.toString(),
+        receiverWalletAddress: formData.receiverWalletAddress,
+        submittedByAddress: formData.submittedByAddress,
+        status: formData.status,
+      };
+      const metadata = proposalMetadata(metadataFormData);
 
       const result = await userAction.proposeProject(
         oracleUtxo,
         tokenUtxo,
         mbrUtxo,
-        Number(formData.fundsRequested),
+        lovelaceAmount,
         formData.receiverWalletAddress,
         metadata,
       );
 
-       const txHash = resolveTxHash(result.txHex);
+      const txHash = resolveTxHash(result.txHex);
 
-      setTxHash(txHash);
-      setShowTxConfirmation(true);
-    } catch (error:any) {
+      showTxConfirmation({
+        txHash,
+        title: 'Proposal Submitted',
+        description:
+          'Your proposal has been submitted. Please wait for blockchain confirmation.',
+        onConfirmed: () => {
+          setShowConfirmation(true);
+        },
+        onTimeout: async () => {
+          if (filename) {
+            await fetch('/api/proposal-content', {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ filename }),
+            }).catch((err) =>
+              console.error('Failed to rollback GitHub file:', err),
+            );
+          }
+
+          setError(
+            'Transaction confirmation timed out. Your proposal may still be processed.',
+          );
+          setShowError(true);
+        },
+      });
+    } catch (error: any) {
+      if (filename) {
+        await fetch('/api/proposal-content', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename }),
+        }).catch((err) =>
+          console.error('Failed to rollback GitHub file:', err),
+        );
+      }
+
       setError(error.message || 'Failed to submit proposal. Please try again.');
       setShowError(true);
     } finally {
@@ -271,26 +350,6 @@ export default function SubmitProposalPage() {
         </div>
       </div>
 
-      {/* Transaction Confirmation Overlay */}
-      <TransactionConfirmationOverlay
-        isVisible={showTxConfirmation}
-        txHash={txHash}
-        title="Proposal Submitted"
-        description="Your proposal has been submitted. Please wait for blockchain confirmation."
-        onClose={() => setShowTxConfirmation(false)}
-        onConfirmed={() => {
-          setShowTxConfirmation(false);
-          setShowConfirmation(true);
-        }}
-        onTimeout={() => {
-          setShowTxConfirmation(false);
-          setError(
-            'Transaction confirmation timed out. Your proposal may still be processed.',
-          );
-          setShowError(true);
-        }}
-      />
-
       {/* Success Modal - shown after transaction confirmation */}
       <Modal
         isOpen={showConfirmation}
@@ -364,8 +423,8 @@ export default function SubmitProposalPage() {
         description=" Please hold on as we do some magic"
         actions={[]}
       >
-          <CardanoLoaderSVG size={64} />
-F      </Modal>
+        <CardanoLoaderSVG size={64} />
+      </Modal>
     </div>
   );
 }

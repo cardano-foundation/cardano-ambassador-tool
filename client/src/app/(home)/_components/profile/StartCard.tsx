@@ -1,31 +1,31 @@
-import React from 'react';
 import Card, { CardContent } from '@/components/atoms/Card';
+import React from 'react';
 
 interface StatCardProps {
   label: string;
-  value: number;
+  value: number | string;
   showHeart?: boolean;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
   label,
   value,
-  showHeart = false
+  showHeart = false,
 }) => {
   return (
     <Card
       padding="sm"
-      className="border-2 border-dashed border-border/60 h-20 lg:min-w-[150px]"
+      className="border-border/60 h-20 border-2 border-dashed lg:min-w-[150px]"
     >
-      <CardContent className="flex flex-col justify-center items-center h-full space-y-1 px-2">
-        <div className="text-base xl:text-xl font-bold text-foreground leading-none">
+      <CardContent className="flex h-full flex-col items-center justify-center space-y-1 px-2">
+        <div className="text-foreground text-base leading-none font-bold xl:text-xl">
           {value}
         </div>
-        <div className="text-xs text-muted-foreground flex items-center justify-center gap-1 text-center leading-tight min-w-0">
+        <div className="text-muted-foreground flex min-w-0 items-center justify-center gap-1 text-center text-xs leading-tight">
           {showHeart && (
-            <span className="text-base text-primary-base flex-shrink-0">❤</span>
+            <span className="text-primary-base shrink-0 text-base">❤</span>
           )}
-          <span className="truncate max-w-full" title={label}>
+          <span className="max-w-full truncate" title={label}>
             {label}
           </span>
         </div>

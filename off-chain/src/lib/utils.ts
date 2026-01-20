@@ -8,7 +8,6 @@ import {
   list,
   serializeAddressObj,
   serializeData,
-  stringToHex,
   UTxO,
   plutusBSArrayToString,
   List,
@@ -44,6 +43,7 @@ import {
   membershipMetadata,
 } from "./types";
 import { blake2b } from "blakejs";
+import { addrBech32ToPlutusDataObj } from "@meshsdk/core-csl";
 
 /**
  *
@@ -76,7 +76,7 @@ export const getOracleAdmins = (oracleUtxo: UTxO): string[] => {
   const datum: OracleDatum = deserializeDatum(plutusData);
 
   const admins: string[] = datum.fields[0].list.map((item) => {
-    return item.bytes;
+    return serializeAddressObj(item);
   });
 
   return admins;
@@ -103,7 +103,7 @@ export const updateOracleDatum = (
     newAdmins
       ? list(
           newAdmins.map((admin) => {
-            return byteString(admin);
+            return addrBech32ToPlutusDataObj(admin);
           })
         )
       : datum.fields[0],
@@ -142,9 +142,9 @@ export const getCounterDatum = (counterUtxo: UTxO): number => {
 };
 
 // Helper function to safely extract string from ByteString | List<ByteString>
-const extractString = (field: any): string => {
+export const extractString = (field: any): string => {
   if (field.list) {
-    return plutusBSArrayToString(field);
+    return hexToString(plutusBSArrayToString(field));
   }
   return hexToString(field.bytes);
 };
@@ -218,14 +218,6 @@ export const getMembershipIntentDatum = (
   const assetName = datum.fields[0].list[1].bytes;
   const metadataPluts: MembershipMetadata = datum.fields[1];
 
-  // Helper function to safely extract string from ByteString | List<ByteString>
-  const extractString = (field: any): string => {
-    if (field.list) {
-      return plutusBSArrayToString(field);
-    }
-    return hexToString(field.bytes);
-  };
-
   const metadata: MemberData = {
     walletAddress: serializeAddressObj(metadataPluts.fields[0]),
     fullName: extractString(metadataPluts.fields[1]),
@@ -234,6 +226,11 @@ export const getMembershipIntentDatum = (
     bio: extractString(metadataPluts.fields[4]),
     country: extractString(metadataPluts.fields[5]),
     city: extractString(metadataPluts.fields[6]),
+    x_handle: extractString(metadataPluts.fields[7]),
+    github: extractString(metadataPluts.fields[8]),
+    discord: extractString(metadataPluts.fields[9]),
+    spo_id: extractString(metadataPluts.fields[10]),
+    drep_id: extractString(metadataPluts.fields[11]),
   };
   return { policyId, assetName, metadata };
 };
@@ -251,6 +248,11 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
     bio: extractString(metadataPluts.fields[4]),
     country: extractString(metadataPluts.fields[5]),
     city: extractString(metadataPluts.fields[6]),
+    x_handle: extractString(metadataPluts.fields[7]),
+    github: extractString(metadataPluts.fields[8]),
+    discord: extractString(metadataPluts.fields[9]),
+    spo_id: extractString(metadataPluts.fields[10]),
+    drep_id: extractString(metadataPluts.fields[11]),
   };
 
   const policyId = datum.fields[0].list[0].bytes;
@@ -261,14 +263,11 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
     completion.set(
       {
         title: extractString(item.k.fields[0]),
-        category: extractString(item.k.fields[1]),
-        description: extractString(item.k.fields[2]),
-        impactToEcosystem: extractString(item.k.fields[3]),
-        objectives: extractString(item.k.fields[4]),
-        milestones: extractString(item.k.fields[5]),
-        budgetBreakdown: extractString(item.k.fields[6]),
-        fundsRequested: extractString(item.k.fields[7]),
-        receiverWalletAddress: extractString(item.k.fields[8]),
+        url: extractString(item.k.fields[1]),
+        fundsRequested: extractString(item.k.fields[2]),
+        receiverWalletAddress: serializeAddressObj(item.k.fields[3]),
+        submittedByAddress: serializeAddressObj(item.k.fields[4]),
+        status: extractString(item.k.fields[5]),
       },
       Number(item.v.int)
     );
@@ -303,14 +302,9 @@ export const updateMemberDatum = (
   const updatedFundRecevied =
     member.fundReceived + signOffApproval.fundRequested;
 
-  // Create updated metadata with the new structure
-  const updatedMetadata: MemberData = {
-    ...member.metadata,
-    // You can update specific fields here if needed
-  };
-
-  const memberMetadata: MembershipMetadata =
-    membershipMetadata(updatedMetadata);
+  const memberMetadata: MembershipMetadata = membershipMetadata(
+    member.metadata
+  );
 
   const updatedMemberDatum: MemberDatum = memberDatum(
     member.token.policyId,
@@ -334,14 +328,11 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
 
   const metadata: ProposalData = {
     title: extractString(metadataPluts.fields[0]),
-    category: extractString(metadataPluts.fields[1]),
-    description: extractString(metadataPluts.fields[2]),
-    impactToEcosystem: extractString(metadataPluts.fields[3]),
-    objectives: extractString(metadataPluts.fields[4]),
-    milestones: extractString(metadataPluts.fields[5]),
-    budgetBreakdown: extractString(metadataPluts.fields[6]),
-    fundsRequested: extractString(metadataPluts.fields[7]),
-    receiverWalletAddress: extractString(metadataPluts.fields[8]),
+    url: extractString(metadataPluts.fields[1]),
+    fundsRequested: extractString(metadataPluts.fields[2]),
+    receiverWalletAddress: serializeAddressObj(metadataPluts.fields[3]),
+    submittedByAddress: serializeAddressObj(metadataPluts.fields[4]),
+    status: extractString(metadataPluts.fields[5]),
   };
   return {
     fundRequested: fundRequested,

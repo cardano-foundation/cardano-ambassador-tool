@@ -3,7 +3,6 @@ import {
   BlockfrostProvider,
   UTxO,
   deserializeDatum,
-  hexToString,
   serializeAddressObj,
 } from "@meshsdk/core";
 import {
@@ -16,6 +15,7 @@ import {
   ProposalData,
   ProposalDatum,
   ProposalMetadata,
+  extractString,
 } from "@sidan-lab/cardano-ambassador-tool";
 
 // ============================================================================
@@ -26,16 +26,20 @@ import {
 const blockfrostService = new BlockfrostService();
 
 // Scripts and addresses
-const allScripts = scripts({
-  oracle: {
-    txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
+const networkId = process.env.NEXT_PUBLIC_NETWORK === "mainnet" ? 1 : 0;
+const allScripts = scripts(
+  {
+    oracle: {
+      txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,
+      outputIndex: parseInt(process.env.NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX!),
+    },
+    counter: {
+      txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
+      outputIndex: parseInt(process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!),
+    },
   },
-  counter: {
-    txHash: process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH!,
-    outputIndex: parseInt(process.env.NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX!),
-  },
-});
+  networkId
+);
 
 export const SCRIPT_ADDRESSES = {
   MEMBERSHIP_INTENT: allScripts.membershipIntent.spend.address,
@@ -87,10 +91,12 @@ export function parseMembershipIntentDatum(
     const metadataPluts: MembershipMetadata = datum.fields[1];
     const metadata: MemberData = {
       walletAddress: serializeAddressObj(metadataPluts.fields[0]),
-      fullName: hexToString(metadataPluts.fields[1].bytes),
-      displayName: hexToString(metadataPluts.fields[2].bytes),
-      emailAddress: hexToString(metadataPluts.fields[3].bytes),
-      bio: hexToString(metadataPluts.fields[4].bytes),
+      fullName: extractString(metadataPluts.fields[1]),
+      displayName: extractString(metadataPluts.fields[2]),
+      emailAddress: extractString(metadataPluts.fields[3]),
+      bio: extractString(metadataPluts.fields[4]),
+      country: extractString(metadataPluts.fields[10]),
+      city: extractString(metadataPluts.fields[11]),
     };
     return { datum: datum as MembershipIntentDatum, metadata };
   } catch (error) {
@@ -117,10 +123,12 @@ export function parseMemberDatum(
     const metadataPluts: MembershipMetadata = datum.fields[3];
     const metadata: MemberData = {
       walletAddress: serializeAddressObj(metadataPluts.fields[0]),
-      fullName: hexToString(metadataPluts.fields[1].bytes),
-      displayName: hexToString(metadataPluts.fields[2].bytes),
-      emailAddress: hexToString(metadataPluts.fields[3].bytes),
-      bio: hexToString(metadataPluts.fields[4].bytes),
+      fullName: extractString(metadataPluts.fields[1]),
+      displayName: extractString(metadataPluts.fields[2]),
+      emailAddress: extractString(metadataPluts.fields[3]),
+      bio: extractString(metadataPluts.fields[4]),
+      country: extractString(metadataPluts.fields[10]),
+      city: extractString(metadataPluts.fields[11]),
     };
 
     const policyId = datum.fields[0].list[0].bytes;
@@ -128,10 +136,15 @@ export function parseMemberDatum(
 
     const completion: Map<ProposalData, number> = new Map();
     datum.fields[1].map.forEach(
-      (item: { k: { fields: { bytes: string }[] }; v: { int: any } }) => {
+      (item: { k: { fields: any[] }; v: { int: any } }) => {
         completion.set(
           {
-            projectDetails: hexToString(item.k.fields[0].bytes),
+            title: extractString(item.k.fields[0]),
+            url: extractString(item.k.fields[1]),
+            fundsRequested: extractString(item.k.fields[2]),
+            receiverWalletAddress: serializeAddressObj(item.k.fields[3]),
+            submittedByAddress: serializeAddressObj(item.k.fields[4]),
+            status: extractString(item.k.fields[5]),
           },
           Number(item.v.int)
         );
@@ -176,7 +189,12 @@ export function parseProposalDatum(
     }
     const metadataPluts: ProposalMetadata = datum.fields[3];
     const metadata: ProposalData = {
-      projectDetails: hexToString(metadataPluts.fields[0].bytes),
+      title: extractString(metadataPluts.fields[0]),
+      url: extractString(metadataPluts.fields[1]),
+      fundsRequested: extractString(metadataPluts.fields[2]),
+      receiverWalletAddress: serializeAddressObj(metadataPluts.fields[3]),
+      submittedByAddress: serializeAddressObj(metadataPluts.fields[4]),
+      status: extractString(metadataPluts.fields[5]),
     };
     return { datum: datum as ProposalDatum, metadata };
   } catch (error) {

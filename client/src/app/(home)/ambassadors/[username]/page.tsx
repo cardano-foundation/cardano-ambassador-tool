@@ -1,6 +1,5 @@
-import * as React from 'react';
-import { use } from 'react';
 import AmbassadorProfile from '@/app/(home)/_components/profile/AmbassadorProfilePage';
+import { use } from 'react';
 
 interface PageProps {
   params: Promise<{ username: string }>;

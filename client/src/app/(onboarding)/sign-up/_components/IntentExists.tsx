@@ -5,18 +5,12 @@ import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import { routes } from '@/config/routes';
 
-const IntentExists = ({
-  goBack
-}: {
-  goBack: () => void;
-}) => {
+const IntentExists = ({ goBack }: { goBack: () => void }) => {
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <CardanoLogo />
       <div className="flex-col gap-3 text-center">
-        <Title level="6">
-          Intent already existing
-        </Title>
+        <Title level="6">Intent already existing</Title>
         <Paragraph size="sm">
           There is a pending membership application with the selected address.
         </Paragraph>

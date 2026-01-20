@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useTreasuryBalance, useWalletManager } from '@/hooks';
 import {
   dbUtxoToMeshUtxo,
   emitGlobalRefreshWithDelay,
@@ -25,7 +25,8 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
   signoffApprovalUtxo,
   memberUtxo,
 }) => {
-  const { wallet: walletState, treasuryBalance, isTreasuryLoading } = useApp();
+  const { wallet } = useWalletManager();
+  const { treasuryBalance, isTreasuryLoading } = useTreasuryBalance();
   const [isExecuting, setIsExecuting] = useState(false);
   const [isExecuted, setIsExecuted] = useState(false);
   const [submitError, setSubmitError] = useState<{
@@ -36,16 +37,22 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
   const [confirmedTxHash, setConfirmedTxHash] = useState<string | null>(null);
 
   // Get proposal amount from signoff approval UTxO
-  const proposalAmount = signoffApprovalUtxo?.plutusData ? (() => {
-    try {
-      const { metadata } = parseProposalDatum(signoffApprovalUtxo.plutusData)!;
-      return BigInt((parseInt(metadata?.fundsRequested || '0')) * 1_000_000); // Convert ADA to lovelace
-    } catch {
-      return BigInt(0);
-    }
-  })() : BigInt(0);
+  const proposalAmount = signoffApprovalUtxo?.plutusData
+    ? (() => {
+        try {
+          const { metadata } = parseProposalDatum(
+            signoffApprovalUtxo.plutusData,
+          )!;
+          const adaAmount = parseFloat(metadata?.fundsRequested || '0');
+          return BigInt(Math.round(adaAmount * 1_000_000));
+        } catch {
+          return BigInt(0);
+        }
+      })()
+    : BigInt(0);
 
-  const hasInsufficientBalance = !isTreasuryLoading && treasuryBalance < proposalAmount;
+  const hasInsufficientBalance =
+    !isTreasuryLoading && treasuryBalance < proposalAmount;
 
   const handleExecuteSignoff = async () => {
     if (!signoffApprovalUtxo || !memberUtxo) {
@@ -71,13 +78,15 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
 
     try {
       const oracleUtxo = await findOracleUtxo();
-      
+
       if (!oracleUtxo) {
         throw new Error('Failed to fetch Oracle UTxO');
       }
 
       const blockfrost = getProvider();
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
       const address = await wallet!.getChangeAddress();
 
       const adminAction = new AdminActionTx(
@@ -86,9 +95,10 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
         blockfrost,
         getCatConstants(),
       );
-      
+
       const signoffApprovalMesh = dbUtxoToMeshUtxo(signoffApprovalUtxo);
       const memberMesh = dbUtxoToMeshUtxo(memberUtxo);
+
 
       const unsignedTx = await adminAction.SignOff(
         oracleUtxo,
@@ -100,13 +110,14 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
         throw new Error('Failed to create SignOff transaction');
       }
 
-      const signedTx = await wallet!.signTx(unsignedTx.txHex);
+      const signedTx = await wallet!.signTx(unsignedTx.txHex, true);
 
       if (!signedTx) {
         throw new Error('Failed to sign transaction');
       }
 
       const txHash = await wallet!.submitTx(signedTx);
+
       setConfirmedTxHash(txHash);
       setShowConfirmationOverlay(true);
     } catch (error) {
@@ -126,7 +137,7 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
 
       setTimeout(() => {
         const event = new CustomEvent('app:refresh', {
-          detail: { refreshTreasury: true }
+          detail: { refreshTreasury: true },
         });
         window.dispatchEvent(event);
       }, 2000);
@@ -135,7 +146,9 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
     [],
   );
 
-  const handleTransactionTimeout = (result: TransactionConfirmationResult) => {};
+  const handleTransactionTimeout = (
+    result: TransactionConfirmationResult,
+  ) => {};
 
   const handleCloseConfirmationOverlay = useCallback(() => {
     setShowConfirmationOverlay(false);
@@ -181,18 +194,30 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       <Button
         variant="primary"
         onClick={handleExecuteSignoff}
-        disabled={isExecuting || isExecuted || hasInsufficientBalance || isTreasuryLoading}
+        disabled={
+          isExecuting ||
+          isExecuted ||
+          hasInsufficientBalance ||
+          isTreasuryLoading
+        }
         className="w-full"
       >
         {isExecuting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isTreasuryLoading ? 'Loading treasury data...' :
-         hasInsufficientBalance ? 'Insufficient Treasury Balance' :
-         isExecuted ? '✓ Signoff Executed' : 'Execute Final Signoff'}
+        {isTreasuryLoading
+          ? 'Loading treasury data...'
+          : hasInsufficientBalance
+            ? 'Insufficient Treasury Balance'
+            : isExecuted
+              ? '✓ Signoff Executed'
+              : 'Execute Final Signoff'}
       </Button>
 
       {hasInsufficientBalance && (
-        <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded text-sm text-orange-700">
-          Treasury balance (₳{Math.floor(Number(treasuryBalance) / 1_000_000).toLocaleString()}) is insufficient for this withdrawal (₳{Math.floor(Number(proposalAmount) / 1_000_000).toLocaleString()})
+        <div className="mt-2 rounded border border-orange-200 bg-orange-50 p-2 text-sm text-orange-700">
+          Treasury balance (₳
+          {Math.floor(Number(treasuryBalance) / 1_000_000).toLocaleString()}) is
+          insufficient for this withdrawal (₳
+          {Math.floor(Number(proposalAmount) / 1_000_000).toLocaleString()})
         </div>
       )}
 
@@ -214,6 +239,19 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}
+        showNavigationOptions={isExecuted}
+        navigationOptions={[
+          {
+            label: 'View Treasury',
+            url: '/manage/treasury-signoffs',
+            variant: 'primary',
+          },
+          {
+            label: 'View All Proposals',
+            url: '/proposals',
+            variant: 'outline',
+          },
+        ]}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useApp } from '@/context';
+import { useWalletManager } from '@/hooks';
 import { emitGlobalRefreshWithDelay } from '@/utils';
 import { storageApiClient } from '@/utils/storageApiClient';
 import { AdminDecisionData, TransactionConfirmationResult } from '@types';
@@ -20,7 +20,7 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
   adminDecisionData,
   onFinalizationComplete,
 }) => {
-  const { wallet: walletState } = useApp();
+  const { wallet } = useWalletManager();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message: string;
@@ -59,7 +59,9 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
     setSubmitError(null);
 
     try {
-      const wallet = await walletState!.wallet;
+      if (!wallet) {
+        throw new Error('Wallet not connected');
+      }
 
       if (!adminDecisionData.signedTx) {
         throw new Error('No signed transaction found in admin decision data');
@@ -87,7 +89,6 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
       if (txhash) {
         try {
           await storageApiClient.delete(txhash, 'signoff-submissions');
-          console.log('Signoff approval data cleaned up successfully');
         } catch (error) {
           console.error('Failed to clean up signoff approval data:', error);
         }
@@ -98,7 +99,9 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
     [onFinalizationComplete, txhash],
   );
 
-  const handleTransactionTimeout = (result: TransactionConfirmationResult) => {};
+  const handleTransactionTimeout = (
+    result: TransactionConfirmationResult,
+  ) => {};
 
   const handleCloseConfirmationOverlay = useCallback(() => {
     setShowConfirmationOverlay(false);
@@ -133,13 +136,11 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
       {hasAdminDecision && !signatureRequirementsMet && adminDecisionData && (
         <div className="space-y-1 text-center">
           <Paragraph size="sm" className="text-gray-500">
-            Waiting for {adminDecisionData.selectedAdmins.length - getSignedCount()} more
+            Waiting for{' '}
+            {adminDecisionData.selectedAdmins.length - getSignedCount()} more
             signature(s) before execution.
           </Paragraph>
-          <Paragraph size="xs" className="text-gray-400">
-            ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
-            required signatures)
-          </Paragraph>
+       
         </div>
       )}
 
@@ -170,6 +171,19 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}
+        showNavigationOptions={isFinalized}
+        navigationOptions={[
+          {
+            label: 'Go to Treasury Signoffs',
+            url: '/manage/treasury-signoffs',
+            variant: 'primary',
+          },
+          {
+            label: 'Back to Proposals',
+            url: '/manage/proposal-applications',
+            variant: 'outline',
+          },
+        ]}
       />
     </div>
   );

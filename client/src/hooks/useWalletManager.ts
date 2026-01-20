@@ -1,197 +1,84 @@
-import { WalletState } from '@/types/wallet';
-import {
-  clearWalletSelection,
-  connectToWallet,
-  getAvailableWallets,
-  getSavedWalletSelection,
-  getWalletAddress,
-  saveWalletSelection,
-  validateNetwork,
-} from '@/utils/wallet';
-import { useCallback, useEffect, useState } from 'react';
+'use client';
 
+import { useCallback, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import {
+  selectWalletState,
+  selectAvailableWallets,
+  connectWallet as connectWalletThunk,
+  autoConnect,
+  disconnectWallet as disconnectWalletAction,
+  clearError as clearErrorAction,
+  refreshWalletList,
+  setHasAttemptedAutoConnect,
+} from '@/lib/redux/features/wallet';
+import { WalletState } from '@/types/wallet';
+
+/**
+ * Wallet manager hook - now delegates to Redux.
+ * Maintains backward compatibility with existing consumers.
+ */
 export function useWalletManager(): WalletState & {
   connectWallet: (walletId: string) => Promise<void>;
   disconnectWallet: () => void;
   clearError: () => void;
   refreshWalletList: () => Promise<void>;
 } {
-  const [state, setState] = useState<WalletState>({
-    isConnected: false,
-    isConnecting: false,
-    hasAttemptedAutoConnect: false,
-    selectedWalletId: null,
-    walletName: null,
-    address: null,
-    wallet: null,
-    availableWallets: [],
-    error: null,
-    isNetworkValid: true,
-  });
+  const dispatch = useAppDispatch();
 
-  // Discover available wallets
-  const refreshWalletList = useCallback(async () => {
-    try {
-      const wallets = await getAvailableWallets();
-      setState((prev) => ({ ...prev, availableWallets: wallets }));
-    } catch (error) {
-      setState((prev) => ({ ...prev, error: 'Failed to discover wallets' }));
-    }
-  }, []);
+  // Read from Redux
+  const walletState = useAppSelector(selectWalletState);
+  const availableWallets = useAppSelector(selectAvailableWallets);
 
-  // Connect to wallet
+  // Connect to wallet - dispatch async thunk
   const connectWallet = useCallback(
     async (walletId: string) => {
-      setState((prev) => ({ ...prev, isConnecting: true, error: null }));
-
-      try {
-        const wallet = await connectToWallet(walletId);
-        const address = await getWalletAddress(wallet);
-        const isNetworkValid = await validateNetwork(wallet);
-
-        const selectedWallet = state.availableWallets.find(
-          (w) => w.id === walletId,
-        );
-
-        if (!isNetworkValid) {
-          // Get detailed network information for error message
-          const walletNetworkId = await wallet.getNetworkId();
-          const expectedNetwork = await import('@/config/cardano').then((m) =>
-            m.getCurrentNetworkConfig(),
-          );
-          const networkNames = await import('@/config/cardano').then(
-            (m) => m.NETWORK_NAMES,
-          );
-
-          const walletNetworkName = networkNames[walletNetworkId] || 'Unknown';
-          const expectedNetworkName = expectedNetwork.name;
-
-          setState((prev) => ({
-            ...prev,
-            isConnecting: false,
-            error: `Network mismatch! Your wallet is connected to ${walletNetworkName}, but this app requires ${expectedNetworkName}. Please switch your wallet network.`,
-          }));
-          return;
-        }
-
-        // Only set as connected if network validation passes
-        setState((prev) => ({
-          ...prev,
-          isConnected: true,
-          isConnecting: false,
-          selectedWalletId: walletId,
-          walletName: selectedWallet?.name || null,
-          address,
-          wallet,
-          isNetworkValid: true,
-        }));
-
-        saveWalletSelection(walletId);
-      } catch (error) {
-        setState((prev) => ({
-          ...prev,
-          isConnecting: false,
-          error: error instanceof Error ? error.message : 'Connection failed',
-        }));
-      }
+      await dispatch(connectWalletThunk({ walletId, availableWallets }));
     },
-    [state.availableWallets],
+    [dispatch, availableWallets],
   );
 
-  // Disconnect wallet
+  // Disconnect wallet - dispatch action
   const disconnectWallet = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      isConnected: false,
-      selectedWalletId: null,
-      walletName: null,
-      address: null,
-      wallet: null,
-      error: null,
-    }));
-    clearWalletSelection();
-  }, []);
+    dispatch(disconnectWalletAction());
+  }, [dispatch]);
 
-  // Clear error
+  // Clear error - dispatch action
   const clearError = useCallback(() => {
-    setState((prev) => ({ ...prev, error: null }));
-  }, []);
+    dispatch(clearErrorAction());
+  }, [dispatch]);
+
+  // Refresh wallet list - dispatch async thunk
+  const refreshWalletListFn = useCallback(async () => {
+    await dispatch(refreshWalletList());
+  }, [dispatch]);
 
   // Auto-connection on mount
   useEffect(() => {
     const attemptAutoConnect = async () => {
-      await refreshWalletList();
+      // First refresh wallet list
+      const result = await dispatch(refreshWalletList());
 
-      const savedWalletId = getSavedWalletSelection();
-      if (savedWalletId && !state.hasAttemptedAutoConnect) {
-        setState((prev) => ({ ...prev, isConnecting: true }));
-
-        try {
-          const wallet = await connectToWallet(savedWalletId);
-          const address = await getWalletAddress(wallet);
-          const isNetworkValid = await validateNetwork(wallet);
-
-          if (!isNetworkValid) {
-            // Get detailed network information for error message
-            const walletNetworkId = await wallet.getNetworkId();
-            const expectedNetwork = await import('@/config/cardano').then((m) =>
-              m.getCurrentNetworkConfig(),
-            );
-            const networkNames = await import('@/config/cardano').then(
-              (m) => m.NETWORK_NAMES,
-            );
-
-            const walletNetworkName =
-              networkNames[walletNetworkId] || 'Unknown';
-            const expectedNetworkName = expectedNetwork.name;
-
-            setState((prev) => ({
-              ...prev,
-              isConnecting: false,
-              error: `Auto-connect failed: Wallet is on ${walletNetworkName} but app requires ${expectedNetworkName}.`,
-            }));
-            clearWalletSelection(); // Clear saved selection since it's invalid
-            return;
-          }
-
-          setState((prev) => {
-            const selectedWallet = prev.availableWallets.find(
-              (w) => w.id === savedWalletId,
-            );
-            return {
-              ...prev,
-              isConnected: true,
-              isConnecting: false,
-              selectedWalletId: savedWalletId,
-              walletName: selectedWallet?.name || null,
-              address,
-              wallet,
-              isNetworkValid: true,
-            };
-          });
-
-          saveWalletSelection(savedWalletId);
-        } catch (error) {
-          setState((prev) => ({
-            ...prev,
-            isConnecting: false,
-            error:
-              error instanceof Error ? error.message : 'Auto-connection failed',
-          }));
-        }
+      if (refreshWalletList.fulfilled.match(result)) {
+        const wallets = result.payload;
+        // Attempt auto-connect with the fetched wallets
+        await dispatch(autoConnect(wallets));
+      } else {
+        // Even if refresh fails, mark as attempted
+        dispatch(setHasAttemptedAutoConnect(true));
       }
-
-      setState((prev) => ({ ...prev, hasAttemptedAutoConnect: true }));
     };
 
-    attemptAutoConnect();
-  }, []);
+    if (!walletState.hasAttemptedAutoConnect) {
+      attemptAutoConnect();
+    }
+  }, [dispatch, walletState.hasAttemptedAutoConnect]);
 
   return {
-    ...state,
+    ...walletState,
     connectWallet,
     disconnectWallet,
     clearError,
-    refreshWalletList,
+    refreshWalletList: refreshWalletListFn,
   };
 }

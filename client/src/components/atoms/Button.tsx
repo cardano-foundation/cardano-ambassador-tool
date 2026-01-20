@@ -12,7 +12,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     | 'warning'
     | 'success'
     | 'primary-light';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   rounded?: 'lg' | 'full';
   children?: React.ReactNode;
   fullWidth?: boolean;
@@ -48,9 +48,10 @@ export default function Button({
         variant === 'nav'
           ? {}
           : {
-              'px-4 py-2 text-sm': size === 'sm',
-              'px-6 py-3 text-sm': size === 'md',
-              'px-8 py-4 text-base': size === 'lg',
+              'px-2 py-1 text-xs': size === 'xs',
+              'px-2 py-1 text-xs lg:px-4 lg:py-2 lg:text-sm': size === 'sm',
+              'px-3 py-1.5 text-sm lg:px-6 lg:py-3': size === 'md',
+              'px-4 py-2 text-base lg:px-8 lg:py-4': size === 'lg',
             },
 
         {

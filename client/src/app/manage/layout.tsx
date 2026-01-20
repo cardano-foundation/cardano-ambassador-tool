@@ -3,24 +3,24 @@
 import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import Footer from '@/components/Footer';
-import SideNav from '@/components/Navigation/SideNav';
-import TopNavBar from '@/components/Navigation/TopNavBar';
-import ToastContainer from '@/components/toast/toast';
-import { useApp } from '@/context';
+import SideNav from '@/components/navigation/SideNav';
+import TopNavBar from '@/components/navigation/TopNavBar';
+import ToastContainer from '@/components/toast/Toast';
+import { useAppLoading } from '@/hooks';
 import React from 'react';
 
 function ManageContent({ children }: { children: React.ReactNode }) {
-  const { shouldShowLoading } = useApp();
+  const { shouldShowLoading } = useAppLoading();
 
   return (
     <>
       <AppLoadingScreen isVisible={shouldShowLoading} />
-      <div className="flex h-screen overflow-hidden">
-        <div className="flex-shrink-0">
+      <div className="flex h-screen w-screen overflow-hidden">
+        <div className="shrink-0">
           <SideNav />
         </div>
         <div className="flex h-screen min-w-0 flex-1 flex-col">
-          <div className="sticky top-0 z-20 flex-shrink-0">
+          <div className="sticky top-0 z-20 shrink-0">
             <TopNavBar />
           </div>
 

@@ -1,12 +1,11 @@
 'use client';
 
 import Button from '@/components/atoms/Button';
-import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import AdminMembershipTimeline from '@/components/Timelines/AdminMembershipTimeline';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context/AppContext';
+import { useDatabase } from '@/hooks';
 import { Utxo } from '@types';
 import Link from 'next/link';
 import { use, useEffect, useState } from 'react';
@@ -19,7 +18,7 @@ const MembershipIntentPage = ({ params }: PageProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [membershipUtxo, setMembershipUtxo] = useState<Utxo | null>(null);
-  const { membershipIntents, dbLoading } = useApp();
+  const { membershipIntents, dbLoading } = useDatabase();
   const { txHash } = use(params);
 
   useEffect(() => {

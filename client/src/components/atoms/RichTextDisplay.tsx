@@ -13,15 +13,11 @@ const RichTextDisplay = ({
   content = '',
   className = '',
 }: RichTextDisplayProps) => {
-
-
   if (!content) {
     return (
       <div className={`text-muted-foreground ${className}`}>Not specified</div>
     );
   }
-
-  const looksLikeHTML = /<\/?[a-z][\s\S]*>/i.test(content);
 
   const baseClasses = `
     prose prose-sm max-w-none break-words whitespace-normal text-sm font-normal text-foreground
@@ -31,8 +27,6 @@ const RichTextDisplay = ({
     [&_li]:ml-2
     [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_img]:my-4
   `;
-
-
 
   return (
     <div className={`${baseClasses} ${className}`}>
@@ -64,13 +58,46 @@ const RichTextDisplay = ({
           br: () => <br />,
 
           img: ({ node, ...props }) => {
-            console.log('Image component called:', props);
+            const { src, alt, ...restProps } = props;
+  
+            
             return (
               <img
-                {...props}
-                className="my-4 h-auto max-w-full rounded-lg"
-                alt={props.alt || 'Image'}
-                style={{ maxWidth: '100%', height: 'auto' }}
+                {...restProps}
+                src={src}
+                className="my-4 h-auto max-w-full rounded-lg border"
+                alt={alt || 'Image'}
+                style={{ 
+                  maxWidth: '100%', 
+                  height: 'auto',
+                  display: 'block'
+                }}
+           
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+          
+                  
+                  
+                  // Show a placeholder for failed images
+                  target.style.border = '2px dashed #e5e7eb';
+                  target.style.background = '#f9fafb';
+                  target.style.padding = '2rem';
+                  target.style.textAlign = 'center';
+                  target.style.color = '#6b7280';
+                  target.style.minHeight = '100px';
+                  target.style.display = 'flex';
+                  target.style.alignItems = 'center';
+                  target.style.justifyContent = 'center';
+                  
+                  // Create a text node showing the error
+                  const errorDiv = document.createElement('div');
+                  errorDiv.innerHTML = `<div style="text-align: center;"><div>🖼️</div><div style="margin-top: 8px; font-size: 14px;">Image failed to load</div><div style="margin-top: 4px; font-size: 12px; opacity: 0.7;">${alt || 'No alt text'}</div></div>`;
+                  target.style.display = 'none';
+                  target.parentNode?.insertBefore(errorDiv, target);
+                }}
+                loading="lazy"
+
+                {...(typeof src === 'string' && !src.startsWith('data:') && { crossOrigin: 'anonymous' })}
               />
             );
           },

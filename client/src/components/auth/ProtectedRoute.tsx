@@ -2,7 +2,14 @@
 
 import { toast } from '@/components/toast/toast-manager';
 import { routes } from '@/config/routes';
-import { useApp } from '@/context/AppContext';
+import { useAppSelector } from '@/lib/redux/hooks';
+import { selectIsConnected, selectIsWalletReady } from '@/lib/redux/features/wallet';
+import {
+  selectIsAdmin,
+  selectIsAuthLoading,
+  selectIsAuthenticated,
+  selectIsHydrated,
+} from '@/lib/redux/features/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -19,11 +26,19 @@ export function ProtectedRoute({
   requireAuth = true,
   redirectTo = '/',
 }: ProtectedRouteProps) {
-  const { isAdmin, wallet, isLoading, user, isAuthenticated } = useApp();
+  // Wallet state from Redux
+  const isConnected = useAppSelector(selectIsConnected);
+  const isWalletReady = useAppSelector(selectIsWalletReady);
+
+  // Auth state from Redux
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isAdmin = useAppSelector(selectIsAdmin);
+  const isAuthLoading = useAppSelector(selectIsAuthLoading);
+  const isHydrated = useAppSelector(selectIsHydrated);
+
   const router = useRouter();
 
-  const isWalletReady = wallet.hasAttemptedAutoConnect && !wallet.isConnecting;
-  const isUserReady = !isLoading;
+  const isUserReady = isHydrated && !isAuthLoading;
   const isFullyReady = isWalletReady && isUserReady;
 
   useEffect(() => {
@@ -32,7 +47,7 @@ export function ProtectedRoute({
     }
 
     // Check auth requirements
-    if (requireAuth && !wallet.isConnected) {
+    if (requireAuth && !isConnected) {
       toast.error(
         'Authentication Required',
         'Please connect your wallet to access this page',
@@ -41,8 +56,8 @@ export function ProtectedRoute({
       return;
     }
 
-    // Check admin requirements - only check if we have a user (not during loading)
-    if (requireAdmin && user && isAdmin === false) {
+    // Check admin requirements - only check if user is authenticated
+    if (requireAdmin && isAuthenticated && isAdmin === false) {
       toast.error(
         'Admin Access Required',
         'You need admin privileges to access this page',
@@ -50,14 +65,7 @@ export function ProtectedRoute({
       router.push(routes.unauthorized);
       return;
     }
-  }, [
-    isFullyReady,
-    wallet.isConnected,
-    user,
-    isAdmin,
-    requireAuth,
-    requireAdmin,
-  ]);
+  }, [isFullyReady, isConnected, isAuthenticated, isAdmin, requireAuth, requireAdmin, router, redirectTo]);
 
   // Show loading while initializing
   if (!isFullyReady) {
@@ -66,9 +74,7 @@ export function ProtectedRoute({
         <div className="flex items-center gap-2">
           <div className="border-primary-base h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></div>
           <span className="text-muted-foreground text-sm">
-            {!isWalletReady
-              ? 'Initializing wallet...'
-              : 'Loading user roles...'}
+            {!isWalletReady ? 'Initializing wallet...' : 'Loading user roles...'}
           </span>
         </div>
       </div>
@@ -76,11 +82,11 @@ export function ProtectedRoute({
   }
 
   // Don't render children if auth requirements aren't met
-  if (requireAuth && !wallet.isConnected) {
+  if (requireAuth && !isConnected) {
     return null;
   }
 
-  if (requireAdmin && user && isAdmin === false) {
+  if (requireAdmin && isAuthenticated && isAdmin === false) {
     return null;
   }
 

@@ -62,31 +62,31 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
 
         <div className="mt-3 sm:mt-4">
           <Progress
-              steps={(showAllActivities ? activities : activities.slice(0, 5)).map(
-                (activity, index) => ({
-                  id: `activity-${index}`,
-                  title: (
-                    <Link
-                      href={activity.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline"
-                    >
-                      <span className="hover:text-primary-base cursor-pointer text-sm transition-colors sm:text-base">
-                        {activity.title}
-                      </span>
-                    </Link>
-                  ),
-                  content: (
-                    <div className="text-muted-foreground text-xs">
-                      {getRelativeTime(activity.created_at)}
-                    </div>
-                  ),
-                  status: 'pending' as const,
-                })
-              )}
-            />
-
+            steps={(showAllActivities
+              ? activities
+              : activities.slice(0, 5)
+            ).map((activity, index) => ({
+              id: `activity-${index}`,
+              title: (
+                <Link
+                  href={activity.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline"
+                >
+                  <span className="hover:text-primary-base cursor-pointer text-sm transition-colors sm:text-base">
+                    {activity.title}
+                  </span>
+                </Link>
+              ),
+              content: (
+                <div className="text-muted-foreground text-xs">
+                  {getRelativeTime(activity.created_at)}
+                </div>
+              ),
+              status: 'pending' as const,
+            }))}
+          />
         </div>
 
         {activities.length > 5 && (

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": false,
     "target": "ES2018",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -20,17 +21,14 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@types": ["./types.ts"],
-      "@css": ["./src/app.css"]
+      "@types": ["./src/types"]
     }
   },
   "include": [
     "next-env.d.ts",
-    "jest-dom.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "utxoSync.worker.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,8 +1,10 @@
 use cardano/assets.{add, from_asset, from_lovelace}
 use cardano/transaction.{Transaction}
+use cocktail.{address_payment_key}
 use mocktail.{
-  complete, mock_policy_id, mock_tx_hash, mock_utxo_ref, mocktail_tx,
-  required_signer_hash, tx_in, tx_in_inline_datum, tx_out, tx_out_inline_datum,
+  complete, mock_policy_id, mock_pub_key_address, mock_tx_hash, mock_utxo_ref,
+  mocktail_tx, required_signer_hash, tx_in, tx_in_inline_datum, tx_out,
+  tx_out_inline_datum,
 }
 use oracle/spend as oracle_spend
 use tests/utils.{
@@ -60,11 +62,26 @@ fn mock_rotate_tx(test_case: RotateTestCase) -> Transaction {
         mock_rotate_output_oracle_datum,
       )
     |> tx_out_inline_datum(!is_output_datum_updated, mock_input_oracle_datum)
-    |> required_signer_hash(is_old_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_old_admins_signed, mock_second_admin)
-    |> required_signer_hash(is_new_admins_signed, mock_new_first_admin)
-    |> required_signer_hash(is_new_admins_signed, mock_new_second_admin)
-    |> required_signer_hash(is_new_admins_signed, mock_new_third_admin)
+    |> required_signer_hash(
+        is_old_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_old_admins_signed,
+        address_payment_key(mock_second_admin),
+      )
+    |> required_signer_hash(
+        is_new_admins_signed,
+        address_payment_key(mock_new_first_admin),
+      )
+    |> required_signer_hash(
+        is_new_admins_signed,
+        address_payment_key(mock_new_second_admin),
+      )
+    |> required_signer_hash(
+        is_new_admins_signed,
+        address_payment_key(mock_new_third_admin),
+      )
     |> complete()
 }
 
@@ -183,8 +200,14 @@ fn mock_update_threshold_tx(test_case: UpdateThresholdTestCase) -> Transaction {
         !is_datum_correct,
         OracleDatum { ..mock_input_oracle_datum, multi_sig_threshold: 0 },
       )
-    |> required_signer_hash(is_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_admins_signed, mock_third_admin)
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_third_admin),
+      )
     |> complete()
 }
 
@@ -265,10 +288,19 @@ fn mock_stop_oracle_tx(test_case: StopOracleTestCase) -> Transaction {
       )
     |> tx_out_inline_datum(
         !is_datum_correct,
-        OracleDatum { ..mock_input_oracle_datum, admins: ["a"] },
+        OracleDatum {
+          ..mock_input_oracle_datum,
+          admins: [mock_pub_key_address(0, None)],
+        },
       )
-    |> required_signer_hash(is_admins_signed, mock_first_admin)
-    |> required_signer_hash(is_admins_signed, mock_third_admin)
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_first_admin),
+      )
+    |> required_signer_hash(
+        is_admins_signed,
+        address_payment_key(mock_third_admin),
+      )
     |> complete()
 }
 

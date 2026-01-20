@@ -3,12 +3,13 @@ import { BlockfrostProvider, UTxO } from '@meshsdk/core';
 const isServer = typeof window === 'undefined';
 
 export class BlockfrostService {
-
   private blockfrost?: BlockfrostProvider;
 
   constructor() {
     if (isServer && process.env.BLOCKFROST_API_KEY_PREPROD) {
-      this.blockfrost = new BlockfrostProvider(process.env.BLOCKFROST_API_KEY_PREPROD);
+      this.blockfrost = new BlockfrostProvider(
+        process.env.BLOCKFROST_API_KEY_PREPROD,
+      );
     }
   }
 

@@ -3,7 +3,9 @@ use aiken/crypto.{VerificationKeyHash}
 use cardano/address.{Address}
 use cardano/assets.{AssetName, PolicyId, Value, quantity_of}
 use cardano/transaction.{DatumHash, InlineDatum, Input, NoDatum, Output}
-use cocktail.{convert_int_to_bytes, inputs_at_with, output_inline_datum}
+use cocktail.{
+  address_payment_key, convert_int_to_bytes, inputs_at_with, output_inline_datum,
+}
 use types.{
   CounterDatum, MemberDatum, MembershipIntentDatum, OracleDatum, ProposalDatum,
 }
@@ -68,13 +70,13 @@ pub fn get_membership_intent_datum(
 }
 
 pub fn has_all_signers(
-  all_signers: List<VerificationKeyHash>,
+  all_signers: List<Address>,
   actual_signers: List<VerificationKeyHash>,
 ) -> Bool {
   when all_signers is {
     [] -> True
     [head, ..tail] ->
-      if !list.has(actual_signers, head) {
+      if !list.has(actual_signers, address_payment_key(head)) {
         False
       } else {
         has_all_signers(tail, actual_signers)
@@ -83,14 +85,14 @@ pub fn has_all_signers(
 }
 
 pub fn has_enough_signers(
-  all_signers: List<VerificationKeyHash>,
+  all_signers: List<Address>,
   threshold: Int,
   actual_signers: List<VerificationKeyHash>,
 ) -> Bool {
   when all_signers is {
     [] -> False
     [head, ..tail] ->
-      if list.has(actual_signers, head) {
+      if list.has(actual_signers, address_payment_key(head)) {
         if threshold > 1 {
           has_enough_signers(tail, threshold - 1, actual_signers)
         } else {

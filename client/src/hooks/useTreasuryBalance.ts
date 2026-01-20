@@ -1,46 +1,59 @@
-import { getCatConstants, getProvider } from '@/utils';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import {
+  fetchTreasuryBalance as fetchTreasuryBalanceThunk,
+  setTotalPayouts,
+} from '@/lib/redux/features/treasury';
+import {
+  selectTreasuryBalance,
+  selectTotalPayouts,
+  selectIsTreasuryLoading,
+} from '@/lib/redux/features/treasury';
+import useProposals from './useProposals';
 
+/**
+ * Treasury balance hook - now delegates to Redux for state management.
+ * Maintains backward compatibility with existing consumers.
+ */
 export function useTreasuryBalance() {
-  const [treasuryBalance, setTreasuryBalance] = useState<bigint>(BigInt(0));
-  const [isTreasuryLoading, setIsTreasuryLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const { allProposals } = useProposals();
 
-  const fetchTreasuryBalance = useCallback(async () => {
-    try {
-      setIsTreasuryLoading(true);
-      const provider = getProvider();
-      const catConstants = getCatConstants();
-      const treasuryAddress = catConstants.scripts.treasury.spend.address;
+  // Read from Redux
+  const treasuryBalance = useAppSelector(selectTreasuryBalance);
+  const totalPayouts = useAppSelector(selectTotalPayouts);
+  const isTreasuryLoading = useAppSelector(selectIsTreasuryLoading);
 
-      const utxos = await provider.fetchAddressUTxOs(treasuryAddress);
-      const totalBalance = utxos.reduce((sum, utxo) => {
-        const lovelace = utxo.output.amount.find((asset) => asset.unit === 'lovelace');
-        return sum + BigInt(lovelace ? lovelace.quantity : '0');
-      }, BigInt(0));
-
-      setTreasuryBalance(totalBalance);
-    } catch (error) {
-      console.error('Failed to fetch treasury balance:', error);
-      setTreasuryBalance(BigInt(0));
-    } finally {
-      setIsTreasuryLoading(false);
-    }
-  }, []);
-
-  const refreshTreasuryBalance = useCallback(async () => {
-    await fetchTreasuryBalance();
-  }, [fetchTreasuryBalance]);
-
-  // Fetch on mount
+  // Calculate and update total payouts when proposals change
+  // Note: fundsRequested is in ADA format (locale string like "1,234.56")
+  // We need to convert back to lovelace for accurate BigInt summation
   useEffect(() => {
-    fetchTreasuryBalance();
-  }, [fetchTreasuryBalance]);
+    const payouts = allProposals.reduce((sum, proposal) => {
+      const adaString = proposal.fundsRequested;
+      if (!adaString) return sum;
 
-  // Listen for global refresh events (from successful signoff execution)
+      // Remove locale formatting (commas) and parse as float
+      const adaValue = parseFloat(adaString.replace(/,/g, ''));
+      if (isNaN(adaValue)) return sum;
+
+      // Convert ADA to lovelace (multiply by 1,000,000)
+      const lovelace = BigInt(Math.round(adaValue * 1_000_000));
+      return sum + lovelace;
+    }, BigInt(0));
+
+    dispatch(setTotalPayouts(payouts.toString()));
+  }, [allProposals, dispatch]);
+
+  // Fetch treasury balance on mount
+  useEffect(() => {
+    dispatch(fetchTreasuryBalanceThunk());
+  }, [dispatch]);
+
+  // Listen for global refresh events
   useEffect(() => {
     const handleRefresh = (event: CustomEvent) => {
       if (event.detail?.refreshTreasury) {
-        fetchTreasuryBalance();
+        dispatch(fetchTreasuryBalanceThunk());
       }
     };
 
@@ -49,11 +62,16 @@ export function useTreasuryBalance() {
     return () => {
       window.removeEventListener('app:refresh' as any, handleRefresh);
     };
-  }, [fetchTreasuryBalance]);
+  }, [dispatch]);
+
+  const refreshTreasuryBalance = useCallback(async () => {
+    await dispatch(fetchTreasuryBalanceThunk());
+  }, [dispatch]);
 
   return {
     treasuryBalance,
     isTreasuryLoading,
+    totalPayouts,
     refreshTreasuryBalance,
   };
 }

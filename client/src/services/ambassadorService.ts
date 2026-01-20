@@ -1,6 +1,6 @@
 import { NormalizedUser } from '@types';
-import { unstable_cache, revalidateTag } from 'next/cache';
 import axios from 'axios';
+import { revalidateTag, unstable_cache } from 'next/cache';
 
 const SUMMARY_URL = 'https://forum.cardano.org/u/{username}/summary.json';
 const PROFILE_URL = 'https://forum.cardano.org/u/{username}.json';
@@ -17,10 +17,10 @@ async function fetchJson(url: string) {
 
   if (!apiKey) {
     throw new Error(
-      'CARDANO_FORUM_API_KEY environment variable is not set. Please add it to your .env.local file.'
+      'CARDANO_FORUM_API_KEY environment variable is not set. Please add it to your .env.local file.',
     );
   }
-  
+
   try {
     const res = await axios.get(url, {
       timeout: 15000,
@@ -35,7 +35,9 @@ async function fetchJson(url: string) {
     throw error;
   }
 }
-async function tryMultipleUsernameFormats(username: string): Promise<NormalizedUser | null> {
+async function tryMultipleUsernameFormats(
+  username: string,
+): Promise<NormalizedUser | null> {
   const usernameVariations = [
     username,
     username.replace(/\s+/g, '_'), // "Eligendi_est_quod_ob"
@@ -52,11 +54,10 @@ async function tryMultipleUsernameFormats(username: string): Promise<NormalizedU
         return result; // Return the valid result
       }
     } catch (error) {
-      console.log(`Username variation "${variation}" failed, trying next...`);
       continue;
     }
   }
-  
+
   return null; // Return null instead of throwing an error
 }
 
@@ -67,11 +68,11 @@ async function getUserProfileUncached(
 
   // Encode the username for the URL
   const encodedUsername = encodeURIComponent(username);
-  
+
   try {
     const summaryUrl = SUMMARY_URL.replace('{username}', encodedUsername);
     const profileUrl = PROFILE_URL.replace('{username}', encodedUsername);
-    
+
     const summaryRaw = await fetchJson(summaryUrl);
     const profileRaw = await fetchJson(profileUrl);
 
@@ -79,7 +80,6 @@ async function getUserProfileUncached(
   } catch (error: any) {
     // If it's a 404, try different username formats
     if (error.response?.status === 404) {
-      console.log(`User "${username}" not found, trying variations...`);
       return tryMultipleUsernameFormats(username);
     }
     // Re-throw other errors (network issues, auth problems, etc.)
@@ -88,10 +88,10 @@ async function getUserProfileUncached(
 }
 
 function processUserData(
-  username: string, 
-  summaryRaw: any, 
-  profileRaw: any, 
-  ambassador: Ambassador
+  username: string,
+  summaryRaw: any,
+  profileRaw: any,
+  ambassador: Ambassador,
 ): NormalizedUser {
   const userSummary = summaryRaw?.user_summary ?? {};
   const topicsRaw = summaryRaw?.topics ?? [];
@@ -229,7 +229,7 @@ export const getUserProfile = (ambassador: Ambassador) =>
     {
       revalidate: 1800,
       tags: [`forum-${ambassador.username}`, 'all-forum-profiles'],
-    }
+    },
   )();
 
 export { getUserProfileUncached };

@@ -5,7 +5,7 @@ import KeyValue from '@/components/atoms/KeyValue';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
-import { useApp } from '@/context/AppContext';
+import { useWalletManager } from '@/hooks';
 import { shortenString } from '@/utils';
 import { hexToString } from '@meshsdk/core';
 import { MemberTokenDetail } from '@types';
@@ -25,8 +25,7 @@ const SelectToken = ({
   setSelectedAssetName: (name: string | null) => void;
   selectedAssetName: string | null;
 }) => {
-  const { wallet } = useApp();
-  const { address } = wallet;
+  const { address } = useWalletManager();
 
   return (
     <>
@@ -64,7 +63,7 @@ const SelectToken = ({
               <label
                 htmlFor={asset.assetName}
                 key={asset.assetName}
-                className="group border-white-400 hover:border-primary-base/30 peer-checked:border-primary-base/30 flex w-full cursor-pointer items-start gap-4 rounded-lg border px-5 py-4 text-sm transition-all"
+                className="group border-white-400 hover:border-primary-base/30 peer-checked:border-primary-base/30 flex w-full cursor-pointer items-start gap-4 rounded-lg border px-2 py-2 text-sm transition-all lg:px-5 lg:py-4"
               >
                 <div className="group-peer-checked:border-primary mt-1.5 flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors">
                   <div className="group-peer-checked:bg-primary hidden size-2 rounded-full bg-white transition-colors group-peer-checked:block" />
@@ -85,7 +84,11 @@ const SelectToken = ({
         </div>
 
         <div className="mt-6 flex w-full justify-between gap-2">
-          <Button variant="outline" onClick={goBack} className="rounded-lg! text-primary-base!">
+          <Button
+            variant="outline"
+            onClick={goBack}
+            className="text-primary-base! rounded-lg!"
+          >
             Back
           </Button>
 

@@ -1,7 +1,7 @@
 'use client';
-import FormDetails from '@/app/(home)/proposals/components/FormDetails';
-import FormFunds from '@/app/(home)/proposals/components/FormFunds';
-import FormReview from '@/app/(home)/proposals/components/FormReview';
+import FormDetails from '@/app/(home)/proposals/_components/FormDetails';
+import FormFunds from '@/app/(home)/proposals/_components/FormFunds';
+import FormReview from '@/app/(home)/proposals/_components/FormReview';
 import Button from '@/components/atoms/Button';
 import Card, { CardContent } from '@/components/atoms/Card';
 import Chip from '@/components/atoms/Chip';
@@ -9,26 +9,29 @@ import Paragraph from '@/components/atoms/Paragraph';
 import RichTextDisplay from '@/components/atoms/RichTextDisplay';
 import Title from '@/components/atoms/Title';
 import Copyable from '@/components/Copyable';
-import TopNav from '@/components/Navigation/TabNav';
+import TopNav from '@/components/navigation/TabNav';
+import ProposalDescription from '@/components/ProposalDescription';
+import MultisigProgressTracker from '@/components/signature-progress/MultisigProgressTracker';
 import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import MultisigProgressTracker from '@/components/SignatureProgress/MultisigProgressTracker';
 import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useApp } from '@/context';
+import { useDatabase, useWalletManager } from '@/hooks';
 import { parseProposalDatum } from '@/utils';
 import { storageApiClient } from '@/utils/storageApiClient';
 import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
 import { AdminDecisionData } from '@types';
-import { use, useRef, useState, useEffect } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 
 interface PageProps {
   params: Promise<{ txhash: string }>;
 }
 
 export default function Page({ params }: PageProps) {
-  const { proposalIntents, dbLoading, userAddress } = useApp();
+  const { address: userAddress } = useWalletManager();
+  const { proposalIntents, dbLoading } = useDatabase();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
-  const [adminDecisionData, setAdminDecisionData] = useState<AdminDecisionData | null>(null);
+  const [adminDecisionData, setAdminDecisionData] =
+    useState<AdminDecisionData | null>(null);
   const { txhash } = use(params);
 
   const descriptionEditorRef = useRef<any>(null);
@@ -36,7 +39,7 @@ export default function Page({ params }: PageProps) {
   useEffect(() => {
     const loadAdminDecision = async () => {
       if (!txhash) return;
-      
+
       try {
         const decision = await storageApiClient.get<AdminDecisionData>(
           txhash,
@@ -55,13 +58,38 @@ export default function Page({ params }: PageProps) {
 
   const proposal = proposalIntents.find((utxo) => utxo.txHash === txhash);
 
-  let proposalData: ProposalData;
+  type ProposalFormData = ProposalData & { description: string };
+  let proposalData: ProposalFormData;
   if (proposal && proposal.plutusData) {
     try {
-      const { metadata } = parseProposalDatum(proposal.plutusData)!;
+      let metadata: any;
+      let description = '';
+
+      if (proposal.parsedMetadata) {
+        try {
+          const parsed =
+            typeof proposal.parsedMetadata === 'string'
+              ? JSON.parse(proposal.parsedMetadata)
+              : proposal.parsedMetadata;
+          metadata = parsed;
+          description = parsed.description || '';
+        } catch (e) {
+          const { metadata: datumMetadata } = parseProposalDatum(
+            proposal.plutusData,
+          )!;
+          metadata = datumMetadata;
+        }
+      } else {
+        const { metadata: datumMetadata } = parseProposalDatum(
+          proposal.plutusData,
+        )!;
+        metadata = datumMetadata;
+      }
+
       proposalData = {
         title: metadata?.title,
-        description: metadata?.description,
+        url: metadata?.url,
+        description,
         fundsRequested: metadata?.fundsRequested || '0',
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
@@ -71,7 +99,8 @@ export default function Page({ params }: PageProps) {
       console.error('Error parsing proposal datum:', error);
       proposalData = {
         title: 'Error Loading Proposal',
-        description: 'Could not parse proposal data',
+        url: '',
+        description: '',
         fundsRequested: '0',
         receiverWalletAddress: '',
         submittedByAddress: '',
@@ -81,7 +110,8 @@ export default function Page({ params }: PageProps) {
   } else {
     proposalData = {
       title: 'Error Loading Proposal',
-      description: 'Could not parse proposal data',
+      url: '',
+      description: '',
       fundsRequested: '0',
       receiverWalletAddress: '',
       submittedByAddress: '',
@@ -89,7 +119,9 @@ export default function Page({ params }: PageProps) {
     };
   }
 
-  const [formData, setFormData] = useState<ProposalData>(proposalData);
+  const [formData, setFormData] = useState<ProposalFormData>({
+    ...proposalData,
+  });
 
   if (dbLoading) {
     return <SimpleCardanoLoader />;
@@ -113,7 +145,8 @@ export default function Page({ params }: PageProps) {
     );
   }
 
-  const isOwner = userAddress && proposalData.submittedByAddress === userAddress;
+  const isOwner =
+    userAddress && proposalData.submittedByAddress === userAddress;
 
   if (!isOwner) {
     return (
@@ -156,7 +189,7 @@ export default function Page({ params }: PageProps) {
     }
   };
 
-  const handleInputChange = (field: keyof ProposalData, value: string) => {
+  const handleInputChange = (field: keyof ProposalFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -221,29 +254,25 @@ export default function Page({ params }: PageProps) {
                   </Paragraph>
                 )}
               </div>
-            </div>
-            <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
-                  Submitted by
+                  Submitted By
                 </Paragraph>
-                <div className="flex flex-wrap items-start gap-1.5">
-                  {proposalData.submittedByAddress ? (
-                    <Copyable
-                      withKey={false}
-                      link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
-                      value={proposalData.submittedByAddress}
-                      keyLabel={''}
-                    />
-                  ) : (
-                    !proposalData.submittedByAddress && (
-                      <Paragraph size="sm" className="text-foreground">
-                        Not specified
-                      </Paragraph>
-                    )
-                  )}
-                </div>
+                {proposalData.submittedByAddress ? (
+                  <Copyable
+                    withKey={false}
+                    link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
+                    value={proposalData.submittedByAddress}
+                    keyLabel={''}
+                  />
+                ) : (
+                  <Paragraph size="sm" className="text-foreground">
+                    Not specified
+                  </Paragraph>
+                )}
               </div>
+            </div>
+            <div className="flex-1 space-y-7">
               <div className="space-y-1.5">
                 <Paragraph size="xs" className="">
                   Funds Requested
@@ -255,7 +284,6 @@ export default function Page({ params }: PageProps) {
             </div>
           </CardContent>
         </Card>
-
         <div className="flex items-center justify-between">
           <Title level="5" className="text-foreground">
             Overview
@@ -286,7 +314,7 @@ export default function Page({ params }: PageProps) {
         <Card>
           {isEditing ? (
             <>
-              <div className="border-border  border-b mx-6 mb-6">
+              <div className="border-border mx-6 mb-6 border-b">
                 <TopNav
                   tabs={tabs}
                   activeTabId={activeTab}
@@ -370,8 +398,10 @@ export default function Page({ params }: PageProps) {
                 <Title level="6" className="text-foreground">
                   Description
                 </Title>
-                <RichTextDisplay
-                  content={proposalData.description}
+                <ProposalDescription
+                  content={
+                    proposalData.description || 'No description available'
+                  }
                   className="text-foreground"
                 />
               </div>

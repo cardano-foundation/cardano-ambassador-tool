@@ -10,9 +10,12 @@ import Paragraph from '@/components/atoms/Paragraph';
 import TextArea from '@/components/atoms/TextArea';
 import ErrorAccordion from '@/components/ErrorAccordion';
 import { toast } from '@/components/toast/toast-manager';
-import { useApp } from '@/context/AppContext';
-import { useMemberValidation } from '@/hooks/useMemberValidation';
-import { findMembershipIntentUtxo, getCatConstants, getProvider } from '@/utils';
+import { useMemberValidation, useWalletManager } from '@/hooks';
+import {
+  findMembershipIntentUtxo,
+  getCatConstants,
+  getProvider,
+} from '@/utils';
 import {
   getFieldError,
   validateIntentForm,
@@ -36,8 +39,7 @@ const SubmitIntent = ({
   goNext?: () => void;
   goBack?: () => void;
 }) => {
-  const { wallet: walletState } = useApp();
-  const { address, wallet } = walletState;
+  const { address, wallet } = useWalletManager();
   const { isMember, memberData } = useMemberValidation();
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
@@ -68,7 +70,6 @@ const SubmitIntent = ({
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Clear submit error when form data changes
   useEffect(() => {
     if (submitError) {
       setSubmitError(null);
@@ -80,23 +81,23 @@ const SubmitIntent = ({
     setValidationErrors([]);
     setSubmitError(null);
 
-    // Check for prior submissions - prevent duplicate intents
     if (isMember && memberData) {
       setSubmitError({
         message: 'You are already a Cardano Ambassador member',
-        details: 'Members cannot submit new membership applications. You can view your profile at /my/submissions.',
+        details:
+          'Members cannot submit new membership applications. You can view your profile at /my/submissions.',
       });
       return;
     }
 
-    // Check for existing membership intent
     try {
       const userAddress = await wallet!.getChangeAddress();
       const existingIntent = await findMembershipIntentUtxo(userAddress);
       if (existingIntent) {
         setSubmitError({
           message: 'You already have a pending membership application',
-          details: 'You can only have one membership application at a time. Check your submission status at /my/submissions.',
+          details:
+            'You can only have one membership application at a time. Check your submission status at /my/submissions.',
         });
         return;
       }
@@ -122,7 +123,6 @@ const SubmitIntent = ({
 
     if (!validation.isValid) {
       setValidationErrors(validation.errors);
-      // Focus on the first error field
       const firstError = validation.errors[0];
       const errorElement = document.querySelector(
         `[name="${firstError.field}"]`,
@@ -134,7 +134,6 @@ const SubmitIntent = ({
       return;
     }
 
-    // Check required wallet and asset data
     if (!wallet || !address || !asset?.txHash || asset.outputIndex === null) {
       setSubmitError({
         message: 'Wallet or asset information is missing',
@@ -243,6 +242,10 @@ const SubmitIntent = ({
       bio: userMetadata.bio || '',
       country: userMetadata.country || '',
       city: userMetadata.city || '',
+      x_handle: '',
+      github: '',
+      discord: '',
+      spo_id: '',
     });
 
     // Apply membership
@@ -281,14 +284,17 @@ const SubmitIntent = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full max-w-full space-y-6 overflow-hidden">
       {/* Error Accordion */}
-      <ErrorAccordion
-        isVisible={!!submitError}
-        message={submitError?.message}
-        details={submitError?.details}
-        onDismiss={() => setSubmitError(null)}
-      />
+      <div className="w-full max-w-full">
+        <ErrorAccordion
+          isVisible={!!submitError}
+          message={submitError?.message}
+          details={submitError?.details}
+          onDismiss={() => setSubmitError(null)}
+          className="max-w-full"
+        />
+      </div>
 
       <CardHeader
         title="You're Whitelisted!"
@@ -405,10 +411,10 @@ const SubmitIntent = ({
             disabled={isSubmitting}
           >
             {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 flex-1 animate-spin" />
-                Submitting...
-              </>
+              <div className="flex">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span>Submitting...</span>
+              </div>
             ) : (
               'Create Account'
             )}

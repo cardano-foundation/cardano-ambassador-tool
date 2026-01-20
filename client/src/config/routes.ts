@@ -9,6 +9,7 @@ export const routes = {
 
   // Dynamic public routes
   proposal: (txhash: string) => `/proposals/${txhash}`,
+  completedProposal: (slug: string) => `/proposals/completed/${slug}`,
 
   // User/Member routes
   my: {
@@ -33,6 +34,7 @@ export const routes = {
 // Helper function to get route with parameters
 export const getRoute = {
   proposal: (txhash: string) => routes.proposal(txhash),
+  completedProposal: (slug: string) => routes.completedProposal(slug),
   myProposal: (txhash: string) => routes.my.proposals(txhash),
   manageMembershipApplication: (txhash: string) =>
     routes.manage.membershipApplication(txhash),
