@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { IWallet } from '@meshsdk/core';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import {
@@ -81,13 +81,15 @@ export function useUserAuth({
   }, [dispatch]);
 
   // Construct user object for backward compatibility
-  const user: User = isAuthenticated && authAddress && (wallet || reduxWallet)
-    ? {
-        wallet: (wallet || reduxWallet) as IWallet,
-        roles,
-        address: authAddress,
-      }
-    : null;
+  const user: User = useMemo(() => {
+    return isAuthenticated && authAddress && (wallet || reduxWallet)
+      ? {
+          wallet: (wallet || reduxWallet) as IWallet,
+          roles,
+          address: authAddress,
+        }
+      : null;
+  }, [isAuthenticated, authAddress, wallet, reduxWallet, roles]);
 
   return {
     user,

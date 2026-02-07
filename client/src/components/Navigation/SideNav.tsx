@@ -92,7 +92,7 @@ const adminToolsSection: NavigationSection = {
 
 const SideNav = () => {
   const wallet = useWalletManager();
-  const { user, isAdmin, userRoles } = useUserAuth({
+  const { user, isAdmin, userRoles, isAuthenticated } = useUserAuth({
     wallet: wallet.wallet,
     address: wallet.address,
     isConnected: wallet.isConnected,
@@ -114,7 +114,7 @@ const SideNav = () => {
     ];
     const match = allItems.find((item) => item.href === pathname);
     if (match) setCurrentActiveId(match.id);
-  }, [pathname, wallet.isConnected, userRoles]);
+  }, [pathname]);
 
   // Update sections when roles change
   useEffect(() => {
@@ -124,12 +124,12 @@ const SideNav = () => {
       updated.push(adminToolsSection);
     }
 
-    if (user) {
+    if (isAuthenticated) {
       updated.push(memberToolsSection);
     }
 
     setSections(updated);
-  }, [user, isAdmin, wallet.isConnected, userRoles]);
+  }, [isAuthenticated, isAdmin]);
 
   return (
     <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r lg:flex">

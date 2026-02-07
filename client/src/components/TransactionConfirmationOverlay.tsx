@@ -64,13 +64,15 @@ const TransactionConfirmationOverlay: React.FC<
 
   useEffect(() => {
     if (!isVisible) {
-      confirmationRunning.current = false;
-      currentTxHash.current = undefined;
-      setConfirmationState({
-        status: 'waiting',
-        attempts: 0,
-        timeTaken: 0,
-      });
+      if (confirmationState.status !== 'waiting') {
+        confirmationRunning.current = false;
+        currentTxHash.current = undefined;
+        setConfirmationState({
+          status: 'waiting',
+          attempts: 0,
+          timeTaken: 0,
+        });
+      }
       return;
     }
 

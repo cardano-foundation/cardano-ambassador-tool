@@ -1,5 +1,6 @@
 'use client';
 
+import { AppInitializer } from '@/components/AppInitializer';
 import { TxConfirmationProvider } from '@/components/TxConfirmationProvider';
 import ReduxProvider from '@/lib/redux/client-provider';
 
@@ -45,6 +46,7 @@ export default function RootLayout({
       </head>
       <body className="flex h-screen min-h-screen w-screen min-w-[320px] overflow-hidden antialiased">
         <ReduxProvider>
+          <AppInitializer />
           <TxConfirmationProvider>{children}</TxConfirmationProvider>
         </ReduxProvider>
       </body>

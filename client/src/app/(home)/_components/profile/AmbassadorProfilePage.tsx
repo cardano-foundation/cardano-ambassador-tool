@@ -50,6 +50,11 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
       created_at: '',
       amount_received: '',
       proposal_count: 0,
+      spo_id: '',
+      drep_id: '',
+      x_handle: '',
+      github: '',
+      discord: '',
     };
 
     const member = members.find((utxo) => {
@@ -92,6 +97,11 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
         ),
         proposal_count: parsed.member.completion.size,
         walletAddress: memberMetadata.walletAddress || '',
+        spo_id: memberMetadata.spo_id || '',
+        drep_id: (memberMetadata as any).drep_id || '',
+        x_handle: memberMetadata.x_handle || '',
+        github: memberMetadata.github || '',
+        discord: memberMetadata.discord || '',
       };
     } catch {
       return defaultData;
@@ -159,6 +169,10 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
               bio_excerpt: memberData.bio_excerpt,
               created_at: memberData.created_at,
               city: memberData.city,
+              spo_id: memberData.spo_id,
+              x_handle: memberData.x_handle,
+              github: memberData.github,
+              discord: memberData.discord,
             }}
             formatDate={formatDate}
             cleanHtml={cleanHtml}

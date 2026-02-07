@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '../../store';
-import type { Utxo } from '@types';
+import type { Utxo, Proposal } from '@types';
+import { lovelaceToAda, parseMemberDatum, parseProposalDatum } from '@/utils';
 
 // ---------- Base Selectors ----------
 export const selectDataState = (state: RootState) => state.data;
@@ -150,5 +151,137 @@ export const selectUtxosByContext = createSelector(
       default:
         return [];
     }
+  },
+);
+
+
+// ... existing selectors ...
+
+/**
+ * Derived Selector: Parse and combine all proposals (Active + Completed)
+ * Replaces logic in useProposals hook
+ */
+export const selectDetailedProposals = createSelector(
+  [selectProposalIntents, selectProposals, selectSignOfApprovals, selectMembers],
+  (proposalIntents, proposals, signOfApprovals, members) => {
+    // 1. Combine Active Utxos
+    const proposalsUtxos = [...proposalIntents, ...proposals, ...signOfApprovals];
+
+    // 2. Parse Active Proposals
+    const activeProposals = proposalsUtxos
+      .map((utxo, idx) => {
+        if (!utxo.plutusData) return null;
+
+        try {
+          let metadata: any;
+          let description = 'No description provided';
+
+          // Try parsing metadata from pre-parsed field or raw plutus data
+          if (utxo.parsedMetadata) {
+            try {
+              const parsed =
+                typeof utxo.parsedMetadata === 'string'
+                  ? JSON.parse(utxo.parsedMetadata)
+                  : utxo.parsedMetadata;
+              metadata = parsed;
+              description = parsed.description || description;
+            } catch {
+              const parsedDatum = parseProposalDatum(utxo.plutusData);
+              metadata = parsedDatum?.metadata;
+            }
+          } else {
+            const parsedDatum = parseProposalDatum(utxo.plutusData);
+            metadata = parsedDatum?.metadata;
+          }
+
+          if (!metadata) return null;
+
+          // Determine status
+          let status: Proposal['status'] = 'pending';
+          if (signOfApprovals.some((p) => p.txHash === utxo.txHash)) {
+            status = 'signoff_pending';
+          } else if (proposals.some((p) => p.txHash === utxo.txHash)) {
+            status = 'approved';
+          }
+
+          return {
+            id: 0, // Will be re-indexed later
+            title: metadata.title || 'Untitled Proposal',
+            description,
+            receiverWalletAddress: metadata.receiverWalletAddress || '',
+            submittedByAddress: metadata.submittedByAddress || '',
+            fundsRequested: metadata.fundsRequested || '0',
+            status,
+            txHash: utxo.txHash,
+            slug: undefined,
+            url: metadata.url || undefined,
+          } as Proposal;
+        } catch (e) {
+          console.error('Error parsing proposal datum:', e);
+          return null;
+        }
+      })
+      .filter((p): p is Proposal => p !== null);
+
+    // 3. Parse Completed Proposals from Members
+    const completedProposals = members.flatMap((mbr) => {
+      const parsed = parseMemberDatum(mbr.plutusData!);
+      if (!parsed || !parsed.member.completion) return [];
+
+      return Array.from(parsed.member.completion, ([proposal, value]) => {
+        // Create slug
+        const titleSlug = proposal.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')
+          .substring(0, 50);
+        const addressSlug = proposal.receiverWalletAddress.substring(0, 8);
+        const slug = `${titleSlug}-${addressSlug}`;
+
+        return {
+          ...proposal,
+          status: 'paid_out' as Proposal['status'],
+          fundsRequested: lovelaceToAda(value),
+          txHash: undefined,
+          slug,
+          description: 'No description provided',
+          url: proposal.url || undefined,
+          id: 0,
+        } as Proposal;
+      });
+    });
+
+    // 4. Merge and Index
+    return [...activeProposals, ...completedProposals].map((p, index) => ({
+      ...p,
+      id: index + 1,
+    }));
+  },
+);
+
+/**
+ * Derived Selector: Calculate Total Payouts from Proposals
+ * Replaces logic in useTreasuryBalance hook
+ */
+export const selectCalculatedTotalPayouts = createSelector(
+  [selectDetailedProposals],
+  (allProposals) => {
+    const totalLovelace = allProposals
+      .filter((p) => p.status === 'paid_out')
+      .reduce((sum, proposal) => {
+      const adaString = proposal.fundsRequested;
+      if (!adaString) return sum;
+
+      // Remove locale formatting (commas) and parse as float
+      const adaValue = parseFloat(adaString.replace(/,/g, ''));
+      if (isNaN(adaValue)) return sum;
+
+      // Convert ADA to lovelace (multiply by 1,000,000)
+      const lovelace = BigInt(Math.round(adaValue * 1_000_000));
+      return sum + lovelace;
+    }, BigInt(0));
+
+    return totalLovelace.toString();
   },
 );

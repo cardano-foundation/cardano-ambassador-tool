@@ -1,6 +1,8 @@
 import Card, { CardContent } from '@/components/atoms/Card';
 import Paragraph from '@/components/atoms/Paragraph';
 import Title from '@/components/atoms/Title';
+import Copyable from '@/components/Copyable';
+import { getCurrentNetworkConfig } from '@/config/cardano';
 import React from 'react';
 import { LocationMap } from './CountryMap';
 
@@ -11,6 +13,7 @@ interface AboutSectionProps {
     city: string;
     bio_excerpt: string;
     created_at: string;
+    spo_id?: string;
   };
   formatDate: (dateString: string) => string;
   cleanHtml: (html: string | null | undefined) => string;
@@ -49,18 +52,20 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             <span className="text-neutral font-semibold">Username:</span>{' '}
             <span className="text-muted-foreground">{profile.username}</span>
           </div>
-          <div>
+          {/* <div>
             <span className="text-neutral font-semibold">Role:</span>{' '}
             <span className="text-muted-foreground"></span>
-          </div>
-          <div>
-            <span className="text-neutral font-semibold">Website:</span>{' '}
-            <span className="text-muted-foreground"></span>
-          </div>
-          <div>
-            <span className="text-neutral font-semibold">Languages:</span>{' '}
-            <span className="text-muted-foreground"></span>
-          </div>
+          </div> */}
+           {profile.spo_id && (
+            <div className="flex items-center">
+              <span className="text-neutral font-semibold mr-2">SPO ID:</span>
+              <Copyable
+                value={profile.spo_id}
+                withKey={false}
+                link={`${getCurrentNetworkConfig().explorerUrl}/pool/${profile.spo_id}`}
+              />
+            </div>
+          )}
         </div>
         {hasLocation && (
           <LocationMap city={profile.city} country={profile.country} />

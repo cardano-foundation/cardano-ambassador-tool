@@ -39,9 +39,10 @@ On-chain membership and treasury management system for Cardano ambassadors. Toke
 | `on-chain/validators/` | Aiken smart contracts (Plutus v3) | `oracle/`, `member/`, `treasury/` |
 | `off-chain/src/` | TypeScript SDK for tx building | `transactions/`, `lib/types.ts` |
 | `client/src/app/` | Next.js 15 frontend (App Router) | `(home)/`, `manage/`, `my/` |
-| `client/src/context/` | React context providers | `AppContext.tsx` |
 | `client/src/hooks/` | Custom React hooks | `useDatabase.ts`, `useWalletManager.ts` |
+| `client/src/utils/` | Utility functions | `format.ts`, `error.ts` |
 | `client/src/components/` | Shared UI components | `Navigation/`, `SignatureProgress/` |
+| `client/src/lib/redux/` | Redux Store & Slices | `store.ts`, `features/` |
 | `admin-dashboard/` | Admin panel (Next.js) | `src/pages/admin.tsx` |
 
 ## Entry Points
@@ -64,7 +65,7 @@ On-chain membership and treasury management system for Cardano ambassadors. Toke
 | `off-chain/src/transactions/adminAction.ts` | Admin multi-sig tx builders |
 | `off-chain/src/transactions/userAction.ts` | User tx builders (apply, propose) |
 | `off-chain/src/lib/constant.ts` | CATConstants - script addresses and hashes |
-| `client/src/context/AppContext.tsx` | Global state: wallet, members, proposals |
+| `client/src/lib/redux/store.ts` | Global state: wallet, members, proposals, auth |
 | `client/src/hooks/useDatabase.ts` | IndexedDB sync for UTxO caching |
 | `on-chain/validators/oracle/spend.ak` | Oracle validator - admin governance |
 

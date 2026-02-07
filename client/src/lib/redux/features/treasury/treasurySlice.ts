@@ -7,7 +7,6 @@ import { getCatConstants, getProvider } from '@/utils';
 export interface TreasuryState {
   // Balance stored as string (bigint not serializable)
   balance: string;
-  totalPayouts: string;
   isLoading: boolean;
   error: string | null;
 }
@@ -15,7 +14,6 @@ export interface TreasuryState {
 // ---------- Initial State ----------
 const initialState: TreasuryState = {
   balance: '0',
-  totalPayouts: '0',
   isLoading: true,
   error: null,
 };
@@ -59,9 +57,6 @@ const treasurySlice = createSlice({
     setTreasuryBalance: (state, action: PayloadAction<string>) => {
       state.balance = action.payload;
     },
-    setTotalPayouts: (state, action: PayloadAction<string>) => {
-      state.totalPayouts = action.payload;
-    },
     setTreasuryLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
@@ -94,7 +89,6 @@ const treasurySlice = createSlice({
 // ---------- Exports ----------
 export const {
   setTreasuryBalance,
-  setTotalPayouts,
   setTreasuryLoading,
   setTreasuryError,
   clearTreasuryError,

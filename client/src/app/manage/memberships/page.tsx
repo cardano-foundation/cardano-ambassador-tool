@@ -97,7 +97,7 @@ export default function ManageAmbassadorsPage() {
       ),
     },
     {
-      header: 'Utxo Hash',
+      header: 'Approval tx',
       accessor: 'utxoHash',
       sortable: false,
       cell: (value: string) => (
