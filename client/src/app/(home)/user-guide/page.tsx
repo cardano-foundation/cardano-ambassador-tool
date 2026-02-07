@@ -25,28 +25,18 @@ export default function AboutPage() {
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="#membership-guide" className="text-primary-base hover:underline">
-                  1. Becoming a Member
+                  Becoming a Member
                 </a>
               </li>
               <li>
                 <a href="#proposal-guide" className="text-primary-base hover:underline">
-                  2. Submitting Proposals
+                  Submitting Proposals
                 </a>
               </li>
             </ul>
           </div>
 
-          <div>
-            <Paragraph size="sm" className="font-medium text-foreground mb-3">
-              What You'll Find Here
-            </Paragraph>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Membership Application</li>
-              <li>Proposal Submission</li>
-              <li>Tracking & Editing</li>
-              <li>Important Notes</li>
-            </ul>
-          </div>
+
         </div>
       </aside>
     </div>

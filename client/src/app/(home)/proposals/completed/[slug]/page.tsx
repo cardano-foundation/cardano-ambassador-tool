@@ -11,7 +11,7 @@ import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
 import { getCurrentNetworkConfig } from '@/config/cardano';
 import useProposals from '@/hooks/useProposals';
 import { formatAdaAmount } from '@/utils';
-import { use } from 'react';
+import { use, useEffect, useState } from 'react';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -20,11 +20,40 @@ interface PageProps {
 export default function CompletedProposalPage({ params }: PageProps) {
   const { allProposals, loading } = useProposals();
   const { slug } = use(params);
+  const [fetchedDescription, setFetchedDescription] = useState<string | null>(
+    null,
+  );
 
   // Find the completed proposal by slug
   const proposal = allProposals.find(
     (p) => p.status === 'paid_out' && p.slug === slug,
   );
+
+  useEffect(() => {
+    const url = proposal?.url;
+    if (url) {
+      const fetchContent = async () => {
+        try {
+          // Extract filename from URL
+          const filename = url.split('/').pop();
+          if (filename && filename.endsWith('.md')) {
+            const res = await fetch(
+              `/api/proposal-content?filename=${filename}`,
+            );
+            if (res.ok) {
+              const data = await res.json();
+              if (data.content) {
+                setFetchedDescription(data.content);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch fresh proposal content', error);
+        }
+      };
+      fetchContent();
+    }
+  }, [proposal?.url]);
 
   if (loading) {
     return <SimpleCardanoLoader />;
@@ -161,10 +190,33 @@ export default function CompletedProposalPage({ params }: PageProps) {
               <Title level="6" className="text-foreground">
                 Description
               </Title>
-              <ProposalDescription
-                content={proposal.description || 'No description available'}
-                className="text-foreground"
-              />
+              {fetchedDescription ||
+              (proposal.description &&
+                proposal.description !== 'No description provided') ? (
+                <ProposalDescription
+                  content={fetchedDescription || proposal.description}
+                  className="text-foreground"
+                />
+              ) : (
+                <div className="border-primary/20 bg-primary/5 flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+                  <div className="text-muted-foreground mb-6 max-w-md">
+                    <Paragraph>
+                      The detailed description for this completed proposal is not
+                      stored on-chain in the member archive.
+                    </Paragraph>
+                  </div>
+                  {proposal.url && (
+                    <a
+                      href={proposal.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-primary-base hover:bg-primary-400 border-primary-base inline-flex items-center justify-center rounded-lg border-2 px-6 py-3 text-sm font-medium text-white transition-all duration-200 ease-in-out hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      View Full Proposal
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </Card>

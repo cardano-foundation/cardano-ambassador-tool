@@ -41,7 +41,7 @@ Click `Become an Ambassador` in the navigation menu, or visit `/sign-up`
 
 The app will automatically detect eligible NFTs in your wallet. Choose the token for your membership.
 
-> ⚠️ **Important:** This token will be locked in a smart contract during your membership.
+> ⚠️ **Important:** This token is required for your membership application and serves as your unique identifier. It will **not** be locked in a smart contract, but must remain in your wallet.
 
 ### Step 4: 📋 Fill Out Application Form
 
