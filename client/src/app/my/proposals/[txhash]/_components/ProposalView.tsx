@@ -21,7 +21,9 @@ export const ProposalView = ({
   setIsEditing,
   adminDecisionData,
 }: ProposalViewProps) => {
-  const signingStarted = adminDecisionData?.signers && adminDecisionData.signers.length > 0;
+  const hasDecision = !!adminDecisionData;
+  const isStatusLocked = ['approved', 'rejected', 'signoff_pending', 'paid_out'].includes(proposalData.status);
+  const isLocked = hasDecision || isStatusLocked;
 
   return (
     <>
@@ -31,13 +33,13 @@ export const ProposalView = ({
                 variant="primary"
                 size="sm"
                 onClick={() => setIsEditing(true)}
-                disabled={!!signingStarted}
+                disabled={isLocked}
               >
                 Edit Proposal
               </Button>
-              {signingStarted && (
+              {isLocked && (
                 <span className="text-xs text-amber-600">
-                  Editing disabled: Proposal signing has started.
+                  Editing disabled: Administrative process has started.
                 </span>
               )}
           </div>

@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import Paragraph from '../atoms/Paragraph';
 import Title from '../atoms/Title';
 import MultisigProgressTracker from '../signature-progress/MultisigProgressTracker';
+import { useDatabase, useMemberValidation, useWalletManager } from '@/hooks';
 
 type ExtendedMemberData = MemberData & {
   txHash?: string;
@@ -35,6 +36,7 @@ const OwnerMembershipTimeline = ({
   const [adminDecisionData, setAdminDecisionData] =
     useState<AdminDecisionData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { signOfApprovals } = useDatabase();
 
   useEffect(() => {
     if (intentUtxo?.plutusData) {
@@ -159,14 +161,24 @@ const OwnerMembershipTimeline = ({
     return 'pending';
   };
 
+  const isStatusLocked = signOfApprovals.some(
+    (p) => p.txHash === intentUtxo?.txHash,
+  );
+  const isLocked = !!adminDecisionData || isStatusLocked;
+
   const applicationProgress: TimelineStep[] = [
     {
       id: 'intent-submitted',
       title: 'Edit Your Application',
       content: (
         <div className="space-y-3">
+          {isLocked && (
+            <span className="mb-2 block text-xs text-amber-600">
+              Editing disabled: Administrative process has started.
+            </span>
+          )}
           <MemberDataComponent
-            readonly={false}
+            readonly={isLocked}
             membershipData={membershipData}
             onSave={handleMemberDataSave}
           />

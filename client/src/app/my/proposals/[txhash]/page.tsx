@@ -26,7 +26,7 @@ type ProposalFormData = ProposalData & { description: string };
 
 export default function Page({ params }: PageProps) {
   const { address: userAddress } = useWalletManager();
-  const { proposalIntents, dbLoading, isSyncing, syncData } = useDatabase();
+  const { proposalIntents, signOfApprovals, proposals, dbLoading, isSyncing, syncData } = useDatabase();
   const [isEditing, setIsEditing] = useState(false);
   const { showTxConfirmation } = useTxConfirmation();
   const [adminDecisionData, setAdminDecisionData] =
@@ -150,7 +150,7 @@ export default function Page({ params }: PageProps) {
         fundsRequested: metadata?.fundsRequested || '0',
         receiverWalletAddress: metadata?.receiverWalletAddress || '',
         submittedByAddress: metadata?.submittedByAddress || '',
-        status: metadata?.status || 'pending',
+        status: (proposal as any).status || metadata?.status || 'pending',
       };
     } else {
       throw new Error('No proposal data found');
