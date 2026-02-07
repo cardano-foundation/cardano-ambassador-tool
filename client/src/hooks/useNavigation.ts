@@ -6,7 +6,7 @@ import { useNetworkValidation, useUserAuth, useWalletManager } from '@/hooks';
 import { NavigationSection } from '@types';
 import {
   BookOpenTextIcon,
-  GridIcon,
+  InfoIcon,
   HomeIcon,
   SendIcon,
   UserIcon,
@@ -24,7 +24,7 @@ const defaultNavigationSections: NavigationSection[] = [
         href: routes.proposals,
         icon: ProposalIcon,
       },
-      { id: 'about', label: 'About', href: routes.about, icon: GridIcon },
+      { id: 'user-guide', label: 'User Guide', href: routes.userGuide, icon: InfoIcon },
       {
         id: 'ambassador',
         label: 'Become an Ambassador',
@@ -79,6 +79,12 @@ const adminToolsSection: NavigationSection = {
       label: 'Treasury Sign offs',
       href: routes.manage.treasurySignoffs,
       icon: ProposalIcon,
+    },
+    {
+      id: 'admin-guide',
+      label: 'Admin Guide',
+      href: routes.manage.adminGuide,
+      icon: InfoIcon,
     },
   ],
 };

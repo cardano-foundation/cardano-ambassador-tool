@@ -47,9 +47,11 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    const body: GithubProposalData & { submitterAddress?: string } =
-      await req.json();
-    const { title, description, submitterAddress } = body;
+    const body: GithubProposalData & {
+      submitterAddress?: string;
+      filename?: string;
+    } = await req.json();
+    const { title, description, submitterAddress, filename } = body;
 
     if (!title || !description) {
       return NextResponse.json(
@@ -62,6 +64,7 @@ export async function POST(req: NextRequest) {
       title,
       description,
       submitterAddress,
+      filename,
     });
 
     return NextResponse.json(

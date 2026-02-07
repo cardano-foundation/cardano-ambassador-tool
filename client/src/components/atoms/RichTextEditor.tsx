@@ -143,6 +143,14 @@ const RichTextEditor = forwardRef(
     const handleRedo = () => {
       editor?.commands.redo();
     };
+
+    useEffect(() => {
+      // Only set content if editor is ready and empty, to avoid overwriting user input
+      if (editor && value && editor.isEmpty) {
+        editor.commands.setContent(value);
+      }
+    }, [editor, value]);
+
     useImperativeHandle(ref, () => ({
       getMarkdown: () => {
         if (!editor) return '';

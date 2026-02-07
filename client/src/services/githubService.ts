@@ -7,15 +7,19 @@ const GitContentService = {
     title,
     description,
     submitterAddress,
-  }: GithubProposalData & { submitterAddress?: string }) {
+    filename: validFilename,
+  }: GithubProposalData & { submitterAddress?: string; filename?: string }) {
     const { owner, repo, branch, octokit } = await getOctokit();
     
-    const contentHash = crypto.createHash('md5')
-      .update(`${title}-${submitterAddress || 'anonymous'}`)
-      .digest('hex')
-      .substring(0, 8);
-    
-    const filename = `proposal-${contentHash}.md`;
+    let filename = validFilename;
+    if (!filename) {
+      const contentHash = crypto.createHash('md5')
+        .update(`${title}-${submitterAddress || 'anonymous'}`)
+        .digest('hex')
+        .substring(0, 8);
+      filename = `proposal-${contentHash}.md`;
+    }
+
     const path = `proposals-applications/content/${filename}`;
 
     try {

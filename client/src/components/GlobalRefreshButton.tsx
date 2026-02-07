@@ -1,6 +1,8 @@
 'use client';
 
-import { useDatabase, useTreasuryBalance } from '@/hooks';
+import { useDatabase } from '@/hooks';
+import { fetchTreasuryBalance as fetchTreasuryBalanceThunk } from '@/lib/redux/features/treasury';
+import { useAppDispatch } from '@/lib/redux/hooks';
 import { RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import Button from './atoms/Button';
@@ -13,7 +15,7 @@ export default function GlobalRefreshButton({
   className = '',
 }: GlobalRefreshButtonProps) {
   const { syncData, isSyncing } = useDatabase();
-  const { refreshTreasuryBalance } = useTreasuryBalance();
+  const dispatch = useAppDispatch();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -34,7 +36,7 @@ export default function GlobalRefreshButton({
         syncData('proposal_intent'),
         syncData('member'),
         syncData('proposal'),
-        refreshTreasuryBalance(),
+        dispatch(fetchTreasuryBalanceThunk()),
       ]);
 
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -43,7 +45,7 @@ export default function GlobalRefreshButton({
     } finally {
       setIsRefreshing(false);
     }
-  }, [syncData, refreshTreasuryBalance]);
+  }, [syncData, dispatch]);
 
   useEffect(() => {
     const handleGlobalRefresh = () => {

@@ -1,7 +1,7 @@
 export const routes = {
   // Public routes
   home: '/',
-  about: '/about',
+  userGuide: '/user-guide',
   proposals: '/proposals',
   newProposal: '/proposals/new',
   signUp: '/sign-up',
@@ -28,6 +28,7 @@ export const routes = {
     proposal: (txhash: string) => `/manage/proposal-applications/${txhash}`,
     treasurySignoffs: '/manage/treasury-signoffs',
     treasurySignoff: (txhash: string) => `/manage/treasury-signoffs/${txhash}`,
+    adminGuide: '/admin-guide',
   },
 } as const;
 

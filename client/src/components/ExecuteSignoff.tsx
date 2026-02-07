@@ -1,4 +1,4 @@
-import { useTreasuryBalance, useWalletManager } from '@/hooks';
+import { useWalletManager } from '@/hooks';
 import {
   dbUtxoToMeshUtxo,
   emitGlobalRefreshWithDelay,
@@ -19,14 +19,17 @@ import TransactionConfirmationOverlay from './TransactionConfirmationOverlay';
 interface ExecuteSignoffProps {
   signoffApprovalUtxo?: Utxo;
   memberUtxo?: Utxo;
+  treasuryBalance: string;
+  isTreasuryLoading: boolean;
 }
 
 const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
   signoffApprovalUtxo,
   memberUtxo,
+  treasuryBalance,
+  isTreasuryLoading,
 }) => {
   const { wallet } = useWalletManager();
-  const { treasuryBalance, isTreasuryLoading } = useTreasuryBalance();
   const [isExecuting, setIsExecuting] = useState(false);
   const [isExecuted, setIsExecuted] = useState(false);
   const [submitError, setSubmitError] = useState<{
@@ -52,7 +55,7 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
     : BigInt(0);
 
   const hasInsufficientBalance =
-    !isTreasuryLoading && treasuryBalance < proposalAmount;
+    !isTreasuryLoading && BigInt(treasuryBalance) < proposalAmount;
 
   const handleExecuteSignoff = async () => {
     if (!signoffApprovalUtxo || !memberUtxo) {

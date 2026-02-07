@@ -332,6 +332,8 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
               <ExecuteSignoff
                 signoffApprovalUtxo={proposal}
                 memberUtxo={memberUtxo}
+                treasuryBalance={String(treasuryBalance)}
+                isTreasuryLoading={isTreasuryLoading}
               />
             </div>
           </Card>

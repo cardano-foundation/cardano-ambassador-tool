@@ -42,11 +42,18 @@ export default function MultisigProgressTracker({
 
   useEffect(() => {
     const loadSigners = async () => {
+      let adminAddresses: string[] = [];
+      
       try {
         const adminData = await findAdminsFromOracle();
-        const adminAddresses = adminData?.adminAddresses || [];
+        
+        adminAddresses = adminData?.adminAddresses || [];
         setMinRequiredSigners(Number(adminData!.minsigners));
+      } catch (error) {
+        console.warn('Failed to fetch oracle admins, falling back to raw hashes:', error);
+      }
 
+      try {
         if (
           adminDecisionData &&
           adminDecisionData.selectedAdmins &&
@@ -81,7 +88,7 @@ export default function MultisigProgressTracker({
           setSigners([]);
         }
       } catch (error) {
-        console.error('Failed to load signers:', error);
+        console.error('Failed to process signers:', error);
         setSigners([]);
       } finally {
         setLoading(false);
@@ -100,6 +107,7 @@ export default function MultisigProgressTracker({
   const progressPercentage =
     totalSigners > 0 ? (signedCount / totalSigners) * 100 : 0;
   const isComplete = signedCount >= totalSigners;
+  
 
   return (
     <div className="space-y-6">
@@ -140,7 +148,9 @@ export default function MultisigProgressTracker({
           <div className="py-4 text-center">
             <Paragraph size="sm" className="">
               {adminDecisionData
-                ? 'Loading signature information...'
+                ? adminDecisionData.decision
+                  ? `Decision: ${adminDecisionData.decision} (Syncing signature data...)`
+                  : 'Proposal is under review.'
                 : 'No admin decision available yet.'}
             </Paragraph>
           </div>

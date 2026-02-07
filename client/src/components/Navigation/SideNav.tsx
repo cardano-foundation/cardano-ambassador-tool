@@ -31,7 +31,7 @@ const defaultNavigationSections: NavigationSection[] = [
         href: routes.proposals,
         icon: ProposalIcon,
       },
-      { id: 'about', label: 'About', href: routes.about, icon: InfoIcon },
+      { id: 'user-guide', label: 'User Guide', href: routes.userGuide, icon: InfoIcon },
       {
         id: 'ambassador',
         label: 'Become an Ambassador',
@@ -87,6 +87,12 @@ const adminToolsSection: NavigationSection = {
       href: routes.manage.treasurySignoffs,
       icon: ProposalIcon,
     },
+    {
+      id: 'admin-guide',
+      label: 'Admin Guide',
+      href: routes.manage.adminGuide,
+      icon: InfoIcon,
+    },
   ],
 };
 
@@ -129,7 +135,7 @@ const SideNav = () => {
     }
 
     setSections(updated);
-  }, [isAuthenticated, isAdmin]);
+  }, [isAuthenticated, isAdmin]);  
 
   return (
     <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r lg:flex">
@@ -150,39 +156,43 @@ const SideNav = () => {
               </div>
             )}
             <nav className="space-y-1">
-              {section.items.map((item) => {
-                const IconComponent = item.icon || GridIcon;
-                const isActive = item.id === currentActiveId;
+              {section.items
+                .filter((item) => item.href) // Skip items without href
+                .map((item) => {
+                  const IconComponent = item.icon || GridIcon;
+                  const isActive = item.id === currentActiveId;
 
-                return (
-                  <Link
-                    key={item.id}
-                    href={item.href}
-                    className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
-                      isActive ? 'bg-muted' : ''
-                    }`}
-                    aria-label={item.label}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    <div
-                      className={`flex h-5 w-5 flex-shrink-0 items-center justify-center ${
-                        isActive ? 'text-primary' : 'text-muted-foreground'
+                  if (!item.href) {
+                    return null;
+                  }
+
+                  return (
+                    <Link
+                      key={item.id}
+                      href={item.href}
+                      className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
+                        isActive ? 'bg-muted' : ''
                       }`}
+                      aria-label={item.label}
+                      aria-current={isActive ? 'page' : undefined}
                     >
-                      <IconComponent className="h-5 w-5" />
-                    </div>
-                    <span
-                      className={`flex-1 text-left text-base ${
-                        isActive
-                          ? 'text-primary font-medium'
-                          : 'text-neutral font-medium'
-                      }`}
-                    >
-                      {item.label}
-                    </span>
-                  </Link>
-                );
-              })}
+                      <div
+                        className={`flex h-5 w-5 flex-shrink-0 items-center justify-center ${
+                          isActive ? 'text-primary' : 'text-muted-foreground'
+                        }`}
+                      >
+                        <IconComponent className="h-5 w-5" />
+                      </div>
+                      <span
+                        className={`text-sm font-medium ${
+                          isActive ? 'text-foreground' : 'text-muted-foreground'
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
+                })}
             </nav>
             {i === 0 && <div className="border-border mx-6 mt-6 border-b" />}
           </div>

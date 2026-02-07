@@ -4,6 +4,7 @@ import { storageApiClient } from '@/utils/storageApiClient';
 import { AdminDecisionData, TransactionConfirmationResult } from '@types';
 import { Loader2 } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Button from './atoms/Button';
 import Paragraph from './atoms/Paragraph';
 import ErrorAccordion from './ErrorAccordion';
@@ -23,6 +24,7 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
 }) => {
   const { wallet } = useWalletManager();
   const { showTxConfirmation } = useTxConfirmation();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message: string;
@@ -166,9 +168,17 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
         }
       }
 
-      emitGlobalRefreshWithDelay(2000);
+      // Redirect to public proposal page if this was an approved proposal
+      if (context === 'ProposalIntent' && adminDecisionData?.decision === 'approve' && result.txHash) {
+        // Give a moment for the transaction to propagate
+        setTimeout(() => {
+          router.push(`/proposals/${result.txHash}?refresh=true`);
+        }, 2000);
+      } else {
+        emitGlobalRefreshWithDelay(2000);
+      }
     },
-    [onFinalizationComplete, txhash],
+    [onFinalizationComplete, txhash, context, adminDecisionData?.decision, router],
   );
 
   const handleTransactionTimeout = (

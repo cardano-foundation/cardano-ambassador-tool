@@ -46,7 +46,7 @@ function ToastItem({ toast }: { toast: Toast }) {
                 <h4 className="text-sm leading-tight font-semibold">
                   {toast.title}
                 </h4>
-                <p className="mt-1 text-sm leading-relaxed text-wrap">
+                <p className="mt-1 text-sm leading-relaxed break-all">
                   {toast.message}
                 </p>
               </div>
