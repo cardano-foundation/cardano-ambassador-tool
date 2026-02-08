@@ -1,10 +1,10 @@
-import Card, { CardContent } from '@/components/atoms/Card';
-import CardanoIcon from '@/components/atoms/CardanoIcon';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import UserAvatar from '@/components/atoms/UserAvatar';
-import { getCountryFlag } from '@/utils';
-import { StatCard } from '../../(home)/_components/profile/StartCard';
+import Card, { CardContent } from "@/components/atoms/Card";
+import CardanoIcon from "@/components/atoms/CardanoIcon";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import UserAvatar from "@/components/atoms/UserAvatar";
+import { getCountryFlag } from "@/utils";
+import { StatCard } from "../../(home)/_components/profile/StartCard";
 
 interface ProfileHeaderProps {
   name: string;

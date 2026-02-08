@@ -1,20 +1,20 @@
-'use client';
-import LocationSelector from '@/app/(onboarding)/sign-up/_components/LocationSelector';
-import Button from '@/components/atoms/Button';
-import ForumUsernameInput from '@/components/atoms/ForumUsernameInput';
-import Input from '@/components/atoms/Input';
-import Modal from '@/components/atoms/Modal';
-import TextArea from '@/components/atoms/TextArea';
-import Title from '@/components/atoms/Title';
-import UserAvatar from '@/components/atoms/UserAvatar';
-import ErrorAccordion from '@/components/ErrorAccordion';
-import { getCountryByCode, getCountryByName } from '@/utils/locationData';
+"use client";
+import LocationSelector from "@/app/(onboarding)/sign-up/_components/LocationSelector";
+import Button from "@/components/atoms/Button";
+import ForumUsernameInput from "@/components/atoms/ForumUsernameInput";
+import Input from "@/components/atoms/Input";
+import Modal from "@/components/atoms/Modal";
+import TextArea from "@/components/atoms/TextArea";
+import Title from "@/components/atoms/Title";
+import UserAvatar from "@/components/atoms/UserAvatar";
+import ErrorAccordion from "@/components/ErrorAccordion";
+import { getCountryByCode, getCountryByName } from "@/utils/locationData";
 import {
   getFieldError,
   validateProfileForm,
   ValidationError,
-} from '@/utils/validation';
-import { useEffect, useState } from 'react';
+} from "@/utils/validation";
+import { useEffect, useState } from "react";
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -42,7 +42,7 @@ export default function ProfileEditModal({
 }: ProfileEditModalProps) {
   const [formData, setFormData] = useState(profile);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [countryCode, setCountryCode] = useState('');
+  const [countryCode, setCountryCode] = useState("");
 
   // Validation and error state
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
@@ -72,7 +72,7 @@ export default function ProfileEditModal({
           setCountryCode(profile.country);
         }
       } else {
-        setCountryCode('');
+        setCountryCode("");
       }
     }
   }, [isOpen, profile]);
@@ -96,8 +96,8 @@ export default function ProfileEditModal({
     const country = getCountryByCode(newCountryCode);
     setFormData((prev) => ({
       ...prev,
-      country: country?.name || '',
-      city: prev.country !== country?.name ? '' : prev.city,
+      country: country?.name || "",
+      city: prev.country !== country?.name ? "" : prev.city,
     }));
   };
 
@@ -135,7 +135,7 @@ export default function ProfileEditModal({
       ) as HTMLElement;
       if (errorElement) {
         errorElement.focus();
-        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
       return;
     }
@@ -145,10 +145,10 @@ export default function ProfileEditModal({
     try {
       await onSave(formData);
     } catch (error: any) {
-      console.error('Failed to save profile:', error);
+      console.error("Failed to save profile:", error);
       setSubmitError({
         message:
-          error?.message || 'Failed to update profile. Please try again.',
+          error?.message || "Failed to update profile. Please try again.",
         details: error?.stack || JSON.stringify(error, null, 2),
       });
     } finally {
@@ -202,11 +202,11 @@ export default function ProfileEditModal({
               type="text"
               name="name"
               value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
+              onChange={(e) => handleInputChange("name", e.target.value)}
               placeholder="Enter your full name"
               required
-              error={!!getFieldError(validationErrors, 'name')}
-              errorMessage={getFieldError(validationErrors, 'name')}
+              error={!!getFieldError(validationErrors, "name")}
+              errorMessage={getFieldError(validationErrors, "name")}
             />
           </div>
 
@@ -215,11 +215,11 @@ export default function ProfileEditModal({
               label="Forum Username (Display Name) *"
               placeholder="Enter your forum.cardano.org username"
               value={formData.username}
-              onChange={(username) => handleInputChange('username', username)}
+              onChange={(username) => handleInputChange("username", username)}
             />
-            {getFieldError(validationErrors, 'username') && (
+            {getFieldError(validationErrors, "username") && (
               <p className="text-primary-base mt-1 text-sm">
-                {getFieldError(validationErrors, 'username')}
+                {getFieldError(validationErrors, "username")}
               </p>
             )}
           </div>
@@ -233,11 +233,11 @@ export default function ProfileEditModal({
             type="email"
             name="email"
             value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
+            onChange={(e) => handleInputChange("email", e.target.value)}
             placeholder="Enter your email address"
             required
-            error={!!getFieldError(validationErrors, 'email')}
-            errorMessage={getFieldError(validationErrors, 'email')}
+            error={!!getFieldError(validationErrors, "email")}
+            errorMessage={getFieldError(validationErrors, "email")}
           />
         </div>
 
@@ -249,11 +249,11 @@ export default function ProfileEditModal({
             onCountryChange={handleCountryChange}
             onCityChange={handleCityChange}
           />
-          {(getFieldError(validationErrors, 'country') ||
-            getFieldError(validationErrors, 'city')) && (
+          {(getFieldError(validationErrors, "country") ||
+            getFieldError(validationErrors, "city")) && (
             <p className="text-primary-base mt-1 text-sm">
-              {getFieldError(validationErrors, 'country') ||
-                getFieldError(validationErrors, 'city')}
+              {getFieldError(validationErrors, "country") ||
+                getFieldError(validationErrors, "city")}
             </p>
           )}
         </div>
@@ -264,13 +264,13 @@ export default function ProfileEditModal({
           </label>
           <TextArea
             name="bio"
-            value={formData.bio || ''}
-            onChange={(e) => handleInputChange('bio', e.target.value)}
+            value={formData.bio || ""}
+            onChange={(e) => handleInputChange("bio", e.target.value)}
             placeholder="Tell us about yourself..."
             rows={4}
             className="resize-none"
-            error={!!getFieldError(validationErrors, 'bio')}
-            errorMessage={getFieldError(validationErrors, 'bio')}
+            error={!!getFieldError(validationErrors, "bio")}
+            errorMessage={getFieldError(validationErrors, "bio")}
           />
         </div>
 
@@ -288,11 +288,11 @@ export default function ProfileEditModal({
               <Input
                 type="text"
                 name="github"
-                value={formData.github || ''}
-                onChange={(e) => handleInputChange('github', e.target.value)}
+                value={formData.github || ""}
+                onChange={(e) => handleInputChange("github", e.target.value)}
                 placeholder="GitHub username"
-                error={!!getFieldError(validationErrors, 'github')}
-                errorMessage={getFieldError(validationErrors, 'github')}
+                error={!!getFieldError(validationErrors, "github")}
+                errorMessage={getFieldError(validationErrors, "github")}
               />
             </div>
 
@@ -303,11 +303,11 @@ export default function ProfileEditModal({
               <Input
                 type="text"
                 name="twitter"
-                value={formData.twitter || ''}
-                onChange={(e) => handleInputChange('twitter', e.target.value)}
+                value={formData.twitter || ""}
+                onChange={(e) => handleInputChange("twitter", e.target.value)}
                 placeholder="Twitter handle (without @)"
-                error={!!getFieldError(validationErrors, 'twitter')}
-                errorMessage={getFieldError(validationErrors, 'twitter')}
+                error={!!getFieldError(validationErrors, "twitter")}
+                errorMessage={getFieldError(validationErrors, "twitter")}
               />
             </div>
           </div>
@@ -320,11 +320,11 @@ export default function ProfileEditModal({
               <Input
                 type="text"
                 name="discord"
-                value={formData.discord || ''}
-                onChange={(e) => handleInputChange('discord', e.target.value)}
+                value={formData.discord || ""}
+                onChange={(e) => handleInputChange("discord", e.target.value)}
                 placeholder="Discord username"
-                error={!!getFieldError(validationErrors, 'discord')}
-                errorMessage={getFieldError(validationErrors, 'discord')}
+                error={!!getFieldError(validationErrors, "discord")}
+                errorMessage={getFieldError(validationErrors, "discord")}
               />
             </div>
 
@@ -335,11 +335,11 @@ export default function ProfileEditModal({
               <Input
                 type="text"
                 name="spoId"
-                value={formData.spoId || ''}
-                onChange={(e) => handleInputChange('spoId', e.target.value)}
+                value={formData.spoId || ""}
+                onChange={(e) => handleInputChange("spoId", e.target.value)}
                 placeholder="Stake Pool Operator ID"
-                error={!!getFieldError(validationErrors, 'spoId')}
-                errorMessage={getFieldError(validationErrors, 'spoId')}
+                error={!!getFieldError(validationErrors, "spoId")}
+                errorMessage={getFieldError(validationErrors, "spoId")}
               />
             </div>
           </div>
@@ -357,7 +357,7 @@ export default function ProfileEditModal({
             Cancel
           </Button>
           <Button type="submit" variant="primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : 'Save Changes'}
+            {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </form>

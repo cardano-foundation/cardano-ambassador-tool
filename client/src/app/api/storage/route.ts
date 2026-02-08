@@ -1,5 +1,5 @@
-import { storageService } from '@/services/storageService';
-import { NextRequest, NextResponse } from 'next/server';
+import { storageService } from "@/services/storageService";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,12 +7,12 @@ export async function POST(request: NextRequest) {
     const { action, filename, content, subfolder } = body;
 
     switch (action) {
-      case 'save':
+      case "save":
         if (!filename || !content || !subfolder) {
           return NextResponse.json(
             {
               error:
-                'Missing required parameters: filename, content, subfolder',
+                "Missing required parameters: filename, content, subfolder",
             },
             { status: 400 },
           );
@@ -20,37 +20,37 @@ export async function POST(request: NextRequest) {
         await storageService.save(filename, content, subfolder);
         return NextResponse.json({ success: true });
 
-      case 'get':
+      case "get":
         if (!filename) {
           return NextResponse.json(
-            { error: 'Missing required parameter: filename' },
+            { error: "Missing required parameter: filename" },
             { status: 400 },
           );
         }
         const data = await storageService.get(filename, subfolder);
         return NextResponse.json({ data });
 
-      case 'exists':
+      case "exists":
         if (!filename) {
           return NextResponse.json(
-            { error: 'Missing required parameter: filename' },
+            { error: "Missing required parameter: filename" },
             { status: 400 },
           );
         }
         const exists = await storageService.exists(filename, subfolder);
         return NextResponse.json({ exists });
 
-      case 'delete':
+      case "delete":
         if (!filename) {
           return NextResponse.json(
-            { error: 'Missing required parameter: filename' },
+            { error: "Missing required parameter: filename" },
             { status: 400 },
           );
         }
         const deleted = await storageService.delete(filename, subfolder);
         return NextResponse.json({ deleted });
 
-      case 'list':
+      case "list":
         const files = await storageService.list(subfolder);
         return NextResponse.json({ files });
 
@@ -58,15 +58,15 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             error:
-              'Invalid action. Supported actions: save, get, exists, delete, list',
+              "Invalid action. Supported actions: save, get, exists, delete, list",
           },
           { status: 400 },
         );
     }
   } catch (error) {
-    console.error('Storage API error:', error);
+    console.error("Storage API error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }

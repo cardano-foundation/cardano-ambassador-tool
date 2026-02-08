@@ -1,5 +1,5 @@
-import Card, { CardContent } from '@/components/atoms/Card';
-import React from 'react';
+import Card, { CardContent } from "@/components/atoms/Card";
+import React from "react";
 
 interface StatCardProps {
   label: string;

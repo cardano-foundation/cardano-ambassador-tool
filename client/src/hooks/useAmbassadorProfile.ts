@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { AmbassadorProfile } from '../types/ambassadorProfile';
+import { useEffect, useState } from "react";
+import { AmbassadorProfile } from "../types/ambassadorProfile";
 
 interface UseAmbassadorProfileReturn {
   profile: AmbassadorProfile | null;
@@ -26,14 +26,14 @@ export const useAmbassadorProfile = (
         window.location.origin,
       );
       if (forceRefresh) {
-        url.searchParams.set('forceRefresh', 'true');
+        url.searchParams.set("forceRefresh", "true");
       }
 
       const response = await fetch(url.toString());
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('API Error:', errorText);
+        console.error("API Error:", errorText);
         throw new Error(
           `Failed to fetch ambassador profile: ${response.status} - ${errorText}`,
         );
@@ -42,8 +42,8 @@ export const useAmbassadorProfile = (
       const data: AmbassadorProfile = await response.json();
       setProfile(data);
     } catch (err) {
-      console.error('Fetch error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error("Fetch error:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -51,9 +51,9 @@ export const useAmbassadorProfile = (
 
   const hardRefresh = async () => {
     try {
-      await fetch('/api/revalidate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/revalidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           forumProfile: ambassadorUsername,
         }),
@@ -61,7 +61,7 @@ export const useAmbassadorProfile = (
 
       await fetchAmbassadorProfile(true);
     } catch (err) {
-      console.error('Hard refresh error:', err);
+      console.error("Hard refresh error:", err);
       await fetchAmbassadorProfile(true);
     }
   };

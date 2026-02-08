@@ -1,19 +1,19 @@
-'use client';
-import Breadcrumb from '@/components/atoms/Breadcrumbs';
-import Button from '@/components/atoms/Button';
-import Card, { CardContent } from '@/components/atoms/Card';
-import HambugerIcon from '@/components/atoms/HumbugerIcon';
-import AppLogo from '@/components/atoms/Logo';
-import ThemeToggle from '@/components/ThemeToggle';
-import ConnectWallet from '@/components/wallet/ConnectWallet';
-import { useNavigation, useUserAuth, useWalletManager } from '@/hooks';
-import { shortenString } from '@/utils';
-import { useWallet } from '@meshsdk/react';
-import { X } from 'lucide-react';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import UserAvatar from '../atoms/UserAvatar';
-import GlobalRefreshButton from '../GlobalRefreshButton';
+"use client";
+import Breadcrumb from "@/components/atoms/Breadcrumbs";
+import Button from "@/components/atoms/Button";
+import Card, { CardContent } from "@/components/atoms/Card";
+import HambugerIcon from "@/components/atoms/HumbugerIcon";
+import AppLogo from "@/components/atoms/Logo";
+import ThemeToggle from "@/components/ThemeToggle";
+import ConnectWallet from "@/components/wallet/ConnectWallet";
+import { useNavigation, useUserAuth, useWalletManager } from "@/hooks";
+import { shortenString } from "@/utils";
+import { useWallet } from "@meshsdk/react";
+import { X } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import UserAvatar from "../atoms/UserAvatar";
+import GlobalRefreshButton from "../GlobalRefreshButton";
 
 export default function TopNavBar() {
   const wallet = useWalletManager();
@@ -45,7 +45,7 @@ export default function TopNavBar() {
                   size="xs"
                   className="bg-background border-none py-0!"
                   onClick={toggleMobileMenu}
-                  aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                  aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                   aria-expanded={isMobileMenuOpen}
                   aria-controls="mobile-navigation"
                 >
@@ -182,13 +182,13 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
                     key={item.id}
                     href={item.href}
                     className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
-                      isActive ? 'bg-muted' : ''
+                      isActive ? "bg-muted" : ""
                     }`}
                     onClick={onClose}
                   >
                     <div
                       className={`flex h-5 w-5 shrink-0 items-center justify-center ${
-                        isActive ? 'text-primary' : 'text-muted-foreground'
+                        isActive ? "text-primary" : "text-muted-foreground"
                       }`}
                     >
                       <IconComponent className="h-5 w-5" />
@@ -196,8 +196,8 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
                     <span
                       className={`flex-1 text-left text-base ${
                         isActive
-                          ? 'text-primary font-medium'
-                          : 'text-neutral font-medium'
+                          ? "text-primary font-medium"
+                          : "text-neutral font-medium"
                       }`}
                     >
                       {item.label}

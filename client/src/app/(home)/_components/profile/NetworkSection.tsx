@@ -1,6 +1,6 @@
-import Card, { CardContent } from '@/components/atoms/Card';
-import Title from '@/components/atoms/Title';
-import React from 'react';
+import Card, { CardContent } from "@/components/atoms/Card";
+import Title from "@/components/atoms/Title";
+import React from "react";
 
 export interface NetworkItem {
   icon: React.ReactNode;

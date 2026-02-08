@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Button from '@/components/atoms/Button';
+import Button from "@/components/atoms/Button";
 import {
   Dialog,
   DialogContent,
@@ -8,12 +8,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/Dialog';
-import { useWalletManager } from '@/hooks';
-import { shortenString } from '@/utils';
-import { useState } from 'react';
-import { toast } from '../toast/toast-manager';
-import WalletList from './WalletList';
+} from "@/components/Dialog";
+import { useWalletManager } from "@/hooks";
+import { shortenString } from "@/utils";
+import { useState } from "react";
+import { toast } from "../toast/toast-manager";
+import WalletList from "./WalletList";
 
 const ConnectWallet = () => {
   const [open, setOpen] = useState(false);
@@ -32,12 +32,12 @@ const ConnectWallet = () => {
     <Dialog open={open} onOpenChange={(open) => handlechange(open)}>
       {isConnected && address ? (
         <div className="flex justify-between">
-          <span className="text-sm">{shortenString(address || '', 8)}</span>
+          <span className="text-sm">{shortenString(address || "", 8)}</span>
           <span
             className="text-primary-base border-primary-base border-b border-dotted text-sm hover:cursor-pointer"
             onClick={(e) => {
               disconnectWallet();
-              toast.warning('Warning!', 'Wallet disconnected');
+              toast.warning("Warning!", "Wallet disconnected");
             }}
           >
             Disconnect
@@ -61,7 +61,7 @@ const ConnectWallet = () => {
 
         <div className="flex h-full w-full flex-col gap-6 p-6">
           <WalletList />
-          
+
           <div className="flex justify-center">
             <Button
               variant="primary"

@@ -1,19 +1,19 @@
-'use client';
-import AmbassadorSearchBar from '@/components/AmbassadorSearchBar';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import { Pagination } from '@/components/Pagination';
-import { useDatabase } from '@/hooks';
-import { parseMemberDatum } from '@/utils';
-import { getCountryByCode } from '@/utils/locationData';
-import { Ambassador } from '@types';
-import React, { useMemo, useState } from 'react';
-import AmbassadorCard from './_components/AmbassadorCard';
+"use client";
+import AmbassadorSearchBar from "@/components/AmbassadorSearchBar";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import { Pagination } from "@/components/Pagination";
+import { useDatabase } from "@/hooks";
+import { parseMemberDatum } from "@/utils";
+import { getCountryByCode } from "@/utils/locationData";
+import { Ambassador } from "@types";
+import React, { useMemo, useState } from "react";
+import AmbassadorCard from "./_components/AmbassadorCard";
 
 export default function HomePage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState('all');
-  const [currentView, setCurrentView] = useState<'grid' | 'list'>('grid');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("all");
+  const [currentView, setCurrentView] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const { members } = useDatabase();
@@ -35,18 +35,18 @@ export default function HomePage() {
           const countryData = memberMetadata.country
             ? getCountryByCode(memberMetadata.country)
             : null;
-          const countryName = countryData?.name || memberMetadata.country || '';
-          const countryFlag = countryData?.flag || '';
+          const countryName = countryData?.name || memberMetadata.country || "";
+          const countryFlag = countryData?.flag || "";
 
           const ambassador: Ambassador = {
             href: `/members/${utxo.txHash}`,
-            username: memberMetadata.displayName || '',
-            name: memberMetadata.fullName || memberMetadata.displayName || '',
+            username: memberMetadata.displayName || "",
+            name: memberMetadata.fullName || memberMetadata.displayName || "",
             bio_excerpt: memberMetadata.bio || null,
             country: countryName,
             flag: countryFlag,
-            avatar: '',
-            created_at: '',
+            avatar: "",
+            created_at: "",
             summary: {
               stats: {
                 topics_entered: 0,
@@ -68,7 +68,7 @@ export default function HomePage() {
 
           return ambassador;
         } catch (error) {
-          console.error('Error parsing member datum:', error);
+          console.error("Error parsing member datum:", error);
           return null;
         }
       })
@@ -76,7 +76,7 @@ export default function HomePage() {
   }, [members]);
 
   const uniqueCountries = [...new Set(parsedMembers.map((a) => a.country))]
-    .filter((country) => country && country.trim() !== '')
+    .filter((country) => country && country.trim() !== "")
     .sort();
 
   const filteredAmbassadors = useMemo(() => {
@@ -85,7 +85,7 @@ export default function HomePage() {
         ambassador.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ambassador.country.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesRegion =
-        selectedRegion === 'all' || ambassador.country === selectedRegion;
+        selectedRegion === "all" || ambassador.country === selectedRegion;
       return matchesSearch && matchesRegion;
     });
   }, [searchTerm, selectedRegion, parsedMembers]);
@@ -104,7 +104,7 @@ export default function HomePage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
@@ -148,16 +148,16 @@ export default function HomePage() {
 
       <div
         className={
-          currentView === 'grid'
-            ? 'grid grid-cols-1 gap-3 sm:grid-cols-1 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
-            : 'space-y-3 sm:space-y-4'
+          currentView === "grid"
+            ? "grid grid-cols-1 gap-3 sm:grid-cols-1 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+            : "space-y-3 sm:space-y-4"
         }
       >
         {displayedAmbassadors.map((member) => (
           <AmbassadorCard
             key={member.username || member.name}
             ambassador={member}
-            isListView={currentView === 'list'}
+            isListView={currentView === "list"}
           />
         ))}
       </div>
@@ -185,11 +185,11 @@ export default function HomePage() {
           <Paragraph size="base" className="text-muted-foreground">
             No ambassadors found matching your search criteria.
           </Paragraph>
-          {(searchTerm || selectedRegion !== 'all') && (
+          {(searchTerm || selectedRegion !== "all") && (
             <button
               onClick={() => {
-                setSearchTerm('');
-                setSelectedRegion('all');
+                setSearchTerm("");
+                setSelectedRegion("all");
               }}
               className="text-primary mt-4 underline"
             >

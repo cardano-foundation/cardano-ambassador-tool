@@ -1,14 +1,14 @@
-import Button from '@/components/atoms/Button';
-import Card, { CardContent } from '@/components/atoms/Card';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import UserAvatar from '@/components/atoms/UserAvatar';
-import Copyable from '@/components/Copyable';
-import { getCountryFlag } from '@/utils';
-import { CopyIcon, ExternalLink } from 'lucide-react';
-import Link from 'next/link';
-import ProfileField from './ProfileField';
-import SocialLinks from './SocialLinks';
+import Button from "@/components/atoms/Button";
+import Card, { CardContent } from "@/components/atoms/Card";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import UserAvatar from "@/components/atoms/UserAvatar";
+import Copyable from "@/components/Copyable";
+import { getCountryFlag } from "@/utils";
+import { CopyIcon, ExternalLink } from "lucide-react";
+import Link from "next/link";
+import ProfileField from "./ProfileField";
+import SocialLinks from "./SocialLinks";
 
 interface ProfileDetailsProps {
   profile: {
@@ -72,7 +72,7 @@ export default function ProfileDetails({
           <ProfileField label="Bio">
             <div className="sm:flex-1 lg:max-w-md">
               <Paragraph className="text-foreground text-sm leading-relaxed">
-                {profile.bio || 'No bio'}
+                {profile.bio || "No bio"}
               </Paragraph>
             </div>
           </ProfileField>

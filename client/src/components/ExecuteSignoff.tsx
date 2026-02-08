@@ -1,4 +1,4 @@
-import { useWalletManager } from '@/hooks';
+import { useWalletManager } from "@/hooks";
 import {
   dbUtxoToMeshUtxo,
   emitGlobalRefreshWithDelay,
@@ -6,15 +6,15 @@ import {
   getCatConstants,
   getProvider,
   parseProposalDatum,
-} from '@/utils';
-import { AdminActionTx } from '@sidan-lab/cardano-ambassador-tool';
-import { TransactionConfirmationResult, Utxo } from '@types';
-import { Loader2 } from 'lucide-react';
-import { useCallback, useState } from 'react';
-import Button from './atoms/Button';
-import Paragraph from './atoms/Paragraph';
-import ErrorAccordion from './ErrorAccordion';
-import TransactionConfirmationOverlay from './TransactionConfirmationOverlay';
+} from "@/utils";
+import { AdminActionTx } from "@sidan-lab/cardano-ambassador-tool";
+import { TransactionConfirmationResult, Utxo } from "@types";
+import { Loader2 } from "lucide-react";
+import { useCallback, useState } from "react";
+import Button from "./atoms/Button";
+import Paragraph from "./atoms/Paragraph";
+import ErrorAccordion from "./ErrorAccordion";
+import TransactionConfirmationOverlay from "./TransactionConfirmationOverlay";
 
 interface ExecuteSignoffProps {
   signoffApprovalUtxo?: Utxo;
@@ -46,7 +46,7 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
           const { metadata } = parseProposalDatum(
             signoffApprovalUtxo.plutusData,
           )!;
-          const adaAmount = parseFloat(metadata?.fundsRequested || '0');
+          const adaAmount = parseFloat(metadata?.fundsRequested || "0");
           return BigInt(Math.round(adaAmount * 1_000_000));
         } catch {
           return BigInt(0);
@@ -60,8 +60,8 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
   const handleExecuteSignoff = async () => {
     if (!signoffApprovalUtxo || !memberUtxo) {
       setSubmitError({
-        message: 'Missing required data',
-        details: 'SignoffApproval UTxO or Member UTxO not found',
+        message: "Missing required data",
+        details: "SignoffApproval UTxO or Member UTxO not found",
       });
       return;
     }
@@ -70,7 +70,7 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       const treasuryAda = Number(treasuryBalance) / 1_000_000;
       const proposalAda = Number(proposalAmount) / 1_000_000;
       setSubmitError({
-        message: 'Insufficient treasury balance',
+        message: "Insufficient treasury balance",
         details: `Treasury balance (₳${Math.floor(treasuryAda).toLocaleString()}) is insufficient for this withdrawal (₳${Math.floor(proposalAda).toLocaleString()})`,
       });
       return;
@@ -83,12 +83,12 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       const oracleUtxo = await findOracleUtxo();
 
       if (!oracleUtxo) {
-        throw new Error('Failed to fetch Oracle UTxO');
+        throw new Error("Failed to fetch Oracle UTxO");
       }
 
       const blockfrost = getProvider();
       if (!wallet) {
-        throw new Error('Wallet not connected');
+        throw new Error("Wallet not connected");
       }
       const address = await wallet!.getChangeAddress();
 
@@ -102,7 +102,6 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       const signoffApprovalMesh = dbUtxoToMeshUtxo(signoffApprovalUtxo);
       const memberMesh = dbUtxoToMeshUtxo(memberUtxo);
 
-
       const unsignedTx = await adminAction.SignOff(
         oracleUtxo,
         signoffApprovalMesh,
@@ -110,13 +109,13 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       );
 
       if (!unsignedTx) {
-        throw new Error('Failed to create SignOff transaction');
+        throw new Error("Failed to create SignOff transaction");
       }
 
       const signedTx = await wallet!.signTx(unsignedTx.txHex, true);
 
       if (!signedTx) {
-        throw new Error('Failed to sign transaction');
+        throw new Error("Failed to sign transaction");
       }
 
       const txHash = await wallet!.submitTx(signedTx);
@@ -124,9 +123,9 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       setConfirmedTxHash(txHash);
       setShowConfirmationOverlay(true);
     } catch (error) {
-      console.error('Failed to execute signoff:', error);
+      console.error("Failed to execute signoff:", error);
       setSubmitError({
-        message: 'Failed to execute signoff',
+        message: "Failed to execute signoff",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
@@ -139,7 +138,7 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       setIsExecuted(true);
 
       setTimeout(() => {
-        const event = new CustomEvent('app:refresh', {
+        const event = new CustomEvent("app:refresh", {
           detail: { refreshTreasury: true },
         });
         window.dispatchEvent(event);
@@ -207,12 +206,12 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
       >
         {isExecuting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {isTreasuryLoading
-          ? 'Loading treasury data...'
+          ? "Loading treasury data..."
           : hasInsufficientBalance
-            ? 'Insufficient Treasury Balance'
+            ? "Insufficient Treasury Balance"
             : isExecuted
-              ? '✓ Signoff Executed'
-              : 'Execute Final Signoff'}
+              ? "✓ Signoff Executed"
+              : "Execute Final Signoff"}
       </Button>
 
       {hasInsufficientBalance && (
@@ -236,8 +235,8 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
         title="Executing Final Signoff"
         description={
           isExecuted
-            ? 'Final signoff has been successfully executed and funds have been transferred! 🎉'
-            : 'Please wait while your final signoff is being confirmed on the blockchain.'
+            ? "Final signoff has been successfully executed and funds have been transferred! 🎉"
+            : "Please wait while your final signoff is being confirmed on the blockchain."
         }
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
@@ -245,14 +244,14 @@ const ExecuteSignoff: React.FC<ExecuteSignoffProps> = ({
         showNavigationOptions={isExecuted}
         navigationOptions={[
           {
-            label: 'View Treasury',
-            url: '/manage/treasury-signoffs',
-            variant: 'primary',
+            label: "View Treasury",
+            url: "/manage/treasury-signoffs",
+            variant: "primary",
           },
           {
-            label: 'View All Proposals',
-            url: '/proposals',
-            variant: 'outline',
+            label: "View All Proposals",
+            url: "/proposals",
+            variant: "outline",
           },
         ]}
       />

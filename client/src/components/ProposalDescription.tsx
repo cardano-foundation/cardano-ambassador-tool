@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
+import RichTextDisplay from "@/components/atoms/RichTextDisplay";
 
 interface ProposalDescriptionProps {
   content: string;
@@ -9,7 +9,7 @@ interface ProposalDescriptionProps {
 
 export default function ProposalDescription({
   content,
-  className = '',
+  className = "",
 }: ProposalDescriptionProps) {
   return <RichTextDisplay content={content} className={className} />;
 }

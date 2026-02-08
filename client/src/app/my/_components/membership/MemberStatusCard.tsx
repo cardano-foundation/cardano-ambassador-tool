@@ -1,9 +1,9 @@
-import Button from '@/components/atoms/Button';
-import Card from '@/components/atoms/Card';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import { routes } from '@/config/routes';
-import Link from 'next/link';
+import Button from "@/components/atoms/Button";
+import Card from "@/components/atoms/Card";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import { routes } from "@/config/routes";
+import Link from "next/link";
 
 export default function MemberStatusCard() {
   return (

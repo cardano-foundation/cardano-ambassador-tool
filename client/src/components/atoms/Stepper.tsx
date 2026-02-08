@@ -1,5 +1,5 @@
-import { cn } from '@/utils/utils';
-import { useState } from 'react';
+import { cn } from "@/utils/utils";
+import { useState } from "react";
 
 interface StepItem {
   id: string | number;
@@ -44,12 +44,12 @@ export default function Stepper({
   onStepClick,
   onActiveStepChange,
   className,
-  activeColor = 'bg-primary-base',
-  completedColor = 'bg-primary-300',
-  inactiveColor = 'bg-neutral-200 dark:bg-zinc-500',
-  disabledColor = 'bg-neutral-100 dark:bg-zinc-700',
-  gap = 'gap-[5px]',
-  stepHeight = 'h-2',
+  activeColor = "bg-primary-base",
+  completedColor = "bg-primary-300",
+  inactiveColor = "bg-neutral-200 dark:bg-zinc-500",
+  disabledColor = "bg-neutral-100 dark:bg-zinc-700",
+  gap = "gap-[5px]",
+  stepHeight = "h-2",
   clickable = false,
 }: StepperProps) {
   const [currentActiveStepIds, setCurrentActiveStepIds] = useState<
@@ -76,11 +76,11 @@ export default function Stepper({
 
   if (rows) {
     return (
-      <div className={cn('flex flex-col gap-4', className)}>
+      <div className={cn("flex flex-col gap-4", className)}>
         {rows.map((row, rowIndex) => (
           <div
             key={row.id}
-            className={cn('inline-flex items-start justify-center', gap)}
+            className={cn("inline-flex items-start justify-center", gap)}
           >
             {row.steps.map((step, stepIndex) => {
               const isActive =
@@ -95,11 +95,11 @@ export default function Stepper({
                   onClick={() => handleStepClick(step, rowIndex, stepIndex)}
                   className={cn(
                     stepHeight,
-                    'rounded-[30px] transition-all duration-300',
+                    "rounded-[30px] transition-all duration-300",
                     clickable &&
                       !isDisabled &&
-                      'cursor-pointer hover:scale-110',
-                    isDisabled && 'cursor-not-allowed',
+                      "cursor-pointer hover:scale-110",
+                    isDisabled && "cursor-not-allowed",
                     isActive
                       ? `w-5 ${activeColor}`
                       : isCompleted
@@ -119,11 +119,11 @@ export default function Stepper({
   }
 
   return (
-    <div className={cn('flex flex-col gap-4', className)}>
+    <div className={cn("flex flex-col gap-4", className)}>
       {steps.map((rowActiveSteps, rowIndex) => (
         <div
           key={rowIndex}
-          className={cn('inline-flex items-start justify-center', gap)}
+          className={cn("inline-flex items-start justify-center", gap)}
         >
           {Array.from({ length: totalStepsPerRow }, (_, stepIndex) => {
             const isActive = rowActiveSteps.includes(stepIndex);
@@ -132,7 +132,7 @@ export default function Stepper({
                 key={stepIndex}
                 className={cn(
                   stepHeight,
-                  'rounded-[30px] transition-all duration-300',
+                  "rounded-[30px] transition-all duration-300",
                   isActive ? `w-5 ${activeColor}` : `w-2 ${inactiveColor}`,
                 )}
               />
@@ -159,7 +159,7 @@ export function SingleRowStepper({
   onStepClick?: (stepIndex: number) => void;
   clickable?: boolean;
   className?: string;
-} & Omit<Partial<StepperProps>, 'onStepClick'>) {
+} & Omit<Partial<StepperProps>, "onStepClick">) {
   const stepItems: StepItem[] = Array.from(
     { length: totalSteps },
     (_, index) => ({
@@ -172,7 +172,7 @@ export function SingleRowStepper({
 
   const rows: StepperRow[] = [
     {
-      id: 'single-row',
+      id: "single-row",
       steps: stepItems,
       activeStepId: currentStep,
     },

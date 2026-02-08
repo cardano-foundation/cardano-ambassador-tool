@@ -62,96 +62,96 @@ export const validateIntentForm = (
   // Full Name validation
   if (!isRequired(formData.fullName)) {
     errors.push({
-      field: 'fullName',
-      message: 'Full name is required',
+      field: "fullName",
+      message: "Full name is required",
     });
   } else if (!hasMinLength(formData.fullName, 2)) {
     errors.push({
-      field: 'fullName',
-      message: 'Full name must be at least 2 characters long',
+      field: "fullName",
+      message: "Full name must be at least 2 characters long",
     });
   } else if (!hasMaxLength(formData.fullName, 100)) {
     errors.push({
-      field: 'fullName',
-      message: 'Full name must not exceed 100 characters',
+      field: "fullName",
+      message: "Full name must not exceed 100 characters",
     });
   }
 
   // Email validation
   if (!isRequired(formData.email)) {
     errors.push({
-      field: 'email',
-      message: 'Email address is required',
+      field: "email",
+      message: "Email address is required",
     });
   } else if (!isValidEmail(formData.email)) {
     errors.push({
-      field: 'email',
-      message: 'Please enter a valid email address',
+      field: "email",
+      message: "Please enter a valid email address",
     });
   } else if (!hasMaxLength(formData.email, 255)) {
     errors.push({
-      field: 'email',
-      message: 'Email address must not exceed 255 characters',
+      field: "email",
+      message: "Email address must not exceed 255 characters",
     });
   }
 
   // Forum Username validation
   if (!isRequired(formData.forum_username)) {
     errors.push({
-      field: 'forum_username',
-      message: 'Forum username is required',
+      field: "forum_username",
+      message: "Forum username is required",
     });
   } else if (!hasMinLength(formData.forum_username, 3)) {
     errors.push({
-      field: 'forum_username',
-      message: 'Forum username must be at least 3 characters long',
+      field: "forum_username",
+      message: "Forum username must be at least 3 characters long",
     });
   } else if (!hasMaxLength(formData.forum_username, 50)) {
     errors.push({
-      field: 'forum_username',
-      message: 'Forum username must not exceed 50 characters',
+      field: "forum_username",
+      message: "Forum username must not exceed 50 characters",
     });
   }
 
   // Country validation
   if (!isRequired(formData.country)) {
     errors.push({
-      field: 'country',
-      message: 'Country selection is required',
+      field: "country",
+      message: "Country selection is required",
     });
   }
 
   // City validation
   if (!isRequired(formData.city)) {
     errors.push({
-      field: 'city',
-      message: 'City selection is required',
+      field: "city",
+      message: "City selection is required",
     });
   }
 
   // Bio validation
   if (!isRequired(formData.bio)) {
     errors.push({
-      field: 'bio',
-      message: 'Bio is required',
+      field: "bio",
+      message: "Bio is required",
     });
   } else if (!hasMinLength(formData.bio, 10)) {
     errors.push({
-      field: 'bio',
-      message: 'Bio must be at least 10 characters long',
+      field: "bio",
+      message: "Bio must be at least 10 characters long",
     });
   } else if (!hasMaxLength(formData.bio, 500)) {
     errors.push({
-      field: 'bio',
-      message: 'Bio must not exceed 500 characters',
+      field: "bio",
+      message: "Bio must not exceed 500 characters",
     });
   }
 
   // Terms & Conditions validation
   if (!formData.t_c) {
     errors.push({
-      field: 't_c',
-      message: 'You must accept the Terms & Conditions to continue',
+      field: "t_c",
+      message: "You must accept the Terms & Conditions to continue",
     });
   }
 
@@ -187,82 +187,82 @@ export const validateProfileForm = (
 
   if (!isRequired(formData.name)) {
     errors.push({
-      field: 'name',
-      message: 'Full name is required',
+      field: "name",
+      message: "Full name is required",
     });
   } else if (!hasMinLength(formData.name, 2)) {
     errors.push({
-      field: 'name',
-      message: 'Full name must be at least 2 characters long',
+      field: "name",
+      message: "Full name must be at least 2 characters long",
     });
   } else if (!hasMaxLength(formData.name, 100)) {
     errors.push({
-      field: 'name',
-      message: 'Full name must not exceed 100 characters',
+      field: "name",
+      message: "Full name must not exceed 100 characters",
     });
   }
 
   // Forum Username validation (username field)
   if (!isRequired(formData.username)) {
     errors.push({
-      field: 'username',
-      message: 'Forum username is required',
+      field: "username",
+      message: "Forum username is required",
     });
   } else if (!hasMinLength(formData.username, 3)) {
     errors.push({
-      field: 'username',
-      message: 'Forum username must be at least 3 characters long',
+      field: "username",
+      message: "Forum username must be at least 3 characters long",
     });
   } else if (!hasMaxLength(formData.username, 50)) {
     errors.push({
-      field: 'username',
-      message: 'Forum username must not exceed 50 characters',
+      field: "username",
+      message: "Forum username must not exceed 50 characters",
     });
   }
 
   if (!isRequired(formData.email)) {
     errors.push({
-      field: 'email',
-      message: 'Email address is required',
+      field: "email",
+      message: "Email address is required",
     });
   } else if (!isValidEmail(formData.email)) {
     errors.push({
-      field: 'email',
-      message: 'Please enter a valid email address',
+      field: "email",
+      message: "Please enter a valid email address",
     });
   } else if (!hasMaxLength(formData.email, 255)) {
     errors.push({
-      field: 'email',
-      message: 'Email address must not exceed 255 characters',
+      field: "email",
+      message: "Email address must not exceed 255 characters",
     });
   }
 
   if (formData.bio && formData.bio.trim().length > 0) {
     if (!hasMinLength(formData.bio, 10)) {
       errors.push({
-        field: 'bio',
-        message: 'Bio must be at least 10 characters long',
+        field: "bio",
+        message: "Bio must be at least 10 characters long",
       });
     } else if (!hasMaxLength(formData.bio, 500)) {
       errors.push({
-        field: 'bio',
-        message: 'Bio must not exceed 500 characters',
+        field: "bio",
+        message: "Bio must not exceed 500 characters",
       });
     }
   }
 
   if (formData.country && !isRequired(formData.country)) {
     errors.push({
-      field: 'country',
-      message: 'Please select a valid country',
+      field: "country",
+      message: "Please select a valid country",
     });
   }
 
   if (formData.country && formData.country.trim().length > 0) {
     if (!formData.city || !isRequired(formData.city)) {
       errors.push({
-        field: 'city',
-        message: 'City is required when country is selected',
+        field: "city",
+        message: "City is required when country is selected",
       });
     }
   }
@@ -270,8 +270,8 @@ export const validateProfileForm = (
   if (formData.github && formData.github.trim().length > 0) {
     if (!hasMaxLength(formData.github, 50)) {
       errors.push({
-        field: 'github',
-        message: 'GitHub username must not exceed 50 characters',
+        field: "github",
+        message: "GitHub username must not exceed 50 characters",
       });
     }
   }
@@ -279,8 +279,8 @@ export const validateProfileForm = (
   if (formData.twitter && formData.twitter.trim().length > 0) {
     if (!hasMaxLength(formData.twitter, 50)) {
       errors.push({
-        field: 'twitter',
-        message: 'Twitter handle must not exceed 50 characters',
+        field: "twitter",
+        message: "Twitter handle must not exceed 50 characters",
       });
     }
   }
@@ -288,8 +288,8 @@ export const validateProfileForm = (
   if (formData.discord && formData.discord.trim().length > 0) {
     if (!hasMaxLength(formData.discord, 50)) {
       errors.push({
-        field: 'discord',
-        message: 'Discord username must not exceed 50 characters',
+        field: "discord",
+        message: "Discord username must not exceed 50 characters",
       });
     }
   }
@@ -297,8 +297,8 @@ export const validateProfileForm = (
   if (formData.spoId && formData.spoId.trim().length > 0) {
     if (!hasMaxLength(formData.spoId, 100)) {
       errors.push({
-        field: 'spoId',
-        message: 'SPO ID must not exceed 100 characters',
+        field: "spoId",
+        message: "SPO ID must not exceed 100 characters",
       });
     }
   }

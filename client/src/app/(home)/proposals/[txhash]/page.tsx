@@ -1,25 +1,26 @@
-'use client';
-import Button from '@/components/atoms/Button';
-import Card, { CardContent } from '@/components/atoms/Card';
-import Chip from '@/components/atoms/Chip';
-import Paragraph from '@/components/atoms/Paragraph';
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
-import Title from '@/components/atoms/Title';
-import Copyable from '@/components/Copyable';
-import ProposalDescription from '@/components/ProposalDescription';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useDatabase } from '@/hooks';
-import { formatAdaAmount } from '@/utils';
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import { use } from 'react';
+"use client";
+import Button from "@/components/atoms/Button";
+import Card, { CardContent } from "@/components/atoms/Card";
+import Chip from "@/components/atoms/Chip";
+import Paragraph from "@/components/atoms/Paragraph";
+import RichTextDisplay from "@/components/atoms/RichTextDisplay";
+import Title from "@/components/atoms/Title";
+import Copyable from "@/components/Copyable";
+import ProposalDescription from "@/components/ProposalDescription";
+import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { useDatabase } from "@/hooks";
+import { formatAdaAmount } from "@/utils";
+import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
+import { use } from "react";
 
 interface PageProps {
   params: Promise<{ txhash: string }>;
 }
 
 export default function Page({ params }: PageProps) {
-  const { proposals, proposalIntents, signOfApprovals, dbLoading } = useDatabase();
+  const { proposals, proposalIntents, signOfApprovals, dbLoading } =
+    useDatabase();
   const { txhash } = use(params);
 
   const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
@@ -29,41 +30,41 @@ export default function Page({ params }: PageProps) {
   if (proposal && proposal.parsedMetadata) {
     try {
       const metadata =
-        typeof proposal.parsedMetadata === 'string'
+        typeof proposal.parsedMetadata === "string"
           ? JSON.parse(proposal.parsedMetadata)
           : proposal.parsedMetadata;
       proposalData = {
         title: metadata?.title,
         url: metadata?.url,
         description: metadata?.description,
-        fundsRequested: metadata?.fundsRequested || '0',
+        fundsRequested: metadata?.fundsRequested || "0",
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
         status: signOfApprovals.some((p) => p.txHash === txhash)
-          ? 'signoff_pending'
+          ? "signoff_pending"
           : proposals.some((p) => p.txHash === txhash)
-            ? 'approved'
-            : 'pending',
+            ? "approved"
+            : "pending",
       };
     } catch (error) {
-      console.error('Error parsing proposal metadata:', error);
+      console.error("Error parsing proposal metadata:", error);
       proposalData = {
-        title: 'Error Loading Proposal',
-        url: '',
-        fundsRequested: '0',
-        receiverWalletAddress: '',
-        submittedByAddress: '',
-        status: 'pending',
+        title: "Error Loading Proposal",
+        url: "",
+        fundsRequested: "0",
+        receiverWalletAddress: "",
+        submittedByAddress: "",
+        status: "pending",
       };
     }
   } else {
     proposalData = {
-      title: 'Error Loading Proposal',
-      url: '',
-      fundsRequested: '0',
-      receiverWalletAddress: '',
-      submittedByAddress: '',
-      status: 'pending',
+      title: "Error Loading Proposal",
+      url: "",
+      fundsRequested: "0",
+      receiverWalletAddress: "",
+      submittedByAddress: "",
+      status: "pending",
     };
   }
 
@@ -91,26 +92,26 @@ export default function Page({ params }: PageProps) {
 
   const getChipVariant = () => {
     switch (proposalData.status) {
-      case 'pending':
-        return 'warning';
-      case 'submitted':
-        return 'default';
-      case 'under_review':
-        return 'default';
-      case 'approved':
-        return 'success';
-      case 'signoff_pending':
-        return 'warning';
-      case 'rejected':
-        return 'error';
+      case "pending":
+        return "warning";
+      case "submitted":
+        return "default";
+      case "under_review":
+        return "default";
+      case "approved":
+        return "success";
+      case "signoff_pending":
+        return "warning";
+      case "rejected":
+        return "error";
       default:
-        return 'inactive';
+        return "inactive";
     }
   };
   const statusLabel =
-    proposalData.status === 'signoff_pending'
-      ? 'Awaiting Signoff'
-      : proposalData.status.replace('_', ' ');
+    proposalData.status === "signoff_pending"
+      ? "Awaiting Signoff"
+      : proposalData.status.replace("_", " ");
 
   return (
     <div className="container px-4 py-2 pb-8 sm:px-6">
@@ -139,7 +140,7 @@ export default function Page({ params }: PageProps) {
                   withKey={false}
                   link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.txHash}`}
                   value={proposal.txHash}
-                  keyLabel={''}
+                  keyLabel={""}
                 />
               </div>
               <div className="space-y-1.5">
@@ -151,7 +152,7 @@ export default function Page({ params }: PageProps) {
                     withKey={false}
                     link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.receiverWalletAddress}`}
                     value={proposalData.receiverWalletAddress}
-                    keyLabel={''}
+                    keyLabel={""}
                   />
                 ) : (
                   <Paragraph size="sm" className="text-foreground">
@@ -168,7 +169,7 @@ export default function Page({ params }: PageProps) {
                     withKey={false}
                     link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
                     value={proposalData.submittedByAddress}
-                    keyLabel={''}
+                    keyLabel={""}
                   />
                 ) : (
                   <Paragraph size="sm" className="text-foreground">
@@ -184,9 +185,9 @@ export default function Page({ params }: PageProps) {
                 </Paragraph>
                 <Paragraph size="sm" className="text-foreground">
                   {proposalData.fundsRequested &&
-                  proposalData.fundsRequested !== '0'
+                  proposalData.fundsRequested !== "0"
                     ? formatAdaAmount(proposalData.fundsRequested)
-                    : 'N/A'}
+                    : "N/A"}
                 </Paragraph>
               </div>
             </div>
@@ -211,7 +212,7 @@ export default function Page({ params }: PageProps) {
                 Description
               </Title>
               <ProposalDescription
-                content={proposalData.description || 'No description available'}
+                content={proposalData.description || "No description available"}
                 className="text-foreground"
               />
             </div>

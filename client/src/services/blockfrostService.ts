@@ -1,6 +1,6 @@
-import { BlockfrostProvider, UTxO } from '@meshsdk/core';
+import { BlockfrostProvider, UTxO } from "@meshsdk/core";
 
-const isServer = typeof window === 'undefined';
+const isServer = typeof window === "undefined";
 
 export class BlockfrostService {
   private blockfrost?: BlockfrostProvider;
@@ -19,19 +19,19 @@ export class BlockfrostService {
       return utxos[0];
     }
 
-    const url = new URL('/api/utxo', window.location.origin);
-    url.searchParams.append('txHash', txHash);
-    url.searchParams.append('outputIndex', outputIndex!.toString());
+    const url = new URL("/api/utxo", window.location.origin);
+    url.searchParams.append("txHash", txHash);
+    url.searchParams.append("outputIndex", outputIndex!.toString());
 
     const response = await fetch(url.toString(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ params: { txHash, outputIndex } }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to fetch UTxO');
+      throw new Error(error.error || "Failed to fetch UTxO");
     }
 
     const data = await response.json();
@@ -45,14 +45,14 @@ export class BlockfrostService {
     }
 
     const response = await fetch(`${window.location.origin}/api/utxos`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ context: 'specific_address_utxos', address }),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ context: "specific_address_utxos", address }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to fetch address UTxOs');
+      throw new Error(error.error || "Failed to fetch address UTxOs");
     }
 
     return await response.json();

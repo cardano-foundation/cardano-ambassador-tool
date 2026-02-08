@@ -1,7 +1,7 @@
-import fs from 'fs/promises';
-import path from 'path';
+import fs from "fs/promises";
+import path from "path";
 
-const STORAGE_ROOT = path.join(process.cwd(), 'storage');
+const STORAGE_ROOT = path.join(process.cwd(), "storage");
 
 interface StorageOptions {
   filename: string;
@@ -28,7 +28,7 @@ export const storageService = {
     const filepath = path.join(dir, `${filename}.json`);
 
     try {
-      const data = await fs.readFile(filepath, 'utf-8');
+      const data = await fs.readFile(filepath, "utf-8");
       return JSON.parse(data);
     } catch {
       return null;
@@ -65,8 +65,8 @@ export const storageService = {
     try {
       const files = await fs.readdir(dir);
       return files
-        .filter((f) => f.endsWith('.json'))
-        .map((f) => f.replace('.json', ''));
+        .filter((f) => f.endsWith(".json"))
+        .map((f) => f.replace(".json", ""));
     } catch {
       return [];
     }

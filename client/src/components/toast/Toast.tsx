@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { AlertCircle, Bell, CheckCircle, Info, X, XCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import toastManager, { Toast } from './toast-manager';
+import { AlertCircle, Bell, CheckCircle, Info, X, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import toastManager, { Toast } from "./toast-manager";
 
 const icons = {
   success: <CheckCircle className="h-5 w-5 text-green-500" />,
@@ -13,11 +13,11 @@ const icons = {
 };
 
 const bgColor = {
-  success: 'bg-green-300/10',
-  error: 'bg-primary-300/10',
-  warning: 'bg-yellow-200/10',
-  info: 'bg-background',
-  default: 'bg-background',
+  success: "bg-green-300/10",
+  error: "bg-primary-300/10",
+  warning: "bg-yellow-200/10",
+  info: "bg-background",
+  default: "bg-background",
 };
 
 function ToastItem({ toast }: { toast: Toast }) {
@@ -30,15 +30,15 @@ function ToastItem({ toast }: { toast: Toast }) {
   return (
     <div
       className={`mb-3 transform transition-all duration-300 ease-out ${
-        isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+        isVisible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
       }`}
     >
       <div
-        className={`${bgColor[toast.type || 'default']} z-50 max-w-96 min-w-80 rounded-lg p-4 shadow-md backdrop-blur-sm`}
+        className={`${bgColor[toast.type || "default"]} z-50 max-w-96 min-w-80 rounded-lg p-4 shadow-md backdrop-blur-sm`}
       >
         <div className="flex items-start gap-3">
           <div className="mt-0.5 flex-shrink-0">
-            {icons[toast.type || 'default']}
+            {icons[toast.type || "default"]}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Button from '@/components/atoms/Button';
-import Card, { CardContent, CardHeader } from '@/components/atoms/Card';
-import { toast } from '@/components/toast/toast-manager';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import Button from "@/components/atoms/Button";
+import Card, { CardContent, CardHeader } from "@/components/atoms/Card";
+import { toast } from "@/components/toast/toast-manager";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function UnauthorizedPage() {
   const router = useRouter();
@@ -12,8 +12,8 @@ export default function UnauthorizedPage() {
   useEffect(() => {
     // Show toast notification
     toast.error(
-      'Access Denied',
-      'You do not have the required permissions to access this page. Admin role required.',
+      "Access Denied",
+      "You do not have the required permissions to access this page. Admin role required.",
     );
   }, []);
 
@@ -22,7 +22,7 @@ export default function UnauthorizedPage() {
   };
 
   const handleGoHome = () => {
-    router.push('/');
+    router.push("/");
   };
 
   return (

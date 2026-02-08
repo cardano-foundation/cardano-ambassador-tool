@@ -1,17 +1,17 @@
-'use client';
-import Button from '@/components/atoms/Button';
-import Card, { CardContent } from '@/components/atoms/Card';
-import Chip from '@/components/atoms/Chip';
-import Paragraph from '@/components/atoms/Paragraph';
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
-import Title from '@/components/atoms/Title';
-import Copyable from '@/components/Copyable';
-import ProposalDescription from '@/components/ProposalDescription';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import useProposals from '@/hooks/useProposals';
-import { formatAdaAmount } from '@/utils';
-import { use, useEffect, useState } from 'react';
+"use client";
+import Button from "@/components/atoms/Button";
+import Card, { CardContent } from "@/components/atoms/Card";
+import Chip from "@/components/atoms/Chip";
+import Paragraph from "@/components/atoms/Paragraph";
+import RichTextDisplay from "@/components/atoms/RichTextDisplay";
+import Title from "@/components/atoms/Title";
+import Copyable from "@/components/Copyable";
+import ProposalDescription from "@/components/ProposalDescription";
+import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import useProposals from "@/hooks/useProposals";
+import { formatAdaAmount } from "@/utils";
+import { use, useEffect, useState } from "react";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -26,7 +26,7 @@ export default function CompletedProposalPage({ params }: PageProps) {
 
   // Find the completed proposal by slug
   const proposal = allProposals.find(
-    (p) => p.status === 'paid_out' && p.slug === slug,
+    (p) => p.status === "paid_out" && p.slug === slug,
   );
 
   useEffect(() => {
@@ -35,8 +35,8 @@ export default function CompletedProposalPage({ params }: PageProps) {
       const fetchContent = async () => {
         try {
           // Extract filename from URL
-          const filename = url.split('/').pop();
-          if (filename && filename.endsWith('.md')) {
+          const filename = url.split("/").pop();
+          if (filename && filename.endsWith(".md")) {
             const res = await fetch(
               `/api/proposal-content?filename=${filename}`,
             );
@@ -48,7 +48,7 @@ export default function CompletedProposalPage({ params }: PageProps) {
             }
           }
         } catch (error) {
-          console.error('Failed to fetch fresh proposal content', error);
+          console.error("Failed to fetch fresh proposal content", error);
         }
       };
       fetchContent();
@@ -79,14 +79,14 @@ export default function CompletedProposalPage({ params }: PageProps) {
 
   const getChipVariant = () => {
     switch (proposal.status) {
-      case 'paid_out':
-        return 'success';
+      case "paid_out":
+        return "success";
       default:
-        return 'inactive';
+        return "inactive";
     }
   };
 
-  const statusLabel = 'Completed & Paid Out';
+  const statusLabel = "Completed & Paid Out";
 
   return (
     <div className="container px-4 py-2 pb-8 sm:px-6">
@@ -149,9 +149,9 @@ export default function CompletedProposalPage({ params }: PageProps) {
               <div className="space-y-1.5">
                 <Paragraph size="xs">Funds Requested & Transferred</Paragraph>
                 <Paragraph size="sm" className="text-foreground">
-                  {proposal.fundsRequested && proposal.fundsRequested !== '0'
+                  {proposal.fundsRequested && proposal.fundsRequested !== "0"
                     ? formatAdaAmount(proposal.fundsRequested)
-                    : 'N/A'}
+                    : "N/A"}
                 </Paragraph>
               </div>
               {proposal.url && (
@@ -192,7 +192,7 @@ export default function CompletedProposalPage({ params }: PageProps) {
               </Title>
               {fetchedDescription ||
               (proposal.description &&
-                proposal.description !== 'No description provided') ? (
+                proposal.description !== "No description provided") ? (
                 <ProposalDescription
                   content={fetchedDescription || proposal.description}
                   className="text-foreground"
@@ -201,8 +201,8 @@ export default function CompletedProposalPage({ params }: PageProps) {
                 <div className="border-primary/20 bg-primary/5 flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
                   <div className="text-muted-foreground mb-6 max-w-md">
                     <Paragraph>
-                      The detailed description for this completed proposal is not
-                      stored on-chain in the member archive.
+                      The detailed description for this completed proposal is
+                      not stored on-chain in the member archive.
                     </Paragraph>
                   </div>
                   {proposal.url && (

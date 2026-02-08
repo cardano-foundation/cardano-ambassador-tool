@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Types
-export type Theme = 'light' | 'dark';
+export type Theme = "light" | "dark";
 
 export interface TxConfirmationState {
   isVisible: boolean;
@@ -12,7 +12,7 @@ export interface TxConfirmationState {
   navigationOptions?: {
     label: string;
     url: string;
-    variant?: 'primary' | 'outline';
+    variant?: "primary" | "outline";
   }[];
 }
 
@@ -31,28 +31,32 @@ export interface UIState {
 
 // Helper to get initial theme from localStorage/system preference
 const getInitialTheme = (): Theme => {
-  if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('theme') as Theme;
-    if (saved && ['light', 'dark'].includes(saved)) {
+  if (typeof window !== "undefined") {
+    const saved = localStorage.getItem("theme") as Theme;
+    if (saved && ["light", "dark"].includes(saved)) {
       return saved;
     }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   }
-  return 'light';
+  return "light";
 };
 
 // Helper to check if this is initial load
 const checkIsInitialLoad = (): boolean => {
-  if (typeof window !== 'undefined') {
-    const timing = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-    return timing?.type === 'navigate' || timing?.type === 'reload';
+  if (typeof window !== "undefined") {
+    const timing = performance.getEntriesByType(
+      "navigation",
+    )[0] as PerformanceNavigationTiming;
+    return timing?.type === "navigate" || timing?.type === "reload";
   }
   return true;
 };
 
 const initialState: UIState = {
   // Theme - will be hydrated on client
-  theme: 'light',
+  theme: "light",
   isThemeInitialized: false,
 
   // Loading
@@ -66,7 +70,7 @@ const initialState: UIState = {
 };
 
 const uiSlice = createSlice({
-  name: 'ui',
+  name: "ui",
   initialState,
   reducers: {
     // Theme actions
@@ -74,7 +78,7 @@ const uiSlice = createSlice({
       state.theme = action.payload;
     },
     toggleTheme: (state) => {
-      state.theme = state.theme === 'light' ? 'dark' : 'light';
+      state.theme = state.theme === "light" ? "dark" : "light";
     },
     setThemeInitialized: (state, action: PayloadAction<boolean>) => {
       state.isThemeInitialized = action.payload;
@@ -112,7 +116,7 @@ const uiSlice = createSlice({
     // Transaction confirmation actions
     showTxConfirmation: (
       state,
-      action: PayloadAction<Omit<TxConfirmationState, 'isVisible'>>,
+      action: PayloadAction<Omit<TxConfirmationState, "isVisible">>,
     ) => {
       state.txConfirmation = {
         isVisible: true,

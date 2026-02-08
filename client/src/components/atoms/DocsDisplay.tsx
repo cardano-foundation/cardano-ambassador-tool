@@ -1,23 +1,22 @@
-'use client';
+"use client";
 
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkBreaks from 'remark-breaks';
-import remarkGfm from 'remark-gfm';
-import Link from 'next/link';
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkBreaks from "remark-breaks";
+import remarkGfm from "remark-gfm";
+import Link from "next/link";
 
 interface DocsDisplayProps {
   content?: string;
   className?: string;
 }
 
-const DocsDisplay = ({
-  content = '',
-  className = '',
-}: DocsDisplayProps) => {
+const DocsDisplay = ({ content = "", className = "" }: DocsDisplayProps) => {
   if (!content) {
     return (
-      <div className={`text-muted-foreground ${className}`}>No content available</div>
+      <div className={`text-muted-foreground ${className}`}>
+        No content available
+      </div>
     );
   }
 
@@ -28,7 +27,7 @@ const DocsDisplay = ({
 
   // Helper to extract ID from heading text like "Title {#id}"
   const extractHeadingId = (children: any): { text: any; id?: string } => {
-    if (typeof children === 'string') {
+    if (typeof children === "string") {
       const match = children.match(/^(.*?)\s*\{#([^}]+)\}\s*$/);
       if (match) {
         return { text: match[1].trim(), id: match[2] };
@@ -45,7 +44,10 @@ const DocsDisplay = ({
           h1: ({ children }) => {
             const { text, id } = extractHeadingId(children);
             return (
-              <h1 id={id} className="mt-8 mb-4 text-2xl font-bold text-foreground scroll-mt-20">
+              <h1
+                id={id}
+                className="mt-8 mb-4 text-2xl font-bold text-foreground scroll-mt-20"
+              >
                 {text}
               </h1>
             );
@@ -53,7 +55,10 @@ const DocsDisplay = ({
           h2: ({ children }) => {
             const { text, id } = extractHeadingId(children);
             return (
-              <h2 id={id} className="mt-6 mb-3 text-xl font-bold text-foreground border-b border-border pb-2 scroll-mt-20">
+              <h2
+                id={id}
+                className="mt-6 mb-3 text-xl font-bold text-foreground border-b border-border pb-2 scroll-mt-20"
+              >
                 {text}
               </h2>
             );
@@ -61,23 +66,32 @@ const DocsDisplay = ({
           h3: ({ children }) => {
             const { text, id } = extractHeadingId(children);
             return (
-              <h3 id={id} className="mt-5 mb-3 text-lg font-bold text-foreground scroll-mt-20">
+              <h3
+                id={id}
+                className="mt-5 mb-3 text-lg font-bold text-foreground scroll-mt-20"
+              >
                 {text}
               </h3>
             );
           },
           h4: ({ children }) => (
-            <h4 className="mt-4 mb-2 text-base font-semibold text-foreground">{children}</h4>
+            <h4 className="mt-4 mb-2 text-base font-semibold text-foreground">
+              {children}
+            </h4>
           ),
 
           // Paragraphs
           p: ({ children }) => (
-            <p className="mb-4 leading-relaxed text-muted-foreground">{children}</p>
+            <p className="mb-4 leading-relaxed text-muted-foreground">
+              {children}
+            </p>
           ),
 
           // Text formatting
           strong: ({ children }) => (
-            <strong className="font-semibold text-foreground">{children}</strong>
+            <strong className="font-semibold text-foreground">
+              {children}
+            </strong>
           ),
           em: ({ children }) => <em className="italic">{children}</em>,
 
@@ -97,12 +111,9 @@ const DocsDisplay = ({
             if (!href) return <span>{children}</span>;
 
             // Internal links (start with / or #)
-            if (href.startsWith('/') || href.startsWith('#')) {
+            if (href.startsWith("/") || href.startsWith("#")) {
               return (
-                <Link 
-                  href={href} 
-                  className="text-primary-base hover:underline"
-                >
+                <Link href={href} className="text-primary-base hover:underline">
                   {children}
                 </Link>
               );
@@ -125,7 +136,7 @@ const DocsDisplay = ({
           code: ({ node, inline, className, children, ...props }: any) => {
             // Check if it's inline code (no className means inline in most cases)
             const isInline = inline !== false;
-            
+
             if (isInline) {
               return (
                 <code className="bg-primary-base/10 border border-primary-base/20 px-2 py-0.5 rounded text-sm font-mono text-primary-base inline-block align-baseline">
@@ -133,7 +144,7 @@ const DocsDisplay = ({
                 </code>
               );
             }
-            
+
             // Block code
             return (
               <pre className="bg-muted p-4 rounded-lg my-4 overflow-x-auto">
@@ -152,9 +163,7 @@ const DocsDisplay = ({
           ),
 
           // Horizontal rule
-          hr: () => (
-            <hr className="my-8 border-border" />
-          ),
+          hr: () => <hr className="my-8 border-border" />,
 
           // Line breaks
           br: () => <br />,

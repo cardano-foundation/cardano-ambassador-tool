@@ -1,4 +1,4 @@
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
+import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
 const Loading = () => {
   return <SimpleCardanoLoader message="Loading dashboard..." />;
 };

@@ -1,5 +1,5 @@
-import { useWalletManager } from '@/hooks';
-import { findAdminsFromOracle } from '@/lib/auth/roles';
+import { useWalletManager } from "@/hooks";
+import { findAdminsFromOracle } from "@/lib/auth/roles";
 import {
   dbUtxoToMeshUtxo,
   extractRequiredSigners,
@@ -7,15 +7,15 @@ import {
   findOracleUtxo,
   getCatConstants,
   getProvider,
-} from '@/utils';
-import { storageApiClient } from '@/utils/storageApiClient';
-import { deserializeAddress } from '@meshsdk/core';
-import { AdminActionTx } from '@sidan-lab/cardano-ambassador-tool';
-import { AdminDecision, AdminDecisionData, Utxo } from '@types';
-import React, { useEffect, useState } from 'react';
-import AdminSelectorModal from './AdminSelectorModal';
-import Button from './atoms/Button';
-import ErrorAccordion from './ErrorAccordion';
+} from "@/utils";
+import { storageApiClient } from "@/utils/storageApiClient";
+import { deserializeAddress } from "@meshsdk/core";
+import { AdminActionTx } from "@sidan-lab/cardano-ambassador-tool";
+import { AdminDecision, AdminDecisionData, Utxo } from "@types";
+import React, { useEffect, useState } from "react";
+import AdminSelectorModal from "./AdminSelectorModal";
+import Button from "./atoms/Button";
+import ErrorAccordion from "./ErrorAccordion";
 
 interface SignoffExecuteProps {
   signoffApprovalUtxo?: Utxo;
@@ -41,7 +41,7 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
   const [showAdminSelector, setShowAdminSelector] = useState(false);
   const { wallet } = useWalletManager();
 
-  const storageBucket = 'signoff-execute';
+  const storageBucket = "signoff-execute";
 
   const checkCurrentWalletSigned = async (decision: AdminDecision) => {
     try {
@@ -91,11 +91,11 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
     setSubmitError(null);
     try {
       if (!wallet || !adminDecision)
-        throw new Error('Wallet or admin decision not available');
+        throw new Error("Wallet or admin decision not available");
       const supportSign = await wallet.signTx(adminDecision.signedTx, true);
       if (!supportSign)
         throw new Error(
-          'Failed to sign transaction - wallet returned undefined',
+          "Failed to sign transaction - wallet returned undefined",
         );
       const updated: AdminDecision = {
         ...adminDecision,
@@ -110,7 +110,7 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
       await extractAndSendDecisionData(updated);
     } catch (error) {
       setSubmitError({
-        message: 'Failed to add your signature',
+        message: "Failed to add your signature",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
@@ -122,12 +122,12 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
     setSubmitError(null);
     try {
       if (!signoffApprovalUtxo || !memberUtxo)
-        throw new Error('Missing signoff approval or member UTxO');
+        throw new Error("Missing signoff approval or member UTxO");
       const oracleUtxo = await findOracleUtxo();
-      if (!oracleUtxo) throw new Error('Failed to fetch Oracle UTxO');
+      if (!oracleUtxo) throw new Error("Failed to fetch Oracle UTxO");
       const blockfrost = getProvider();
       if (!wallet) {
-        throw new Error('Wallet not connected');
+        throw new Error("Wallet not connected");
       }
       const address = await wallet.getChangeAddress();
 
@@ -144,15 +144,15 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
       );
 
       const firstSig = await wallet.signTx(unsignedTx.txHex, true);
-      if (!unsignedTx) throw new Error('Failed to create transaction');
+      if (!unsignedTx) throw new Error("Failed to create transaction");
       if (!firstSig)
         throw new Error(
-          'Failed to sign transaction - wallet returned undefined',
+          "Failed to sign transaction - wallet returned undefined",
         );
       const { txHex, ...rest } = unsignedTx;
       const data: AdminDecision = {
-        context: 'SignoffExecute',
-        decision: 'approve',
+        context: "SignoffExecute",
+        decision: "approve",
         signedTx: firstSig,
         ...rest,
       };
@@ -165,7 +165,7 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
       await extractAndSendDecisionData(data);
     } catch (error) {
       setSubmitError({
-        message: 'Failed to create signoff execution transaction',
+        message: "Failed to create signoff execution transaction",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
@@ -235,7 +235,7 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
               onClick={() => handleStart()}
               disabled={isProcessing}
             >
-              {isProcessing ? 'Processing...' : 'Add Your Signature'}
+              {isProcessing ? "Processing..." : "Add Your Signature"}
             </Button>
           </div>
         )}
@@ -269,7 +269,7 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
             disabled={isProcessing || !signoffApprovalUtxo?.txHash}
             className="w-full"
           >
-            {isProcessing ? 'Processing...' : 'Start Signoff Execution'}
+            {isProcessing ? "Processing..." : "Start Signoff Execution"}
           </Button>
         </div>
       </div>
@@ -277,7 +277,7 @@ const SignoffExecute: React.FC<SignoffExecuteProps> = ({
         isVisible={showAdminSelector}
         onConfirm={handleAdminSelectionConfirm}
         onCancel={handleAdminSelectionCancel}
-        decision={'approve'}
+        decision={"approve"}
       />
     </>
   );

@@ -1,68 +1,68 @@
-'use client';
+"use client";
 
-import { ColumnDef, Table } from '@/components/Table/Table';
-import { Ambassador } from '@types';
+import { ColumnDef, Table } from "@/components/Table/Table";
+import { Ambassador } from "@types";
 
 export function TableTestPage() {
   const getCountryFlag = (country: string) => {
     const flags: { [key: string]: string } = {
-      Argentina: '🇦🇷',
-      Romania: '🇷🇴',
-      Indonesia: '🇮🇩',
-      Norway: '🇳🇴',
-      Ghana: '🇬🇭',
-      Germany: '🇩🇪',
-      DRC: '🇨🇩',
-      Scotland: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
-      'United States': '🇺🇸',
-      Kazakhstan: '🇰🇿',
-      Poland: '🇵🇱',
-      Venezuela: '🇻🇪',
-      Netherlands: '🇳🇱',
-      Italy: '🇮🇹',
-      Brazil: '🇧🇷',
-      UAE: '🇦🇪',
-      Singapore: '🇸🇬',
-      France: '🇫🇷',
-      Japan: '🇯🇵',
-      Ireland: '🇮🇪',
-      Spain: '🇪🇸',
-      Nigeria: '🇳🇬',
-      'United Kingdom': '🇬🇧',
-      India: '🇮🇳',
-      Sweden: '🇸🇪',
-      'Czech Republic': '🇨🇿',
-      Mexico: '🇲🇽',
-      Russia: '🇷🇺',
-      Canada: '🇨🇦',
-      Morocco: '🇲🇦',
-      'South Korea': '🇰🇷',
-      Ukraine: '🇺🇦',
-      Austria: '🇦🇹',
-      Slovakia: '🇸🇰',
-      China: '🇨🇳',
-      'Hong Kong': '🇭🇰',
-      Colombia: '🇨🇴',
-      Egypt: '🇪🇬',
-      'New Zealand': '🇳🇿',
-      Tunisia: '🇹🇳',
-      Australia: '🇦🇺',
+      Argentina: "🇦🇷",
+      Romania: "🇷🇴",
+      Indonesia: "🇮🇩",
+      Norway: "🇳🇴",
+      Ghana: "🇬🇭",
+      Germany: "🇩🇪",
+      DRC: "🇨🇩",
+      Scotland: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+      "United States": "🇺🇸",
+      Kazakhstan: "🇰🇿",
+      Poland: "🇵🇱",
+      Venezuela: "🇻🇪",
+      Netherlands: "🇳🇱",
+      Italy: "🇮🇹",
+      Brazil: "🇧🇷",
+      UAE: "🇦🇪",
+      Singapore: "🇸🇬",
+      France: "🇫🇷",
+      Japan: "🇯🇵",
+      Ireland: "🇮🇪",
+      Spain: "🇪🇸",
+      Nigeria: "🇳🇬",
+      "United Kingdom": "🇬🇧",
+      India: "🇮🇳",
+      Sweden: "🇸🇪",
+      "Czech Republic": "🇨🇿",
+      Mexico: "🇲🇽",
+      Russia: "🇷🇺",
+      Canada: "🇨🇦",
+      Morocco: "🇲🇦",
+      "South Korea": "🇰🇷",
+      Ukraine: "🇺🇦",
+      Austria: "🇦🇹",
+      Slovakia: "🇸🇰",
+      China: "🇨🇳",
+      "Hong Kong": "🇭🇰",
+      Colombia: "🇨🇴",
+      Egypt: "🇪🇬",
+      "New Zealand": "🇳🇿",
+      Tunisia: "🇹🇳",
+      Australia: "🇦🇺",
     };
-    return flags[country] || '🌍';
+    return flags[country] || "🌍";
   };
 
   const columns: ColumnDef<Ambassador>[] = [
     {
-      header: '#',
-      accessor: 'username',
+      header: "#",
+      accessor: "username",
       sortable: false,
       cell: (value: string) => (
         <span className="text-neutral font-normal">{value}</span>
       ),
     },
     {
-      header: 'Name',
-      accessor: 'name',
+      header: "Name",
+      accessor: "name",
       sortable: true,
       copyable: true,
       cell: (value: string) => (
@@ -70,8 +70,8 @@ export function TableTestPage() {
       ),
     },
     {
-      header: 'Country',
-      accessor: 'country',
+      header: "Country",
+      accessor: "country",
       sortable: true,
       cell: (value: string) => (
         <div className="text-neutral flex items-center gap-2">
@@ -82,16 +82,16 @@ export function TableTestPage() {
       getCopyText: (value: string) => value,
     },
     {
-      header: 'Bio',
-      accessor: 'bio_excerpt',
+      header: "Bio",
+      accessor: "bio_excerpt",
       sortable: false,
       cell: (value: string | null) => (
-        <span className="text-neutral text-sm">{value || '-'}</span>
+        <span className="text-neutral text-sm">{value || "-"}</span>
       ),
     },
     {
-      header: 'Join Date',
-      accessor: 'created_at',
+      header: "Join Date",
+      accessor: "created_at",
       sortable: true,
       copyable: true,
       cell: (value: string) => (
@@ -102,18 +102,18 @@ export function TableTestPage() {
       getCopyText: (value: string) => new Date(value).toISOString(),
     },
     {
-      header: 'Topics Created',
-      accessor: 'summary',
+      header: "Topics Created",
+      accessor: "summary",
       sortable: true,
-      cell: (value: Ambassador['summary']) => (
+      cell: (value: Ambassador["summary"]) => (
         <span className="text-neutral font-medium">
           {value.stats.topics_created.toLocaleString()}
         </span>
       ),
     },
     {
-      header: 'Profile',
-      accessor: 'href',
+      header: "Profile",
+      accessor: "href",
       copyable: true,
       truncate: 25,
       cell: (value: string) => {

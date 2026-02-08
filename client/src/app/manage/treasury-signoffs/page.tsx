@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import Copyable from '@/components/Copyable';
-import { ColumnDef, Table } from '@/components/Table/Table';
-import Button from '@/components/atoms/Button';
-import Card, { CardContent } from '@/components/atoms/Card';
-import Chip from '@/components/atoms/Chip';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { routes } from '@/config/routes';
-import { useDatabase, useTreasuryBalance } from '@/hooks';
-import { formatAdaAmount, getCatConstants, parseProposalDatum } from '@/utils';
-import { ArrowUpRightFromSquare } from 'lucide-react';
-import Link from 'next/link';
+import Copyable from "@/components/Copyable";
+import { ColumnDef, Table } from "@/components/Table/Table";
+import Button from "@/components/atoms/Button";
+import Card, { CardContent } from "@/components/atoms/Card";
+import Chip from "@/components/atoms/Chip";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { routes } from "@/config/routes";
+import { useDatabase, useTreasuryBalance } from "@/hooks";
+import { formatAdaAmount, getCatConstants, parseProposalDatum } from "@/utils";
+import { ArrowUpRightFromSquare } from "lucide-react";
+import Link from "next/link";
 
 type ProposalIntent = {
   id: number;
@@ -21,41 +21,41 @@ type ProposalIntent = {
   receiverWalletAddress: string;
   createdAt?: string;
   status:
-    | 'pending'
-    | 'submitted'
-    | 'under_review'
-    | 'approved'
-    | 'rejected'
-    | 'ready';
+    | "pending"
+    | "submitted"
+    | "under_review"
+    | "approved"
+    | "rejected"
+    | "ready";
   fundsRequested: string;
   txHash: string;
   outputIndex?: number;
 };
 
-const getChipVariant = (status: ProposalIntent['status']) => {
+const getChipVariant = (status: ProposalIntent["status"]) => {
   switch (status) {
-    case 'pending':
-      return 'default';
-    case 'submitted':
-      return 'warning';
-    case 'under_review':
-      return 'default';
-    case 'approved':
-      return 'success';
-    case 'ready':
-      return 'success';
-    case 'rejected':
-      return 'error';
+    case "pending":
+      return "default";
+    case "submitted":
+      return "warning";
+    case "under_review":
+      return "default";
+    case "approved":
+      return "success";
+    case "ready":
+      return "success";
+    case "rejected":
+      return "error";
     default:
-      return 'inactive';
+      return "inactive";
   }
 };
 
 const truncateToWords = (text: string, wordCount: number = 6) => {
-  if (!text) return 'No description';
-  const words = text.split(' ');
+  if (!text) return "No description";
+  const words = text.split(" ");
   if (words.length <= wordCount) return text;
-  return words.slice(0, wordCount).join(' ') + '...';
+  return words.slice(0, wordCount).join(" ") + "...";
 };
 
 const copyToClipboard = async (text: string) => {
@@ -69,20 +69,20 @@ const copyToClipboard = async (text: string) => {
 
 const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
   {
-    header: '#',
-    accessor: 'id',
+    header: "#",
+    accessor: "id",
     sortable: true,
     cell: (value) => <span className="text-sm">{value}</span>,
   },
   {
-    header: 'Proposal title',
-    accessor: 'title',
+    header: "Proposal title",
+    accessor: "title",
     sortable: true,
     cell: (value) => <span className="text-sm">{value}</span>,
   },
   {
-    header: 'Project details',
-    accessor: 'url',
+    header: "Project details",
+    accessor: "url",
     sortable: false,
     cell: (value) => {
       if (!value)
@@ -105,29 +105,29 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     },
   },
   {
-    header: 'Funds requested',
-    accessor: 'fundsRequested',
+    header: "Funds requested",
+    accessor: "fundsRequested",
     sortable: true,
     cell: (value) => (
       <span className="text-sm">
-        {value && value !== '0' ? formatAdaAmount(value) : 'N/A'}
+        {value && value !== "0" ? formatAdaAmount(value) : "N/A"}
       </span>
     ),
   },
   {
-    header: 'Status',
-    accessor: 'status',
+    header: "Status",
+    accessor: "status",
     sortable: true,
     cell: (value) => (
       <Chip variant={getChipVariant(value)}>
-        {value === 'ready'
-          ? 'Ready for Withdrawal'
-          : value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
+        {value === "ready"
+          ? "Ready for Withdrawal"
+          : value.charAt(0).toUpperCase() + value.slice(1).replace("_", " ")}
       </Chip>
     ),
   },
   {
-    header: 'Action',
+    header: "Action",
     sortable: false,
     cell: (value, row) => (
       <Link href={routes.manage.treasurySignoff(row.txHash)} prefetch={true}>
@@ -152,11 +152,11 @@ export default function TreasurySignOffsPage() {
 
   const decodedUtxos = signOfApprovals.map((utxo, idx) => {
     const decodedDatum: ProposalIntent = {
-      title: '',
-      url: '',
-      fundsRequested: '0',
-      receiverWalletAddress: '',
-      status: 'ready',
+      title: "",
+      url: "",
+      fundsRequested: "0",
+      receiverWalletAddress: "",
+      status: "ready",
       id: 0,
       txHash: utxo.txHash,
     };
@@ -165,11 +165,11 @@ export default function TreasurySignOffsPage() {
       const { metadata } = parseProposalDatum(utxo.plutusData)!;
 
       if (metadata) {
-        decodedDatum['title'] = metadata.title!;
-        decodedDatum['url'] = metadata.url!;
-        decodedDatum['fundsRequested'] = metadata.fundsRequested || '0';
-        decodedDatum['receiverWalletAddress'] = metadata.receiverWalletAddress!;
-        decodedDatum['id'] = idx + 1;
+        decodedDatum["title"] = metadata.title!;
+        decodedDatum["url"] = metadata.url!;
+        decodedDatum["fundsRequested"] = metadata.fundsRequested || "0";
+        decodedDatum["receiverWalletAddress"] = metadata.receiverWalletAddress!;
+        decodedDatum["id"] = idx + 1;
       }
     }
 
@@ -177,7 +177,7 @@ export default function TreasurySignOffsPage() {
   });
 
   const totalPendingWithdrawals = decodedUtxos.reduce((sum, utxo) => {
-    const adaAmount = parseFloat(utxo.fundsRequested || '0');
+    const adaAmount = parseFloat(utxo.fundsRequested || "0");
     return sum + (isNaN(adaAmount) ? 0 : adaAmount);
   }, 0);
   const availableBalance = treasuryBalanceAda - totalPendingWithdrawals;
@@ -206,7 +206,7 @@ export default function TreasurySignOffsPage() {
                   withKey={false}
                   link={`${getCurrentNetworkConfig().explorerUrl}/address/${getCatConstants().scripts.treasury.spend.address}`}
                   value={getCatConstants().scripts.treasury.spend.address}
-                  keyLabel={''}
+                  keyLabel={""}
                 />
               </div>
               <div className="grid grid-cols-3 gap-8">
@@ -234,8 +234,8 @@ export default function TreasurySignOffsPage() {
                     level="5"
                     className={
                       hasInsufficientBalance
-                        ? 'font-semibold text-red-600'
-                        : 'font-semibold text-green-600'
+                        ? "font-semibold text-red-600"
+                        : "font-semibold text-green-600"
                     }
                   >
                     ₳{availableBalance.toLocaleString()}
@@ -273,7 +273,7 @@ export default function TreasurySignOffsPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Paragraph className="text-muted-foreground text-sm">
-                  Showing {decodedUtxos.length} of {decodedUtxos.length}{' '}
+                  Showing {decodedUtxos.length} of {decodedUtxos.length}{" "}
                   proposals
                 </Paragraph>
               </div>

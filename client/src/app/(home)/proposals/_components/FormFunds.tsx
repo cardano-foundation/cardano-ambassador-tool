@@ -1,13 +1,13 @@
-import Input from '@/components/atoms/Input';
-import { useWalletManager } from '@/hooks';
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
+import Input from "@/components/atoms/Input";
+import { useWalletManager } from "@/hooks";
+import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 
 type ProposalFormData = ProposalData & {
   description: string;
 };
 
 interface Props {
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   formData: ProposalFormData;
   handleInputChange: (field: keyof ProposalFormData, value: string) => void;
   userAddress?: string;
@@ -22,12 +22,12 @@ export default function FormFunds({
   const { address: connectedAddress } = useWalletManager();
 
   const handleAdaInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleInputChange('fundsRequested', e.target.value);
+    handleInputChange("fundsRequested", e.target.value);
   };
 
   const handleUseConnectedWallet = () => {
     if (connectedAddress) {
-      handleInputChange('receiverWalletAddress', connectedAddress);
+      handleInputChange("receiverWalletAddress", connectedAddress);
     }
   };
 
@@ -35,9 +35,9 @@ export default function FormFunds({
     <div className="space-y-6">
       <Input
         label="Funds requested (ADA)"
-        value={formData.fundsRequested || ''}
+        value={formData.fundsRequested || ""}
         onChange={handleAdaInputChange}
-        placeholder={mode === 'create' ? '₳5000' : 'Update funds requested'}
+        placeholder={mode === "create" ? "₳5000" : "Update funds requested"}
         type="text"
       />
 
@@ -56,12 +56,12 @@ export default function FormFunds({
           )}
         </div>
         <Input
-          value={formData.receiverWalletAddress || ''}
+          value={formData.receiverWalletAddress || ""}
           onChange={(e) =>
-            handleInputChange('receiverWalletAddress', e.target.value)
+            handleInputChange("receiverWalletAddress", e.target.value)
           }
           placeholder={
-            mode === 'create' ? 'addr1q...xyz' : 'Update wallet address'
+            mode === "create" ? "addr1q...xyz" : "Update wallet address"
           }
         />
         {connectedAddress && (

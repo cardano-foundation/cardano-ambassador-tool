@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getCatConstants, getProvider } from '@/utils';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { getCatConstants, getProvider } from "@/utils";
 
 // ---------- Types ----------
 export interface TreasuryState {
@@ -13,7 +13,7 @@ export interface TreasuryState {
 
 // ---------- Initial State ----------
 const initialState: TreasuryState = {
-  balance: '0',
+  balance: "0",
   isLoading: true,
   error: null,
 };
@@ -27,7 +27,7 @@ export const fetchTreasuryBalance = createAsyncThunk<
   string,
   void,
   { rejectValue: string }
->('treasury/fetchBalance', async (_, { rejectWithValue }) => {
+>("treasury/fetchBalance", async (_, { rejectWithValue }) => {
   try {
     const provider = getProvider();
     const catConstants = getCatConstants();
@@ -36,22 +36,24 @@ export const fetchTreasuryBalance = createAsyncThunk<
     const utxos = await provider.fetchAddressUTxOs(treasuryAddress);
     const totalBalance = utxos.reduce((sum, utxo) => {
       const lovelace = utxo.output.amount.find(
-        (asset) => asset.unit === 'lovelace',
+        (asset) => asset.unit === "lovelace",
       );
-      return sum + BigInt(lovelace ? lovelace.quantity : '0');
+      return sum + BigInt(lovelace ? lovelace.quantity : "0");
     }, BigInt(0));
 
     return totalBalance.toString();
   } catch (error) {
     return rejectWithValue(
-      error instanceof Error ? error.message : 'Failed to fetch treasury balance',
+      error instanceof Error
+        ? error.message
+        : "Failed to fetch treasury balance",
     );
   }
 });
 
 // ---------- Slice ----------
 const treasurySlice = createSlice({
-  name: 'treasury',
+  name: "treasury",
   initialState,
   reducers: {
     setTreasuryBalance: (state, action: PayloadAction<string>) => {
@@ -80,8 +82,8 @@ const treasurySlice = createSlice({
       })
       .addCase(fetchTreasuryBalance.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || 'Failed to fetch treasury balance';
-        state.balance = '0';
+        state.error = action.payload || "Failed to fetch treasury balance";
+        state.balance = "0";
       });
   },
 });

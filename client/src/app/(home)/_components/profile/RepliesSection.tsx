@@ -1,9 +1,9 @@
-import Card, { CardContent } from '@/components/atoms/Card';
-import Paragraph from '@/components/atoms/Paragraph';
-import TextLink from '@/components/atoms/TextLink';
-import Title from '@/components/atoms/Title';
-import Link from 'next/link';
-import React from 'react';
+import Card, { CardContent } from "@/components/atoms/Card";
+import Paragraph from "@/components/atoms/Paragraph";
+import TextLink from "@/components/atoms/TextLink";
+import Title from "@/components/atoms/Title";
+import Link from "next/link";
+import React from "react";
 
 interface RepliesSectionProps {
   replies: Array<{
@@ -26,7 +26,7 @@ export const RepliesSection: React.FC<RepliesSectionProps> = ({
   const ReplyItem = ({
     reply,
   }: {
-    reply: RepliesSectionProps['replies'][0];
+    reply: RepliesSectionProps["replies"][0];
   }) => (
     <div className="border-primary-base flex items-start space-x-3 border-l-2 py-2 pl-3">
       <div className="flex-1 pt-3">
@@ -67,7 +67,7 @@ export const RepliesSection: React.FC<RepliesSectionProps> = ({
                 onToggleShowAll();
               }}
             >
-              {showAllReplies ? 'Show Less' : 'View All'}
+              {showAllReplies ? "Show Less" : "View All"}
             </TextLink>
           )}
         </div>

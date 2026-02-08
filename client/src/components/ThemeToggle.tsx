@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { selectTheme, toggleTheme } from '@/lib/redux/features/ui';
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { selectTheme, toggleTheme } from "@/lib/redux/features/ui";
 
 const MoonIcon = () => (
   <svg
@@ -79,9 +79,9 @@ export function ThemeToggle() {
     <button
       onClick={handleToggle}
       className="bg-background hover:bg-muted flex cursor-pointer items-center justify-center rounded-lg p-2 transition-colors"
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
-      {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
+      {theme === "dark" ? <MoonIcon /> : <SunIcon />}
     </button>
   );
 }

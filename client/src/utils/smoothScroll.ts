@@ -1,4 +1,4 @@
-import { RefObject } from 'react';
+import { RefObject } from "react";
 
 /**
  * Smooth scroll utility that scrolls to a target element
@@ -13,7 +13,7 @@ export const smoothScrollToElement = (
     block?: ScrollLogicalPosition;
   } = {},
 ) => {
-  const { delay = 100, behavior = 'smooth', block = 'start' } = options;
+  const { delay = 100, behavior = "smooth", block = "start" } = options;
 
   requestAnimationFrame(() => {
     setTimeout(() => {
@@ -37,7 +37,7 @@ export const smoothScrollToTop = (
     behavior?: ScrollBehavior;
   } = {},
 ) => {
-  const { delay = 100, behavior = 'smooth' } = options;
+  const { delay = 100, behavior = "smooth" } = options;
 
   requestAnimationFrame(() => {
     setTimeout(() => {

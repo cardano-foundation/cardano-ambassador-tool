@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import type { IWallet, Wallet } from '@meshsdk/core';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import type { IWallet, Wallet } from "@meshsdk/core";
 import {
   clearWalletSelection,
   connectToWallet,
@@ -10,7 +10,7 @@ import {
   getWalletAddress,
   saveWalletSelection,
   validateNetwork,
-} from '@/utils/wallet';
+} from "@/utils/wallet";
 
 // ---------- Types ----------
 export interface WalletState {
@@ -46,13 +46,13 @@ const initialState: WalletState = {
  * Refresh available wallets list
  */
 export const refreshWalletList = createAsyncThunk(
-  'wallet/refreshWalletList',
+  "wallet/refreshWalletList",
   async (_, { rejectWithValue }) => {
     try {
       const wallets = await getAvailableWallets();
       return wallets;
     } catch (error) {
-      return rejectWithValue('Failed to discover wallets');
+      return rejectWithValue("Failed to discover wallets");
     }
   },
 );
@@ -61,9 +61,12 @@ export const refreshWalletList = createAsyncThunk(
  * Connect to a wallet by ID
  */
 export const connectWallet = createAsyncThunk(
-  'wallet/connect',
+  "wallet/connect",
   async (
-    { walletId, availableWallets }: { walletId: string; availableWallets: Wallet[] },
+    {
+      walletId,
+      availableWallets,
+    }: { walletId: string; availableWallets: Wallet[] },
     { rejectWithValue },
   ) => {
     try {
@@ -73,10 +76,12 @@ export const connectWallet = createAsyncThunk(
 
       if (!isNetworkValid) {
         const walletNetworkId = await wallet.getNetworkId();
-        const { getCurrentNetworkConfig, NETWORK_NAMES } = await import('@/config/cardano');
+        const { getCurrentNetworkConfig, NETWORK_NAMES } = await import(
+          "@/config/cardano"
+        );
         const expectedNetwork = getCurrentNetworkConfig();
 
-        const walletNetworkName = NETWORK_NAMES[walletNetworkId] || 'Unknown';
+        const walletNetworkName = NETWORK_NAMES[walletNetworkId] || "Unknown";
         const expectedNetworkName = expectedNetwork.name;
 
         return rejectWithValue(
@@ -95,7 +100,9 @@ export const connectWallet = createAsyncThunk(
         isNetworkValid: true,
       };
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Connection failed');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Connection failed",
+      );
     }
   },
 );
@@ -104,7 +111,7 @@ export const connectWallet = createAsyncThunk(
  * Auto-connect from saved wallet selection
  */
 export const autoConnect = createAsyncThunk(
-  'wallet/autoConnect',
+  "wallet/autoConnect",
   async (availableWallets: Wallet[], { rejectWithValue }) => {
     const savedWalletId = getSavedWalletSelection();
     if (!savedWalletId) {
@@ -118,10 +125,12 @@ export const autoConnect = createAsyncThunk(
 
       if (!isNetworkValid) {
         const walletNetworkId = await wallet.getNetworkId();
-        const { getCurrentNetworkConfig, NETWORK_NAMES } = await import('@/config/cardano');
+        const { getCurrentNetworkConfig, NETWORK_NAMES } = await import(
+          "@/config/cardano"
+        );
         const expectedNetwork = getCurrentNetworkConfig();
 
-        const walletNetworkName = NETWORK_NAMES[walletNetworkId] || 'Unknown';
+        const walletNetworkName = NETWORK_NAMES[walletNetworkId] || "Unknown";
         const expectedNetworkName = expectedNetwork.name;
 
         clearWalletSelection();
@@ -130,7 +139,9 @@ export const autoConnect = createAsyncThunk(
         );
       }
 
-      const selectedWallet = availableWallets.find((w) => w.id === savedWalletId);
+      const selectedWallet = availableWallets.find(
+        (w) => w.id === savedWalletId,
+      );
       saveWalletSelection(savedWalletId);
 
       return {
@@ -141,14 +152,16 @@ export const autoConnect = createAsyncThunk(
         isNetworkValid: true,
       };
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Auto-connection failed');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Auto-connection failed",
+      );
     }
   },
 );
 
 // ---------- Slice ----------
 const walletSlice = createSlice({
-  name: 'wallet',
+  name: "wallet",
   initialState,
   reducers: {
     disconnectWallet: (state) => {
@@ -228,7 +241,11 @@ const walletSlice = createSlice({
 });
 
 // ---------- Exports ----------
-export const { disconnectWallet, clearError, setAvailableWallets, setHasAttemptedAutoConnect } =
-  walletSlice.actions;
+export const {
+  disconnectWallet,
+  clearError,
+  setAvailableWallets,
+  setHasAttemptedAutoConnect,
+} = walletSlice.actions;
 
 export default walletSlice.reducer;

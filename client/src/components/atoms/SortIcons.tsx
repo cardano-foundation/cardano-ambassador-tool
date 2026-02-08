@@ -1,7 +1,7 @@
 interface IconProps {
   className?: string;
 }
-export function SortDownIcon({ className = '' }: IconProps) {
+export function SortDownIcon({ className = "" }: IconProps) {
   return (
     <svg
       width="8"
@@ -19,7 +19,7 @@ export function SortDownIcon({ className = '' }: IconProps) {
   );
 }
 
-export function SortUpIcon({ className = '' }: IconProps) {
+export function SortUpIcon({ className = "" }: IconProps) {
   return (
     <svg
       width="8"

@@ -11,7 +11,7 @@ const KeyValue = ({
     <div className={`flex gap-8 ${className}`}>
       <span className="text-muted-foreground flex-none">{`${keyLabel}: `}</span>
       <div className="flex-1">
-        <span>{value ?? ''}</span>
+        <span>{value ?? ""}</span>
       </div>
     </div>
   );

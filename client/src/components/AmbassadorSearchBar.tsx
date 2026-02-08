@@ -1,8 +1,8 @@
-'use client';
-import Input from '@/components/atoms/Input';
-import React, { useEffect, useRef, useState } from 'react';
+"use client";
+import Input from "@/components/atoms/Input";
+import React, { useEffect, useRef, useState } from "react";
 
-const SearchIcon = ({ className = '' }: { className?: string }) => (
+const SearchIcon = ({ className = "" }: { className?: string }) => (
   <svg
     className={className}
     width="20"
@@ -20,7 +20,7 @@ const SearchIcon = ({ className = '' }: { className?: string }) => (
   </svg>
 );
 
-const GridIcon = ({ className = '' }: { className?: string }) => (
+const GridIcon = ({ className = "" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 16 16" fill="none">
     <rect
       x="2"
@@ -65,7 +65,7 @@ const GridIcon = ({ className = '' }: { className?: string }) => (
   </svg>
 );
 
-const ListIcon = ({ className = '' }: { className?: string }) => (
+const ListIcon = ({ className = "" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 16 16" fill="none">
     <path
       d="M2 4h12M2 8h12M2 12h12"
@@ -82,8 +82,8 @@ interface AmbassadorSearchProps {
   selectedRegion: string;
   onRegionChange: (region: string) => void;
   availableRegions: string[];
-  onViewChange?: (view: 'grid' | 'list') => void;
-  currentView?: 'grid' | 'list';
+  onViewChange?: (view: "grid" | "list") => void;
+  currentView?: "grid" | "list";
 }
 
 export default function AmbassadorSearch({
@@ -93,7 +93,7 @@ export default function AmbassadorSearch({
   onRegionChange,
   availableRegions,
   onViewChange,
-  currentView = 'grid',
+  currentView = "grid",
 }: AmbassadorSearchProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -109,16 +109,16 @@ export default function AmbassadorSearch({
     };
 
     if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isDropdownOpen]);
 
   const regionOptions = [
-    { value: 'all', label: 'All Regions' },
+    { value: "all", label: "All Regions" },
     ...availableRegions.map((region) => ({
       value: region,
       label: region,
@@ -127,7 +127,7 @@ export default function AmbassadorSearch({
 
   const handleClearRegion = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onRegionChange('all');
+    onRegionChange("all");
   };
 
   const handleRegionSelect = (value: string) => {
@@ -159,11 +159,11 @@ export default function AmbassadorSearch({
                 Sort
               </div>
               <div className="truncate font-['Chivo'] text-sm leading-3 font-normal text-slate-800 dark:text-slate-200">
-                {selectedRegion === 'all' ? 'Region' : selectedRegion}
+                {selectedRegion === "all" ? "Region" : selectedRegion}
               </div>
             </div>
             <div className="relative flex h-4 w-4 flex-shrink-0 items-center justify-center overflow-hidden">
-              {selectedRegion !== 'all' ? (
+              {selectedRegion !== "all" ? (
                 <button
                   onClick={handleClearRegion}
                   className="text-sm text-slate-400 transition-colors duration-200 hover:cursor-pointer hover:text-slate-600"
@@ -173,7 +173,7 @@ export default function AmbassadorSearch({
               ) : (
                 <svg
                   className={`text-muted-foreground h-3 w-3 transition-transform duration-200 ${
-                    isDropdownOpen ? 'rotate-180' : ''
+                    isDropdownOpen ? "rotate-180" : ""
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -198,8 +198,8 @@ export default function AmbassadorSearch({
                     onClick={() => handleRegionSelect(option.value)}
                     className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm transition-all duration-200 hover:cursor-pointer ${
                       selectedRegion === option.value
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:bg-muted'
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted"
                     }`}
                   >
                     <span className="mr-2 flex-1 truncate">{option.label}</span>
@@ -227,22 +227,22 @@ export default function AmbassadorSearch({
         <div className="border-border dark:!bg-background hover:bg-muted inline-flex flex-shrink-0 items-center justify-center rounded-md border bg-neutral-50 px-[2px] transition-all duration-200 hover:cursor-pointer lg:py-1">
           <button
             className={`flex items-center justify-center rounded-md p-1 transition-all duration-200 hover:cursor-pointer lg:p-1.5 ${
-              currentView === 'grid'
-                ? 'bg-muted shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)]'
-                : 'hover:bg-muted/50'
+              currentView === "grid"
+                ? "bg-muted shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)]"
+                : "hover:bg-muted/50"
             }`}
-            onClick={() => onViewChange?.('grid')}
+            onClick={() => onViewChange?.("grid")}
             title="Grid view"
           >
             <GridIcon className="text-muted-foreground hover:text-foreground h-4 w-4 transition-colors duration-200" />
           </button>
           <button
             className={`flex items-center justify-center rounded-md p-1 transition-all duration-200 hover:cursor-pointer lg:p-1.5 ${
-              currentView === 'list'
-                ? 'bg-muted shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)]'
-                : 'hover:bg-muted/50'
+              currentView === "list"
+                ? "bg-muted shadow-[0px_3px_4px_0px_rgba(0,0,0,0.03)]"
+                : "hover:bg-muted/50"
             }`}
-            onClick={() => onViewChange?.('list')}
+            onClick={() => onViewChange?.("list")}
             title="List view"
           >
             <ListIcon className="text-muted-foreground hover:text-foreground h-4 w-4 transition-colors duration-200" />

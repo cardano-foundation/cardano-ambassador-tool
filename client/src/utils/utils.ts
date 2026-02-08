@@ -1,6 +1,6 @@
-import { toast } from '@/components/toast/toast-manager';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { BlockfrostService } from '@/services/blockfrostService';
+import { toast } from "@/components/toast/toast-manager";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { BlockfrostService } from "@/services/blockfrostService";
 import {
   BlockfrostProvider,
   ByteString,
@@ -13,8 +13,8 @@ import {
   plutusBSArrayToString,
   pubKeyAddress,
   serializeAddressObj,
-} from '@meshsdk/core';
-import { deserializeTx } from '@meshsdk/core-csl';
+} from "@meshsdk/core";
+import { deserializeTx } from "@meshsdk/core-csl";
 import {
   Member,
   MemberData,
@@ -25,11 +25,11 @@ import {
   ProposalDatum,
   ProposalMetadata,
   scripts,
-} from '@sidan-lab/cardano-ambassador-tool';
-import { ProposalItem, Utxo } from '@types';
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-import { getCatConstants } from './constants';
+} from "@sidan-lab/cardano-ambassador-tool";
+import { ProposalItem, Utxo } from "@types";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { getCatConstants } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -39,10 +39,10 @@ export function copyToClipboard(text: string) {
   navigator.clipboard
     .writeText(text)
     .then(() => {
-      toast.success('Copied!', text);
+      toast.success("Copied!", text);
     })
     .catch((err) => {
-      toast.error('Failed to copy:', err);
+      toast.error("Failed to copy:", err);
     });
 }
 
@@ -70,7 +70,7 @@ export const POLICY_IDS = {
  * @param network The network to connect to (default: "preprod")
  * @returns Configured BlockfrostProvider instance
  */
-export function getProvider(network = 'preprod'): BlockfrostProvider {
+export function getProvider(network = "preprod"): BlockfrostProvider {
   const provider = new BlockfrostProvider(`/api/blockfrost/${network}/`);
   provider.setSubmitTxToBytes(false);
   return provider;
@@ -92,13 +92,13 @@ const safeExtractString = (field: any, fieldName?: string): string => {
     if (field?.bytes) {
       return hexToString(field.bytes);
     }
-    return '';
+    return "";
   } catch (error) {
     console.error(
-      `Error extracting string from field ${fieldName || 'unknown'}:`,
+      `Error extracting string from field ${fieldName || "unknown"}:`,
       error,
     );
-    return '';
+    return "";
   }
 };
 
@@ -151,7 +151,7 @@ export function parseMembershipIntentDatum(
 
     return { datum: datum as MembershipIntentDatum, metadata };
   } catch (error) {
-    console.error('Error parsing membership intent datum:', error);
+    console.error("Error parsing membership intent datum:", error);
     return null;
   }
 }
@@ -166,7 +166,7 @@ export function parseMemberDatum(
       !datum.fields ||
       !datum.fields[0]?.list ||
       !datum.fields[1] ||
-      typeof datum.fields[2]?.int === 'undefined' ||
+      typeof datum.fields[2]?.int === "undefined" ||
       !datum.fields[3]?.fields
     ) {
       return null;
@@ -197,15 +197,15 @@ export function parseMemberDatum(
 
     datum.fields[1].map.forEach((item: ProposalItem) => {
       if (!item.k || !item.v) return null;
-      
+
       completion.set(
         {
-          title: hexToString(item.k.fields[0].bytes || ''),
-          url: hexToString(item.k.fields[1].bytes || ''),
-          fundsRequested: hexToString(item.k.fields[2].bytes || ''),
+          title: hexToString(item.k.fields[0].bytes || ""),
+          url: hexToString(item.k.fields[1].bytes || ""),
+          fundsRequested: hexToString(item.k.fields[2].bytes || ""),
           receiverWalletAddress: serializeAddressObj(item.k.fields[3]),
           submittedByAddress: serializeAddressObj(item.k.fields[4]),
-          status: hexToString(item.k.fields[5].bytes || ''),
+          status: hexToString(item.k.fields[5].bytes || ""),
         },
         Number(item.v.int),
       );
@@ -222,7 +222,7 @@ export function parseMemberDatum(
 
     return { datum: datum as MemberDatum, member };
   } catch (error) {
-    console.error('Error parsing member datum:', error);
+    console.error("Error parsing member datum:", error);
     return null;
   }
 }
@@ -242,9 +242,9 @@ export function parseProposalDatum(plutusData: string): {
     if (
       !datum ||
       !datum.fields ||
-      typeof datum.fields[0]?.int === 'undefined' ||
+      typeof datum.fields[0]?.int === "undefined" ||
       !datum.fields[1] ||
-      typeof datum.fields[2]?.int === 'undefined' ||
+      typeof datum.fields[2]?.int === "undefined" ||
       !datum.fields[3]?.fields
     ) {
       return null;
@@ -260,14 +260,14 @@ export function parseProposalDatum(plutusData: string): {
     const metadata: ProposalData = {
       title: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
       url: safeExtractString(metadataPlutus.fields[1] as ByteString),
-      fundsRequested: lovelaceToAda(parseInt(fundsRequestedLovelace || '0')),
+      fundsRequested: lovelaceToAda(parseInt(fundsRequestedLovelace || "0")),
       receiverWalletAddress: serializeAddressObj(metadataPlutus.fields[3]),
       submittedByAddress: serializeAddressObj(metadataPlutus.fields[4]),
       status: hexToString((metadataPlutus.fields[5] as ByteString).bytes),
     };
     return { datum: datum as ProposalDatum, metadata, memberIndex };
   } catch (error) {
-    console.error('Error parsing proposal datum:', error);
+    console.error("Error parsing proposal datum:", error);
     return null;
   }
 }
@@ -320,7 +320,7 @@ export async function fetchMembershipIntentUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     parseMembershipIntentDatum,
-    'membership intent',
+    "membership intent",
   );
 }
 
@@ -332,7 +332,7 @@ export async function fetchProposeIntentUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.PROPOSE_INTENT,
     parseProposalDatum,
-    'propose intent',
+    "propose intent",
   );
 }
 
@@ -344,7 +344,7 @@ export async function fetchProposalUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.PROPOSAL,
     parseProposalDatum,
-    'proposal',
+    "proposal",
   );
 }
 
@@ -356,7 +356,7 @@ export async function fetchSignOffApprovalUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.SIGN_OFF_APPROVAL,
     parseProposalDatum,
-    'sign off approval',
+    "sign off approval",
   );
 }
 
@@ -368,7 +368,7 @@ export async function fetchMemberUtxos(): Promise<UTxO[]> {
   return fetchAndValidateUtxos(
     SCRIPT_ADDRESSES.MEMBER_NFT,
     parseMemberDatum,
-    'member',
+    "member",
   );
 }
 
@@ -387,20 +387,20 @@ export async function findMembershipIntentUtxo(
     const utxos = await blockfrostService.fetchAddressUTxOs(
       SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
     );
-    
+
     const utxosWithData = utxos.filter((utxo) => utxo.output.plutusData);
     const matchingUtxo = utxosWithData.find((utxo) => {
-        if (!utxo.output.plutusData) return false;
-        const datum: MembershipIntentDatum = deserializeDatum(
-          utxo.output.plutusData,
-        );
-        const metadataPluts: MembershipMetadata = datum.fields[1];
-        const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
-        return walletAddress === address;
+      if (!utxo.output.plutusData) return false;
+      const datum: MembershipIntentDatum = deserializeDatum(
+        utxo.output.plutusData,
+      );
+      const metadataPluts: MembershipMetadata = datum.fields[1];
+      const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
+      return walletAddress === address;
     });
     return matchingUtxo || null;
   } catch (error) {
-    console.error('Error fetching or processing UTxOs:', error);
+    console.error("Error fetching or processing UTxOs:", error);
     return null;
   }
 }
@@ -427,13 +427,13 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
         );
         return walletAddress === address;
       } catch (error) {
-        console.error('Error processing UTxO:', error);
+        console.error("Error processing UTxO:", error);
         return false;
       }
     });
     return matchingUtxo || null;
   } catch (error) {
-    console.error('Error fetching or processing UTxOs:', error);
+    console.error("Error fetching or processing UTxOs:", error);
     return null;
   }
 }
@@ -443,7 +443,7 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
  * This re-exports the cached version from roles.ts for convenience
  * @returns The matching UTxO or null if not found
  */
-export { findOracleUtxo } from '@/lib/auth/roles';
+export { findOracleUtxo } from "@/lib/auth/roles";
 
 /**
  * Finds a member UTxO by asset name
@@ -464,7 +464,7 @@ export async function findMemberUtxoByAssetName(
     );
     return matchingUtxo || null;
   } catch (error) {
-    console.error('Error finding member UTxO by asset:', error);
+    console.error("Error finding member UTxO by asset:", error);
     return null;
   }
 }
@@ -479,7 +479,7 @@ export async function findTokenUtxoByMemberUtxo(
 ): Promise<UTxO | null> {
   try {
     if (!memberUtxo.output.plutusData) {
-      console.error('Member UTxO does not contain Plutus data');
+      console.error("Member UTxO does not contain Plutus data");
       return null;
     }
     const datum: MemberDatum = deserializeDatum(memberUtxo.output.plutusData);
@@ -499,7 +499,7 @@ export async function findTokenUtxoByMemberUtxo(
     }
     return tokenUtxo;
   } catch (error) {
-    console.error('Error finding token UTxO:', error);
+    console.error("Error finding token UTxO:", error);
     return null;
   }
 }
@@ -514,7 +514,7 @@ export async function findTokenUtxoByMembershipIntentUtxo(
 ): Promise<UTxO | null> {
   try {
     if (!membershipIntentUtxo.output.plutusData) {
-      throw 'Member UTxO does not contain Plutus data';
+      throw "Member UTxO does not contain Plutus data";
     }
     const datum: MembershipIntentDatum = deserializeDatum(
       membershipIntentUtxo.output.plutusData,
@@ -548,7 +548,7 @@ export async function findTokenUtxoByMembershipIntentUtxoMesh(
 ): Promise<UTxO | null> {
   try {
     if (!membershipIntentUtxo.output.plutusData) {
-      console.error('Member UTxO does not contain Plutus data');
+      console.error("Member UTxO does not contain Plutus data");
       return null;
     }
     const datum: MembershipIntentDatum = deserializeDatum(
@@ -570,14 +570,14 @@ export async function findTokenUtxoByMembershipIntentUtxoMesh(
     }
     return tokenUtxo;
   } catch (error) {
-    console.error('Error finding token UTxO:', error);
+    console.error("Error finding token UTxO:", error);
     return null;
   }
 }
 
 export function findAdmins(): string[] | null {
   const adminList = Object.keys(process.env)
-    .filter((key) => key.startsWith('ADMIN_WALLET'))
+    .filter((key) => key.startsWith("ADMIN_WALLET"))
     .map((key) => deserializeAddress(process.env[key]!).pubKeyHash)
     .filter(Boolean);
 
@@ -607,7 +607,7 @@ export function extractWitnesses(txHex: string) {
       return witnessKeys;
     }
   } catch (error) {
-    throw new Error(String(error) || 'Failed to save counter UTxO');
+    throw new Error(String(error) || "Failed to save counter UTxO");
   }
 }
 
@@ -630,7 +630,7 @@ export function extractRequiredSigners(txHex: string) {
 
     return [];
   } catch (error) {
-    console.error('Failed to extract required signers:', error);
+    console.error("Failed to extract required signers:", error);
     return [];
   }
 }
@@ -650,13 +650,13 @@ export function pubKeyHashToAddress(
     const address = serializeAddressObj(pubKeyAddr, networkId);
     return address;
   } catch (error) {
-    console.error('Failed to convert pubkey hash to address:', error);
+    console.error("Failed to convert pubkey hash to address:", error);
     return pubKeyHashHex;
   }
 }
 
 export function shortenString(text: string, length = 8) {
-  if (!text) return '';
+  if (!text) return "";
   return `${text.substring(0, length)}...${text.substring(text.length - length)}`;
 }
 
@@ -670,8 +670,8 @@ export function shortenString(text: string, length = 8) {
  */
 export function dbUtxoToMeshUtxo(dbUtxo: Utxo): UTxO {
   let amount;
-  if (typeof dbUtxo.amount === 'string') {
-    amount = JSON.parse(dbUtxo.amount || '[]');
+  if (typeof dbUtxo.amount === "string") {
+    amount = JSON.parse(dbUtxo.amount || "[]");
   } else if (Array.isArray(dbUtxo.amount)) {
     amount = dbUtxo.amount;
   } else {
@@ -706,21 +706,21 @@ export function dbUtxoToMeshUtxo(dbUtxo: Utxo): UTxO {
  */
 export async function getCounterUtxo(): Promise<UTxO | null> {
   try {
-    const response = await fetch('/api/counter-utxo', {
-      method: 'GET',
+    const response = await fetch("/api/counter-utxo", {
+      method: "GET",
     });
 
     if (!response.ok) {
       if (response.status === 404) {
         return null;
       }
-      throw new Error('Failed to fetch counter UTxO');
+      throw new Error("Failed to fetch counter UTxO");
     }
 
     const counterUtxo = await response.json();
     return counterUtxo;
   } catch (error) {
-    console.error('Error fetching counter UTxO:', error);
+    console.error("Error fetching counter UTxO:", error);
     return null;
   }
 }
@@ -737,17 +737,17 @@ export async function saveCounterUtxo(
   outputIndex: number,
 ): Promise<boolean> {
   try {
-    const response = await fetch('/api/counter-utxo', {
-      method: 'POST',
+    const response = await fetch("/api/counter-utxo", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ txHash, outputIndex }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to save counter UTxO');
+      throw new Error(error.error || "Failed to save counter UTxO");
     }
 
     return true;
@@ -757,12 +757,12 @@ export async function saveCounterUtxo(
 }
 
 export function formatTimestamp(timestamp: Date) {
-  return timestamp.toLocaleString('en-US', {
-    month: 'long', // Full month name (June)
-    day: 'numeric', // Day (29)
-    year: 'numeric', // Year (2025)
-    hour: 'numeric', // Hour (2)
-    minute: '2-digit', // Minute (00)
+  return timestamp.toLocaleString("en-US", {
+    month: "long", // Full month name (June)
+    day: "numeric", // Day (29)
+    year: "numeric", // Year (2025)
+    hour: "numeric", // Hour (2)
+    minute: "2-digit", // Minute (00)
     hour12: true, // AM/PM format
   });
 }
@@ -780,7 +780,7 @@ export async function fetchTransactionTimestamp(txHash: string) {
 
     return null;
   } catch (error) {
-    throw new Error('Error fetching transaction timestamp:' + error);
+    throw new Error("Error fetching transaction timestamp:" + error);
   }
 }
 
@@ -795,9 +795,9 @@ export async function fetchTransactionTimestamp(txHash: string) {
  */
 export function adaToLovelace(ada: string | number): number {
   const adaValue =
-    typeof ada === 'string' ? parseFloat(ada.replace(/[^0-9.-]/g, '')) : ada;
+    typeof ada === "string" ? parseFloat(ada.replace(/[^0-9.-]/g, "")) : ada;
   if (isNaN(adaValue)) {
-    throw new Error('Invalid ADA value');
+    throw new Error("Invalid ADA value");
   }
   return Math.round(adaValue * 1_000_000);
 }
@@ -809,12 +809,12 @@ export function adaToLovelace(ada: string | number): number {
  */
 export function lovelaceToAda(lovelace: number | string): string {
   const lovelaceValue =
-    typeof lovelace === 'string' ? parseFloat(lovelace) : lovelace;
+    typeof lovelace === "string" ? parseFloat(lovelace) : lovelace;
   if (isNaN(lovelaceValue)) {
-    return '0';
+    return "0";
   }
   const ada = lovelaceValue / 1_000_000;
-  return ada.toLocaleString('en-US', {
+  return ada.toLocaleString("en-US", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 6,
   });
@@ -826,7 +826,7 @@ export function lovelaceToAda(lovelace: number | string): string {
  * @returns Formatted string with ₳ symbol
  */
 export function formatAdaAmount(ada: string | number): string {
-  const adaValue = typeof ada === 'string' ? ada : ada.toString();
+  const adaValue = typeof ada === "string" ? ada : ada.toString();
   return `₳ ${adaValue}`;
 }
 
@@ -836,14 +836,14 @@ export function formatAdaAmount(ada: string | number): string {
  * @returns Clean numeric string or the original input if no 'ADA' found
  */
 export function parseAdaInput(input: string): string {
-  if (!input) return '';
+  if (!input) return "";
 
   // Remove 'ADA', '₳', and extra whitespace, keep only numbers and decimal points
   const cleaned = input
-    .replace(/ADA/gi, '')
-    .replace(/₳/g, '')
-    .replace(/[^0-9.-]/g, '')
+    .replace(/ADA/gi, "")
+    .replace(/₳/g, "")
+    .replace(/[^0-9.-]/g, "")
     .trim();
 
-  return cleaned || '';
+  return cleaned || "";
 }

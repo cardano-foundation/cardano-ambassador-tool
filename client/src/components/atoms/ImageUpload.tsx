@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { ImageUp } from 'lucide-react';
-import { useRef, useState } from 'react';
-import TextLink from './TextLink';
+import { ImageUp } from "lucide-react";
+import { useRef, useState } from "react";
+import TextLink from "./TextLink";
 
 interface ImageUploadProps {
   onImageUpload: (file: File) => void;
@@ -17,9 +17,9 @@ export default function ImageUpload({
   onImageUpload,
   onDisconnect,
   currentImage,
-  className = '',
+  className = "",
   maxSize = 5 * 1024 * 1024,
-  acceptedTypes = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/gif'],
+  acceptedTypes = ["image/svg+xml", "image/png", "image/jpeg", "image/gif"],
 }: ImageUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,14 +32,14 @@ export default function ImageUpload({
     if (validateFile(file)) {
       onImageUpload(file);
     } else {
-      console.error('Invalid file');
+      console.error("Invalid file");
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) handleFile(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -60,7 +60,7 @@ export default function ImageUpload({
 
   return (
     <div
-      className={`border-border relative inline-flex items-center justify-center gap-2.5 self-stretch rounded-md border px-3 py-5 transition-colors duration-200 ${isDragging ? 'border-primary-base bg-primary-50' : ''} ${currentImage ? 'min-h-[120px]' : ''} ${className} `}
+      className={`border-border relative inline-flex items-center justify-center gap-2.5 self-stretch rounded-md border px-3 py-5 transition-colors duration-200 ${isDragging ? "border-primary-base bg-primary-50" : ""} ${currentImage ? "min-h-[120px]" : ""} ${className} `}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -116,7 +116,7 @@ export default function ImageUpload({
         ref={fileInputRef}
         type="file"
         className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-        accept={acceptedTypes.join(',')}
+        accept={acceptedTypes.join(",")}
         onChange={handleFileChange}
       />
     </div>

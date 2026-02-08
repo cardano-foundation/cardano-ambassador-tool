@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { AmbassadorProfile } from '@/types/ambassadorProfile';
-import { cn } from '@/utils/utils';
+import { AmbassadorProfile } from "@/types/ambassadorProfile";
+import { cn } from "@/utils/utils";
 import {
   CheckCircle,
   ExternalLink,
   Loader2,
   User,
   XCircle,
-} from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 
 interface ForumUsernameInputProps {
   label?: string;
@@ -32,11 +32,11 @@ interface VerificationState {
 }
 
 const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
-  label = 'Cardano Forum Username',
-  placeholder = 'Enter your forum.cardano.org username',
-  value = '',
+  label = "Cardano Forum Username",
+  placeholder = "Enter your forum.cardano.org username",
+  value = "",
   onChange,
-  className = '',
+  className = "",
   disabled = false,
 }) => {
   const [verificationState, setVerificationState] = useState<VerificationState>(
@@ -72,11 +72,11 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
       if (!res.ok) {
         const errorText = await res.text();
         if (res.status === 403) {
-          throw new Error('Forum API authentication failed');
+          throw new Error("Forum API authentication failed");
         } else if (res.status === 404) {
-          throw new Error('User not found on forum');
+          throw new Error("User not found on forum");
         } else {
-          throw new Error('Failed to verify forum username');
+          throw new Error("Failed to verify forum username");
         }
       }
 
@@ -94,11 +94,11 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
       });
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Verification failed';
+        error instanceof Error ? error.message : "Verification failed";
 
       if (
-        errorMessage.includes('authentication failed') ||
-        errorMessage.includes('403')
+        errorMessage.includes("authentication failed") ||
+        errorMessage.includes("403")
       ) {
         setVerificationState({
           isVerifying: false,
@@ -149,19 +149,19 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
 
   const getStatusColor = () => {
     if (verificationState.isValid === true)
-      return 'border-green-500 ring-green-500/20';
+      return "border-green-500 ring-green-500/20";
     if (verificationState.isValid === false)
-      return 'border-red-500 ring-red-500/20';
+      return "border-red-500 ring-red-500/20";
     if (verificationState.isVerifying)
-      return 'border-blue-500 ring-blue-500/20';
-    return 'border-border';
+      return "border-blue-500 ring-blue-500/20";
+    return "border-border";
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      year: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
     });
   };
 
@@ -181,9 +181,9 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
           placeholder={placeholder}
           disabled={disabled}
           className={cn(
-            'bg-background h-10 w-full rounded-md border px-3 py-2 pr-10 text-sm transition-colors',
-            'focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
-            'disabled:cursor-not-allowed disabled:opacity-50',
+            "bg-background h-10 w-full rounded-md border px-3 py-2 pr-10 text-sm transition-colors",
+            "focus:ring-primary-300/20 focus:ring-2 focus:outline-none",
+            "disabled:cursor-not-allowed disabled:opacity-50",
             getStatusColor(),
           )}
         />
@@ -212,7 +212,7 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
                   </p>
                   {verificationState.userInfo.created_at && (
                     <p className="mt-1 text-xs text-green-600">
-                      Member since{' '}
+                      Member since{" "}
                       {formatDate(verificationState.userInfo.created_at)}
                     </p>
                   )}
@@ -239,7 +239,7 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
                 Forum verification temporarily unavailable
               </p>
               <p className="text-muted-foreground text-xs">
-                Please ensure you have an active account on{' '}
+                Please ensure you have an active account on{" "}
                 <a
                   href="https://forum.cardano.org"
                   target="_blank"
@@ -258,7 +258,7 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
               ✗ {verificationState.error}
             </p>
             <p className="text-muted-foreground text-xs">
-              Make sure you have an active account on{' '}
+              Make sure you have an active account on{" "}
               <a
                 href="https://forum.cardano.org"
                 target="_blank"

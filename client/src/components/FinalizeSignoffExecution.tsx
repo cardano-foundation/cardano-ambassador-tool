@@ -1,13 +1,13 @@
-import { useWalletManager } from '@/hooks';
-import { emitGlobalRefreshWithDelay } from '@/utils';
-import { storageApiClient } from '@/utils/storageApiClient';
-import { AdminDecisionData, TransactionConfirmationResult } from '@types';
-import { Loader2 } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
-import Button from './atoms/Button';
-import Paragraph from './atoms/Paragraph';
-import ErrorAccordion from './ErrorAccordion';
-import TransactionConfirmationOverlay from './TransactionConfirmationOverlay';
+import { useWalletManager } from "@/hooks";
+import { emitGlobalRefreshWithDelay } from "@/utils";
+import { storageApiClient } from "@/utils/storageApiClient";
+import { AdminDecisionData, TransactionConfirmationResult } from "@types";
+import { Loader2 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import Button from "./atoms/Button";
+import Paragraph from "./atoms/Paragraph";
+import ErrorAccordion from "./ErrorAccordion";
+import TransactionConfirmationOverlay from "./TransactionConfirmationOverlay";
 
 interface FinalizeSignoffExecutionProps {
   txhash?: string;
@@ -55,18 +55,18 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
     setSubmitError(null);
     try {
       if (!wallet) {
-        throw new Error('Wallet not connected');
+        throw new Error("Wallet not connected");
       }
       if (!adminDecisionData.signedTx) {
-        throw new Error('No signed transaction found in admin decision data');
+        throw new Error("No signed transaction found in admin decision data");
       }
       const txHash = await wallet!.submitTx(adminDecisionData.signedTx);
       setConfirmedTxHash(txHash);
       setShowConfirmationOverlay(true);
     } catch (error) {
-      console.error('Failed to submit signoff execution transaction:', error);
+      console.error("Failed to submit signoff execution transaction:", error);
       setSubmitError({
-        message: 'Failed to execute treasury withdrawal',
+        message: "Failed to execute treasury withdrawal",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
@@ -80,9 +80,9 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
       onFinalizationComplete?.();
       if (txhash) {
         try {
-          await storageApiClient.delete(txhash, 'signoff-execute');
+          await storageApiClient.delete(txhash, "signoff-execute");
         } catch (error) {
-          console.error('Failed to clean up signoff execution data:', error);
+          console.error("Failed to clean up signoff execution data:", error);
         }
       }
       emitGlobalRefreshWithDelay(2000);
@@ -127,7 +127,7 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
       {hasAdminDecision && !signatureRequirementsMet && adminDecisionData && (
         <div className="space-y-1 text-center">
           <Paragraph size="sm" className="text-gray-500">
-            Waiting for{' '}
+            Waiting for{" "}
             {adminDecisionData.selectedAdmins.length - getSignedCount()} more
             signature(s) before execution.
           </Paragraph>
@@ -137,7 +137,7 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
       {signatureRequirementsMet && !isFinalized && adminDecisionData && (
         <div className="space-y-1 text-center">
           <Paragraph size="xs" className="text-green-500">
-            ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
+            ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{" "}
             required signatures complete)
           </Paragraph>
         </div>
@@ -155,8 +155,8 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
         title="Executing Treasury Withdrawal"
         description={
           isFinalized
-            ? 'Treasury withdrawal has been successfully executed! Funds have been transferred. 🎉'
-            : 'Please wait while your treasury withdrawal is being confirmed on the blockchain.'
+            ? "Treasury withdrawal has been successfully executed! Funds have been transferred. 🎉"
+            : "Please wait while your treasury withdrawal is being confirmed on the blockchain."
         }
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
@@ -164,14 +164,14 @@ const FinalizeSignoffExecution: React.FC<FinalizeSignoffExecutionProps> = ({
         showNavigationOptions={isFinalized}
         navigationOptions={[
           {
-            label: 'View Treasury',
-            url: '/manage/treasury-signoffs',
-            variant: 'primary',
+            label: "View Treasury",
+            url: "/manage/treasury-signoffs",
+            variant: "primary",
           },
           {
-            label: 'View All Proposals',
-            url: '/proposals',
-            variant: 'outline',
+            label: "View All Proposals",
+            url: "/proposals",
+            variant: "outline",
           },
         ]}
       />

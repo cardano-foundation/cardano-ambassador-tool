@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface XIconProps {
   className?: string;
@@ -7,9 +7,9 @@ interface XIconProps {
 }
 
 const XIcon: React.FC<XIconProps> = ({
-  className = '',
+  className = "",
   size = 24,
-  color = 'currentColor',
+  color = "currentColor",
 }) => {
   return (
     <svg

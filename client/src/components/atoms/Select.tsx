@@ -1,5 +1,5 @@
-'use client';
-import Dropdown from './Dropdown';
+"use client";
+import Dropdown from "./Dropdown";
 
 interface SelectOption {
   value: string;
@@ -23,9 +23,9 @@ export default function Select({
   options,
   value,
   onValueChange,
-  placeholder = 'Select...',
+  placeholder = "Select...",
   disabled = false,
-  className = 'w-48',
+  className = "w-48",
 }: SelectProps) {
   return (
     <Dropdown

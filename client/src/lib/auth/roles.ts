@@ -1,13 +1,13 @@
-'use server';
+"use server";
 
-import { BlockfrostService } from '@/services/blockfrostService';
-import type { UTxO } from '@meshsdk/core';
-import { deserializeAddress, deserializeDatum } from '@meshsdk/core';
+import { BlockfrostService } from "@/services/blockfrostService";
+import type { UTxO } from "@meshsdk/core";
+import { deserializeAddress, deserializeDatum } from "@meshsdk/core";
 import {
   getOracleAdmins,
   OracleDatum,
-} from '@sidan-lab/cardano-ambassador-tool';
-import { revalidateTag, unstable_cache } from 'next/cache';
+} from "@sidan-lab/cardano-ambassador-tool";
+import { revalidateTag, unstable_cache } from "next/cache";
 
 const blockfrost = new BlockfrostService();
 
@@ -38,15 +38,15 @@ export async function resolveRoles(address: string): Promise<
 
   try {
     // Get admin pub key hashes from environment
-    const admins = await  fetchAdminsFromOracle();    
+    const admins = await fetchAdminsFromOracle();
 
     // Check if user is admin
     if (admins?.adminAddresses.includes(address)) {
-      roles.push({ role: 'admin' });
+      roles.push({ role: "admin" });
     } else {
     }
   } catch (error) {
-    console.error('Error resolving user roles:', error);
+    console.error("Error resolving user roles:", error);
   }
 
   return roles;
@@ -73,7 +73,7 @@ async function fetchOracleUtxoUncached(): Promise<UTxO | null> {
 
     return utxo;
   } catch (error) {
-    console.error('Error fetching oracle UTxO:', error);
+    console.error("Error fetching oracle UTxO:", error);
     return null;
   }
 }
@@ -86,10 +86,10 @@ async function fetchOracleUtxoUncached(): Promise<UTxO | null> {
  */
 export const findOracleUtxo = unstable_cache(
   fetchOracleUtxoUncached,
-  ['oracle-utxo'],
+  ["oracle-utxo"],
   {
     revalidate: 86400, // 24 hours
-    tags: ['oracle-utxo', 'oracle-data'],
+    tags: ["oracle-utxo", "oracle-data"],
   },
 );
 
@@ -114,7 +114,7 @@ async function fetchAdminsFromOracle(): Promise<{
       minsigners,
     };
   } catch (error) {
-    console.error('Error finding admins from oracle:', error);
+    console.error("Error finding admins from oracle:", error);
     return null;
   }
 }
@@ -123,10 +123,10 @@ async function fetchAdminsFromOracle(): Promise<{
 // This is cached because oracle data rarely changes
 export const findAdminsFromOracle = unstable_cache(
   fetchAdminsFromOracle,
-  ['oracle-admins'],
+  ["oracle-admins"],
   {
     revalidate: 86400,
-    tags: ['oracle-admins'],
+    tags: ["oracle-admins"],
   },
 );
 
@@ -138,7 +138,7 @@ export const findAdminsFromOracle = unstable_cache(
  * await invalidateOracleAdminsCache();
  */
 export async function invalidateOracleAdminsCache(): Promise<void> {
-  revalidateTag('oracle-admins');
+  revalidateTag("oracle-admins");
 }
 
 /**
@@ -149,7 +149,7 @@ export async function invalidateOracleAdminsCache(): Promise<void> {
  * await invalidateOracleUtxoCache();
  */
 export async function invalidateOracleUtxoCache(): Promise<void> {
-  revalidateTag('oracle-utxo');
+  revalidateTag("oracle-utxo");
 }
 
 /**
@@ -160,7 +160,7 @@ export async function invalidateOracleUtxoCache(): Promise<void> {
  * await invalidateAllOracleCache();
  */
 export async function invalidateAllOracleCache(): Promise<void> {
-  revalidateTag('oracle-data'); // Clears both oracle-utxo and oracle-admins via shared tag
-  revalidateTag('oracle-admins');
-  revalidateTag('oracle-utxo');
+  revalidateTag("oracle-data"); // Clears both oracle-utxo and oracle-admins via shared tag
+  revalidateTag("oracle-admins");
+  revalidateTag("oracle-utxo");
 }

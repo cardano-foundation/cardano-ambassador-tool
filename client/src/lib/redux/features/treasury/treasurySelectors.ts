@@ -1,15 +1,17 @@
-import { createSelector } from '@reduxjs/toolkit';
-import type { RootState } from '../../store';
-import { selectDetailedProposals } from '../data/dataSelectors';
+import { createSelector } from "@reduxjs/toolkit";
+import type { RootState } from "../../store";
+import { selectDetailedProposals } from "../data/dataSelectors";
 
-import { selectCalculatedTotalPayouts } from '../data/dataSelectors';
+import { selectCalculatedTotalPayouts } from "../data/dataSelectors";
 
 // ---------- Base Selectors ----------
 export const selectTreasuryState = (state: RootState) => state.treasury;
 
-export const selectTreasuryBalanceString = (state: RootState) => state.treasury.balance;
+export const selectTreasuryBalanceString = (state: RootState) =>
+  state.treasury.balance;
 // Removed selectTotalPayoutsString as it's no longer in state
-export const selectIsTreasuryLoading = (state: RootState) => state.treasury.isLoading;
+export const selectIsTreasuryLoading = (state: RootState) =>
+  state.treasury.isLoading;
 export const selectTreasuryError = (state: RootState) => state.treasury.error;
 
 // ---------- Memoized Selectors ----------

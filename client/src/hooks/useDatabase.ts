@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { useCallback, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
   selectDbLoading,
   selectIsSyncing,
@@ -17,25 +17,25 @@ import {
   dbInitialized,
   dbInitializationFailed,
   startSync,
-} from '@/lib/redux/features/data';
-import { DatabaseManager } from '@/lib/dbManager';
+} from "@/lib/redux/features/data";
+import { DatabaseManager } from "@/lib/dbManager";
 import {
   initUtxoWorker,
   onUtxoWorkerMessage,
   sendUtxoWorkerMessage,
-} from '@/lib/utxoWorkerClient';
+} from "@/lib/utxoWorkerClient";
 import {
   deserializeDatum,
   PubKeyAddress,
   ScriptAddress,
   serializeAddressObj,
   TransactionInfo,
-} from '@meshsdk/core';
+} from "@meshsdk/core";
 import {
   MembershipIntentDatum,
   MembershipMetadata,
-} from '@sidan-lab/cardano-ambassador-tool';
-import { Utxo } from '@types';
+} from "@sidan-lab/cardano-ambassador-tool";
+import { Utxo } from "@types";
 
 // ---------- Database operations ----------
 const dbManager = DatabaseManager.getInstance();
@@ -83,11 +83,14 @@ export function useDatabase() {
             clearTimeout(timeoutId);
 
             await dbManager.initializeDatabase(data.db);
-            const memberships_intents = dbManager.getUtxosByContext('membership_intent');
-            const proposals_intents = dbManager.getUtxosByContext('proposal_intent');
-            const membersData = dbManager.getUtxosByContext('members');
-            const proposalsData = dbManager.getUtxosByContext('proposals');
-            const sign_of_approvals = dbManager.getUtxosByContext('sign_of_approval');
+            const memberships_intents =
+              dbManager.getUtxosByContext("membership_intent");
+            const proposals_intents =
+              dbManager.getUtxosByContext("proposal_intent");
+            const membersData = dbManager.getUtxosByContext("members");
+            const proposalsData = dbManager.getUtxosByContext("proposals");
+            const sign_of_approvals =
+              dbManager.getUtxosByContext("sign_of_approval");
             const treasury_payouts = dbManager.getPayoutUtxos();
 
             // Dispatch all data to Redux
@@ -102,12 +105,16 @@ export function useDatabase() {
               }),
             );
 
-            dispatch(dbInitialized({ isSyncOperation: data.isSyncOperation || false }));
+            dispatch(
+              dbInitialized({ isSyncOperation: data.isSyncOperation || false }),
+            );
           } catch (err) {
             clearTimeout(timeoutId);
             dispatch(
               dbInitializationFailed(
-                err instanceof Error ? err.message : 'Database initialization failed',
+                err instanceof Error
+                  ? err.message
+                  : "Database initialization failed",
               ),
             );
           }
@@ -129,15 +136,15 @@ export function useDatabase() {
   // Database operations
   const syncAllData = useCallback(() => {
     sendUtxoWorkerMessage({
-      action: 'seedAll',
-      apiBaseUrl: typeof window !== 'undefined' ? window.location.origin : '',
+      action: "seedAll",
+      apiBaseUrl: typeof window !== "undefined" ? window.location.origin : "",
       contexts: [
-        'members',
-        'membership_intent',
-        'proposals',
-        'proposal_intent',
-        'sign_of_approval',
-        'treasury_payouts',
+        "members",
+        "membership_intent",
+        "proposals",
+        "proposal_intent",
+        "sign_of_approval",
+        "treasury_payouts",
       ],
     });
   }, []);
@@ -146,15 +153,15 @@ export function useDatabase() {
     (context: string) => {
       dispatch(startSync());
       sendUtxoWorkerMessage({
-        action: 'seedAll',
-        apiBaseUrl: typeof window !== 'undefined' ? window.location.origin : '',
+        action: "seedAll",
+        apiBaseUrl: typeof window !== "undefined" ? window.location.origin : "",
         contexts: [
-          'members',
-          'membership_intent',
-          'proposals',
-          'proposal_intent',
-          'sign_of_approval',
-          'treasury_payouts',
+          "members",
+          "membership_intent",
+          "proposals",
+          "proposal_intent",
+          "sign_of_approval",
+          "treasury_payouts",
         ],
         isSyncOperation: true,
       });
@@ -170,26 +177,32 @@ export function useDatabase() {
   const findMembershipIntentUtxo = useCallback(
     async (address: string): Promise<Utxo | null> => {
       try {
-        const utxosWithData = membershipIntents.filter((utxo) => utxo.plutusData);
+        const utxosWithData = membershipIntents.filter(
+          (utxo) => utxo.plutusData,
+        );
 
         const matchingUtxo = utxosWithData.find((utxo) => {
           try {
             if (!utxo.plutusData) return false;
-            const datum: MembershipIntentDatum = deserializeDatum(utxo.plutusData);
+            const datum: MembershipIntentDatum = deserializeDatum(
+              utxo.plutusData,
+            );
             const metadataPlutus: MembershipMetadata = datum.fields[1];
             const walletAddress = serializeAddressObj(
-              metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+              metadataPlutus.fields[0] as unknown as
+                | PubKeyAddress
+                | ScriptAddress,
             );
             return walletAddress === address;
           } catch (error) {
-            console.error('Error processing UTxO:', error);
+            console.error("Error processing UTxO:", error);
             return false;
           }
         });
 
         return matchingUtxo || null;
       } catch (error) {
-        console.error('Error fetching or processing UTxOs:', error);
+        console.error("Error fetching or processing UTxOs:", error);
         return null;
       }
     },
@@ -200,15 +213,15 @@ export function useDatabase() {
   const getUtxosByContext = useCallback(
     (contextName: string): Utxo[] => {
       switch (contextName) {
-        case 'membership_intent':
+        case "membership_intent":
           return membershipIntents;
-        case 'proposal_intent':
+        case "proposal_intent":
           return proposalIntents;
-        case 'members':
+        case "members":
           return members;
-        case 'proposals':
+        case "proposals":
           return proposals;
-        case 'sign_of_approval':
+        case "sign_of_approval":
           return signOfApprovals;
         default:
           // Fall back to database manager for unknown contexts

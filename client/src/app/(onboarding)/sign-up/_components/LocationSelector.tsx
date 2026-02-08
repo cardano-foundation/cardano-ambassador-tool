@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import SearchableDropdown from '@/components/atoms/SearchableDropdown';
-import { countries, getCitiesForCountry } from '@/utils/locationData';
-import { cn } from '@/utils/utils';
-import React from 'react';
+import SearchableDropdown from "@/components/atoms/SearchableDropdown";
+import { countries, getCitiesForCountry } from "@/utils/locationData";
+import { cn } from "@/utils/utils";
+import React from "react";
 
 interface LocationSelectorProps {
   countryCode?: string;
@@ -18,7 +18,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
   city,
   onCountryChange,
   onCityChange,
-  className = '',
+  className = "",
 }) => {
   const countryOptions = countries.map((country) => ({
     value: country.code,
@@ -34,7 +34,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 
   const handleCountryChange = (newCountryCode: string) => {
     onCountryChange(newCountryCode);
-    onCityChange('');
+    onCityChange("");
   };
 
   const handleCityChange = (newCity: string) => {
@@ -42,7 +42,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
   };
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn("space-y-4", className)}>
       <div>
         <label className="text-foreground mb-2 block text-sm font-medium">
           Country
@@ -66,7 +66,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
           value={city}
           onValueChange={handleCityChange}
           placeholder={
-            countryCode ? 'Select your city...' : 'Select a country first'
+            countryCode ? "Select your city..." : "Select a country first"
           }
           searchPlaceholder="Search cities..."
           noOptionsMessage="No cities found"

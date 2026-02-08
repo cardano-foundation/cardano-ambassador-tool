@@ -1,65 +1,65 @@
-'use client';
+"use client";
 
-import { ColumnDef, Table } from '@/components/Table/Table';
-import Button from '@/components/atoms/Button';
-import Chip from '@/components/atoms/Chip';
-import Empty from '@/components/atoms/Empty';
-import Paragraph from '@/components/atoms/Paragraph';
-import Select from '@/components/atoms/Select';
-import Title from '@/components/atoms/Title';
-import { routes } from '@/config/routes';
-import { useWalletManager } from '@/hooks';
-import useProposals from '@/hooks/useProposals';
-import { formatAdaAmount } from '@/utils';
-import { Proposal } from '@types';
-import { ArrowUpLeftFromSquare, ArrowUpRightFromSquare } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+import { ColumnDef, Table } from "@/components/Table/Table";
+import Button from "@/components/atoms/Button";
+import Chip from "@/components/atoms/Chip";
+import Empty from "@/components/atoms/Empty";
+import Paragraph from "@/components/atoms/Paragraph";
+import Select from "@/components/atoms/Select";
+import Title from "@/components/atoms/Title";
+import { routes } from "@/config/routes";
+import { useWalletManager } from "@/hooks";
+import useProposals from "@/hooks/useProposals";
+import { formatAdaAmount } from "@/utils";
+import { Proposal } from "@types";
+import { ArrowUpLeftFromSquare, ArrowUpRightFromSquare } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 const truncateToWords = (text: string, wordCount: number = 6) => {
-  if (!text) return 'No description';
-  const words = text.split(' ');
+  if (!text) return "No description";
+  const words = text.split(" ");
   if (words.length <= wordCount) return text;
-  return words.slice(0, wordCount).join(' ') + '...';
+  return words.slice(0, wordCount).join(" ") + "...";
 };
 
-const getChipVariant = (status: Proposal['status']) => {
+const getChipVariant = (status: Proposal["status"]) => {
   switch (status) {
-    case 'pending':
-      return 'default';
-    case 'submitted':
-      return 'warning';
-    case 'under_review':
-      return 'default';
-    case 'approved':
-      return 'success';
-    case 'signoff_pending':
-      return 'success';
-    case 'paid_out':
-      return 'success';
-    case 'rejected':
-      return 'error';
+    case "pending":
+      return "default";
+    case "submitted":
+      return "warning";
+    case "under_review":
+      return "default";
+    case "approved":
+      return "success";
+    case "signoff_pending":
+      return "success";
+    case "paid_out":
+      return "success";
+    case "rejected":
+      return "error";
     default:
-      return 'inactive';
+      return "inactive";
   }
 };
 
 const userProposalColumns: ColumnDef<Proposal>[] = [
   {
-    header: '#',
-    accessor: 'id',
+    header: "#",
+    accessor: "id",
     sortable: true,
     cell: (value) => <span className="text-sm">{value}</span>,
   },
   {
-    header: 'Proposal title',
-    accessor: 'title',
+    header: "Proposal title",
+    accessor: "title",
     sortable: true,
     cell: (value) => <span className="text-sm font-medium">{value}</span>,
   },
   {
-    header: 'Project details',
-    accessor: 'url',
+    header: "Project details",
+    accessor: "url",
     sortable: false,
     cell: (value) => {
       if (!value)
@@ -82,27 +82,27 @@ const userProposalColumns: ColumnDef<Proposal>[] = [
     },
   },
   {
-    header: 'Funds requested',
-    accessor: 'fundsRequested',
+    header: "Funds requested",
+    accessor: "fundsRequested",
     sortable: true,
     cell: (value) => (
-      <span className="text-sm">{value ? formatAdaAmount(value) : 'N/A'}</span>
+      <span className="text-sm">{value ? formatAdaAmount(value) : "N/A"}</span>
     ),
   },
   {
-    header: 'Status',
-    accessor: 'status',
+    header: "Status",
+    accessor: "status",
     sortable: true,
     cell: (value) => (
       <Chip variant={getChipVariant(value)} className="text-nowrap">
-        {value === 'signoff_pending'
-          ? 'Awaiting Signoff'
-          : value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ')}
+        {value === "signoff_pending"
+          ? "Awaiting Signoff"
+          : value.charAt(0).toUpperCase() + value.slice(1).replace("_", " ")}
       </Chip>
     ),
   },
   {
-    header: 'Action',
+    header: "Action",
     sortable: false,
     cell: (value, row) => {
       if (row.txHash) {
@@ -113,7 +113,7 @@ const userProposalColumns: ColumnDef<Proposal>[] = [
             </Button>
           </Link>
         );
-      } else if (row.status === 'paid_out' && row.slug) {
+      } else if (row.status === "paid_out" && row.slug) {
         return (
           <Link href={routes.completedProposal(row.slug)}>
             <Button variant="primary" size="sm">
@@ -122,7 +122,7 @@ const userProposalColumns: ColumnDef<Proposal>[] = [
           </Link>
         );
       }
-      return '';
+      return "";
     },
   },
 ];
@@ -132,20 +132,20 @@ export default function ProposalSubmissionsTab({
 }: {
   address?: string;
 }) {
-  const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>(
-    'all',
+  const [statusFilter, setStatusFilter] = useState<"all" | Proposal["status"]>(
+    "all",
   );
   const { address: userAddress } = useWalletManager();
 
   const { allProposals, loading } = useProposals();
 
   const statusOptions = [
-    { value: 'all', label: 'All Statuses' },
-    { value: 'paid_out', label: 'Paid Out' },
-    { value: 'approved', label: 'Approved' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'signoff_pending', label: 'Awaiting Signoff' },
-    { value: 'rejected', label: 'Rejected' },
+    { value: "all", label: "All Statuses" },
+    { value: "paid_out", label: "Paid Out" },
+    { value: "approved", label: "Approved" },
+    { value: "pending", label: "Pending" },
+    { value: "signoff_pending", label: "Awaiting Signoff" },
+    { value: "rejected", label: "Rejected" },
   ];
 
   if (loading) {
@@ -171,17 +171,17 @@ export default function ProposalSubmissionsTab({
 
   // Apply status filter
   const filteredProposals =
-    statusFilter === 'all'
+    statusFilter === "all"
       ? userProposals
       : userProposals.filter((proposal) => proposal.status === statusFilter);
 
   // Count by status for display
   const statusCounts = {
-    pending: userProposals.filter((p) => p.status === 'pending').length,
-    approved: userProposals.filter((p) => p.status === 'approved').length,
-    signoff_pending: userProposals.filter((p) => p.status === 'signoff_pending')
+    pending: userProposals.filter((p) => p.status === "pending").length,
+    approved: userProposals.filter((p) => p.status === "approved").length,
+    signoff_pending: userProposals.filter((p) => p.status === "signoff_pending")
       .length,
-    paid_out: userProposals.filter((p) => p.status === 'paid_out').length,
+    paid_out: userProposals.filter((p) => p.status === "paid_out").length,
   };
 
   if (userProposals.length === 0) {
@@ -227,7 +227,7 @@ export default function ProposalSubmissionsTab({
             options={statusOptions.map((option) => ({
               ...option,
               label:
-                option.value !== 'all' &&
+                option.value !== "all" &&
                 statusCounts[option.value as keyof typeof statusCounts] > 0
                   ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
                   : option.label,

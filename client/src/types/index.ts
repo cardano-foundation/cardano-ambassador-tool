@@ -4,13 +4,13 @@ import {
   Quantity,
   ScriptAddress,
   Unit,
-} from '@meshsdk/core';
-import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
+} from "@meshsdk/core";
+import { MemberData } from "@sidan-lab/cardano-ambassador-tool";
 
 // Re-export types from other files in this folder
-export * from './ambassadorProfile';
-export * from './profile';
-export * from './wallet';
+export * from "./ambassadorProfile";
+export * from "./profile";
+export * from "./wallet";
 
 export interface MembershipIntentPayoad {
   tokenUtxoHash: string;
@@ -92,7 +92,7 @@ export type Ambassador = {
     }>;
   };
   activities: Array<{
-    type: 'reply' | 'topic';
+    type: "reply" | "topic";
     title: string;
     url: string;
     created_at: string;
@@ -108,7 +108,7 @@ export type Ambassador = {
 /**
  * Cardano Network Configuration
  */
-export type CardanoNetwork = 'mainnet' | 'preprod';
+export type CardanoNetwork = "mainnet" | "preprod";
 
 export interface NetworkConfig {
   network: CardanoNetwork;
@@ -153,7 +153,7 @@ export interface NormalizedUser {
   badges: any[];
 }
 
-export type TimelineStatus = 'pending' | 'current' | 'completed';
+export type TimelineStatus = "pending" | "current" | "completed";
 
 export interface TimelineStep {
   id: string;
@@ -229,13 +229,13 @@ export type Proposal = {
   submittedByAddress: string;
   fundsRequested: string;
   status:
-    | 'pending'
-    | 'submitted'
-    | 'under_review'
-    | 'approved'
-    | 'rejected'
-    | 'signoff_pending'
-    | 'paid_out';
+    | "pending"
+    | "submitted"
+    | "under_review"
+    | "approved"
+    | "rejected"
+    | "signoff_pending"
+    | "paid_out";
   txHash?: string;
   slug?: string;
   url?: string;

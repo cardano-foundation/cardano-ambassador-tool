@@ -1,17 +1,20 @@
-'use client';
+"use client";
 
-import { toast } from '@/components/toast/toast-manager';
-import { routes } from '@/config/routes';
-import { useAppSelector } from '@/lib/redux/hooks';
-import { selectIsConnected, selectIsWalletReady } from '@/lib/redux/features/wallet';
+import { toast } from "@/components/toast/toast-manager";
+import { routes } from "@/config/routes";
+import { useAppSelector } from "@/lib/redux/hooks";
+import {
+  selectIsConnected,
+  selectIsWalletReady,
+} from "@/lib/redux/features/wallet";
 import {
   selectIsAdmin,
   selectIsAuthLoading,
   selectIsAuthenticated,
   selectIsHydrated,
-} from '@/lib/redux/features/auth';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+} from "@/lib/redux/features/auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -24,7 +27,7 @@ export function ProtectedRoute({
   children,
   requireAdmin = false,
   requireAuth = true,
-  redirectTo = '/',
+  redirectTo = "/",
 }: ProtectedRouteProps) {
   // Wallet state from Redux
   const isConnected = useAppSelector(selectIsConnected);
@@ -49,8 +52,8 @@ export function ProtectedRoute({
     // Check auth requirements
     if (requireAuth && !isConnected) {
       toast.error(
-        'Authentication Required',
-        'Please connect your wallet to access this page',
+        "Authentication Required",
+        "Please connect your wallet to access this page",
       );
       router.push(redirectTo);
       return;
@@ -59,13 +62,22 @@ export function ProtectedRoute({
     // Check admin requirements - only check if user is authenticated
     if (requireAdmin && isAuthenticated && isAdmin === false) {
       toast.error(
-        'Admin Access Required',
-        'You need admin privileges to access this page',
+        "Admin Access Required",
+        "You need admin privileges to access this page",
       );
       router.push(routes.unauthorized);
       return;
     }
-  }, [isFullyReady, isConnected, isAuthenticated, isAdmin, requireAuth, requireAdmin, router, redirectTo]);
+  }, [
+    isFullyReady,
+    isConnected,
+    isAuthenticated,
+    isAdmin,
+    requireAuth,
+    requireAdmin,
+    router,
+    redirectTo,
+  ]);
 
   // Show loading while initializing
   if (!isFullyReady) {
@@ -74,7 +86,9 @@ export function ProtectedRoute({
         <div className="flex items-center gap-2">
           <div className="border-primary-base h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></div>
           <span className="text-muted-foreground text-sm">
-            {!isWalletReady ? 'Initializing wallet...' : 'Loading user roles...'}
+            {!isWalletReady
+              ? "Initializing wallet..."
+              : "Loading user roles..."}
           </span>
         </div>
       </div>

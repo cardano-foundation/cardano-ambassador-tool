@@ -1,13 +1,13 @@
-import { useWalletManager } from '@/hooks';
-import { emitGlobalRefreshWithDelay } from '@/utils';
-import { storageApiClient } from '@/utils/storageApiClient';
-import { AdminDecisionData, TransactionConfirmationResult } from '@types';
-import { Loader2 } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
-import Button from './atoms/Button';
-import Paragraph from './atoms/Paragraph';
-import ErrorAccordion from './ErrorAccordion';
-import TransactionConfirmationOverlay from './TransactionConfirmationOverlay';
+import { useWalletManager } from "@/hooks";
+import { emitGlobalRefreshWithDelay } from "@/utils";
+import { storageApiClient } from "@/utils/storageApiClient";
+import { AdminDecisionData, TransactionConfirmationResult } from "@types";
+import { Loader2 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import Button from "./atoms/Button";
+import Paragraph from "./atoms/Paragraph";
+import ErrorAccordion from "./ErrorAccordion";
+import TransactionConfirmationOverlay from "./TransactionConfirmationOverlay";
 
 interface FinalizeSignoffApprovalProps {
   txhash?: string;
@@ -60,20 +60,20 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
 
     try {
       if (!wallet) {
-        throw new Error('Wallet not connected');
+        throw new Error("Wallet not connected");
       }
 
       if (!adminDecisionData.signedTx) {
-        throw new Error('No signed transaction found in admin decision data');
+        throw new Error("No signed transaction found in admin decision data");
       }
 
       const txHash = await wallet!.submitTx(adminDecisionData.signedTx);
       setConfirmedTxHash(txHash);
       setShowConfirmationOverlay(true);
     } catch (error) {
-      console.error('Failed to submit signoff approval transaction:', error);
+      console.error("Failed to submit signoff approval transaction:", error);
       setSubmitError({
-        message: 'Failed to submit signoff approval',
+        message: "Failed to submit signoff approval",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
@@ -88,9 +88,9 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
 
       if (txhash) {
         try {
-          await storageApiClient.delete(txhash, 'signoff-submissions');
+          await storageApiClient.delete(txhash, "signoff-submissions");
         } catch (error) {
-          console.error('Failed to clean up signoff approval data:', error);
+          console.error("Failed to clean up signoff approval data:", error);
         }
       }
 
@@ -136,18 +136,17 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
       {hasAdminDecision && !signatureRequirementsMet && adminDecisionData && (
         <div className="space-y-1 text-center">
           <Paragraph size="sm" className="text-gray-500">
-            Waiting for{' '}
+            Waiting for{" "}
             {adminDecisionData.selectedAdmins.length - getSignedCount()} more
             signature(s) before execution.
           </Paragraph>
-       
         </div>
       )}
 
       {signatureRequirementsMet && !isFinalized && adminDecisionData && (
         <div className="space-y-1 text-center">
           <Paragraph size="xs" className="text-green-500">
-            ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
+            ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{" "}
             required signatures complete)
           </Paragraph>
         </div>
@@ -165,8 +164,8 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
         title="Executing Signoff Approval"
         description={
           isFinalized
-            ? 'Signoff approval has been successfully executed! 🎉'
-            : 'Please wait while your signoff approval is being confirmed on the blockchain.'
+            ? "Signoff approval has been successfully executed! 🎉"
+            : "Please wait while your signoff approval is being confirmed on the blockchain."
         }
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
@@ -174,14 +173,14 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
         showNavigationOptions={isFinalized}
         navigationOptions={[
           {
-            label: 'Go to Treasury Signoffs',
-            url: '/manage/treasury-signoffs',
-            variant: 'primary',
+            label: "Go to Treasury Signoffs",
+            url: "/manage/treasury-signoffs",
+            variant: "primary",
           },
           {
-            label: 'Back to Proposals',
-            url: '/manage/proposal-applications',
-            variant: 'outline',
+            label: "Back to Proposals",
+            url: "/manage/proposal-applications",
+            variant: "outline",
           },
         ]}
       />

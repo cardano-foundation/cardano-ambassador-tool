@@ -1,10 +1,10 @@
-import Card, { CardContent } from '@/components/atoms/Card';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import Copyable from '@/components/Copyable';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import React from 'react';
-import { LocationMap } from './CountryMap';
+import Card, { CardContent } from "@/components/atoms/Card";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import Copyable from "@/components/Copyable";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import React from "react";
+import { LocationMap } from "./CountryMap";
 
 interface AboutSectionProps {
   profile: {
@@ -39,24 +39,24 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
         </Paragraph>
         <div className="space-y-3 text-sm">
           <div>
-            <span className="text-neutral font-semibold">Country:</span>{' '}
+            <span className="text-neutral font-semibold">Country:</span>{" "}
             <span className="text-muted-foreground">
-              {profile.country || '—'}
+              {profile.country || "—"}
             </span>
           </div>
           <div>
-            <span className="text-neutral font-semibold">City:</span>{' '}
-            <span className="text-muted-foreground">{profile.city || '—'}</span>
+            <span className="text-neutral font-semibold">City:</span>{" "}
+            <span className="text-muted-foreground">{profile.city || "—"}</span>
           </div>
           <div>
-            <span className="text-neutral font-semibold">Username:</span>{' '}
+            <span className="text-neutral font-semibold">Username:</span>{" "}
             <span className="text-muted-foreground">{profile.username}</span>
           </div>
           {/* <div>
             <span className="text-neutral font-semibold">Role:</span>{' '}
             <span className="text-muted-foreground"></span>
           </div> */}
-           {profile.spo_id && (
+          {profile.spo_id && (
             <div className="flex items-center">
               <span className="text-neutral font-semibold mr-2">SPO ID:</span>
               <Copyable

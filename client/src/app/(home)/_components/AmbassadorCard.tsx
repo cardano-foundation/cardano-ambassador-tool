@@ -1,11 +1,11 @@
-import Button from '@/components/atoms/Button';
-import Card, { CardContent } from '@/components/atoms/Card';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import UserAvatar from '@/components/atoms/UserAvatar';
-import { getCountryFlag } from '@/utils';
-import { Ambassador } from '@types';
-import Link from 'next/link';
+import Button from "@/components/atoms/Button";
+import Card, { CardContent } from "@/components/atoms/Card";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import UserAvatar from "@/components/atoms/UserAvatar";
+import { getCountryFlag } from "@/utils";
+import { Ambassador } from "@types";
+import Link from "next/link";
 
 export default function AmbassadorCard({
   ambassador,
@@ -15,7 +15,7 @@ export default function AmbassadorCard({
   isListView?: boolean;
 }) {
   const ambassadorId =
-    ambassador.username || ambassador.name.toLowerCase().replace(/\s+/g, '');
+    ambassador.username || ambassador.name.toLowerCase().replace(/\s+/g, "");
 
   const displayFlag = getCountryFlag(ambassador.country);
 
@@ -53,11 +53,11 @@ export default function AmbassadorCard({
               aria-label={`View profile details for ${ambassador.name}`}
             >
               <Button
-                variant={'primary'}
+                variant={"primary"}
                 size="sm"
                 className="!h-[38px] text-sm font-medium whitespace-nowrap"
               >
-                {'view'}
+                {"view"}
               </Button>
             </Link>
           </div>
@@ -88,11 +88,11 @@ export default function AmbassadorCard({
           aria-label={`View profile details for ${ambassador.name}`}
         >
           <Button
-            variant={'primary'}
+            variant={"primary"}
             size="sm"
             className="!h-[38px] text-sm font-medium whitespace-nowrap"
           >
-            {'view'}
+            {"view"}
           </Button>
         </Link>
       </CardContent>

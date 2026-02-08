@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useAppSelector } from '@/lib/redux/hooks';
+import { useAppSelector } from "@/lib/redux/hooks";
 import {
   selectIsConnected,
   selectIsWalletReady,
   selectWallet,
   selectWalletAddress,
-} from '@/lib/redux/features/wallet';
-import { toast } from '@/components/toast/toast-manager';
-import { routes } from '@/config/routes';
-import { useUserAuth } from '@/hooks';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+} from "@/lib/redux/features/wallet";
+import { toast } from "@/components/toast/toast-manager";
+import { routes } from "@/config/routes";
+import { useUserAuth } from "@/hooks";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -28,7 +28,7 @@ export function AuthGuard({
   children,
   requireAdmin = false,
   requireAuth = true,
-  redirectTo = '/',
+  redirectTo = "/",
 }: AuthGuardProps) {
   const router = useRouter();
 
@@ -56,8 +56,8 @@ export function AuthGuard({
     // Check auth requirements
     if (requireAuth && !isConnected) {
       toast.error(
-        'Authentication Required',
-        'Please connect your wallet to access this page',
+        "Authentication Required",
+        "Please connect your wallet to access this page",
       );
       router.push(redirectTo);
       return;
@@ -66,13 +66,22 @@ export function AuthGuard({
     // Check admin requirements - only check if we have a user (not during loading)
     if (requireAdmin && user && isAdmin === false) {
       toast.error(
-        'Admin Access Required',
-        'You need admin privileges to access this page',
+        "Admin Access Required",
+        "You need admin privileges to access this page",
       );
       router.push(routes.unauthorized);
       return;
     }
-  }, [isFullyReady, isConnected, user, isAdmin, requireAuth, requireAdmin, router, redirectTo]);
+  }, [
+    isFullyReady,
+    isConnected,
+    user,
+    isAdmin,
+    requireAuth,
+    requireAdmin,
+    router,
+    redirectTo,
+  ]);
 
   // Show loading while initializing
   if (!isFullyReady) {
@@ -81,7 +90,9 @@ export function AuthGuard({
         <div className="flex items-center gap-2">
           <div className="border-primary-base h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></div>
           <span className="text-muted-foreground text-sm">
-            {!isWalletReady ? 'Initializing wallet...' : 'Loading user roles...'}
+            {!isWalletReady
+              ? "Initializing wallet..."
+              : "Loading user roles..."}
           </span>
         </div>
       </div>

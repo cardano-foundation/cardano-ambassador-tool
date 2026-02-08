@@ -1,5 +1,5 @@
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
 
 export default function DashboardHeader() {
   return (

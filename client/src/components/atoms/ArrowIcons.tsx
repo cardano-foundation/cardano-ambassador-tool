@@ -1,7 +1,7 @@
 interface IconProps {
   className?: string;
 }
-export function ArrowLeftIcon({ className = '' }: IconProps) {
+export function ArrowLeftIcon({ className = "" }: IconProps) {
   return (
     <svg
       width="16"
@@ -19,7 +19,7 @@ export function ArrowLeftIcon({ className = '' }: IconProps) {
   );
 }
 
-export function ArrowRightIcon({ className = '' }: IconProps) {
+export function ArrowRightIcon({ className = "" }: IconProps) {
   return (
     <svg
       width="16"

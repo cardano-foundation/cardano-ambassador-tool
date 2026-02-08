@@ -1,6 +1,6 @@
-import { Tabs, TabsList, TabsTrigger } from '@/components/Tabs';
-import { cn } from '@/utils/utils';
-import React from 'react';
+import { Tabs, TabsList, TabsTrigger } from "@/components/Tabs";
+import { cn } from "@/utils/utils";
+import React from "react";
 
 interface TabItem {
   id: string;
@@ -21,7 +21,7 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
   tabs,
   activeTabId,
   onTabChange,
-  className = '',
+  className = "",
 }) => {
   const handleTabClick = (tab: TabItem) => {
     if (tab.disabled) return;
@@ -32,7 +32,7 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
 
   return (
     <div className="w-full">
-      <Tabs className={cn('w-full', className)} value={activeTabId}>
+      <Tabs className={cn("w-full", className)} value={activeTabId}>
         <TabsList
           className="grid w-full"
           style={{ gridTemplateColumns: `repeat(${tabs.length}, 1fr)` }}
@@ -51,10 +51,10 @@ const TopNav: React.FC<TopNavigationTabsProps> = ({
               >
                 <div
                   className={cn(
-                    'text-sm leading-none whitespace-nowrap transition-all duration-200 hover:cursor-pointer',
+                    "text-sm leading-none whitespace-nowrap transition-all duration-200 hover:cursor-pointer",
                     activeTabId === tab.id
-                      ? 'text-primary-base font-bold'
-                      : 'font-normal text-neutral-500 hover:text-neutral-700',
+                      ? "text-primary-base font-bold"
+                      : "font-normal text-neutral-500 hover:text-neutral-700",
                   )}
                 >
                   {tab.label}

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Button from '@/components/atoms/Button';
-import Title from '@/components/atoms/Title';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import AdminMembershipTimeline from '@/components/Timelines/AdminMembershipTimeline';
-import { routes } from '@/config/routes';
-import { useDatabase } from '@/hooks';
-import { Utxo } from '@types';
-import Link from 'next/link';
-import { use, useEffect, useState } from 'react';
+import Button from "@/components/atoms/Button";
+import Title from "@/components/atoms/Title";
+import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
+import AdminMembershipTimeline from "@/components/Timelines/AdminMembershipTimeline";
+import { routes } from "@/config/routes";
+import { useDatabase } from "@/hooks";
+import { Utxo } from "@types";
+import Link from "next/link";
+import { use, useEffect, useState } from "react";
 
 interface PageProps {
   params: Promise<{ txHash: string }>;
@@ -27,7 +27,7 @@ const MembershipIntentPage = ({ params }: PageProps) => {
     }
 
     if (!membershipIntents.length) {
-      setError('No membership intents found');
+      setError("No membership intents found");
       setLoading(false);
       return;
     }
@@ -37,7 +37,7 @@ const MembershipIntentPage = ({ params }: PageProps) => {
     );
 
     if (!foundIntent) {
-      setError('Membership intent not found');
+      setError("Membership intent not found");
       setLoading(false);
       return;
     }

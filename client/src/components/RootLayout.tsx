@@ -1,19 +1,19 @@
-import type { Metadata } from 'next';
-import '../app.css';
+import type { Metadata } from "next";
+import "../app.css";
 
 export const metadata: Metadata = {
-  title: 'Cardano Ambassador Tool',
+  title: "Cardano Ambassador Tool",
   description:
-    'Discover the passionate individuals shaping the Cardano ecosystem. From developers and educators to community organizers, these ambassadors are driving innovation, connection, and real-world impact.',
+    "Discover the passionate individuals shaping the Cardano ecosystem. From developers and educators to community organizers, these ambassadors are driving innovation, connection, and real-world impact.",
   keywords: [
-    'Cardano',
-    'Ambassador',
-    'Blockchain',
-    'Cryptocurrency',
-    'Community',
+    "Cardano",
+    "Ambassador",
+    "Blockchain",
+    "Cryptocurrency",
+    "Community",
   ],
-  authors: [{ name: 'Cardano Ambassador Team' }],
-  viewport: 'width=device-width, initial-scale=1',
+  authors: [{ name: "Cardano Ambassador Team" }],
+  viewport: "width=device-width, initial-scale=1",
 };
 
 export default function RootLayout({

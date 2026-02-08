@@ -1,8 +1,8 @@
-import BadgeIcon from '@/components/atoms/BadgeIcon';
-import Card, { CardContent } from '@/components/atoms/Card';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import React from 'react';
+import BadgeIcon from "@/components/atoms/BadgeIcon";
+import Card, { CardContent } from "@/components/atoms/Card";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import React from "react";
 
 interface BadgesSectionProps {
   badges: Array<{
@@ -18,7 +18,7 @@ export const BadgesSection: React.FC<BadgesSectionProps> = ({
   badges,
   cleanHtml,
 }) => {
-  const BadgeCard = ({ badge }: { badge: BadgesSectionProps['badges'][0] }) => (
+  const BadgeCard = ({ badge }: { badge: BadgesSectionProps["badges"][0] }) => (
     <Card className="p-4">
       <CardContent>
         <div className="flex items-start space-x-4">

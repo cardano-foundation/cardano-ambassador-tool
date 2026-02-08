@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import DocsDisplay from '@/components/atoms/DocsDisplay';
-import Paragraph from '@/components/atoms/Paragraph';
-import { useUserAuth, useWalletManager } from '@/hooks';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import DocsDisplay from "@/components/atoms/DocsDisplay";
+import Paragraph from "@/components/atoms/Paragraph";
+import { useUserAuth, useWalletManager } from "@/hooks";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function AdminGuidePage() {
   const wallet = useWalletManager();
@@ -14,19 +14,19 @@ export default function AdminGuidePage() {
     isConnected: wallet.isConnected,
   });
   const router = useRouter();
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Redirect non-admins
     if (!isAdmin && !loading) {
-      router.push('/unauthorized');
+      router.push("/unauthorized");
       return;
     }
 
     // Load markdown content
     if (isAdmin) {
-      fetch('/api/docs/admin-guide')
+      fetch("/api/docs/admin-guide")
         .then((res) => res.text())
         .then((text) => {
           setContent(text);
@@ -62,22 +62,34 @@ export default function AdminGuidePage() {
             </Paragraph>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#system-configuration" className="text-primary-base hover:underline">
+                <a
+                  href="#system-configuration"
+                  className="text-primary-base hover:underline"
+                >
                   System Configuration
                 </a>
               </li>
               <li>
-                <a href="#managing-membership-applications" className="text-primary-base hover:underline">
+                <a
+                  href="#managing-membership-applications"
+                  className="text-primary-base hover:underline"
+                >
                   Membership Applications
                 </a>
               </li>
               <li>
-                <a href="#managing-proposal-applications" className="text-primary-base hover:underline">
+                <a
+                  href="#managing-proposal-applications"
+                  className="text-primary-base hover:underline"
+                >
                   Proposal Applications
                 </a>
               </li>
               <li>
-                <a href="#treasury-sign-offs" className="text-primary-base hover:underline">
+                <a
+                  href="#treasury-sign-offs"
+                  className="text-primary-base hover:underline"
+                >
                   Treasury Sign-offs
                 </a>
               </li>

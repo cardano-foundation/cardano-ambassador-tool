@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ArrowRightIcon } from '@/components/atoms/ArrowIcons';
+import { ArrowLeftIcon, ArrowRightIcon } from "@/components/atoms/ArrowIcons";
 
 type PaginationProps = {
   currentPage: number;
@@ -157,8 +157,8 @@ export function Pagination({
                     onClick={() => onPageChange(pageNum)}
                     className={`h-8 w-8 cursor-pointer rounded text-sm transition-colors ${
                       currentPage === pageNum
-                        ? 'bg-muted text-neutral font-medium'
-                        : 'text-foreground hover:bg-muted/50 opacity-50 hover:opacity-100'
+                        ? "bg-muted text-neutral font-medium"
+                        : "text-foreground hover:bg-muted/50 opacity-50 hover:opacity-100"
                     }`}
                   >
                     {pageNum}
@@ -196,8 +196,8 @@ export function Pagination({
                 onClick={() => onPageChange(pageNum)}
                 className={`h-8 w-8 cursor-pointer rounded transition-colors ${
                   currentPage === pageNum
-                    ? 'bg-muted text-neutral'
-                    : 'text-foreground hover:bg-muted/50 opacity-50 hover:opacity-100'
+                    ? "bg-muted text-neutral"
+                    : "text-foreground hover:bg-muted/50 opacity-50 hover:opacity-100"
                 }`}
               >
                 {pageNum}

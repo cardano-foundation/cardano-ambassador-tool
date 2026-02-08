@@ -1,8 +1,8 @@
-import Card, { CardContent } from '@/components/atoms/Card';
-import Paragraph from '@/components/atoms/Paragraph';
-import Copyable from '@/components/Copyable';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
+import Card, { CardContent } from "@/components/atoms/Card";
+import Paragraph from "@/components/atoms/Paragraph";
+import Copyable from "@/components/Copyable";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 
 type ProposalFormData = ProposalData & { description: string };
 
@@ -26,7 +26,7 @@ export const ProposalDetails = ({
             withKey={false}
             link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.txHash}`}
             value={proposal.txHash}
-            keyLabel={''}
+            keyLabel={""}
           />
         </div>
         <div className="space-y-1.5">
@@ -38,7 +38,7 @@ export const ProposalDetails = ({
               withKey={false}
               link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.receiverWalletAddress}`}
               value={proposalData.receiverWalletAddress}
-              keyLabel={''}
+              keyLabel={""}
             />
           ) : (
             <Paragraph size="sm" className="text-foreground">
@@ -55,7 +55,7 @@ export const ProposalDetails = ({
               withKey={false}
               link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
               value={proposalData.submittedByAddress}
-              keyLabel={''}
+              keyLabel={""}
             />
           ) : (
             <Paragraph size="sm" className="text-foreground">

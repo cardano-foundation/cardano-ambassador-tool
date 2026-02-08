@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { AppInitializer } from '@/components/AppInitializer';
-import { TxConfirmationProvider } from '@/components/TxConfirmationProvider';
-import ReduxProvider from '@/lib/redux/client-provider';
+import { AppInitializer } from "@/components/AppInitializer";
+import { TxConfirmationProvider } from "@/components/TxConfirmationProvider";
+import ReduxProvider from "@/lib/redux/client-provider";
 
-import './app.css';
+import "./app.css";
 
 export default function RootLayout({
   children,

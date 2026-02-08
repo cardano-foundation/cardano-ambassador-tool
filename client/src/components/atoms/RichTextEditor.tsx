@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
-import TextAlign from '@tiptap/extension-text-align';
-import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
+import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
+import TextAlign from "@tiptap/extension-text-align";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import {
   AlignCenter,
   AlignLeft,
@@ -17,15 +17,15 @@ import {
   ListOrdered,
   Smile,
   Underline as UnderlineIcon,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   forwardRef,
   MouseEvent,
   useEffect,
   useImperativeHandle,
   useState,
-} from 'react';
-import { Markdown } from 'tiptap-markdown';
+} from "react";
+import { Markdown } from "tiptap-markdown";
 
 interface RichTextEditorProps {
   value: string;
@@ -38,25 +38,25 @@ const RichTextEditor = forwardRef(
     const [mounted, setMounted] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showLinkInput, setShowLinkInput] = useState(false);
-    const [linkUrl, setLinkUrl] = useState('');
+    const [linkUrl, setLinkUrl] = useState("");
 
     const editor = useEditor({
       extensions: [
         StarterKit,
         TextAlign.configure({
-          types: ['heading', 'paragraph'],
+          types: ["heading", "paragraph"],
         }),
         Link.configure({
           openOnClick: false,
           HTMLAttributes: {
-            class: 'text-blue-500 underline',
-            target: '_blank',
-            rel: 'noopener noreferrer',
+            class: "text-blue-500 underline",
+            target: "_blank",
+            rel: "noopener noreferrer",
           },
         }),
         Image.configure({
           HTMLAttributes: {
-            class: 'max-w-full h-auto rounded-lg',
+            class: "max-w-full h-auto rounded-lg",
           },
           allowBase64: true,
         }),
@@ -76,21 +76,21 @@ const RichTextEditor = forwardRef(
       editorProps: {
         attributes: {
           class:
-            'prose prose-sm max-w-none focus:outline-none min-h-[750px] w-full ' +
-            'prose-ul:list-disc prose-ol:list-decimal prose-li:ml-6',
+            "prose prose-sm max-w-none focus:outline-none min-h-[750px] w-full " +
+            "prose-ul:list-disc prose-ol:list-decimal prose-li:ml-6",
         },
         handlePaste: (view, event) => {
           const clipboardData = event.clipboardData;
-          const pastedText = clipboardData?.getData('text/plain');
+          const pastedText = clipboardData?.getData("text/plain");
 
           if (!pastedText) return false;
 
           const looksLikeMarkdown =
             /^#+\s|^\*\s|^-\s|^\d+\.\s|^\[.*\]\(.*\)|^>|```/.test(pastedText) ||
-            pastedText.includes('\n#') ||
-            pastedText.includes('**') ||
-            pastedText.includes('__') ||
-            (pastedText.includes('[') && pastedText.includes(']('));
+            pastedText.includes("\n#") ||
+            pastedText.includes("**") ||
+            pastedText.includes("__") ||
+            (pastedText.includes("[") && pastedText.includes("]("));
 
           if (!looksLikeMarkdown) return false;
 
@@ -99,12 +99,12 @@ const RichTextEditor = forwardRef(
           if (!editor) return false;
 
           try {
-            const tempDiv = document.createElement('div');
+            const tempDiv = document.createElement("div");
             editor.commands.insertContent(pastedText);
 
             return true;
           } catch (error) {
-            console.error('Markdown paste failed:', error);
+            console.error("Markdown paste failed:", error);
             editor.commands.insertContent(pastedText);
             return true;
           }
@@ -122,9 +122,9 @@ const RichTextEditor = forwardRef(
       const file = event.target.files?.[0];
       if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
-        event.target.value = '';
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        event.target.value = "";
         return;
       }
 
@@ -134,7 +134,7 @@ const RichTextEditor = forwardRef(
         editor?.commands.setImage({ src: result });
       };
       reader.readAsDataURL(file);
-      event.target.value = '';
+      event.target.value = "";
     };
 
     const handleUndo = () => {
@@ -153,7 +153,7 @@ const RichTextEditor = forwardRef(
 
     useImperativeHandle(ref, () => ({
       getMarkdown: () => {
-        if (!editor) return '';
+        if (!editor) return "";
         return (editor.storage as any).markdown.getMarkdown();
       },
       undo: () => editor?.commands.undo(),
@@ -166,23 +166,23 @@ const RichTextEditor = forwardRef(
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
-        if (showEmojiPicker && !target.closest('.emoji-picker-container')) {
+        if (showEmojiPicker && !target.closest(".emoji-picker-container")) {
           setShowEmojiPicker(false);
         }
-        if (showLinkInput && !target.closest('.link-input-container')) {
+        if (showLinkInput && !target.closest(".link-input-container")) {
           setShowLinkInput(false);
-          setLinkUrl('');
+          setLinkUrl("");
         }
       };
 
-      document.addEventListener('mousedown', handleClickOutside as any);
+      document.addEventListener("mousedown", handleClickOutside as any);
       return () =>
-        document.removeEventListener('mousedown', handleClickOutside as any);
+        document.removeEventListener("mousedown", handleClickOutside as any);
     }, [showEmojiPicker, showLinkInput]);
 
     useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
-        if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+        if ((event.ctrlKey || event.metaKey) && event.key === "z") {
           if (event.shiftKey) {
             event.preventDefault();
             handleRedo();
@@ -193,8 +193,8 @@ const RichTextEditor = forwardRef(
         }
       };
 
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
     }, [editor]);
 
     if (!mounted) {
@@ -229,7 +229,7 @@ const RichTextEditor = forwardRef(
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`hover:bg-muted rounded p-2 ${editor.isActive('bold') ? 'bg-muted' : ''}`}
+            className={`hover:bg-muted rounded p-2 ${editor.isActive("bold") ? "bg-muted" : ""}`}
             title="Bold"
           >
             <Bold className="h-4 w-4" />
@@ -237,7 +237,7 @@ const RichTextEditor = forwardRef(
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`hover:bg-muted rounded p-2 ${editor.isActive('italic') ? 'bg-muted' : ''}`}
+            className={`hover:bg-muted rounded p-2 ${editor.isActive("italic") ? "bg-muted" : ""}`}
             title="Italic"
           >
             <Italic className="h-4 w-4" />
@@ -245,7 +245,7 @@ const RichTextEditor = forwardRef(
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={`hover:bg-muted rounded p-2 ${editor.isActive('underline') ? 'bg-muted' : ''}`}
+            className={`hover:bg-muted rounded p-2 ${editor.isActive("underline") ? "bg-muted" : ""}`}
             title="Underline"
           >
             <UnderlineIcon className="h-4 w-4" />
@@ -255,7 +255,7 @@ const RichTextEditor = forwardRef(
             <button
               type="button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className={`hover:bg-muted rounded p-2 ${showEmojiPicker ? 'bg-muted' : ''}`}
+              className={`hover:bg-muted rounded p-2 ${showEmojiPicker ? "bg-muted" : ""}`}
               title="Insert Emoji"
             >
               <Smile className="h-4 w-4" />
@@ -273,8 +273,8 @@ const RichTextEditor = forwardRef(
           </div>
           <button
             type="button"
-            onClick={() => editor.chain().focus().setTextAlign('left').run()}
-            className={`hover:bg-muted rounded p-2 ${editor.isActive({ textAlign: 'left' }) ? 'bg-muted' : ''}`}
+            onClick={() => editor.chain().focus().setTextAlign("left").run()}
+            className={`hover:bg-muted rounded p-2 ${editor.isActive({ textAlign: "left" }) ? "bg-muted" : ""}`}
             title="Align Left"
           >
             <AlignLeft className="h-4 w-4" />
@@ -282,8 +282,8 @@ const RichTextEditor = forwardRef(
 
           <button
             type="button"
-            onClick={() => editor.chain().focus().setTextAlign('center').run()}
-            className={`hover:bg-muted rounded p-2 ${editor.isActive({ textAlign: 'center' }) ? 'bg-muted' : ''}`}
+            onClick={() => editor.chain().focus().setTextAlign("center").run()}
+            className={`hover:bg-muted rounded p-2 ${editor.isActive({ textAlign: "center" }) ? "bg-muted" : ""}`}
             title="Align Center"
           >
             <AlignCenter className="h-4 w-4" />
@@ -291,8 +291,8 @@ const RichTextEditor = forwardRef(
 
           <button
             type="button"
-            onClick={() => editor.chain().focus().setTextAlign('right').run()}
-            className={`hover:bg-muted rounded p-2 ${editor.isActive({ textAlign: 'right' }) ? 'bg-muted' : ''}`}
+            onClick={() => editor.chain().focus().setTextAlign("right").run()}
+            className={`hover:bg-muted rounded p-2 ${editor.isActive({ textAlign: "right" }) ? "bg-muted" : ""}`}
             title="Align Right"
           >
             <AlignRight className="h-4 w-4" />
@@ -300,7 +300,7 @@ const RichTextEditor = forwardRef(
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={`hover:bg-muted rounded p-2 ${editor.isActive('bulletList') ? 'bg-muted' : ''}`}
+            className={`hover:bg-muted rounded p-2 ${editor.isActive("bulletList") ? "bg-muted" : ""}`}
             title="Bullet List"
           >
             <List className="h-4 w-4" />
@@ -309,7 +309,7 @@ const RichTextEditor = forwardRef(
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={`hover:bg-muted rounded p-2 ${editor.isActive('orderedList') ? 'bg-muted' : ''}`}
+            className={`hover:bg-muted rounded p-2 ${editor.isActive("orderedList") ? "bg-muted" : ""}`}
             title="Numbered List"
           >
             <ListOrdered className="h-4 w-4" />

@@ -1,11 +1,11 @@
-import { cn } from '@/utils/utils';
-import { X } from 'lucide-react';
-import React from 'react';
+import { cn } from "@/utils/utils";
+import { X } from "lucide-react";
+import React from "react";
 
 interface ChipProps {
   children: React.ReactNode;
-  variant?: 'default' | 'success' | 'inactive' | 'error' | 'warning';
-  size?: 'sm' | 'md';
+  variant?: "default" | "success" | "inactive" | "error" | "warning";
+  size?: "sm" | "md";
   dismissible?: boolean;
   onDismiss?: () => void;
   className?: string;
@@ -14,8 +14,8 @@ interface ChipProps {
 
 export default function Chip({
   children,
-  variant = 'default',
-  size = 'md',
+  variant = "default",
+  size = "md",
   dismissible = false,
   onDismiss,
   className,
@@ -32,23 +32,23 @@ export default function Chip({
         "inline-flex items-center justify-center gap-2 overflow-hidden rounded-3xl font-['Chivo'] leading-none font-normal shadow-[0px_1px_2px_0px_rgba(13,13,18,0.06)] outline outline-1 outline-offset-[-1px]",
 
         {
-          'px-2.5 py-1 text-xs': size === 'sm',
-          'px-3.5 py-1.5 text-xs': size === 'md',
+          "px-2.5 py-1 text-xs": size === "sm",
+          "px-3.5 py-1.5 text-xs": size === "md",
         },
 
         {
-          'outline-primary-base text-primary-base bg-rose-50':
-            variant === 'default',
-          'bg-emerald-50 text-emerald-400 outline-emerald-400':
-            variant === 'success',
-          'bg-zinc-50 text-zinc-400 outline-zinc-400': variant === 'inactive',
-          'outline-primary-base text-primary-base bg-pink-100':
-            variant === 'error',
-          'bg-orange-50 text-amber-500 outline-amber-500':
-            variant === 'warning',
+          "outline-primary-base text-primary-base bg-rose-50":
+            variant === "default",
+          "bg-emerald-50 text-emerald-400 outline-emerald-400":
+            variant === "success",
+          "bg-zinc-50 text-zinc-400 outline-zinc-400": variant === "inactive",
+          "outline-primary-base text-primary-base bg-pink-100":
+            variant === "error",
+          "bg-orange-50 text-amber-500 outline-amber-500":
+            variant === "warning",
         },
 
-        onClick && 'cursor-pointer transition-opacity hover:opacity-80',
+        onClick && "cursor-pointer transition-opacity hover:opacity-80",
 
         className,
       )}

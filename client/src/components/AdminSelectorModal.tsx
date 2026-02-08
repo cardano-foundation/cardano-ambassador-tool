@@ -1,12 +1,12 @@
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useUserAuth, useWalletManager } from '@/hooks';
-import { findAdminsFromOracle } from '@/lib/auth/roles';
-import { User } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import Button from './atoms/Button';
-import Checkbox from './atoms/Checkbox';
-import Modal from './atoms/Modal';
-import Copyable from './Copyable';
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { useUserAuth, useWalletManager } from "@/hooks";
+import { findAdminsFromOracle } from "@/lib/auth/roles";
+import { User } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import Button from "./atoms/Button";
+import Checkbox from "./atoms/Checkbox";
+import Modal from "./atoms/Modal";
+import Copyable from "./Copyable";
 
 interface AdminInfo {
   address: string;
@@ -20,7 +20,7 @@ interface AdminSelectorModalProps {
   isVisible: boolean;
   onConfirm: (selectedAdmins: string[]) => void;
   onCancel: () => void;
-  decision: 'approve' | 'reject';
+  decision: "approve" | "reject";
 }
 
 const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
@@ -49,7 +49,7 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
         const adminData = await findAdminsFromOracle();
 
         if (!adminData || !adminData.adminAddresses) {
-          throw new Error('Failed to load admin data from oracle');
+          throw new Error("Failed to load admin data from oracle");
         }
 
         const adminList: AdminInfo[] = adminData.adminAddresses.map(
@@ -68,8 +68,8 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
         setAdmins(adminList);
         setMinRequiredSigners(Number(adminData.minsigners));
       } catch (err) {
-        console.error('Error loading admins:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load admins');
+        console.error("Error loading admins:", err);
+        setError(err instanceof Error ? err.message : "Failed to load admins");
       } finally {
         setLoading(false);
       }
@@ -136,10 +136,10 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
         <div className="flex items-center justify-between text-sm">
           <span className="text-foreground">
             <strong>Minimum required:</strong> {minRequiredSigners} signature
-            {minRequiredSigners !== 1 ? 's' : ''}
+            {minRequiredSigners !== 1 ? "s" : ""}
           </span>
           <span
-            className={`font-medium ${canConfirm ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`font-medium ${canConfirm ? "text-primary" : "text-muted-foreground"}`}
           >
             Selected: {selectedCount} / {admins.length}
           </span>
@@ -181,12 +181,12 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
               disabled={admin.disabled}
               className={`flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left transition-colors ${
                 admin.isSelected
-                  ? 'bg-primary/10 text-primary border-l-primary-base border-l-2'
-                  : 'text-foreground hover:bg-muted'
+                  ? "bg-primary/10 text-primary border-l-primary-base border-l-2"
+                  : "text-foreground hover:bg-muted"
               } ${
                 admin.disabled
-                  ? 'cursor-not-allowed opacity-75 hover:bg-transparent'
-                  : ''
+                  ? "cursor-not-allowed opacity-75 hover:bg-transparent"
+                  : ""
               }`}
             >
               <div onClick={(e) => e.stopPropagation()}>
@@ -208,7 +208,7 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
                     withKey={false}
                     value={admin.address}
                     link={`${getCurrentNetworkConfig().explorerUrl}/address/${admin.address}`}
-                    keyLabel={''}
+                    keyLabel={""}
                   />
                   {admin.isCurrentUser && (
                     <span className="bg-primary-base rounded-full px-2 py-0.5 text-xs text-white">
@@ -229,7 +229,7 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
             <span>⚠️</span>
             <span>
               You need to select at least {minRequiredSigners} admin
-              {minRequiredSigners !== 1 ? 's' : ''} to meet the minimum signing
+              {minRequiredSigners !== 1 ? "s" : ""} to meet the minimum signing
               requirement.
             </span>
           </p>
@@ -253,7 +253,7 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
         disabled={!canConfirm}
         className="flex-1"
       >
-        {decision === 'approve' ? 'Create Approval' : 'Create Rejection'}
+        {decision === "approve" ? "Create Approval" : "Create Rejection"}
         <span className="ml-1">({selectedCount})</span>
       </Button>
     </div>

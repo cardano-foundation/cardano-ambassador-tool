@@ -1,33 +1,38 @@
-import ProposalIcon from '@/components/atoms/ProposalIcon';
-import SettingsIcon from '@/components/atoms/SettingsIcon';
-import UsersIcon from '@/components/atoms/UsersIcon';
-import { routes } from '@/config/routes';
-import { useNetworkValidation, useUserAuth, useWalletManager } from '@/hooks';
-import { NavigationSection } from '@types';
+import ProposalIcon from "@/components/atoms/ProposalIcon";
+import SettingsIcon from "@/components/atoms/SettingsIcon";
+import UsersIcon from "@/components/atoms/UsersIcon";
+import { routes } from "@/config/routes";
+import { useNetworkValidation, useUserAuth, useWalletManager } from "@/hooks";
+import { NavigationSection } from "@types";
 import {
   BookOpenTextIcon,
   InfoIcon,
   HomeIcon,
   SendIcon,
   UserIcon,
-} from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+} from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const defaultNavigationSections: NavigationSection[] = [
   {
     items: [
-      { id: 'home', label: 'Home', href: routes.home, icon: HomeIcon },
+      { id: "home", label: "Home", href: routes.home, icon: HomeIcon },
       {
-        id: 'proposals',
-        label: 'Proposals',
+        id: "proposals",
+        label: "Proposals",
         href: routes.proposals,
         icon: ProposalIcon,
       },
-      { id: 'user-guide', label: 'User Guide', href: routes.userGuide, icon: InfoIcon },
       {
-        id: 'ambassador',
-        label: 'Become an Ambassador',
+        id: "user-guide",
+        label: "User Guide",
+        href: routes.userGuide,
+        icon: InfoIcon,
+      },
+      {
+        id: "ambassador",
+        label: "Become an Ambassador",
         href: routes.signUp,
         icon: BookOpenTextIcon,
       },
@@ -36,17 +41,17 @@ const defaultNavigationSections: NavigationSection[] = [
 ];
 
 const memberToolsSection: NavigationSection = {
-  title: 'Member Tools',
+  title: "Member Tools",
   items: [
     {
-      id: 'submissions',
-      label: 'Submissions',
+      id: "submissions",
+      label: "Submissions",
       href: routes.my.submissions,
       icon: SendIcon,
     },
     {
-      id: 'dashboard',
-      label: 'Profile',
+      id: "dashboard",
+      label: "Profile",
       href: routes.my.profile,
       icon: UserIcon,
     },
@@ -54,35 +59,35 @@ const memberToolsSection: NavigationSection = {
 };
 
 const adminToolsSection: NavigationSection = {
-  title: 'Admin Tools',
+  title: "Admin Tools",
   items: [
     {
-      id: 'manage-ambassadors',
-      label: 'Manage Ambassadors',
+      id: "manage-ambassadors",
+      label: "Manage Ambassadors",
       href: routes.manage.ambassadors,
       icon: UsersIcon,
     },
     {
-      id: 'membership-intent',
-      label: 'Membership Applications',
+      id: "membership-intent",
+      label: "Membership Applications",
       href: routes.manage.membershipApplications,
       icon: SettingsIcon,
     },
     {
-      id: 'proposal-intent',
-      label: 'Proposal Applications',
+      id: "proposal-intent",
+      label: "Proposal Applications",
       href: routes.manage.proposalApplications,
       icon: ProposalIcon,
     },
     {
-      id: 'treasury-signoffs',
-      label: 'Treasury Sign offs',
+      id: "treasury-signoffs",
+      label: "Treasury Sign offs",
       href: routes.manage.treasurySignoffs,
       icon: ProposalIcon,
     },
     {
-      id: 'admin-guide',
-      label: 'Admin Guide',
+      id: "admin-guide",
+      label: "Admin Guide",
       href: routes.manage.adminGuide,
       icon: InfoIcon,
     },
@@ -103,7 +108,7 @@ export const useNavigation = () => {
   const pathname = usePathname();
 
   const [sections, setSections] = useState(defaultNavigationSections);
-  const [currentActiveId, setCurrentActiveId] = useState('');
+  const [currentActiveId, setCurrentActiveId] = useState("");
 
   // Active link handling
   useEffect(() => {

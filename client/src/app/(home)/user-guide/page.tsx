@@ -1,12 +1,15 @@
-import DocsDisplay from '@/components/atoms/DocsDisplay';
-import Paragraph from '@/components/atoms/Paragraph';
-import fs from 'fs';
-import path from 'path';
+import DocsDisplay from "@/components/atoms/DocsDisplay";
+import Paragraph from "@/components/atoms/Paragraph";
+import fs from "fs";
+import path from "path";
 
 export default function AboutPage() {
   // Read the markdown file directly
-  const markdownPath = path.join(process.cwd(), 'docs/guides/getting-started.md');
-  const content = fs.readFileSync(markdownPath, 'utf8');
+  const markdownPath = path.join(
+    process.cwd(),
+    "docs/guides/getting-started.md",
+  );
+  const content = fs.readFileSync(markdownPath, "utf8");
 
   return (
     <div className="flex min-h-screen">
@@ -24,19 +27,23 @@ export default function AboutPage() {
             </Paragraph>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#membership-guide" className="text-primary-base hover:underline">
+                <a
+                  href="#membership-guide"
+                  className="text-primary-base hover:underline"
+                >
                   Becoming a Member
                 </a>
               </li>
               <li>
-                <a href="#proposal-guide" className="text-primary-base hover:underline">
+                <a
+                  href="#proposal-guide"
+                  className="text-primary-base hover:underline"
+                >
                   Submitting Proposals
                 </a>
               </li>
             </ul>
           </div>
-
-
         </div>
       </aside>
     </div>

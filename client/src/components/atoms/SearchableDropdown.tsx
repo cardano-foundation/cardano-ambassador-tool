@@ -1,6 +1,6 @@
-'use client';
-import { cn } from '@/utils/utils';
-import { useEffect, useRef, useState } from 'react';
+"use client";
+import { cn } from "@/utils/utils";
+import { useEffect, useRef, useState } from "react";
 
 interface DropdownOption {
   value: string;
@@ -22,14 +22,14 @@ export default function SearchableDropdown({
   options,
   value,
   onValueChange,
-  placeholder = 'Select option...',
-  searchPlaceholder = 'Search...',
+  placeholder = "Select option...",
+  searchPlaceholder = "Search...",
   disabled = false,
   className,
-  noOptionsMessage = 'No options found',
+  noOptionsMessage = "No options found",
 }: SearchableDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -48,12 +48,12 @@ export default function SearchableDropdown({
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
-        setSearchQuery('');
+        setSearchQuery("");
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
       // Focus search input when dropdown opens
       setTimeout(() => {
         searchRef.current?.focus();
@@ -61,21 +61,21 @@ export default function SearchableDropdown({
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
   // Reset search when dropdown closes
   useEffect(() => {
     if (!isOpen) {
-      setSearchQuery('');
+      setSearchQuery("");
     }
   }, [isOpen]);
 
   const handleSelect = (optionValue: string) => {
     onValueChange?.(optionValue);
     setIsOpen(false);
-    setSearchQuery('');
+    setSearchQuery("");
     // Return focus to button after selection
     setTimeout(() => {
       buttonRef.current?.focus();
@@ -83,11 +83,11 @@ export default function SearchableDropdown({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       setIsOpen(false);
-      setSearchQuery('');
+      setSearchQuery("");
       buttonRef.current?.focus();
-    } else if (event.key === 'Enter' && filteredOptions.length > 0) {
+    } else if (event.key === "Enter" && filteredOptions.length > 0) {
       event.preventDefault();
       handleSelect(filteredOptions[0].value);
     }
@@ -97,7 +97,7 @@ export default function SearchableDropdown({
     <div
       ref={dropdownRef}
       className={cn(
-        'relative inline-block w-full min-w-0 text-left sm:min-w-[200px]',
+        "relative inline-block w-full min-w-0 text-left sm:min-w-[200px]",
         className,
       )}
     >
@@ -111,10 +111,10 @@ export default function SearchableDropdown({
           if (!disabled) setIsOpen(!isOpen);
         }}
         className={cn(
-          'inline-flex h-10 w-full cursor-pointer items-center justify-between rounded-md border px-3 text-sm transition-colors focus-visible:outline-none',
-          'bg-background border-border hover:border-primary/50 focus:border-primary-300 focus:ring-primary-300/20 focus:ring-2',
-          disabled && 'hover:border-border cursor-not-allowed opacity-50',
-          isOpen && 'border-primary ring-primary/20 ring-2',
+          "inline-flex h-10 w-full cursor-pointer items-center justify-between rounded-md border px-3 text-sm transition-colors focus-visible:outline-none",
+          "bg-background border-border hover:border-primary/50 focus:border-primary-300 focus:ring-primary-300/20 focus:ring-2",
+          disabled && "hover:border-border cursor-not-allowed opacity-50",
+          isOpen && "border-primary ring-primary/20 ring-2",
         )}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -123,16 +123,16 @@ export default function SearchableDropdown({
         <span
           id="searchable-dropdown-label"
           className={cn(
-            selectedOption ? 'text-foreground' : 'text-muted-foreground',
-            'mr-2 truncate',
+            selectedOption ? "text-foreground" : "text-muted-foreground",
+            "mr-2 truncate",
           )}
         >
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <svg
           className={cn(
-            'text-muted-foreground h-4 w-4 flex-shrink-0 transition-transform',
-            isOpen && 'rotate-180',
+            "text-muted-foreground h-4 w-4 flex-shrink-0 transition-transform",
+            isOpen && "rotate-180",
           )}
           fill="none"
           stroke="currentColor"
@@ -179,16 +179,16 @@ export default function SearchableDropdown({
                 onKeyDown={handleKeyDown}
                 placeholder={searchPlaceholder}
                 className={cn(
-                  'border-border bg-background w-full rounded-md border px-3 py-2 pl-10 text-sm',
-                  'text-foreground placeholder:text-muted-foreground',
-                  'focus:border-primary focus:ring-primary/20 focus:ring-2 focus:outline-none',
+                  "border-border bg-background w-full rounded-md border px-3 py-2 pl-10 text-sm",
+                  "text-foreground placeholder:text-muted-foreground",
+                  "focus:border-primary focus:ring-primary/20 focus:ring-2 focus:outline-none",
                 )}
                 aria-label="Search options"
               />
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => setSearchQuery("")}
                   className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2"
                   aria-label="Clear search"
                 >
@@ -219,7 +219,7 @@ export default function SearchableDropdown({
                 role="option"
                 aria-selected="false"
               >
-                {searchQuery ? noOptionsMessage : 'No options available'}
+                {searchQuery ? noOptionsMessage : "No options available"}
               </div>
             ) : (
               filteredOptions.map((option) => (
@@ -232,10 +232,10 @@ export default function SearchableDropdown({
                     handleSelect(option.value);
                   }}
                   className={cn(
-                    'flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm transition-colors',
-                    'text-foreground hover:bg-muted hover:text-foreground',
+                    "flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm transition-colors",
+                    "text-foreground hover:bg-muted hover:text-foreground",
                     value === option.value &&
-                      'bg-muted text-primary font-medium',
+                      "bg-muted text-primary font-medium",
                   )}
                   role="option"
                   aria-selected={value === option.value}

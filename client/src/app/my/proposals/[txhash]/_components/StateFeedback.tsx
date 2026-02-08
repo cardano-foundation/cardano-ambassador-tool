@@ -1,15 +1,15 @@
-import Link from 'next/link';
-import Button from '@/components/atoms/Button';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
+import Link from "next/link";
+import Button from "@/components/atoms/Button";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
 
 interface StateFeedbackProps {
-  type: 'not-found' | 'access-denied' | 'loading';
+  type: "not-found" | "access-denied" | "loading";
   txhash?: string;
 }
 
 export const StateFeedback = ({ type, txhash }: StateFeedbackProps) => {
-  if (type === 'loading') {
+  if (type === "loading") {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-base"></div>
@@ -17,7 +17,7 @@ export const StateFeedback = ({ type, txhash }: StateFeedbackProps) => {
     );
   }
 
-  if (type === 'not-found') {
+  if (type === "not-found") {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
         <div className="text-center">

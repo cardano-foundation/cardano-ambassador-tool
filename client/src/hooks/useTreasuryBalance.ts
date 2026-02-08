@@ -1,11 +1,11 @@
-import { useCallback, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { fetchTreasuryBalance as fetchTreasuryBalanceThunk } from '@/lib/redux/features/treasury';
+import { useCallback, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { fetchTreasuryBalance as fetchTreasuryBalanceThunk } from "@/lib/redux/features/treasury";
 import {
   selectTreasuryBalance,
   selectIsTreasuryLoading,
-} from '@/lib/redux/features/treasury';
-import { selectCalculatedTotalPayouts } from '@/lib/redux/features/data/dataSelectors';
+} from "@/lib/redux/features/treasury";
+import { selectCalculatedTotalPayouts } from "@/lib/redux/features/data/dataSelectors";
 
 /**
  * Treasury balance hook - now delegates to Redux for state management.
@@ -33,10 +33,10 @@ export function useTreasuryBalance() {
       }
     };
 
-    window.addEventListener('app:refresh' as any, handleRefresh);
+    window.addEventListener("app:refresh" as any, handleRefresh);
 
     return () => {
-      window.removeEventListener('app:refresh' as any, handleRefresh);
+      window.removeEventListener("app:refresh" as any, handleRefresh);
     };
   }, [dispatch]);
 

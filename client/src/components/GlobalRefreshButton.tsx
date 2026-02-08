@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useDatabase } from '@/hooks';
-import { fetchTreasuryBalance as fetchTreasuryBalanceThunk } from '@/lib/redux/features/treasury';
-import { useAppDispatch } from '@/lib/redux/hooks';
-import { RefreshCw } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import Button from './atoms/Button';
+import { useDatabase } from "@/hooks";
+import { fetchTreasuryBalance as fetchTreasuryBalanceThunk } from "@/lib/redux/features/treasury";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { RefreshCw } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import Button from "./atoms/Button";
 
 interface GlobalRefreshButtonProps {
   className?: string;
 }
 
 export default function GlobalRefreshButton({
-  className = '',
+  className = "",
 }: GlobalRefreshButtonProps) {
   const { syncData, isSyncing } = useDatabase();
   const dispatch = useAppDispatch();
@@ -22,9 +22,9 @@ export default function GlobalRefreshButton({
     setIsRefreshing(true);
 
     try {
-      await fetch('/api/revalidate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/revalidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           allUtxos: true,
           allOracle: true,
@@ -32,16 +32,16 @@ export default function GlobalRefreshButton({
       });
 
       await Promise.all([
-        syncData('membership_intent'),
-        syncData('proposal_intent'),
-        syncData('member'),
-        syncData('proposal'),
+        syncData("membership_intent"),
+        syncData("proposal_intent"),
+        syncData("member"),
+        syncData("proposal"),
         dispatch(fetchTreasuryBalanceThunk()),
       ]);
 
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (error) {
-      console.error('Refresh error:', error);
+      console.error("Refresh error:", error);
     } finally {
       setIsRefreshing(false);
     }
@@ -52,10 +52,10 @@ export default function GlobalRefreshButton({
       handleRefresh();
     };
 
-    window.addEventListener('globalRefresh', handleGlobalRefresh);
+    window.addEventListener("globalRefresh", handleGlobalRefresh);
 
     return () => {
-      window.removeEventListener('globalRefresh', handleGlobalRefresh);
+      window.removeEventListener("globalRefresh", handleGlobalRefresh);
     };
   }, [handleRefresh]);
 
@@ -68,14 +68,14 @@ export default function GlobalRefreshButton({
       onClick={handleRefresh}
       disabled={isLoading}
       className={`appearance-none ${className}`}
-      aria-label={isLoading ? 'Syncing...' : 'Sync'}
+      aria-label={isLoading ? "Syncing..." : "Sync"}
     >
       <RefreshCw
         size={16}
-        className={`text-primary-base transition-transform duration-200 ${isLoading ? 'animate-spin' : ''}`}
+        className={`text-primary-base transition-transform duration-200 ${isLoading ? "animate-spin" : ""}`}
       />
       <span className="text-primary-base">
-        {isLoading ? 'Syncing...' : 'Sync'}
+        {isLoading ? "Syncing..." : "Sync"}
       </span>
     </Button>
   );

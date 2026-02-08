@@ -1,20 +1,24 @@
-import { createSelector } from '@reduxjs/toolkit';
-import type { RootState } from '../../store';
+import { createSelector } from "@reduxjs/toolkit";
+import type { RootState } from "../../store";
 
 // ---------- Base Selectors ----------
 export const selectWalletState = (state: RootState) => state.wallet;
 
 export const selectIsConnected = (state: RootState) => state.wallet.isConnected;
-export const selectIsConnecting = (state: RootState) => state.wallet.isConnecting;
+export const selectIsConnecting = (state: RootState) =>
+  state.wallet.isConnecting;
 export const selectHasAttemptedAutoConnect = (state: RootState) =>
   state.wallet.hasAttemptedAutoConnect;
-export const selectSelectedWalletId = (state: RootState) => state.wallet.selectedWalletId;
+export const selectSelectedWalletId = (state: RootState) =>
+  state.wallet.selectedWalletId;
 export const selectWalletName = (state: RootState) => state.wallet.walletName;
 export const selectWalletAddress = (state: RootState) => state.wallet.address;
 export const selectWallet = (state: RootState) => state.wallet.wallet;
-export const selectAvailableWallets = (state: RootState) => state.wallet.availableWallets;
+export const selectAvailableWallets = (state: RootState) =>
+  state.wallet.availableWallets;
 export const selectWalletError = (state: RootState) => state.wallet.error;
-export const selectIsNetworkValid = (state: RootState) => state.wallet.isNetworkValid;
+export const selectIsNetworkValid = (state: RootState) =>
+  state.wallet.isNetworkValid;
 
 // ---------- Memoized Selectors ----------
 
@@ -23,22 +27,29 @@ export const selectIsNetworkValid = (state: RootState) => state.wallet.isNetwork
  */
 export const selectIsWalletReady = createSelector(
   [selectHasAttemptedAutoConnect, selectIsConnecting],
-  (hasAttemptedAutoConnect, isConnecting) => hasAttemptedAutoConnect && !isConnecting,
+  (hasAttemptedAutoConnect, isConnecting) =>
+    hasAttemptedAutoConnect && !isConnecting,
 );
 
 /**
  * Check if wallet has an error
  */
-export const selectHasWalletError = createSelector([selectWalletError], (error) => error !== null);
+export const selectHasWalletError = createSelector(
+  [selectWalletError],
+  (error) => error !== null,
+);
 
 /**
  * Get shortened wallet address for display
  */
-export const selectShortenedAddress = createSelector([selectWalletAddress], (address) => {
-  if (!address) return null;
-  if (address.length <= 16) return address;
-  return `${address.slice(0, 8)}...${address.slice(-8)}`;
-});
+export const selectShortenedAddress = createSelector(
+  [selectWalletAddress],
+  (address) => {
+    if (!address) return null;
+    if (address.length <= 16) return address;
+    return `${address.slice(0, 8)}...${address.slice(-8)}`;
+  },
+);
 
 /**
  * Get current connected wallet info

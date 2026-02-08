@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useAppDispatch } from '@/lib/redux/hooks';
-import { updateLoadingState } from '@/lib/redux/features/ui';
-import { useDatabase } from '@/hooks/useDatabase';
-import { useThemeManager } from '@/hooks/useThemeManager';
-import { useUserAuth } from '@/hooks/useUserAuth';
-import { useWalletManager } from '@/hooks/useWalletManager';
-import { useEffect } from 'react';
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { updateLoadingState } from "@/lib/redux/features/ui";
+import { useDatabase } from "@/hooks/useDatabase";
+import { useThemeManager } from "@/hooks/useThemeManager";
+import { useUserAuth } from "@/hooks/useUserAuth";
+import { useWalletManager } from "@/hooks/useWalletManager";
+import { useEffect } from "react";
 
 /**
  * Component responsible for initializing app global state.
@@ -39,14 +39,14 @@ export function AppInitializer() {
   // Loading state coordination
   const dispatch = useAppDispatch();
   // We do NOT subcribe to isAppLoading here to avoid render loops when we update it
-  
+
   useEffect(() => {
     dispatch(
       updateLoadingState({
         dbLoading,
         isThemeInitialized,
         authLoading,
-      })
+      }),
     );
   }, [dbLoading, isThemeInitialized, authLoading, dispatch]);
 

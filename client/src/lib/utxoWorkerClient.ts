@@ -3,7 +3,7 @@ let listeners: ((data: any) => void)[] = [];
 
 export function initUtxoWorker() {
   if (!worker) {
-    worker = new Worker('/db-worker.js');
+    worker = new Worker("/db-worker.js");
     worker.onmessage = (e) => {
       listeners.forEach((cb) => cb(e.data));
     };

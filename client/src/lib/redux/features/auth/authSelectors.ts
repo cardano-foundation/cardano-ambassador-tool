@@ -1,10 +1,10 @@
-import { createSelector } from '@reduxjs/toolkit';
-import type { RootState } from '../../store';
-import { selectMembers, selectDbLoading } from '../data/dataSelectors';
-import { selectWalletAddress } from '../wallet/walletSelectors';
-import { parseMemberDatum, getCountryByCode } from '@/utils';
-import type { Utxo } from '@types';
-import type { MemberData } from '@sidan-lab/cardano-ambassador-tool';
+import { createSelector } from "@reduxjs/toolkit";
+import type { RootState } from "../../store";
+import { selectMembers, selectDbLoading } from "../data/dataSelectors";
+import { selectWalletAddress } from "../wallet/walletSelectors";
+import { parseMemberDatum, getCountryByCode } from "@/utils";
+import type { Utxo } from "@types";
+import type { MemberData } from "@sidan-lab/cardano-ambassador-tool";
 
 // ---------- Base Selectors ----------
 
@@ -12,7 +12,8 @@ export const selectAuthState = (state: RootState) => state.auth;
 
 export const selectAuthAddress = (state: RootState) => state.auth.address;
 export const selectAuthRoles = (state: RootState) => state.auth.roles;
-export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated;
+export const selectIsAuthenticated = (state: RootState) =>
+  state.auth.isAuthenticated;
 export const selectIsAdmin = (state: RootState) => state.auth.isAdmin;
 export const selectIsAuthLoading = (state: RootState) => state.auth.isLoading;
 export const selectIsHydrated = (state: RootState) => state.auth.isHydrated;
@@ -22,8 +23,10 @@ export const selectAuthError = (state: RootState) => state.auth.error;
 export const selectIsMember = (state: RootState) => state.auth.isMember;
 export const selectMemberValidationLoading = (state: RootState) =>
   state.auth.memberValidationLoading;
-export const selectCurrentMemberData = (state: RootState) => state.auth.currentMemberData;
-export const selectCurrentMemberUtxoRef = (state: RootState) => state.auth.currentMemberUtxoRef;
+export const selectCurrentMemberData = (state: RootState) =>
+  state.auth.currentMemberData;
+export const selectCurrentMemberUtxoRef = (state: RootState) =>
+  state.auth.currentMemberUtxoRef;
 
 // ---------- Memoized Selectors ----------
 
@@ -48,7 +51,8 @@ export const selectIsAuthReady = createSelector(
  */
 export const selectIsUserReady = createSelector(
   [selectIsAuthReady, selectMemberValidationLoading],
-  (isAuthReady, memberValidationLoading) => isAuthReady && !memberValidationLoading,
+  (isAuthReady, memberValidationLoading) =>
+    isAuthReady && !memberValidationLoading,
 );
 
 /**
@@ -115,13 +119,13 @@ export const selectParsedCurrentUserMember = createSelector(
         fullName: memberMetadata.fullName || memberMetadata.displayName,
         displayName: memberMetadata.displayName,
         emailAddress: memberMetadata.emailAddress,
-        country: countryData?.name || memberMetadata.country || '',
-        city: memberMetadata.city || '',
-        bio: memberMetadata.bio || '',
-        x_handle: memberMetadata.x_handle || '',
-        github: memberMetadata.github || '',
-        discord: memberMetadata.discord || '',
-        spo_id: memberMetadata.spo_id || '',
+        country: countryData?.name || memberMetadata.country || "",
+        city: memberMetadata.city || "",
+        bio: memberMetadata.bio || "",
+        x_handle: memberMetadata.x_handle || "",
+        github: memberMetadata.github || "",
+        discord: memberMetadata.discord || "",
+        spo_id: memberMetadata.spo_id || "",
       };
 
       return {
@@ -130,7 +134,7 @@ export const selectParsedCurrentUserMember = createSelector(
         memberUtxo,
       };
     } catch (error) {
-      console.error('Error parsing member data:', error);
+      console.error("Error parsing member data:", error);
       return {
         isMember: false,
         memberData: null,
@@ -178,5 +182,6 @@ export const selectCanPerformAdminActions = createSelector(
  */
 export const selectCanPerformMemberActions = createSelector(
   [selectIsAuthenticated, selectIsMember, selectIsUserReady],
-  (isAuthenticated, isMember, isReady) => isReady && isAuthenticated && isMember,
+  (isAuthenticated, isMember, isReady) =>
+    isReady && isAuthenticated && isMember,
 );

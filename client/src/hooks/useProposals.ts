@@ -1,9 +1,9 @@
-import { useAppSelector } from '@/lib/redux/hooks';
+import { useAppSelector } from "@/lib/redux/hooks";
 import {
   selectDetailedProposals,
   selectDbLoading,
   selectDbError,
-} from '@/lib/redux/features/data/dataSelectors';
+} from "@/lib/redux/features/data/dataSelectors";
 
 const useProposals = () => {
   const allProposals = useAppSelector(selectDetailedProposals);

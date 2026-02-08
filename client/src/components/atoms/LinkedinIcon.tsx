@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface LinkedInIconProps {
   className?: string;
@@ -7,9 +7,9 @@ interface LinkedInIconProps {
 }
 
 const LinkedInIcon: React.FC<LinkedInIconProps> = ({
-  className = '',
+  className = "",
   size = 24,
-  color = 'currentColor',
+  color = "currentColor",
 }) => {
   return (
     <svg

@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import LocationSelector from '@/app/(onboarding)/sign-up/_components/LocationSelector';
-import Button from '@/components/atoms/Button';
-import ForumUsernameInput from '@/components/atoms/ForumUsernameInput';
-import Input from '@/components/atoms/Input';
-import TextArea from '@/components/atoms/TextArea';
-import Copyable from '@/components/Copyable';
-import ErrorAccordion from '@/components/ErrorAccordion';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { fetchTransactionTimestamp, formatTimestamp } from '@/utils';
-import { getCountryByCode } from '@/utils/locationData';
+import LocationSelector from "@/app/(onboarding)/sign-up/_components/LocationSelector";
+import Button from "@/components/atoms/Button";
+import ForumUsernameInput from "@/components/atoms/ForumUsernameInput";
+import Input from "@/components/atoms/Input";
+import TextArea from "@/components/atoms/TextArea";
+import Copyable from "@/components/Copyable";
+import ErrorAccordion from "@/components/ErrorAccordion";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { fetchTransactionTimestamp, formatTimestamp } from "@/utils";
+import { getCountryByCode } from "@/utils/locationData";
 import {
   getFieldError,
   validateIntentForm,
   ValidationError,
-} from '@/utils/validation';
-import { ExtendedMemberData } from '@types';
-import { Edit, Save, X } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+} from "@/utils/validation";
+import { ExtendedMemberData } from "@types";
+import { Edit, Save, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 interface EditableMemberDataComponentProps {
   membershipData: ExtendedMemberData | null;
@@ -40,7 +40,7 @@ const EditableField = ({
   editKey,
   editedData,
   isEditing,
-  type = 'text',
+  type = "text",
   onChange,
 }: {
   label: string;
@@ -48,7 +48,7 @@ const EditableField = ({
   editKey: keyof EditedData;
   editedData: EditedData;
   isEditing: boolean;
-  type?: 'text' | 'email' | 'bio';
+  type?: "text" | "email" | "bio";
   onChange: (key: keyof EditedData, value: string) => void;
 }) => {
   if (!isEditing) {
@@ -58,7 +58,7 @@ const EditableField = ({
         <div className="flex-1">
           <span
             className={
-              type === 'bio' ? 'block pt-2 whitespace-pre-wrap' : 'block pt-2'
+              type === "bio" ? "block pt-2 whitespace-pre-wrap" : "block pt-2"
             }
           >
             {value}
@@ -70,7 +70,7 @@ const EditableField = ({
 
   return (
     <div className="space-y-1">
-      {type === 'bio' ? (
+      {type === "bio" ? (
         <TextArea
           label={label}
           rows={3}
@@ -97,12 +97,12 @@ const MemberDataComponent = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editedData, setEditedData] = useState<EditedData>({
-    fullName: membershipData?.fullName ?? '',
-    displayName: membershipData?.displayName ?? '',
-    emailAddress: membershipData?.emailAddress ?? '',
-    bio: membershipData?.bio ?? '',
-    country: membershipData?.country ?? '',
-    city: membershipData?.city ?? '',
+    fullName: membershipData?.fullName ?? "",
+    displayName: membershipData?.displayName ?? "",
+    emailAddress: membershipData?.emailAddress ?? "",
+    bio: membershipData?.bio ?? "",
+    country: membershipData?.country ?? "",
+    city: membershipData?.city ?? "",
   });
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -126,12 +126,12 @@ const MemberDataComponent = ({
       if (!membershipData) return false;
 
       return (
-        data.fullName !== (membershipData.fullName ?? '') ||
-        data.displayName !== (membershipData.displayName ?? '') ||
-        data.emailAddress !== (membershipData.emailAddress ?? '') ||
-        data.bio !== (membershipData.bio ?? '') ||
-        data.country !== (membershipData.country ?? '') ||
-        data.city !== (membershipData.city ?? '')
+        data.fullName !== (membershipData.fullName ?? "") ||
+        data.displayName !== (membershipData.displayName ?? "") ||
+        data.emailAddress !== (membershipData.emailAddress ?? "") ||
+        data.bio !== (membershipData.bio ?? "") ||
+        data.country !== (membershipData.country ?? "") ||
+        data.city !== (membershipData.city ?? "")
       );
     },
     [membershipData],
@@ -154,12 +154,12 @@ const MemberDataComponent = ({
     setSubmitError(null);
     setHasChanges(false);
     setEditedData({
-      fullName: membershipData?.fullName ?? '',
-      displayName: membershipData?.displayName ?? '',
-      emailAddress: membershipData?.emailAddress ?? '',
-      bio: membershipData?.bio ?? '',
-      country: membershipData?.country ?? '',
-      city: membershipData?.city ?? '',
+      fullName: membershipData?.fullName ?? "",
+      displayName: membershipData?.displayName ?? "",
+      emailAddress: membershipData?.emailAddress ?? "",
+      bio: membershipData?.bio ?? "",
+      country: membershipData?.country ?? "",
+      city: membershipData?.city ?? "",
     });
   };
 
@@ -188,7 +188,7 @@ const MemberDataComponent = ({
       ) as HTMLElement;
       if (errorElement) {
         errorElement.focus();
-        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
       return;
     }
@@ -201,7 +201,7 @@ const MemberDataComponent = ({
         setHasChanges(false);
       } catch (error) {
         setSubmitError({
-          message: 'Update failed',
+          message: "Update failed",
           details: error instanceof Error ? error.stack : String(error),
         });
       } finally {
@@ -216,12 +216,12 @@ const MemberDataComponent = ({
     setSubmitError(null);
     setHasChanges(false);
     setEditedData({
-      fullName: membershipData?.fullName ?? '',
-      displayName: membershipData?.displayName ?? '',
-      emailAddress: membershipData?.emailAddress ?? '',
-      bio: membershipData?.bio ?? '',
-      country: membershipData?.country ?? '',
-      city: membershipData?.city ?? '',
+      fullName: membershipData?.fullName ?? "",
+      displayName: membershipData?.displayName ?? "",
+      emailAddress: membershipData?.emailAddress ?? "",
+      bio: membershipData?.bio ?? "",
+      country: membershipData?.country ?? "",
+      city: membershipData?.city ?? "",
     });
   };
 
@@ -232,7 +232,7 @@ const MemberDataComponent = ({
 
       setSubmissionTimestamp(await fetchTransactionTimestamp(txHash));
     } catch (error) {
-      console.error('Error fetching transaction timestamp:', error);
+      console.error("Error fetching transaction timestamp:", error);
     } finally {
       setIsLoadingTimestamp(false);
     }
@@ -260,11 +260,11 @@ const MemberDataComponent = ({
           <div className="mb-2 flex items-center justify-between">
             <span className="text-muted-foreground text-sm font-normal">
               {isLoadingTimestamp ? (
-                'Loading...'
+                "Loading..."
               ) : submissionTimestamp ? (
                 <>{formatTimestamp(submissionTimestamp)}</>
               ) : (
-                'Recently'
+                "Recently"
               )}
             </span>
             <div className="ml-auto flex gap-2">
@@ -287,7 +287,7 @@ const MemberDataComponent = ({
                     className="flex items-center gap-1"
                   >
                     <Save className="h-4 w-4" />
-                    {isSubmitting ? 'Saving...' : 'Save'}
+                    {isSubmitting ? "Saving..." : "Save"}
                   </Button>
                 </>
               ) : (
@@ -314,9 +314,9 @@ const MemberDataComponent = ({
               type="text"
               name="fullName"
               value={editedData.fullName}
-              onChange={(e) => handleFieldChange('fullName', e.target.value)}
-              error={!!getFieldError(validationErrors, 'fullName')}
-              errorMessage={getFieldError(validationErrors, 'fullName')}
+              onChange={(e) => handleFieldChange("fullName", e.target.value)}
+              error={!!getFieldError(validationErrors, "fullName")}
+              errorMessage={getFieldError(validationErrors, "fullName")}
             />
 
             <Input
@@ -326,22 +326,22 @@ const MemberDataComponent = ({
               name="email"
               value={editedData.emailAddress}
               onChange={(e) =>
-                handleFieldChange('emailAddress', e.target.value)
+                handleFieldChange("emailAddress", e.target.value)
               }
-              error={!!getFieldError(validationErrors, 'email')}
-              errorMessage={getFieldError(validationErrors, 'email')}
+              error={!!getFieldError(validationErrors, "email")}
+              errorMessage={getFieldError(validationErrors, "email")}
             />
 
             <div className="space-y-1">
               <ForumUsernameInput
                 value={editedData.displayName}
                 onChange={(displayName) =>
-                  handleFieldChange('displayName', displayName)
+                  handleFieldChange("displayName", displayName)
                 }
               />
-              {getFieldError(validationErrors, 'forum_username') && (
+              {getFieldError(validationErrors, "forum_username") && (
                 <p className="text-primary-base mt-1 text-sm">
-                  {getFieldError(validationErrors, 'forum_username')}
+                  {getFieldError(validationErrors, "forum_username")}
                 </p>
               )}
             </div>
@@ -351,16 +351,16 @@ const MemberDataComponent = ({
                 countryCode={editedData.country}
                 city={editedData.city}
                 onCountryChange={(country) => {
-                  handleFieldChange('country', country);
-                  handleFieldChange('city', ''); // Reset city when country changes
+                  handleFieldChange("country", country);
+                  handleFieldChange("city", ""); // Reset city when country changes
                 }}
-                onCityChange={(city) => handleFieldChange('city', city)}
+                onCityChange={(city) => handleFieldChange("city", city)}
               />
-              {(getFieldError(validationErrors, 'country') ||
-                getFieldError(validationErrors, 'city')) && (
+              {(getFieldError(validationErrors, "country") ||
+                getFieldError(validationErrors, "city")) && (
                 <p className="text-primary-base mt-1 text-sm">
-                  {getFieldError(validationErrors, 'country') ||
-                    getFieldError(validationErrors, 'city')}
+                  {getFieldError(validationErrors, "country") ||
+                    getFieldError(validationErrors, "city")}
                 </p>
               )}
             </div>
@@ -370,16 +370,16 @@ const MemberDataComponent = ({
               rows={4}
               name="bio"
               value={editedData.bio}
-              onChange={(e) => handleFieldChange('bio', e.target.value)}
-              error={!!getFieldError(validationErrors, 'bio')}
-              errorMessage={getFieldError(validationErrors, 'bio')}
+              onChange={(e) => handleFieldChange("bio", e.target.value)}
+              error={!!getFieldError(validationErrors, "bio")}
+              errorMessage={getFieldError(validationErrors, "bio")}
             />
           </div>
         ) : (
           <>
             <EditableField
               label="Full name"
-              value={membershipData?.fullName ?? ''}
+              value={membershipData?.fullName ?? ""}
               editKey="fullName"
               editedData={editedData}
               isEditing={isEditing}
@@ -389,7 +389,7 @@ const MemberDataComponent = ({
 
             <EditableField
               label="Display name"
-              value={membershipData?.displayName ?? ''}
+              value={membershipData?.displayName ?? ""}
               editKey="displayName"
               editedData={editedData}
               isEditing={isEditing}
@@ -399,7 +399,7 @@ const MemberDataComponent = ({
 
             <EditableField
               label="Email"
-              value={membershipData?.emailAddress ?? ''}
+              value={membershipData?.emailAddress ?? ""}
               editKey="emailAddress"
               editedData={editedData}
               isEditing={isEditing}
@@ -414,7 +414,7 @@ const MemberDataComponent = ({
                   {membershipData?.country
                     ? (getCountryByCode(membershipData.country)?.name ??
                       membershipData.country)
-                    : ''}
+                    : ""}
                 </span>
               </div>
             </div>
@@ -422,13 +422,13 @@ const MemberDataComponent = ({
             <div className="flex items-start gap-4">
               <span className="text-muted-foreground w-32 pt-2">City:</span>
               <div className="flex-1">
-                <span className="block pt-2">{membershipData?.city ?? ''}</span>
+                <span className="block pt-2">{membershipData?.city ?? ""}</span>
               </div>
             </div>
 
             <EditableField
               label="Bio"
-              value={membershipData?.bio ?? ''}
+              value={membershipData?.bio ?? ""}
               editKey="bio"
               editedData={editedData}
               isEditing={isEditing}
@@ -447,7 +447,7 @@ const MemberDataComponent = ({
                 withKey={false}
                 link={`${getCurrentNetworkConfig().explorerUrl}/address/${membershipData.txHash}`}
                 value={membershipData.walletAddress}
-                keyLabel={''}
+                keyLabel={""}
               />
             )}
           </div>
@@ -461,7 +461,7 @@ const MemberDataComponent = ({
                 withKey={false}
                 link={`${getCurrentNetworkConfig().explorerUrl}/transaction/${membershipData.txHash}`}
                 value={membershipData.txHash}
-                keyLabel={''}
+                keyLabel={""}
               />
             )}
           </div>

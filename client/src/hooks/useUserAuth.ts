@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo } from 'react';
-import { IWallet } from '@meshsdk/core';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { useCallback, useEffect, useMemo } from "react";
+import { IWallet } from "@meshsdk/core";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
   hydrateFromSession,
   resolveUserRoles,
@@ -13,8 +13,8 @@ import {
   selectAuthRoles,
   selectIsAuthLoading,
   selectIsHydrated,
-} from '@/lib/redux/features/auth';
-import { selectWallet } from '@/lib/redux/features/wallet';
+} from "@/lib/redux/features/auth";
+import { selectWallet } from "@/lib/redux/features/wallet";
 
 export type User = {
   wallet: IWallet;
@@ -74,7 +74,15 @@ export function useUserAuth({
 
     // Resolve roles for new connection
     dispatch(resolveUserRoles(address));
-  }, [address, wallet, isConnected, isHydrated, isAuthenticated, authAddress, dispatch]);
+  }, [
+    address,
+    wallet,
+    isConnected,
+    isHydrated,
+    isAuthenticated,
+    authAddress,
+    dispatch,
+  ]);
 
   const logout = useCallback(() => {
     dispatch(clearAuth());

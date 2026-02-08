@@ -2,7 +2,7 @@ interface IconProps {
   className?: string;
 }
 
-export function ExternalLink({ className = '' }: IconProps) {
+export function ExternalLink({ className = "" }: IconProps) {
   return (
     <svg
       width="16"

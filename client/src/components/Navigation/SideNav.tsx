@@ -1,40 +1,45 @@
-'use client';
+"use client";
 
-import Card, { CardContent } from '@/components/atoms/Card';
-import AppLogo from '@/components/atoms/Logo';
-import SettingsIcon from '@/components/atoms/SettingsIcon';
-import UsersIcon from '@/components/atoms/UsersIcon';
-import ConnectWallet from '@/components/wallet/ConnectWallet';
-import { routes } from '@/config/routes';
-import { useNetworkValidation, useUserAuth, useWalletManager } from '@/hooks';
-import { NavigationSection } from '@types';
+import Card, { CardContent } from "@/components/atoms/Card";
+import AppLogo from "@/components/atoms/Logo";
+import SettingsIcon from "@/components/atoms/SettingsIcon";
+import UsersIcon from "@/components/atoms/UsersIcon";
+import ConnectWallet from "@/components/wallet/ConnectWallet";
+import { routes } from "@/config/routes";
+import { useNetworkValidation, useUserAuth, useWalletManager } from "@/hooks";
+import { NavigationSection } from "@types";
 import {
   BookOpenTextIcon,
   GridIcon,
   HomeIcon,
   InfoIcon,
   SendIcon,
-} from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import ProposalIcon from '../atoms/ProposalIcon';
-import UserIcon from '../atoms/UserIcon';
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import ProposalIcon from "../atoms/ProposalIcon";
+import UserIcon from "../atoms/UserIcon";
 
 const defaultNavigationSections: NavigationSection[] = [
   {
     items: [
-      { id: 'home', label: 'Home', href: routes.home, icon: HomeIcon },
+      { id: "home", label: "Home", href: routes.home, icon: HomeIcon },
       {
-        id: 'proposals',
-        label: 'Proposals',
+        id: "proposals",
+        label: "Proposals",
         href: routes.proposals,
         icon: ProposalIcon,
       },
-      { id: 'user-guide', label: 'User Guide', href: routes.userGuide, icon: InfoIcon },
       {
-        id: 'ambassador',
-        label: 'Become an Ambassador',
+        id: "user-guide",
+        label: "User Guide",
+        href: routes.userGuide,
+        icon: InfoIcon,
+      },
+      {
+        id: "ambassador",
+        label: "Become an Ambassador",
         href: routes.signUp,
         icon: BookOpenTextIcon,
       },
@@ -43,17 +48,17 @@ const defaultNavigationSections: NavigationSection[] = [
 ];
 
 const memberToolsSection: NavigationSection = {
-  title: 'Member Tools',
+  title: "Member Tools",
   items: [
     {
-      id: 'submissions',
-      label: 'Submissions',
+      id: "submissions",
+      label: "Submissions",
       href: routes.my.submissions,
       icon: SendIcon,
     },
     {
-      id: 'dashboard',
-      label: 'Profile',
+      id: "dashboard",
+      label: "Profile",
       href: routes.my.profile,
       icon: UserIcon,
     },
@@ -61,35 +66,35 @@ const memberToolsSection: NavigationSection = {
 };
 
 const adminToolsSection: NavigationSection = {
-  title: 'Admin Tools',
+  title: "Admin Tools",
   items: [
     {
-      id: 'manage-ambassadors',
-      label: 'Manage Ambassadors',
+      id: "manage-ambassadors",
+      label: "Manage Ambassadors",
       href: routes.manage.ambassadors,
       icon: UsersIcon,
     },
     {
-      id: 'membership-intent',
-      label: 'Membership Applications',
+      id: "membership-intent",
+      label: "Membership Applications",
       href: routes.manage.membershipApplications,
       icon: SettingsIcon,
     },
     {
-      id: 'proposal-intent',
-      label: 'Proposal Applications',
+      id: "proposal-intent",
+      label: "Proposal Applications",
       href: routes.manage.proposalApplications,
       icon: ProposalIcon,
     },
     {
-      id: 'treasury-signoffs',
-      label: 'Treasury Sign offs',
+      id: "treasury-signoffs",
+      label: "Treasury Sign offs",
       href: routes.manage.treasurySignoffs,
       icon: ProposalIcon,
     },
     {
-      id: 'admin-guide',
-      label: 'Admin Guide',
+      id: "admin-guide",
+      label: "Admin Guide",
       href: routes.manage.adminGuide,
       icon: InfoIcon,
     },
@@ -111,7 +116,7 @@ const SideNav = () => {
   const [sections, setSections] = useState(defaultNavigationSections);
 
   // Active link handling
-  const [currentActiveId, setCurrentActiveId] = useState('');
+  const [currentActiveId, setCurrentActiveId] = useState("");
   useEffect(() => {
     const allItems = [
       ...defaultNavigationSections.flatMap((s) => s.items),
@@ -135,7 +140,7 @@ const SideNav = () => {
     }
 
     setSections(updated);
-  }, [isAuthenticated, isAdmin]);  
+  }, [isAuthenticated, isAdmin]);
 
   return (
     <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r lg:flex">
@@ -171,21 +176,21 @@ const SideNav = () => {
                       key={item.id}
                       href={item.href}
                       className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
-                        isActive ? 'bg-muted' : ''
+                        isActive ? "bg-muted" : ""
                       }`}
                       aria-label={item.label}
-                      aria-current={isActive ? 'page' : undefined}
+                      aria-current={isActive ? "page" : undefined}
                     >
                       <div
                         className={`flex h-5 w-5 flex-shrink-0 items-center justify-center ${
-                          isActive ? 'text-primary' : 'text-muted-foreground'
+                          isActive ? "text-primary" : "text-muted-foreground"
                         }`}
                       >
                         <IconComponent className="h-5 w-5" />
                       </div>
                       <span
                         className={`text-sm font-medium ${
-                          isActive ? 'text-foreground' : 'text-muted-foreground'
+                          isActive ? "text-foreground" : "text-muted-foreground"
                         }`}
                       >
                         {item.label}
@@ -203,11 +208,11 @@ const SideNav = () => {
         <CardContent className="flex flex-col">
           {wallet.isConnected && isNetworkValid ? (
             <span className="text-muted-foreground text-sm">
-              Connected Wallet{' '}
+              Connected Wallet{" "}
             </span>
           ) : (
             <span className="text-muted-foreground text-sm">
-              Connect Wallet{' '}
+              Connect Wallet{" "}
             </span>
           )}
 

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
-import { useTxConfirmation } from '@/hooks';
+import TransactionConfirmationOverlay from "@/components/TransactionConfirmationOverlay";
+import { useTxConfirmation } from "@/hooks";
 
 /**
  * Provider component that renders the TransactionConfirmationOverlay.
@@ -16,7 +16,7 @@ export function TxConfirmationProvider({
 
   // Get callbacks from window registry
   const callbacks =
-    typeof window !== 'undefined'
+    typeof window !== "undefined"
       ? (window as any).__txConfirmationCallbacks
       : {};
 

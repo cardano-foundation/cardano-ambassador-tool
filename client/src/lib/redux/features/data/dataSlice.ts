@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { TransactionInfo } from '@meshsdk/core';
-import type { Utxo } from '@types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { TransactionInfo } from "@meshsdk/core";
+import type { Utxo } from "@types";
 
 // ---------- Types ----------
 export interface DataState {
@@ -45,7 +45,7 @@ interface SetAllDataPayload {
 
 // ---------- Slice ----------
 const dataSlice = createSlice({
-  name: 'data',
+  name: "data",
   initialState,
   reducers: {
     // Loading state
@@ -91,7 +91,10 @@ const dataSlice = createSlice({
     },
 
     // Database initialization complete
-    dbInitialized: (state, action: PayloadAction<{ isSyncOperation: boolean }>) => {
+    dbInitialized: (
+      state,
+      action: PayloadAction<{ isSyncOperation: boolean }>,
+    ) => {
       if (action.payload.isSyncOperation) {
         state.isSyncing = false;
       } else {

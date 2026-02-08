@@ -1,32 +1,32 @@
-'use client';
+"use client";
 
-import OwnerMembershipTimeline from '@/components/Timelines/OwnerMembershipTimeline';
-import TransactionConfirmationOverlay from '@/components/TransactionConfirmationOverlay';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import { useDatabase, useMemberValidation, useWalletManager } from '@/hooks';
+import OwnerMembershipTimeline from "@/components/Timelines/OwnerMembershipTimeline";
+import TransactionConfirmationOverlay from "@/components/TransactionConfirmationOverlay";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import { useDatabase, useMemberValidation, useWalletManager } from "@/hooks";
 import {
   findMembershipIntentUtxo,
   findTokenUtxoByMembershipIntentUtxo,
   getCatConstants,
   getProvider,
   parseMembershipIntentDatum,
-} from '@/utils';
-import { resolveTxHash } from '@meshsdk/core';
+} from "@/utils";
+import { resolveTxHash } from "@meshsdk/core";
 import {
   MemberData,
   membershipMetadata,
   UserActionTx,
-} from '@sidan-lab/cardano-ambassador-tool';
-import { TransactionConfirmationResult, Utxo } from '@types';
-import { useCallback, useEffect, useState } from 'react';
-import EmptyMembershipState from './EmptyMembershipState';
-import MemberStatusCard from './MemberStatusCard';
+} from "@sidan-lab/cardano-ambassador-tool";
+import { TransactionConfirmationResult, Utxo } from "@types";
+import { useCallback, useEffect, useState } from "react";
+import EmptyMembershipState from "./EmptyMembershipState";
+import MemberStatusCard from "./MemberStatusCard";
 
 export default function MembershipSubmissionsTab() {
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
-    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
+    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
   );
 
   const blockfrost = getProvider();
@@ -38,7 +38,11 @@ export default function MembershipSubmissionsTab() {
   const [isTransactionPending, setIsTransactionPending] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
-  const { address: userAddress, wallet: userWallet, isConnected } = useWalletManager();
+  const {
+    address: userAddress,
+    wallet: userWallet,
+    isConnected,
+  } = useWalletManager();
   const { membershipIntents, dbLoading, isSyncing, syncData } = useDatabase();
   const { memberUtxo, memberData } = useMemberValidation();
 
@@ -48,7 +52,7 @@ export default function MembershipSubmissionsTab() {
     }
 
     if (!userAddress) {
-      setError('User address not available. Please connect your wallet.');
+      setError("User address not available. Please connect your wallet.");
       setLoading(false);
       return;
     }
@@ -79,7 +83,7 @@ export default function MembershipSubmissionsTab() {
 
       if (!membershipIntentUtxo) {
         throw new Error(
-          'No membership application UTxO found for this address',
+          "No membership application UTxO found for this address",
         );
       }
 
@@ -87,7 +91,7 @@ export default function MembershipSubmissionsTab() {
         await findTokenUtxoByMembershipIntentUtxo(membershipIntentUtxo);
 
       if (!tokenUtxo) {
-        throw new Error('No token UTxO found for this membership application');
+        throw new Error("No token UTxO found for this membership application");
       }
 
       const oracleUtxos = await blockfrost.fetchUTxOs(
@@ -98,7 +102,7 @@ export default function MembershipSubmissionsTab() {
       const oracleUtxo = oracleUtxos[0];
 
       if (!oracleUtxo) {
-        throw new Error('Failed to fetch required oracle UTxO');
+        throw new Error("Failed to fetch required oracle UTxO");
       }
 
       const userAction = new UserActionTx(
@@ -110,16 +114,16 @@ export default function MembershipSubmissionsTab() {
 
       const metadata = membershipMetadata({
         walletAddress: userMetadata.walletAddress,
-        fullName: userMetadata.fullName || '',
-        displayName: userMetadata.displayName || '',
-        emailAddress: userMetadata.emailAddress || '',
-        bio: userMetadata.bio || '',
-        country: userMetadata.country || '',
-        city: userMetadata.city || '',
-        x_handle: userMetadata.x_handle || '',
-        github: userMetadata.github || '',
-        discord: userMetadata.discord || '',
-        spo_id: userMetadata.spo_id || '',
+        fullName: userMetadata.fullName || "",
+        displayName: userMetadata.displayName || "",
+        emailAddress: userMetadata.emailAddress || "",
+        bio: userMetadata.bio || "",
+        country: userMetadata.country || "",
+        city: userMetadata.city || "",
+        x_handle: userMetadata.x_handle || "",
+        github: userMetadata.github || "",
+        discord: userMetadata.discord || "",
+        spo_id: userMetadata.spo_id || "",
       });
 
       const result = await userAction.updateMembershipIntentMetadata(
@@ -136,11 +140,11 @@ export default function MembershipSubmissionsTab() {
           setTransactionHash(txHash);
           setIsTransactionPending(true);
         } else {
-          console.error('Failed to compute transaction hash from txHex');
+          console.error("Failed to compute transaction hash from txHex");
         }
       }
     } catch (error) {
-      console.error('Error updating membership application metadata:', error);
+      console.error("Error updating membership application metadata:", error);
       throw error;
     }
   };
@@ -151,20 +155,20 @@ export default function MembershipSubmissionsTab() {
       setTransactionHash(null);
 
       try {
-        await fetch('/api/revalidate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch("/api/revalidate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             allUtxos: true,
             oracleAdmins: true,
           }),
         });
       } catch (error) {
-        console.error('Cache invalidation error:', error);
+        console.error("Cache invalidation error:", error);
       }
 
       setTimeout(() => {
-        syncData('membership_intent');
+        syncData("membership_intent");
       }, 2000);
     },
     [syncData],
@@ -176,20 +180,20 @@ export default function MembershipSubmissionsTab() {
       setTransactionHash(null);
 
       try {
-        await fetch('/api/revalidate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch("/api/revalidate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             allUtxos: true,
             oracleAdmins: false,
           }),
         });
       } catch (error) {
-        console.error('Cache invalidation error:', error);
+        console.error("Cache invalidation error:", error);
       }
 
       setTimeout(() => {
-        syncData('membership_intent');
+        syncData("membership_intent");
       }, 2000);
     },
     [syncData],
@@ -200,20 +204,20 @@ export default function MembershipSubmissionsTab() {
     setTransactionHash(null);
 
     try {
-      await fetch('/api/revalidate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/revalidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           allUtxos: true,
           oracleAdmins: true,
         }),
       });
     } catch (error) {
-      console.error('Cache invalidation error:', error);
+      console.error("Cache invalidation error:", error);
     }
 
     setTimeout(() => {
-      syncData('membership_intent');
+      syncData("membership_intent");
     }, 2000);
   }, [syncData]);
 

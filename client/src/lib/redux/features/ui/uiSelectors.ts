@@ -1,16 +1,23 @@
-import { createSelector } from '@reduxjs/toolkit';
-import type { RootState } from '../../store';
+import { createSelector } from "@reduxjs/toolkit";
+import type { RootState } from "../../store";
 
 // Base selectors
 export const selectUIState = (state: RootState) => state.ui;
 
 // Theme selectors
 export const selectTheme = (state: RootState) => state.ui.theme;
-export const selectIsThemeInitialized = (state: RootState) => state.ui.isThemeInitialized;
+export const selectIsThemeInitialized = (state: RootState) =>
+  state.ui.isThemeInitialized;
 
 // Memoized derived theme selectors
-export const selectIsDark = createSelector(selectTheme, (theme) => theme === 'dark');
-export const selectIsLight = createSelector(selectTheme, (theme) => theme === 'light');
+export const selectIsDark = createSelector(
+  selectTheme,
+  (theme) => theme === "dark",
+);
+export const selectIsLight = createSelector(
+  selectTheme,
+  (theme) => theme === "light",
+);
 
 // Loading selectors
 export const selectIsAppLoading = (state: RootState) => state.ui.isAppLoading;
@@ -23,7 +30,9 @@ export const selectShouldShowLoading = createSelector(
 );
 
 // Transaction confirmation selectors
-export const selectTxConfirmation = (state: RootState) => state.ui.txConfirmation;
+export const selectTxConfirmation = (state: RootState) =>
+  state.ui.txConfirmation;
 export const selectIsTxConfirmationVisible = (state: RootState) =>
   state.ui.txConfirmation.isVisible;
-export const selectTxConfirmationHash = (state: RootState) => state.ui.txConfirmation.txHash;
+export const selectTxConfirmationHash = (state: RootState) =>
+  state.ui.txConfirmation.txHash;

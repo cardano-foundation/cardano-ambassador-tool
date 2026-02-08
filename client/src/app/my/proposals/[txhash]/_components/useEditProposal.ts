@@ -5,16 +5,16 @@ import {
   getProvider,
   parseAdaInput,
   parseProposalDatum,
-} from '@/utils';
-import { resolveTxHash } from '@meshsdk/core';
+} from "@/utils";
+import { resolveTxHash } from "@meshsdk/core";
 import {
   ProposalData,
   proposalMetadata,
   UserActionTx,
-} from '@sidan-lab/cardano-ambassador-tool';
-import { useState } from 'react';
-import { useDatabase, useWalletManager } from '@/hooks';
-import { useRouter } from 'next/navigation';
+} from "@sidan-lab/cardano-ambassador-tool";
+import { useState } from "react";
+import { useDatabase, useWalletManager } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 type ProposalFormData = ProposalData & { description: string };
 
@@ -48,14 +48,14 @@ export const useEditProposal = ({
       setIsSubmitting(true);
 
       // Extract filename from URL if it exists
-      const existingFilename = formData.url 
-        ? formData.url.split('/').pop() 
+      const existingFilename = formData.url
+        ? formData.url.split("/").pop()
         : undefined;
 
       // 1. Upload new content to GitHub
-      const saveResponse = await fetch('/api/proposal-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const saveResponse = await fetch("/api/proposal-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: formData.title,
           description: formData.description,
@@ -65,7 +65,7 @@ export const useEditProposal = ({
       });
 
       if (!saveResponse.ok) {
-        throw new Error('Failed to save proposal content to GitHub');
+        throw new Error("Failed to save proposal content to GitHub");
       }
 
       const saveData = await saveResponse.json();
@@ -76,7 +76,7 @@ export const useEditProposal = ({
       const blockfrost = getProvider();
       const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
       const ORACLE_OUTPUT_INDEX = parseInt(
-        process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
+        process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
       );
 
       const oracleUtxos = await blockfrost.fetchUTxOs(
@@ -86,7 +86,7 @@ export const useEditProposal = ({
       const oracleUtxo = oracleUtxos[0];
 
       if (!oracleUtxo) {
-        throw new Error('Failed to fetch required oracle UTxO');
+        throw new Error("Failed to fetch required oracle UTxO");
       }
 
       const proposalIntentUtxo = dbUtxoToMeshUtxo(proposal);
@@ -126,18 +126,22 @@ export const useEditProposal = ({
 
       showTxConfirmation({
         txHash: newTxHash,
-        title: 'Proposal Updated',
+        title: "Proposal Updated",
         description:
-          'Your proposal update has been submitted. Please wait for blockchain confirmation.',
+          "Your proposal update has been submitted. Please wait for blockchain confirmation.",
         onConfirmed: () => {
           setIsEditing(false);
-          syncData('proposal_intent');
+          syncData("proposal_intent");
           router.push(`/my/proposals/${newTxHash}?refresh=true`);
         },
       });
     } catch (err: any) {
-      console.error('Error updating proposal:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update proposal. Please try again.');
+      console.error("Error updating proposal:", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to update proposal. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }

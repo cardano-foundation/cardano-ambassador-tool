@@ -1,23 +1,23 @@
-import CopyPlugin from 'copy-webpack-plugin';
-import type { NextConfig } from 'next';
-import path from 'path';
+import CopyPlugin from "copy-webpack-plugin";
+import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: "standalone",
   reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
-  serverExternalPackages: ['@sidan-lab/whisky-js-nodejs'],
+  serverExternalPackages: ["@sidan-lab/whisky-js-nodejs"],
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
+        protocol: "https",
+        hostname: "**",
       },
       {
-        protocol: 'http', 
-        hostname: '**',
+        protocol: "http",
+        hostname: "**",
       },
     ],
     dangerouslyAllowSVG: true,
@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
     // Handle WASM files
     config.module.rules.push({
       test: /\.wasm$/,
-      type: 'webassembly/async',
+      type: "webassembly/async",
     });
 
     if (isServer) {
@@ -47,9 +47,9 @@ const nextConfig: NextConfig = {
             // Copy to root server directory
             {
               from: path.resolve(
-                './node_modules/@sidan-lab/whisky-js-nodejs/whisky_js_bg.wasm',
+                "./node_modules/@sidan-lab/whisky-js-nodejs/whisky_js_bg.wasm",
               ),
-              to: path.resolve('./.next/server/whisky_js_bg.wasm'),
+              to: path.resolve("./.next/server/whisky_js_bg.wasm"),
               noErrorOnMissing: true,
             },
           ],
@@ -59,16 +59,16 @@ const nextConfig: NextConfig = {
       // Configure aliases for server-side WASM resolution
       config.resolve.alias = {
         ...config.resolve.alias,
-        'whisky_js_bg.wasm': path.resolve(
-          './node_modules/@sidan-lab/whisky-js-nodejs/whisky_js_bg.wasm',
+        "whisky_js_bg.wasm": path.resolve(
+          "./node_modules/@sidan-lab/whisky-js-nodejs/whisky_js_bg.wasm",
         ),
       };
     } else {
       // Client-side configuration
       config.resolve.alias = {
         ...config.resolve.alias,
-        'whisky_js_bg.wasm': path.resolve(
-          './node_modules/@sidan-lab/whisky-js-browser/whisky_js_bg.wasm',
+        "whisky_js_bg.wasm": path.resolve(
+          "./node_modules/@sidan-lab/whisky-js-browser/whisky_js_bg.wasm",
         ),
       };
     }

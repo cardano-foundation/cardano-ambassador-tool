@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { CardanoLoaderSVG } from './ui/CardanoLoaderSVG';
+import { CardanoLoaderSVG } from "./ui/CardanoLoaderSVG";
 
 interface SimpleCardanoLoaderProps {
   size?: number;
@@ -10,8 +10,8 @@ interface SimpleCardanoLoaderProps {
 
 export function SimpleCardanoLoader({
   size = 64,
-  className = '',
-  message = 'Loading...',
+  className = "",
+  message = "Loading...",
 }: SimpleCardanoLoaderProps) {
   return (
     <div
@@ -25,15 +25,15 @@ export function SimpleCardanoLoader({
         <div className="flex justify-center space-x-1">
           <div
             className="bg-primary-base h-1.5 w-1.5 animate-bounce rounded-full"
-            style={{ animationDelay: '0ms' }}
+            style={{ animationDelay: "0ms" }}
           />
           <div
             className="bg-primary-base h-1.5 w-1.5 animate-bounce rounded-full"
-            style={{ animationDelay: '150ms' }}
+            style={{ animationDelay: "150ms" }}
           />
           <div
             className="bg-primary-base h-1.5 w-1.5 animate-bounce rounded-full"
-            style={{ animationDelay: '300ms' }}
+            style={{ animationDelay: "300ms" }}
           />
         </div>
       </div>

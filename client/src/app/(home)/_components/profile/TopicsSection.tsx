@@ -1,9 +1,9 @@
-import Card, { CardContent } from '@/components/atoms/Card';
-import Paragraph from '@/components/atoms/Paragraph';
-import TextLink from '@/components/atoms/TextLink';
-import Title from '@/components/atoms/Title';
-import Link from 'next/link';
-import React from 'react';
+import Card, { CardContent } from "@/components/atoms/Card";
+import Paragraph from "@/components/atoms/Paragraph";
+import TextLink from "@/components/atoms/TextLink";
+import Title from "@/components/atoms/Title";
+import Link from "next/link";
+import React from "react";
 
 interface TopicsSectionProps {
   topics: Array<{
@@ -24,7 +24,7 @@ export const TopicsSection: React.FC<TopicsSectionProps> = ({
   onToggleShowAll,
   formatDate,
 }) => {
-  const TopicItem = ({ topic }: { topic: TopicsSectionProps['topics'][0] }) => (
+  const TopicItem = ({ topic }: { topic: TopicsSectionProps["topics"][0] }) => (
     <div className="border-border/60 flex items-start justify-between border-b py-3 last:border-b-0">
       <div className="flex-1">
         <Link href={topic.url} target="_blank" rel="noopener noreferrer">
@@ -62,7 +62,7 @@ export const TopicsSection: React.FC<TopicsSectionProps> = ({
                 onToggleShowAll();
               }}
             >
-              {showAllTopics ? 'Show Less' : 'View All'}
+              {showAllTopics ? "Show Less" : "View All"}
             </TextLink>
           )}
         </div>
