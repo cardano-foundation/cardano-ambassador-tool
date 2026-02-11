@@ -139,7 +139,7 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
         }
         onClick={handleActivation}
         disabled={!signatureRequirementsMet}
-        className={`w-full ${adminDecisionData?.decision === "reject" ? "text-primary-base!" : ""}`}
+        className={`w-full  text-primary-base!`}
       >
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {adminDecisionData?.decision === "approve"

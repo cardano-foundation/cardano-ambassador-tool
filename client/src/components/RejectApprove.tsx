@@ -147,6 +147,33 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
     }
   }
 
+  async function handleDeleteDecision() {
+    setSubmitError(null);
+    setIsProcessing(true);
+
+    try {
+        if (!adminDecision || !intentUtxo?.txHash) {
+            throw new Error("Missing decision data");
+        }
+
+        // Delete the entire decision file
+        const deleted = await storageApiClient.delete(intentUtxo.txHash, "submissions");
+        if (!deleted) throw new Error("Failed to delete decision file");
+        
+        setAdminDecision(null);
+        onDecisionUpdate?.(null);
+        setCurrentWalletHasSigned(false);
+    } catch (error) {
+        console.error("Error deleting decision:", error);
+        setSubmitError({
+            message: "Failed to delete decision",
+            details: error instanceof Error ? error.message : String(error),
+        });
+    } finally {
+        setIsProcessing(false);
+    }
+  }
+
   async function initSignOff(decision: string, selectedAdmins: string[]) {
     setSubmitError(null);
 
@@ -352,7 +379,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
         {/* Only show Second button if current wallet hasn't signed yet */}
         {!currentWalletHasSigned && (
-          <div className="flex justify-center">
+          <div className="flex w-1/2 justify-between gap-2">
             <Button
               variant={
                 adminDecision.decision === "approve" ? "primary" : "outline"
@@ -366,6 +393,17 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
               {isProcessing
                 ? "Processing..."
                 : `Second ${adminDecision.decision === "approve" ? "Approval" : "Rejection"}`}
+            </Button>
+            
+            {/* Delete Control for Admins */}
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleDeleteDecision()}
+                disabled={isProcessing}
+                className="text-primary-base!"
+            >
+                Delete Decision
             </Button>
           </div>
         )}

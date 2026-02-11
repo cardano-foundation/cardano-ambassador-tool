@@ -136,9 +136,11 @@ export default function ProfileDetails({
               serve in this role, you may withdraw. This action is reversible
               only through re-application.
             </Paragraph>
-            <Button variant="primary" size="sm" onClick={onWithdrawRole}>
+            
+            TODO: Implement withdraw role functionality
+            {/* <Button variant="primary" size="sm" onClick={onWithdrawRole}>
               Withdraw role
-            </Button>
+            </Button> */}
           </div>
         )}
       </CardContent>
