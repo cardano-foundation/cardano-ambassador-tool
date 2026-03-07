@@ -21,7 +21,7 @@ import type { TxConfirmationOptions } from "@/hooks/useTxConfirmation";
 type ProposalFormData = ProposalData & { description: string };
 
 interface UseEditProposalProps {
-  proposal: Utxo;
+  proposal: Utxo | undefined;
   userAddress: string;
   formData: ProposalFormData;
   setFormData: (data: ProposalFormData) => void;

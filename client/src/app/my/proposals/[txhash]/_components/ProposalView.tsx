@@ -1,3 +1,5 @@
+"use client";
+
 import Card from "@/components/atoms/Card";
 import Paragraph from "@/components/atoms/Paragraph";
 import RichTextDisplay from "@/components/atoms/RichTextDisplay";

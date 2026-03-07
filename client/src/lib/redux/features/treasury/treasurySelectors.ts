@@ -1,7 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
-import { selectDetailedProposals } from "../data/dataSelectors";
-
 import { selectCalculatedTotalPayouts } from "../data/dataSelectors";
 
 // ---------- Base Selectors ----------

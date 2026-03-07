@@ -38,7 +38,7 @@ export function AppInitializer() {
 
   // Loading state coordination
   const dispatch = useAppDispatch();
-  // We do NOT subcribe to isAppLoading here to avoid render loops when we update it
+  // We do NOT subscribe to isAppLoading here to avoid render loops when we update it
 
   useEffect(() => {
     dispatch(

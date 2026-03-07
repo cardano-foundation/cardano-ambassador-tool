@@ -33,7 +33,7 @@ export const NetworkSection: React.FC<NetworkSectionProps> = ({ items }) => {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex cursor-pointer items-center space-x-3 rounded-lg p-2 transition-all duration-200 hover:bg-mute"
+        className="group flex cursor-pointer items-center space-x-3 rounded-lg p-2 transition-all duration-200 hover:bg-muted"
         aria-label={`Visit ${text}'s ${platform} profile`}
       >
         <div className="transition-transform duration-200 group-hover:scale-125">

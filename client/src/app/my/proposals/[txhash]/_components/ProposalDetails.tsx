@@ -25,7 +25,7 @@ export const ProposalDetails = ({
           </Paragraph>
           <Copyable
             withKey={false}
-            link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.txHash}`}
+            link={`${getCurrentNetworkConfig().explorerUrl}/transaction/${proposal.txHash}`}
             value={proposal.txHash}
             keyLabel={""}
           />

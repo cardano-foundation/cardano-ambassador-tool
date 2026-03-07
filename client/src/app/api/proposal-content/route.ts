@@ -53,6 +53,13 @@ export async function POST(req: NextRequest) {
     } = await req.json();
     const { title, description, submitterAddress, filename } = body;
 
+    if (
+      filename &&
+      (filename.length > 200 || !/^[a-zA-Z0-9_-]+\.md$/.test(filename.trim()))
+    ) {
+      return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
+    }
+
     if (!title || !description) {
       return NextResponse.json(
         { error: "Valid title and proposal description required" },
