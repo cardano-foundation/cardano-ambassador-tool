@@ -12,7 +12,7 @@ import ErrorAccordion from "./ErrorAccordion";
 interface FinalizeDecisionProps {
   txhash?: string;
   adminDecisionData?: AdminDecisionData | null;
-  context: "MembershipIntent" | "ProposalIntent";
+  context: "MembershipIntent" | "ProposalIntent" | "Member";
   onFinalizationComplete?: () => void;
 }
 
@@ -69,6 +69,23 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
           pending:
             "Please wait while membership activation is being confirmed on the blockchain.",
           success: "Membership has been successfully activated! 🎉",
+        },
+      };
+    } else if (context === "Member") {
+      return {
+        approveButton: "Execute Removal",
+        rejectButton: "Execute Removal",
+        pendingMessage:
+          "An admin needs to initiate member removal first.",
+        rejectedMessage: "This member has been removed.",
+        waitingMessage: "Waiting for",
+        readyMessage: "✓ All requirements met! Ready to remove member.",
+        completedMessage: "✓ Member Removed!",
+        overlayTitle: "Removing Member",
+        overlayDescription: {
+          pending:
+            "Please wait while member removal is being confirmed on the blockchain.",
+          success: "Member has been successfully removed! 🎉",
         },
       };
     } else {

@@ -43,12 +43,10 @@ export class Layer1Tx {
   };
 
   newTxBuilder = (evaluateTx = true) => {
-    console.log("no csl");
-
     const txBuilderConfig: MeshTxBuilderOptions = {
       fetcher: this.provider,
       submitter: this.provider,
-      verbose: true,
+      verbose: false,
     };
     if (evaluateTx) {
       const evaluator = new OfflineEvaluator(

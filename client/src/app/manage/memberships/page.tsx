@@ -114,11 +114,18 @@ export default function ManageAmbassadorsPage() {
       cell: (value: string, row: any) => {
         const name = row.displayName || value;
         return (
-          <Link href={`/ambassadors/${ambassadorId(name)}`}>
-            <Button variant="primary" size="sm" className="text-nowrap">
-              View Ambassador
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href={`/ambassadors/${ambassadorId(name)}`}>
+              <Button variant="primary" size="sm" className="text-nowrap">
+                View Ambassador
+              </Button>
+            </Link>
+            <Link href={`/manage/memberships/${row.utxoHash}`}>
+              <Button variant="outline" size="sm" className="text-nowrap">
+                Manage
+              </Button>
+            </Link>
+          </div>
         );
       },
     },

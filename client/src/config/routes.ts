@@ -21,6 +21,7 @@ export const routes = {
   // Admin routes
   manage: {
     ambassadors: "/manage/memberships",
+    ambassador: (txhash: string) => `/manage/memberships/${txhash}`,
     membershipApplications: "/manage/membership-applications",
     membershipApplication: (txhash: string) =>
       `/manage/membership-applications/${txhash}`,

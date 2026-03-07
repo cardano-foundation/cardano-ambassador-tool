@@ -36,10 +36,6 @@ export class SetupTx extends Layer1Tx {
     const scriptCbor = this.catConstant.scripts.counter.mint.cbor;
     const policyId = resolveScriptHash(scriptCbor, "V3");
 
-    const utxos = await this.wallet.getUtxos();
-    const paramUtxo = utxos[0]!;
-    console.log(paramUtxo);
-
     const txBuilder = await this.newValidationTx();
     try {
       const unsignedTx = await txBuilder
@@ -82,10 +78,6 @@ export class SetupTx extends Layer1Tx {
     const scriptCbor = this.catConstant.scripts.oracle.mint.cbor;
     const policyId = resolveScriptHash(scriptCbor, "V3");
     const oracleAddress = this.catConstant.scripts.oracle.spend.address;
-
-    const utxos = await this.wallet.getUtxos();
-    const paramUtxo = utxos[0]!;
-    console.log(paramUtxo);
 
     const newOracleDatum: OracleDatum = oracleDatum(
       admins,

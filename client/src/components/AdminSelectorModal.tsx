@@ -20,7 +20,7 @@ interface AdminSelectorModalProps {
   isVisible: boolean;
   onConfirm: (selectedAdmins: string[]) => void;
   onCancel: () => void;
-  decision: "approve" | "reject";
+  decision: "approve" | "reject" | "remove";
 }
 
 const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
@@ -253,7 +253,7 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
         disabled={!canConfirm}
         className="flex-1"
       >
-        {decision === "approve" ? "Create Approval" : "Create Rejection"}
+        {decision === "approve" ? "Create Approval" : decision === "remove" ? "Create Removal" : "Create Rejection"}
         <span className="ml-1">({selectedCount})</span>
       </Button>
     </div>

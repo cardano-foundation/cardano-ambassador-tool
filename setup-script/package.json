@@ -1,0 +1,24 @@
+{
+  "name": "cardano-ambassador-setup",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CLI setup tool for Cardano Ambassador Tool deployment",
+  "type": "module",
+  "scripts": {
+    "setup": "tsx src/index.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sidan-lab/cardano-ambassador-tool": "0.0.19",
+    "@meshsdk/core": "1.9.0-beta.101",
+    "dotenv": "^16"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "tsx": "^4.20.6",
+    "@types/node": "^20"
+  },
+  "overrides": {
+    "libsodium-wrappers-sumo": "0.7.15"
+  }
+}

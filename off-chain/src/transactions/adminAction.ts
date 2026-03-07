@@ -36,7 +36,7 @@ import {
   CATConstants,
   MembershipMetadata,
   membershipMetadata,
-  getOracleAdmins,
+
   processMembershipIntent,
 } from "../lib";
 import { IWallet, mConStr0, stringToHex, UTxO } from "@meshsdk/core";
@@ -259,12 +259,15 @@ export class AdminActionTx extends Layer1Tx {
     return { txHex };
   };
 
-  removeMember = async (oracleUtxo: UTxO, memberUtxo: UTxO) => {
+  removeMember = async (
+    oracleUtxo: UTxO,
+    memberUtxo: UTxO,
+    adminSigned: string[],
+  ) => {
     const memberAssetName = getTokenAssetNameByPolicyId(
       memberUtxo,
       this.catConstant.scripts.member.mint.hash
     );
-    const admins = getOracleAdmins(oracleUtxo);
 
     const txBuilder = await this.newValidationTx(true);
     txBuilder
@@ -301,7 +304,7 @@ export class AdminActionTx extends Layer1Tx {
       )
       .mintRedeemerValue(removeMember, "JSON");
 
-    for (const admin of admins) {
+    for (const admin of adminSigned) {
       txBuilder.requiredSignerHash(admin);
     }
 
