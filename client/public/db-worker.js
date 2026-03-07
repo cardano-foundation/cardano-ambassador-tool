@@ -1,11 +1,10 @@
-
-self.importScripts('sql-wasm.js');
+self.importScripts("sql-wasm.js");
 
 self.onmessage = async function (e) {
   const { action, context, contexts, apiBaseUrl, existingDb, isSyncOperation } =
     e.data;
 
-  const SQL = await initSqlJs({ locateFile: () => '/sql-wasm.wasm' });
+  const SQL = await initSqlJs({ locateFile: () => "/sql-wasm.wasm" });
   let db = new SQL.Database();
 
   /**
@@ -48,8 +47,6 @@ self.onmessage = async function (e) {
       blockTime INTEGER
     );
     `);
-
-    
   }
   createTables();
 
@@ -81,7 +78,7 @@ self.onmessage = async function (e) {
   }
 
   // Insert Ambassador
-  function insertPayOutTxs(tx) {    
+  function insertPayOutTxs(tx) {
     const stmt = db.prepare(`
       INSERT INTO treasury_payout_txs (block, deposit, fees, hash, invalidAfter, invalidBefore, size, inputs, outputs, blockHeight, blockTime, slot)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -99,7 +96,7 @@ self.onmessage = async function (e) {
       JSON.stringify(tx.outputs || []),
       tx.blockHeight,
       tx.blockTime,
-      tx.slot
+      tx.slot,
     ]);
 
     stmt.free();
@@ -113,13 +110,13 @@ self.onmessage = async function (e) {
 
   // Fetch and store UTxOs
   async function fetchAndStoreContext(contextName) {
-    if (contextName === 'treasury_payouts') {
+    if (contextName === "treasury_payouts") {
       return fetchStorePayoutTxs();
     }
 
     const res = await fetch(`${apiBaseUrl}/api/utxos`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ context: contextName }),
     });
 
@@ -132,9 +129,9 @@ self.onmessage = async function (e) {
 
   async function fetchStorePayoutTxs() {
     const res = await fetch(`${apiBaseUrl}/api/txs`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ forceRefresh: false })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ forceRefresh: false }),
     });
 
     const txs = await res.json();
@@ -144,24 +141,23 @@ self.onmessage = async function (e) {
     }
   }
 
-
   /**
    * -------------------------
    *   ACTION HANDLERS
    * -------------------------
    */
 
-  if (action === 'seed' && context) {
+  if (action === "seed" && context) {
     await fetchAndStoreContext(context);
   }
 
-  if (action === 'seedAll' && Array.isArray(contexts)) {
+  if (action === "seedAll" && Array.isArray(contexts)) {
     const results = await Promise.allSettled(
       contexts.map((ctx) => fetchAndStoreContext(ctx)),
     );
 
     results.forEach((result, i) => {
-      if (result.status === 'rejected') {
+      if (result.status === "rejected") {
         // Silent fail during build
       }
     });

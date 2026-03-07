@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { SingleRowStepper } from '@/components/atoms/Stepper';
-import { useMemberValidation, useWalletManager } from '@/hooks';
-import { findMembershipIntentUtxo, smoothScrollToElement } from '@/utils';
-import { UTxO } from '@meshsdk/core';
-import { MemberTokenDetail } from '@types';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
-import ConnectWallet from './_components/ConnectWallet';
-import IntentExists from './_components/IntentExists';
-import SelectToken from './_components/SelectToken';
-import SubmissionSuccess from './_components/SubmissionSuccess';
-import SubmitIntent from './_components/SubmitIntent';
-import TokenNotFound from './_components/TokenNotFound';
+import { SingleRowStepper } from "@/components/atoms/Stepper";
+import { useMemberValidation, useWalletManager } from "@/hooks";
+import { findMembershipIntentUtxo, smoothScrollToElement } from "@/utils";
+import { UTxO } from "@meshsdk/core";
+import { MemberTokenDetail } from "@types";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import ConnectWallet from "./_components/ConnectWallet";
+import IntentExists from "./_components/IntentExists";
+import SelectToken from "./_components/SelectToken";
+import SubmissionSuccess from "./_components/SubmissionSuccess";
+import SubmitIntent from "./_components/SubmitIntent";
+import TokenNotFound from "./_components/TokenNotFound";
 
 function SignUp() {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(0);
   const [asset, setAsset] = useState<MemberTokenDetail | undefined>(undefined);
   const { address, wallet } = useWalletManager();
-  const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? '';
+  const policyId = process.env.NEXT_PUBLIC_AMBASSADOR_POLICY_ID ?? "";
   const [walletAssets, setWalletAssets] = useState<MemberTokenDetail[]>([]);
   const [selectedAssetName, setSelectedAssetName] = useState<string | null>(
     null,
@@ -50,18 +50,18 @@ function SignUp() {
 
   const steps = [
     {
-      name: 'Connect Wallet',
+      name: "Connect Wallet",
       component: <ConnectWallet goNext={() => goNext()} />,
       showProgress: true,
     },
 
     {
-      name: 'Pick Token',
+      name: "Pick Token",
       component: resolveStep2(),
       showProgress: !walletAssets.length,
     },
     {
-      name: 'Intent Form',
+      name: "Intent Form",
       component: selectedAssetName ? (
         <SubmitIntent
           asset={asset}
@@ -74,7 +74,7 @@ function SignUp() {
       showProgress: !selectedAssetName,
     },
     {
-      name: 'Success',
+      name: "Success",
       component: <SubmissionSuccess />,
       showProgress: !selectedAssetName,
     },
@@ -84,17 +84,17 @@ function SignUp() {
     enter: (direction: number) => ({
       x: direction > 0 ? 300 : -300,
       opacity: 0,
-      position: 'absolute',
+      position: "absolute",
     }),
     center: {
       x: 0,
       opacity: 1,
-      position: 'relative',
+      position: "relative",
     },
     exit: (direction: number) => ({
       x: direction > 0 ? -300 : 300,
       opacity: 0,
-      position: 'absolute',
+      position: "absolute",
     }),
   };
 

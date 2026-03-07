@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * Global refresh utilities
@@ -20,11 +20,11 @@ import React from 'react';
  * ```
  */
 export function emitGlobalRefresh(): void {
-  const event = new CustomEvent('globalRefresh', {
+  const event = new CustomEvent("globalRefresh", {
     bubbles: true,
     detail: {
       timestamp: Date.now(),
-      source: 'manual',
+      source: "manual",
     },
   });
 
@@ -66,10 +66,10 @@ export function useGlobalRefreshListener(callback: () => void): void {
       callback();
     };
 
-    window.addEventListener('globalRefresh', handleGlobalRefresh);
+    window.addEventListener("globalRefresh", handleGlobalRefresh);
 
     return () => {
-      window.removeEventListener('globalRefresh', handleGlobalRefresh);
+      window.removeEventListener("globalRefresh", handleGlobalRefresh);
     };
   }, [callback]);
 }

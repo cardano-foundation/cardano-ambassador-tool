@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { hydrateTheme, setTheme, setThemeInitialized, Theme } from './uiSlice';
-import { selectTheme, selectIsThemeInitialized } from './uiSelectors';
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { hydrateTheme, setTheme, setThemeInitialized, Theme } from "./uiSlice";
+import { selectTheme, selectIsThemeInitialized } from "./uiSelectors";
 
 /**
  * Hook that syncs Redux theme state with localStorage and DOM.
@@ -21,15 +21,15 @@ export function useThemeSync() {
 
   // Sync theme changes to DOM and localStorage
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const root = document.documentElement;
-    root.classList.remove('light', 'dark');
+    root.classList.remove("light", "dark");
     root.classList.add(theme);
     // Force reflow to ensure styles are applied
     root.offsetHeight;
 
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
 
     if (!isThemeInitialized) {
       dispatch(setThemeInitialized(true));
@@ -38,19 +38,20 @@ export function useThemeSync() {
 
   // Listen for system theme changes
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const handleSystemThemeChange = (e: MediaQueryListEvent) => {
-      const hasExplicitTheme = localStorage.getItem('theme');
+      const hasExplicitTheme = localStorage.getItem("theme");
       if (!hasExplicitTheme) {
-        dispatch(setTheme(e.matches ? 'dark' : 'light'));
+        dispatch(setTheme(e.matches ? "dark" : "light"));
       }
     };
 
-    mediaQuery.addEventListener('change', handleSystemThemeChange);
-    return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
+    return () =>
+      mediaQuery.removeEventListener("change", handleSystemThemeChange);
   }, [dispatch]);
 
   return { theme, isThemeInitialized };

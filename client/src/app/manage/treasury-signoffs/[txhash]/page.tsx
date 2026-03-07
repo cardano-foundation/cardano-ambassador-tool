@@ -1,19 +1,19 @@
-'use client';
-import Button from '@/components/atoms/Button';
-import Card, { CardContent } from '@/components/atoms/Card';
-import Chip from '@/components/atoms/Chip';
-import Paragraph from '@/components/atoms/Paragraph';
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
-import Title from '@/components/atoms/Title';
-import Copyable from '@/components/Copyable';
-import ExecuteSignoff from '@/components/ExecuteSignoff';
-import ProposalDescription from '@/components/ProposalDescription';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useDatabase, useTreasuryBalance } from '@/hooks';
-import { getCatConstants, parseProposalDatum } from '@/utils';
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import { use } from 'react';
+"use client";
+import Button from "@/components/atoms/Button";
+import Card, { CardContent } from "@/components/atoms/Card";
+import Chip from "@/components/atoms/Chip";
+import Paragraph from "@/components/atoms/Paragraph";
+import RichTextDisplay from "@/components/atoms/RichTextDisplay";
+import Title from "@/components/atoms/Title";
+import Copyable from "@/components/Copyable";
+import ExecuteSignoff from "@/components/ExecuteSignoff";
+import ProposalDescription from "@/components/ProposalDescription";
+import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { useDatabase, useTreasuryBalance } from "@/hooks";
+import { getCatConstants, parseProposalDatum } from "@/utils";
+import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
+import { use } from "react";
 
 interface PageProps {
   params: Promise<{ txhash: string }>;
@@ -27,8 +27,8 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
   const proposal = signOfApprovals.find((utxo) => utxo.txHash === txhash);
 
   const memberUtxo = members.find((mbr) => {
-    let memberMetadata = JSON.parse(mbr.parsedMetadata || '{}');
-    let proposalMetadata = JSON.parse(proposal?.parsedMetadata || '{}');
+    let memberMetadata = JSON.parse(mbr.parsedMetadata || "{}");
+    let proposalMetadata = JSON.parse(proposal?.parsedMetadata || "{}");
     return memberMetadata.walletAddress == proposalMetadata.submittedByAddress;
   });
 
@@ -36,16 +36,16 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
   if (proposal && proposal.plutusData) {
     try {
       let metadata: any;
-      let description = 'No description provided';
+      let description = "No description provided";
 
       if (proposal.parsedMetadata) {
         try {
           const parsed =
-            typeof proposal.parsedMetadata === 'string'
+            typeof proposal.parsedMetadata === "string"
               ? JSON.parse(proposal.parsedMetadata)
               : proposal.parsedMetadata;
           metadata = parsed;
-          description = parsed.description || 'No description provided';
+          description = parsed.description || "No description provided";
         } catch (e) {
           const { metadata: datumMetadata } = parseProposalDatum(
             proposal.plutusData,
@@ -63,32 +63,32 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
         title: metadata?.title,
         url: metadata?.url,
         description,
-        fundsRequested: metadata?.fundsRequested || '0',
+        fundsRequested: metadata?.fundsRequested || "0",
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
-        status: 'ready',
+        status: "ready",
       };
     } catch (error) {
-      console.error('Error parsing proposal datum:', error);
+      console.error("Error parsing proposal datum:", error);
       proposalData = {
-        title: 'Error Loading Proposal',
-        url: '',
-        description: 'No description provided',
-        fundsRequested: '0',
-        receiverWalletAddress: '',
-        submittedByAddress: '',
-        status: 'ready',
+        title: "Error Loading Proposal",
+        url: "",
+        description: "No description provided",
+        fundsRequested: "0",
+        receiverWalletAddress: "",
+        submittedByAddress: "",
+        status: "ready",
       };
     }
   } else {
     proposalData = {
-      title: 'Error Loading Proposal',
-      url: '',
-      description: 'No description provided',
-      fundsRequested: '0',
-      receiverWalletAddress: '',
-      submittedByAddress: '',
-      status: 'ready',
+      title: "Error Loading Proposal",
+      url: "",
+      description: "No description provided",
+      fundsRequested: "0",
+      receiverWalletAddress: "",
+      submittedByAddress: "",
+      status: "ready",
     };
   }
 
@@ -119,20 +119,20 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
 
   const getChipVariant = () => {
     switch (proposalData.status) {
-      case 'pending':
-        return 'warning';
-      case 'submitted':
-        return 'default';
-      case 'under_review':
-        return 'default';
-      case 'approved':
-        return 'success';
-      case 'ready':
-        return 'success';
-      case 'rejected':
-        return 'error';
+      case "pending":
+        return "warning";
+      case "submitted":
+        return "default";
+      case "under_review":
+        return "default";
+      case "approved":
+        return "success";
+      case "ready":
+        return "success";
+      case "rejected":
+        return "error";
       default:
-        return 'inactive';
+        return "inactive";
     }
   };
 
@@ -144,7 +144,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
             {proposalData.title}
           </Title>
           <Chip variant={getChipVariant()} size="md" className="capitalize">
-            {proposalData.status.replace('_', ' ')}
+            {proposalData.status.replace("_", " ")}
           </Chip>
         </div>
         <Card>
@@ -158,7 +158,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                   withKey={false}
                   link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.txHash}`}
                   value={proposal.txHash}
-                  keyLabel={''}
+                  keyLabel={""}
                 />
               </div>
               <div className="space-y-1.5">
@@ -170,7 +170,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                     withKey={false}
                     link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.receiverWalletAddress}`}
                     value={proposalData.receiverWalletAddress}
-                    keyLabel={''}
+                    keyLabel={""}
                   />
                 ) : (
                   <Paragraph size="sm" className="text-foreground">
@@ -187,7 +187,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                     withKey={false}
                     link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
                     value={proposalData.submittedByAddress}
-                    keyLabel={''}
+                    keyLabel={""}
                   />
                 ) : (
                   <Paragraph size="sm" className="text-foreground">
@@ -223,7 +223,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                 withKey={false}
                 link={`${getCurrentNetworkConfig().explorerUrl}/address/${getCatConstants().scripts.treasury.spend.address}`}
                 value={getCatConstants().scripts.treasury.spend.address}
-                keyLabel={''}
+                keyLabel={""}
               />
             </div>
             <div className="grid grid-cols-3 gap-8">
@@ -234,7 +234,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                 <Title level="6" className="text-foreground font-semibold">
                   ₳
                   {isTreasuryLoading
-                    ? '...'
+                    ? "..."
                     : Math.floor(treasuryBalanceAda).toLocaleString()}
                 </Title>
               </div>
@@ -254,13 +254,13 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                   level="6"
                   className={
                     treasuryBalanceAda < parseInt(proposalData?.fundsRequested)
-                      ? 'text-primary-base font-semibold'
-                      : 'font-semibold text-green-600'
+                      ? "text-primary-base font-semibold"
+                      : "font-semibold text-green-600"
                   }
                 >
                   ₳
                   {isTreasuryLoading
-                    ? '...'
+                    ? "..."
                     : Math.floor(
                         treasuryBalanceAda -
                           parseInt(proposalData?.fundsRequested),
@@ -315,7 +315,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
                 Description
               </Title>
               <ProposalDescription
-                content={proposalData.description || 'No description available'}
+                content={proposalData.description || "No description available"}
                 className="text-foreground"
               />
             </div>
@@ -332,6 +332,8 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
               <ExecuteSignoff
                 signoffApprovalUtxo={proposal}
                 memberUtxo={memberUtxo}
+                treasuryBalance={String(treasuryBalance)}
+                isTreasuryLoading={isTreasuryLoading}
               />
             </div>
           </Card>

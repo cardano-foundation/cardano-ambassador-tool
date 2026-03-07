@@ -1,10 +1,10 @@
-import multiavatar from '@multiavatar/multiavatar/esm';
-import { useEffect, useMemo, useState } from 'react';
+import multiavatar from "@multiavatar/multiavatar/esm";
+import { useEffect, useMemo, useState } from "react";
 
 export default function UserAvatar({
-  size = 'size-9',
+  size = "size-9",
   imageUrl,
-  name = 'User',
+  name = "User",
 }: {
   imageUrl?: string;
   size?: string;
@@ -12,7 +12,7 @@ export default function UserAvatar({
 }) {
   const fallbackSvg = useMemo(() => {
     const svg = multiavatar(name);
-    return 'data:image/svg+xml;base64,' + btoa(svg);
+    return "data:image/svg+xml;base64," + btoa(svg);
   }, [name]);
 
   const [avatarSrc, setAvatarSrc] = useState(fallbackSvg);
@@ -45,8 +45,8 @@ export default function UserAvatar({
     <div className="group relative inline-block">
       <img
         src={avatarSrc}
-        alt={name + ' avatar'}
-        className={'rounded-full ' + size}
+        alt={name + " avatar"}
+        className={"rounded-full " + size}
         aria-label="User avatar"
       />
       <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 transform opacity-0 transition-opacity duration-200 group-hover:opacity-100">

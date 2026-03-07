@@ -1,24 +1,24 @@
-'use client';
-import ApproveSignoff from '@/components/ApproveSignoff';
-import Button from '@/components/atoms/Button';
-import Card, { CardContent } from '@/components/atoms/Card';
-import Chip from '@/components/atoms/Chip';
-import Paragraph from '@/components/atoms/Paragraph';
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
-import Title from '@/components/atoms/Title';
-import Copyable from '@/components/Copyable';
-import FinalizeDecision from '@/components/FinalizeDecision';
-import FinalizeSignoffApproval from '@/components/FinalizeSignoffApproval';
-import ProposalDescription from '@/components/ProposalDescription';
-import ApproveReject from '@/components/RejectApprove';
-import MultisigProgressTracker from '@/components/signature-progress/MultisigProgressTracker';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useDatabase } from '@/hooks';
-import { formatAdaAmount, parseProposalDatum } from '@/utils';
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import { AdminDecisionData } from '@types';
-import { use, useState } from 'react';
+"use client";
+import ApproveSignoff from "@/components/ApproveSignoff";
+import Button from "@/components/atoms/Button";
+import Card, { CardContent } from "@/components/atoms/Card";
+import Chip from "@/components/atoms/Chip";
+import Paragraph from "@/components/atoms/Paragraph";
+import RichTextDisplay from "@/components/atoms/RichTextDisplay";
+import Title from "@/components/atoms/Title";
+import Copyable from "@/components/Copyable";
+import FinalizeDecision from "@/components/FinalizeDecision";
+import FinalizeSignoffApproval from "@/components/FinalizeSignoffApproval";
+import ProposalDescription from "@/components/ProposalDescription";
+import ApproveReject from "@/components/RejectApprove";
+import MultisigProgressTracker from "@/components/signature-progress/MultisigProgressTracker";
+import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { useDatabase } from "@/hooks";
+import { formatAdaAmount, parseProposalDatum } from "@/utils";
+import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
+import { AdminDecisionData } from "@types";
+import { use, useState } from "react";
 
 interface PageProps {
   params: Promise<{ txhash: string }>;
@@ -47,16 +47,16 @@ export default function Page({ params }: PageProps) {
   if (proposal && proposal.plutusData) {
     try {
       let metadata: any;
-      let description = 'No description provided';
+      let description = "No description provided";
 
       if (proposal.parsedMetadata) {
         try {
           const parsed =
-            typeof proposal.parsedMetadata === 'string'
+            typeof proposal.parsedMetadata === "string"
               ? JSON.parse(proposal.parsedMetadata)
               : proposal.parsedMetadata;
           metadata = parsed;
-          description = parsed.description || 'No description provided';
+          description = parsed.description || "No description provided";
         } catch (e) {
           const { metadata: datumMetadata } = parseProposalDatum(
             proposal.plutusData,
@@ -74,37 +74,37 @@ export default function Page({ params }: PageProps) {
         title: metadata?.title,
         url: metadata?.url,
         description,
-        fundsRequested: metadata?.fundsRequested || '0',
+        fundsRequested: metadata?.fundsRequested || "0",
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
         status: signOfApprovals.some((p) => p.txHash === txhash)
-          ? 'signoff_pending'
+          ? "signoff_pending"
           : proposals.some((p) => p.txHash === txhash)
-            ? 'approved'
-            : 'pending',
+            ? "approved"
+            : "pending",
       };
     } catch (error) {
-      console.error('Error parsing proposal datum:', error);
+      console.error("Error parsing proposal datum:", error);
       const isApproved = proposals.some((p) => p.txHash === txhash);
       proposalData = {
-        title: 'Error Loading Proposal',
-        url: '',
-        description: 'No description provided',
-        fundsRequested: '0',
-        receiverWalletAddress: '',
-        submittedByAddress: '',
-        status: isApproved ? 'approved' : 'pending',
+        title: "Error Loading Proposal",
+        url: "",
+        description: "No description provided",
+        fundsRequested: "0",
+        receiverWalletAddress: "",
+        submittedByAddress: "",
+        status: isApproved ? "approved" : "pending",
       };
     }
   } else {
     proposalData = {
-      title: 'Error Loading Proposal',
-      url: '',
-      description: 'No description provided',
-      fundsRequested: '0',
-      receiverWalletAddress: '',
-      submittedByAddress: '',
-      status: 'pending',
+      title: "Error Loading Proposal",
+      url: "",
+      description: "No description provided",
+      fundsRequested: "0",
+      receiverWalletAddress: "",
+      submittedByAddress: "",
+      status: "pending",
     };
   }
 
@@ -132,20 +132,20 @@ export default function Page({ params }: PageProps) {
 
   const getChipVariant = () => {
     switch (proposalData.status) {
-      case 'pending':
-        return 'warning';
-      case 'submitted':
-        return 'default';
-      case 'under_review':
-        return 'default';
-      case 'approved':
-        return 'success';
-      case 'signoff_pending':
-        return 'warning';
-      case 'rejected':
-        return 'error';
+      case "pending":
+        return "warning";
+      case "submitted":
+        return "default";
+      case "under_review":
+        return "default";
+      case "approved":
+        return "success";
+      case "signoff_pending":
+        return "warning";
+      case "rejected":
+        return "error";
       default:
-        return 'inactive';
+        return "inactive";
     }
   };
 
@@ -162,9 +162,9 @@ export default function Page({ params }: PageProps) {
     setIsSignoffFinalized(true);
   };
   const statusLabel =
-    proposalData.status === 'signoff_pending'
-      ? 'Awaiting Signoff'
-      : proposalData.status.replace('_', ' ');
+    proposalData.status === "signoff_pending"
+      ? "Awaiting Signoff"
+      : proposalData.status.replace("_", " ");
   return (
     <div className="container px-4 py-2 pb-8 sm:px-6">
       <div className="space-y-4">
@@ -192,7 +192,7 @@ export default function Page({ params }: PageProps) {
                   withKey={false}
                   link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposal.txHash}`}
                   value={proposal.txHash}
-                  keyLabel={''}
+                  keyLabel={""}
                 />
               </div>
               <div className="space-y-1.5">
@@ -204,7 +204,7 @@ export default function Page({ params }: PageProps) {
                     withKey={false}
                     link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.receiverWalletAddress}`}
                     value={proposalData.receiverWalletAddress}
-                    keyLabel={''}
+                    keyLabel={""}
                   />
                 ) : (
                   <Paragraph
@@ -225,7 +225,7 @@ export default function Page({ params }: PageProps) {
                     withKey={false}
                     link={`${getCurrentNetworkConfig().explorerUrl}/address/${proposalData.submittedByAddress}`}
                     value={proposalData.submittedByAddress}
-                    keyLabel={''}
+                    keyLabel={""}
                   />
                 ) : (
                   <Paragraph
@@ -271,7 +271,7 @@ export default function Page({ params }: PageProps) {
                 </Title>
                 <ProposalDescription
                   content={
-                    proposalData.description || 'No description available'
+                    proposalData.description || "No description available"
                   }
                   className="text-foreground"
                 />
@@ -279,7 +279,7 @@ export default function Page({ params }: PageProps) {
             </div>
           </Card>
         </div>
-        {proposalData.status === 'pending' && (
+        {proposalData.status === "pending" && (
           <div className="space-y-4">
             <Title level="5" className="text-foreground">
               Admin Review
@@ -288,7 +288,7 @@ export default function Page({ params }: PageProps) {
               <div className="p-6">
                 <ApproveReject
                   intentUtxo={proposal}
-                  context={'ProposalIntent'}
+                  context={"ProposalIntent"}
                   onDecisionUpdate={handleAdminDecisionUpdate}
                   aria-label="Approve or reject proposal"
                 />
@@ -296,7 +296,7 @@ export default function Page({ params }: PageProps) {
             </Card>
           </div>
         )}
-        {adminDecisionData && proposalData.status === 'pending' && (
+        {adminDecisionData && proposalData.status === "pending" && (
           <div className="space-y-4">
             <Title level="5" className="text-foreground">
               Multisig Progress
@@ -312,7 +312,7 @@ export default function Page({ params }: PageProps) {
             </Card>
           </div>
         )}
-        {adminDecisionData && proposalData.status === 'pending' && (
+        {adminDecisionData && proposalData.status === "pending" && (
           <div className="space-y-4">
             <Title level="5" className="text-foreground">
               Finalize Decision
@@ -322,7 +322,7 @@ export default function Page({ params }: PageProps) {
                 <FinalizeDecision
                   txhash={proposal?.txHash}
                   adminDecisionData={adminDecisionData}
-                  context={'ProposalIntent'}
+                  context={"ProposalIntent"}
                   onFinalizationComplete={handleFinalizationComplete}
                 />
               </div>
@@ -331,7 +331,7 @@ export default function Page({ params }: PageProps) {
         )}
 
         {/* Signoff Workflow for Approved Proposals */}
-        {proposalData.status === 'approved' && (
+        {proposalData.status === "approved" && (
           <>
             {/* Step 1: Approve Signoff */}
             <div className="space-y-4">

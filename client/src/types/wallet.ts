@@ -1,4 +1,4 @@
-import type { IWallet, Wallet } from '@meshsdk/core';
+import type { IWallet, Wallet } from "@meshsdk/core";
 
 export interface WalletState {
   isConnected: boolean;

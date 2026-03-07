@@ -1,13 +1,13 @@
-import { useWalletManager } from '@/hooks';
-import { emitGlobalRefreshWithDelay, saveCounterUtxo } from '@/utils';
-import { storageApiClient } from '@/utils/storageApiClient';
-import { AdminDecisionData, TransactionConfirmationResult } from '@types';
-import { Loader2 } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
-import Button from './atoms/Button';
-import Paragraph from './atoms/Paragraph';
-import ErrorAccordion from './ErrorAccordion';
-import TransactionConfirmationOverlay from './TransactionConfirmationOverlay';
+import { useWalletManager } from "@/hooks";
+import { emitGlobalRefreshWithDelay, saveCounterUtxo } from "@/utils";
+import { storageApiClient } from "@/utils/storageApiClient";
+import { AdminDecisionData, TransactionConfirmationResult } from "@types";
+import { Loader2 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import Button from "./atoms/Button";
+import Paragraph from "./atoms/Paragraph";
+import ErrorAccordion from "./ErrorAccordion";
+import TransactionConfirmationOverlay from "./TransactionConfirmationOverlay";
 
 interface ActivateMembershipProps {
   txhash?: string;
@@ -64,11 +64,11 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
 
     try {
       if (!wallet) {
-        throw new Error('Wallet not connected');
+        throw new Error("Wallet not connected");
       }
 
       if (!adminDecisionData.signedTx) {
-        throw new Error('No signed transaction found in admin decision data');
+        throw new Error("No signed transaction found in admin decision data");
       }
 
       const txHash = await wallet.submitTx(adminDecisionData.signedTx);
@@ -79,15 +79,15 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
           adminDecisionData.counterUtxoTxIndex || 0,
         );
       } catch (error) {
-        console.error('Failed to update counter UTxO:', error);
+        console.error("Failed to update counter UTxO:", error);
       }
 
       setConfirmedTxHash(txHash);
       setShowConfirmationOverlay(true);
     } catch (error) {
-      console.error('Failed to submit transaction:', error);
+      console.error("Failed to submit transaction:", error);
       setSubmitError({
-        message: 'Failed to submit transaction',
+        message: "Failed to submit transaction",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
@@ -102,9 +102,9 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
 
       if (txhash) {
         try {
-          await storageApiClient.delete(txhash, 'submissions');
+          await storageApiClient.delete(txhash, "submissions");
         } catch (error) {
-          console.error('Failed to clean up admin decision data:', error);
+          console.error("Failed to clean up admin decision data:", error);
         }
       }
 
@@ -135,18 +135,18 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
       {/* Action Button */}
       <Button
         variant={
-          adminDecisionData?.decision === 'approve' ? 'primary' : 'outline'
+          adminDecisionData?.decision === "approve" ? "primary" : "outline"
         }
         onClick={handleActivation}
         disabled={!signatureRequirementsMet}
-        className={`w-full ${adminDecisionData?.decision === 'reject' ? 'text-primary-base!' : ''}`}
+        className={`w-full  text-primary-base!`}
       >
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {adminDecisionData?.decision === 'approve'
-          ? 'Activate Membership'
-          : adminDecisionData?.decision === 'reject'
-            ? 'Execute Rejection'
-            : 'Process Decision'}
+        {adminDecisionData?.decision === "approve"
+          ? "Activate Membership"
+          : adminDecisionData?.decision === "reject"
+            ? "Execute Rejection"
+            : "Process Decision"}
       </Button>
 
       {!hasAdminDecision && (
@@ -155,18 +155,18 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
         </Paragraph>
       )}
 
-      {adminDecisionData?.decision === 'reject' && (
+      {adminDecisionData?.decision === "reject" && (
         <Paragraph size="sm" className="text-primary-base text-center">
           This membership application has been rejected by an admin.
         </Paragraph>
       )}
 
       {hasAdminDecision &&
-        adminDecisionData?.decision === 'approve' &&
+        adminDecisionData?.decision === "approve" &&
         !signatureRequirementsMet && (
           <div className="space-y-1 text-center">
             <Paragraph size="sm" className="text-gray-500">
-              Waiting for{' '}
+              Waiting for{" "}
               {adminDecisionData.selectedAdmins.length - getSignedCount()} more
               signature(s) before activation.
             </Paragraph>
@@ -174,14 +174,14 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
         )}
 
       {signatureRequirementsMet &&
-        adminDecisionData?.decision === 'approve' &&
+        adminDecisionData?.decision === "approve" &&
         !isActivated && (
           <div className="space-y-1 text-center">
             <Paragraph size="sm" className="text-green-600">
               ✓ All requirements met! Ready to activate membership.
             </Paragraph>
             <Paragraph size="xs" className="text-green-500">
-              ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{' '}
+              ({getSignedCount()} of {adminDecisionData.selectedAdmins.length}{" "}
               required signatures complete)
             </Paragraph>
           </div>
@@ -200,19 +200,19 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
         title="Activating Membership"
         description={
           isActivated
-            ? 'Membership has been successfully activated! 🎉'
-            : 'Please wait while membership activation is being confirmed on the blockchain.'
+            ? "Membership has been successfully activated! 🎉"
+            : "Please wait while membership activation is being confirmed on the blockchain."
         }
         onClose={handleCloseConfirmationOverlay}
         onConfirmed={handleTransactionConfirmed}
         onTimeout={handleTransactionTimeout}
         showNavigationOptions={isActivated}
         navigationOptions={[
-          { label: 'View Members', url: '/', variant: 'primary' },
+          { label: "View Members", url: "/", variant: "primary" },
           {
-            label: 'Back to Applications',
-            url: '/manage/membership-applications',
-            variant: 'outline',
+            label: "Back to Applications",
+            url: "/manage/membership-applications",
+            variant: "outline",
           },
         ]}
       />

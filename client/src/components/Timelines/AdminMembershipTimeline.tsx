@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import MemberDataComponent from '@/app/manage/membership-applications/_components/MemberDataComponent';
-import Timeline from '@/components/atoms/Timeline';
-import { parseMembershipIntentDatum } from '@/utils';
-import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
-import { AdminDecisionData, TimelineStep, Utxo } from '@types';
-import { useEffect, useState } from 'react';
-import Title from '../atoms/Title';
-import FinalizeDecision from '../FinalizeDecision';
-import ApproveReject from '../RejectApprove';
-import MultisigProgressTracker from '../signature-progress/MultisigProgressTracker';
+import MemberDataComponent from "@/app/manage/membership-applications/_components/MemberDataComponent";
+import Timeline from "@/components/atoms/Timeline";
+import { parseMembershipIntentDatum } from "@/utils";
+import { MemberData } from "@sidan-lab/cardano-ambassador-tool";
+import { AdminDecisionData, TimelineStep, Utxo } from "@types";
+import { useEffect, useState } from "react";
+import Title from "../atoms/Title";
+import FinalizeDecision from "../FinalizeDecision";
+import ApproveReject from "../RejectApprove";
+import MultisigProgressTracker from "../signature-progress/MultisigProgressTracker";
 
 type ExtendedMemberData = MemberData & {
   txHash?: string;
@@ -77,50 +77,50 @@ const AdminMembershipTimeline = ({
   };
 
   const getIntentSubmittedStatus = () => {
-    return membershipData ? 'completed' : 'pending';
+    return membershipData ? "completed" : "pending";
   };
 
   const getAdminReviewStatus = () => {
-    if (!membershipData) return 'pending';
-    if (!adminDecisionData?.decision) return 'current';
-    return 'completed';
+    if (!membershipData) return "pending";
+    if (!adminDecisionData?.decision) return "current";
+    return "completed";
   };
 
   const getMultisigApprovalStatus = () => {
-    if (!adminDecisionData?.decision) return 'pending';
-    if (signatureRequirementsMet()) return 'completed';
-    return 'current';
+    if (!adminDecisionData?.decision) return "pending";
+    if (signatureRequirementsMet()) return "completed";
+    return "current";
   };
 
   const getMembershipActivatedStatus = () => {
-    if (signatureRequirementsMet()) return 'current';
-    return 'pending';
+    if (signatureRequirementsMet()) return "current";
+    return "pending";
   };
 
   const applicationProgress: TimelineStep[] = [
     {
-      id: 'intent-submitted',
-      title: 'Intent Form Submitted',
+      id: "intent-submitted",
+      title: "Intent Form Submitted",
       content: (
         <MemberDataComponent readonly={true} membershipData={membershipData} />
       ),
       status: getIntentSubmittedStatus(),
     },
     {
-      id: 'admin-review',
-      title: 'Admin Review',
+      id: "admin-review",
+      title: "Admin Review",
       content: (
         <ApproveReject
           intentUtxo={intentUtxo}
-          context={'MembershipIntent'}
+          context={"MembershipIntent"}
           onDecisionUpdate={handleAdminDecisionUpdate}
         />
       ),
       status: getAdminReviewStatus(),
     },
     {
-      id: 'multisig-approval',
-      title: 'Multisig Approval',
+      id: "multisig-approval",
+      title: "Multisig Approval",
       content: (
         <MultisigProgressTracker
           txhash={intentUtxo?.txHash}
@@ -130,13 +130,13 @@ const AdminMembershipTimeline = ({
       status: getMultisigApprovalStatus(),
     },
     {
-      id: 'membership-activated',
-      title: 'Membership Activated',
+      id: "membership-activated",
+      title: "Membership Activated",
       content: (
         <FinalizeDecision
           txhash={intentUtxo?.txHash}
           adminDecisionData={adminDecisionData}
-          context={'MembershipIntent'}
+          context={"MembershipIntent"}
           onFinalizationComplete={handleActivationComplete}
         />
       ),

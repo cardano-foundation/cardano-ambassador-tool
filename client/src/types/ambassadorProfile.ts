@@ -34,7 +34,7 @@ export interface AmbassadorProfile {
     }>;
   };
   activities: Array<{
-    type: 'topic' | 'reply';
+    type: "topic" | "reply";
     title: string;
     url: string;
     created_at: string;

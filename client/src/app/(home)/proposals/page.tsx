@@ -1,75 +1,75 @@
-'use client';
+"use client";
 
-import Button from '@/components/atoms/Button';
-import Chip from '@/components/atoms/Chip';
-import Paragraph from '@/components/atoms/Paragraph';
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
-import Select from '@/components/atoms/Select';
-import Title from '@/components/atoms/Title';
-import Copyable from '@/components/Copyable';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import { ColumnDef, Table } from '@/components/Table/Table';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { routes } from '@/config/routes';
-import useProposals from '@/hooks/useProposals';
-import { formatAdaAmount } from '@/utils';
-import { Proposal } from '@types';
-import { ArrowUpRightFromSquare } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+import Button from "@/components/atoms/Button";
+import Chip from "@/components/atoms/Chip";
+import Paragraph from "@/components/atoms/Paragraph";
+import RichTextDisplay from "@/components/atoms/RichTextDisplay";
+import Select from "@/components/atoms/Select";
+import Title from "@/components/atoms/Title";
+import Copyable from "@/components/Copyable";
+import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
+import { ColumnDef, Table } from "@/components/Table/Table";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { routes } from "@/config/routes";
+import useProposals from "@/hooks/useProposals";
+import { formatAdaAmount } from "@/utils";
+import { Proposal } from "@types";
+import { ArrowUpRightFromSquare } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
-const getChipVariant = (status: Proposal['status']) => {
+const getChipVariant = (status: Proposal["status"]) => {
   switch (status) {
-    case 'pending':
-      return 'warning';
-    case 'submitted':
-      return 'default';
-    case 'under_review':
-      return 'default';
-    case 'approved':
-      return 'success';
-    case 'rejected':
-      return 'error';
-    case 'signoff_pending':
-      return 'success';
-    case 'paid_out':
-      return 'success';
+    case "pending":
+      return "warning";
+    case "submitted":
+      return "default";
+    case "under_review":
+      return "default";
+    case "approved":
+      return "success";
+    case "rejected":
+      return "error";
+    case "signoff_pending":
+      return "success";
+    case "paid_out":
+      return "success";
     default:
-      return 'inactive';
+      return "inactive";
   }
 };
 
-const formatStatus = (status: Proposal['status']) => {
-  return status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
+const formatStatus = (status: Proposal["status"]) => {
+  return status.charAt(0).toUpperCase() + status.slice(1).replace("_", " ");
 };
 
 const truncateToWords = (text: string, wordCount: number = 8) => {
-  if (!text) return 'No description';
-  const words = text.split(' ');
+  if (!text) return "No description";
+  const words = text.split(" ");
   if (words.length <= wordCount) return text;
-  return words.slice(0, wordCount).join(' ') + '...';
+  return words.slice(0, wordCount).join(" ") + "...";
 };
 
 const proposalColumns: ColumnDef<Proposal>[] = [
   {
-    header: '#',
-    accessor: 'id',
+    header: "#",
+    accessor: "id",
     sortable: true,
     cell: (value) => (
       <span className="text-muted-foreground text-sm">{value}</span>
     ),
   },
   {
-    header: 'Proposal title',
-    accessor: 'title',
+    header: "Proposal title",
+    accessor: "title",
     sortable: true,
     cell: (value) => (
       <span className="text-foreground text-sm font-medium">{value}</span>
     ),
   },
   {
-    header: 'Project details',
-    accessor: 'url',
+    header: "Project details",
+    accessor: "url",
     sortable: false,
     cell: (value) => {
       if (!value)
@@ -92,18 +92,18 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     },
   },
   {
-    header: 'Funds Requested',
-    accessor: 'fundsRequested',
+    header: "Funds Requested",
+    accessor: "fundsRequested",
     sortable: true,
     cell: (value) => (
       <span className="text-sm">
-        {value && value !== '0' ? formatAdaAmount(value) : 'N/A'}
+        {value && value !== "0" ? formatAdaAmount(value) : "N/A"}
       </span>
     ),
   },
   {
-    header: 'Submitted By',
-    accessor: 'submittedByAddress',
+    header: "Submitted By",
+    accessor: "submittedByAddress",
     sortable: false,
     cell: (value: string) => (
       <Copyable
@@ -115,8 +115,8 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     ),
   },
   {
-    header: 'Status',
-    accessor: 'status',
+    header: "Status",
+    accessor: "status",
     sortable: true,
     cell: (value, row) => (
       <div className="space-y-1">
@@ -127,7 +127,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
     ),
   },
   {
-    header: 'Action',
+    header: "Action",
     sortable: false,
     cell: (value, row) => {
       if (row.txHash) {
@@ -138,7 +138,7 @@ const proposalColumns: ColumnDef<Proposal>[] = [
             </Button>
           </Link>
         );
-      } else if (row.status === 'paid_out' && row.slug) {
+      } else if (row.status === "paid_out" && row.slug) {
         return (
           <Link href={routes.completedProposal(row.slug)}>
             <Button variant="primary" size="sm">
@@ -147,15 +147,15 @@ const proposalColumns: ColumnDef<Proposal>[] = [
           </Link>
         );
       }
-      return '';
+      return "";
     },
   },
 ];
 
 export default function ProposalsPage() {
   const { allProposals, loading } = useProposals();
-  const [statusFilter, setStatusFilter] = useState<'all' | Proposal['status']>(
-    'all',
+  const [statusFilter, setStatusFilter] = useState<"all" | Proposal["status"]>(
+    "all",
   );
 
   if (loading) {
@@ -164,26 +164,26 @@ export default function ProposalsPage() {
 
   // Apply status filter
   const filteredProposals =
-    statusFilter === 'all'
+    statusFilter === "all"
       ? allProposals
       : allProposals.filter((proposal) => proposal.status === statusFilter);
 
   // Count by status for display
   const statusCounts = {
-    pending: allProposals.filter((p) => p.status === 'pending').length,
-    approved: allProposals.filter((p) => p.status === 'approved').length,
-    signoff_pending: allProposals.filter((p) => p.status === 'signoff_pending')
+    pending: allProposals.filter((p) => p.status === "pending").length,
+    approved: allProposals.filter((p) => p.status === "approved").length,
+    signoff_pending: allProposals.filter((p) => p.status === "signoff_pending")
       .length,
-    paid_out: allProposals.filter((p) => p.status === 'paid_out').length,
+    paid_out: allProposals.filter((p) => p.status === "paid_out").length,
   };
 
   const statusOptions = [
-    { value: 'all', label: 'All Statuses' },
-    { value: 'paid_out', label: 'Paid Out' },
-    { value: 'approved', label: 'Approved' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'signoff_pending', label: 'Awaiting Signoff' },
-    { value: 'rejected', label: 'Rejected' },
+    { value: "all", label: "All Statuses" },
+    { value: "paid_out", label: "Paid Out" },
+    { value: "approved", label: "Approved" },
+    { value: "pending", label: "Pending" },
+    { value: "signoff_pending", label: "Awaiting Signoff" },
+    { value: "rejected", label: "Rejected" },
   ];
 
   return (
@@ -219,7 +219,7 @@ export default function ProposalsPage() {
               options={statusOptions.map((option) => ({
                 ...option,
                 label:
-                  option.value !== 'all' &&
+                  option.value !== "all" &&
                   statusCounts[option.value as keyof typeof statusCounts] > 0
                     ? `${option.label} (${statusCounts[option.value as keyof typeof statusCounts]})`
                     : option.label,

@@ -1,14 +1,14 @@
-import Card, { CardContent } from '@/components/atoms/Card';
-import Switch from '@/components/atoms/Switch';
-import TextLink from '@/components/atoms/TextLink';
-import Progress from '@/components/atoms/Timeline';
-import Title from '@/components/atoms/Title';
-import Link from 'next/link';
-import React from 'react';
+import Card, { CardContent } from "@/components/atoms/Card";
+import Switch from "@/components/atoms/Switch";
+import TextLink from "@/components/atoms/TextLink";
+import Progress from "@/components/atoms/Timeline";
+import Title from "@/components/atoms/Title";
+import Link from "next/link";
+import React from "react";
 
 interface ActivitySectionProps {
   activities: Array<{
-    type: 'topic' | 'reply';
+    type: "topic" | "reply";
     title: string;
     url: string;
     created_at: string;
@@ -37,7 +37,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
           </Title>
           <div className="flex items-center">
             <span className="text-muted-foreground mr-1 text-sm">
-              Enable Notifications: {notificationsEnabled ? 'On' : 'Off'}
+              Enable Notifications: {notificationsEnabled ? "On" : "Off"}
             </span>
             <Switch
               checked={notificationsEnabled}
@@ -51,7 +51,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
           </Title>
           <div className="flex items-center">
             <span className="text-muted-foreground mr-1 text-sm">
-              Enable Notifications: {notificationsEnabled ? 'On' : 'Off'}
+              Enable Notifications: {notificationsEnabled ? "On" : "Off"}
             </span>
             <Switch
               checked={notificationsEnabled}
@@ -84,7 +84,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
                   {getRelativeTime(activity.created_at)}
                 </div>
               ),
-              status: 'pending' as const,
+              status: "pending" as const,
             }))}
           />
         </div>
@@ -100,7 +100,7 @@ export const ActivitySection: React.FC<ActivitySectionProps> = ({
                 onToggleShowAll();
               }}
             >
-              {showAllActivities ? 'Show Less' : 'View All'}
+              {showAllActivities ? "Show Less" : "View All"}
             </TextLink>
           </div>
         )}

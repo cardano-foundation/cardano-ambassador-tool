@@ -1,11 +1,11 @@
 export const routes = {
   // Public routes
-  home: '/',
-  about: '/about',
-  proposals: '/proposals',
-  newProposal: '/proposals/new',
-  signUp: '/sign-up',
-  unauthorized: '/unauthorized',
+  home: "/",
+  userGuide: "/user-guide",
+  proposals: "/proposals",
+  newProposal: "/proposals/new",
+  signUp: "/sign-up",
+  unauthorized: "/unauthorized",
 
   // Dynamic public routes
   proposal: (txhash: string) => `/proposals/${txhash}`,
@@ -13,21 +13,22 @@ export const routes = {
 
   // User/Member routes
   my: {
-    profile: '/my/profile',
-    submissions: '/my/submissions',
+    profile: "/my/profile",
+    submissions: "/my/submissions",
     proposals: (txhash: string) => `/my/proposals/${txhash}`,
   },
 
   // Admin routes
   manage: {
-    ambassadors: '/manage/memberships',
-    membershipApplications: '/manage/membership-applications',
+    ambassadors: "/manage/memberships",
+    membershipApplications: "/manage/membership-applications",
     membershipApplication: (txhash: string) =>
       `/manage/membership-applications/${txhash}`,
-    proposalApplications: '/manage/proposal-applications',
+    proposalApplications: "/manage/proposal-applications",
     proposal: (txhash: string) => `/manage/proposal-applications/${txhash}`,
-    treasurySignoffs: '/manage/treasury-signoffs',
+    treasurySignoffs: "/manage/treasury-signoffs",
     treasurySignoff: (txhash: string) => `/manage/treasury-signoffs/${txhash}`,
+    adminGuide: "/admin-guide",
   },
 } as const;
 

@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
   selectIsAppLoading,
   selectIsInitialLoad,
   selectShouldShowLoading,
   updateLoadingState as updateLoadingStateAction,
-} from '@/lib/redux/features/ui';
+} from "@/lib/redux/features/ui";
 
 /**
  * App loading hook - now delegates to Redux.

@@ -1,7 +1,7 @@
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { BrowserWallet, IWallet } from '@meshsdk/core';
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { BrowserWallet, IWallet } from "@meshsdk/core";
 
-const WALLET_PERSISTENCE_KEY = 'wallet-selection';
+const WALLET_PERSISTENCE_KEY = "wallet-selection";
 
 // Wallet discovery
 export const getAvailableWallets = async () => {

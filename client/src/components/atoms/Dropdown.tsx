@@ -1,6 +1,6 @@
-'use client';
-import { cn } from '@/utils/utils';
-import { useEffect, useRef, useState } from 'react';
+"use client";
+import { cn } from "@/utils/utils";
+import { useEffect, useRef, useState } from "react";
 
 interface DropdownOption {
   value: string;
@@ -20,7 +20,7 @@ export default function Dropdown({
   options,
   value,
   onValueChange,
-  placeholder = 'Select option...',
+  placeholder = "Select option...",
   disabled = false,
   className,
 }: DropdownProps) {
@@ -40,11 +40,11 @@ export default function Dropdown({
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -61,7 +61,7 @@ export default function Dropdown({
     <div
       ref={dropdownRef}
       className={cn(
-        'relative inline-block w-full min-w-0 text-left sm:min-w-[200px]',
+        "relative inline-block w-full min-w-0 text-left sm:min-w-[200px]",
         className,
       )}
     >
@@ -75,10 +75,10 @@ export default function Dropdown({
           if (!disabled) setIsOpen(!isOpen);
         }}
         className={cn(
-          'inline-flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-sm transition-colors focus-visible:outline-none',
-          'bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-primary/20 hover:cursor-pointer focus:ring-2',
-          disabled && 'hover:border-border cursor-not-allowed opacity-50',
-          isOpen && 'border-primary ring-primary/20 ring-2',
+          "inline-flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-sm transition-colors focus-visible:outline-none",
+          "bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-primary/20 hover:cursor-pointer focus:ring-2",
+          disabled && "hover:border-border cursor-not-allowed opacity-50",
+          isOpen && "border-primary ring-primary/20 ring-2",
         )}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -87,16 +87,16 @@ export default function Dropdown({
         <span
           id="dropdown-label"
           className={cn(
-            selectedOption ? 'text-foreground' : 'text-muted-foreground',
-            'mr-2 truncate',
+            selectedOption ? "text-foreground" : "text-muted-foreground",
+            "mr-2 truncate",
           )}
         >
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <svg
           className={cn(
-            'text-muted-foreground h-4 w-4 flex-shrink-0 transition-transform',
-            isOpen && 'rotate-180',
+            "text-muted-foreground h-4 w-4 flex-shrink-0 transition-transform",
+            isOpen && "rotate-180",
           )}
           fill="none"
           stroke="currentColor"
@@ -138,10 +138,10 @@ export default function Dropdown({
                     handleSelect(option.value);
                   }}
                   className={cn(
-                    'flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm transition-colors',
-                    'text-foreground hover:bg-muted hover:text-foreground hover:cursor-pointer',
+                    "flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm transition-colors",
+                    "text-foreground hover:bg-muted hover:text-foreground hover:cursor-pointer",
                     value === option.value &&
-                      'bg-muted text-primary font-medium',
+                      "bg-muted text-primary font-medium",
                   )}
                   role="option"
                   aria-selected={value === option.value}

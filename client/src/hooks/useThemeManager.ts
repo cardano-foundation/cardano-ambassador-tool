@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
   selectTheme,
   selectIsThemeInitialized,
@@ -8,11 +8,11 @@ import {
   selectIsLight,
   setTheme as setThemeAction,
   toggleTheme as toggleThemeAction,
-} from '@/lib/redux/features/ui';
-import { useThemeSync } from '@/lib/redux/features/ui/useThemeSync';
+} from "@/lib/redux/features/ui";
+import { useThemeSync } from "@/lib/redux/features/ui/useThemeSync";
 
 // Re-export type for backward compatibility
-export type Theme = 'light' | 'dark';
+export type Theme = "light" | "dark";
 
 /**
  * Theme manager hook - now delegates to Redux.

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import UserAvatar from '@/components/atoms/UserAvatar';
-import { Camera } from 'lucide-react';
-import { useRef } from 'react';
+import UserAvatar from "@/components/atoms/UserAvatar";
+import { Camera } from "lucide-react";
+import { useRef } from "react";
 
 interface ProfileImageEditorProps {
   currentImage?: string | null;
@@ -14,8 +14,8 @@ interface ProfileImageEditorProps {
 export default function ProfileImageEditor({
   currentImage,
   onImageUpload,
-  userName = 'User',
-  className = '',
+  userName = "User",
+  className = "",
 }: ProfileImageEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 

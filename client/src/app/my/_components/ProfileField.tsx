@@ -7,7 +7,7 @@ interface ProfileFieldProps {
 export default function ProfileField({
   label,
   children,
-  className = '',
+  className = "",
 }: ProfileFieldProps) {
   return (
     <div className={`flex items-start gap-4 sm:gap-3 ${className}`}>

@@ -1,7 +1,7 @@
-'use client';
-import { cn } from '@/utils';
-import { Check } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+"use client";
+import { cn } from "@/utils";
+import { Check } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 interface CheckboxProps {
   checked?: boolean;
@@ -18,7 +18,7 @@ export default function Checkbox({
   disabled = false,
   indeterminate = false,
   className,
-  id = 'checkbox',
+  id = "checkbox",
 }: CheckboxProps) {
   const ref = useRef<HTMLInputElement>(null);
 
@@ -46,11 +46,11 @@ export default function Checkbox({
       <label
         htmlFor={id}
         className={cn(
-          'relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border-2 transition-all duration-200',
+          "relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border-2 transition-all duration-200",
           checked
-            ? 'bg-primary-base border-primary-base text-white'
-            : 'border-gray-300 hover:border-gray-400',
-          disabled && 'cursor-not-allowed opacity-50',
+            ? "bg-primary-base border-primary-base text-white"
+            : "border-gray-300 hover:border-gray-400",
+          disabled && "cursor-not-allowed opacity-50",
           className,
         )}
       >

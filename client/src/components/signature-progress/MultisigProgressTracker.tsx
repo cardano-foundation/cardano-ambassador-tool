@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Paragraph from '@/components/atoms/Paragraph';
-import Copyable from '@/components/Copyable';
-import { findAdminsFromOracle } from '@/lib/auth/roles';
-import { AdminDecisionData } from '@types';
-import { deserializeAddress } from '@meshsdk/core';
-import { CheckCircleIcon, Hourglass, XCircleIcon } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import ProgressTrackerLoading from './ProgressTrackerLoading';
-import { getCurrentNetworkConfig } from '@/config/cardano';
+import Paragraph from "@/components/atoms/Paragraph";
+import Copyable from "@/components/Copyable";
+import { findAdminsFromOracle } from "@/lib/auth/roles";
+import { AdminDecisionData } from "@types";
+import { deserializeAddress } from "@meshsdk/core";
+import { CheckCircleIcon, Hourglass, XCircleIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import ProgressTrackerLoading from "./ProgressTrackerLoading";
+import { getCurrentNetworkConfig } from "@/config/cardano";
 
 interface SignerStatus {
   address: string;
@@ -18,19 +18,22 @@ interface ProgressTrackerClientProps {
   txhash?: string;
   adminDecisionData?: AdminDecisionData | null;
 }
-  const findAddressByPubKeyHash = (pubKeyHash: string, adminAddresses: string[]): string => {
-    for (const address of adminAddresses) {
-      try {
-        const addressInfo = deserializeAddress(address);
-        if (addressInfo.pubKeyHash === pubKeyHash) {
-          return address;
-        }
-      } catch (error) {
-        console.error(`Error deserializing address ${address}:`, error);
+const findAddressByPubKeyHash = (
+  pubKeyHash: string,
+  adminAddresses: string[],
+): string => {
+  for (const address of adminAddresses) {
+    try {
+      const addressInfo = deserializeAddress(address);
+      if (addressInfo.pubKeyHash === pubKeyHash) {
+        return address;
       }
+    } catch (error) {
+      console.error(`Error deserializing address ${address}:`, error);
     }
-    return pubKeyHash;
-  };
+  }
+  return pubKeyHash;
+};
 
 export default function MultisigProgressTracker({
   txhash,
@@ -42,11 +45,21 @@ export default function MultisigProgressTracker({
 
   useEffect(() => {
     const loadSigners = async () => {
+      let adminAddresses: string[] = [];
+
       try {
         const adminData = await findAdminsFromOracle();
-        const adminAddresses = adminData?.adminAddresses || [];
-        setMinRequiredSigners(Number(adminData!.minsigners));
 
+        adminAddresses = adminData?.adminAddresses || [];
+        setMinRequiredSigners(Number(adminData!.minsigners));
+      } catch (error) {
+        console.warn(
+          "Failed to fetch oracle admins, falling back to raw hashes:",
+          error,
+        );
+      }
+
+      try {
         if (
           adminDecisionData &&
           adminDecisionData.selectedAdmins &&
@@ -54,7 +67,10 @@ export default function MultisigProgressTracker({
         ) {
           const signersWithStatus: SignerStatus[] =
             adminDecisionData.selectedAdmins.map((pubKeyHash: string) => {
-              const address = findAddressByPubKeyHash(pubKeyHash, adminAddresses);
+              const address = findAddressByPubKeyHash(
+                pubKeyHash,
+                adminAddresses,
+              );
               return {
                 address: address,
                 signed: adminDecisionData.signers.includes(pubKeyHash),
@@ -69,7 +85,10 @@ export default function MultisigProgressTracker({
           const uniqueSigners = [...new Set([...adminDecisionData.signers])];
           const signersWithStatus: SignerStatus[] = uniqueSigners.map(
             (pubKeyHash) => {
-              const address = findAddressByPubKeyHash(pubKeyHash, adminAddresses);
+              const address = findAddressByPubKeyHash(
+                pubKeyHash,
+                adminAddresses,
+              );
               return {
                 address: address,
                 signed: true,
@@ -81,7 +100,7 @@ export default function MultisigProgressTracker({
           setSigners([]);
         }
       } catch (error) {
-        console.error('Failed to load signers:', error);
+        console.error("Failed to process signers:", error);
         setSigners([]);
       } finally {
         setLoading(false);
@@ -114,7 +133,7 @@ export default function MultisigProgressTracker({
               <Copyable
                 withKey={false}
                 value={signer.address}
-                keyLabel={''}
+                keyLabel={""}
                 link={`${getCurrentNetworkConfig().explorerUrl}/address/${signer.address}`}
               />
               <div className="flex items-center gap-2">
@@ -123,15 +142,15 @@ export default function MultisigProgressTracker({
                     color="oklch(83.7% 0.128 66.29)"
                     className="h-4 w-4 text-orange-300"
                   />
-                ) : adminDecisionData?.decision === 'approve' ? (
+                ) : adminDecisionData?.decision === "approve" ? (
                   <CheckCircleIcon className="h-4 w-4 text-green-500" />
                 ) : (
                   <XCircleIcon className="text-primary-base h-4 w-4" />
                 )}
                 <span className="text-sm">
                   {signer.signed
-                    ? `${adminDecisionData?.decision === 'approve' ? 'Approval' : 'Rejection'} Signed`
-                    : 'Pending Signature'}
+                    ? `${adminDecisionData?.decision === "approve" ? "Approval" : "Rejection"} Signed`
+                    : "Pending Signature"}
                 </span>
               </div>
             </div>
@@ -140,8 +159,10 @@ export default function MultisigProgressTracker({
           <div className="py-4 text-center">
             <Paragraph size="sm" className="">
               {adminDecisionData
-                ? 'Loading signature information...'
-                : 'No admin decision available yet.'}
+                ? adminDecisionData.decision
+                  ? `Decision: ${adminDecisionData.decision} (Syncing signature data...)`
+                  : "Proposal is under review."
+                : "No admin decision available yet."}
             </Paragraph>
           </div>
         )}
@@ -170,15 +191,15 @@ export default function MultisigProgressTracker({
               <div
                 className={`relative h-2 rounded-full transition-all duration-500 ease-out ${
                   isComplete
-                    ? 'bg-linear-to-r from-green-400 to-green-500'
-                    : 'from-primary-400 to-primary-base bg-linear-to-r'
+                    ? "bg-linear-to-r from-green-400 to-green-500"
+                    : "from-primary-400 to-primary-base bg-linear-to-r"
                 }`}
                 style={{ width: `${Math.min(progressPercentage, 100)}%` }}
               >
                 {/* Status dot */}
                 <div
                   className={`absolute top-1/2 right-0 -mr-1.5 h-3 w-3 -translate-y-1/2 transform rounded-full border-2 border-white ${
-                    isComplete ? 'bg-green-500' : 'bg-primary-base'
+                    isComplete ? "bg-green-500" : "bg-primary-base"
                   }`}
                 ></div>
               </div>
@@ -190,7 +211,7 @@ export default function MultisigProgressTracker({
                 {signedCount} of {totalSigners} required signatures
               </Paragraph>
               <span
-                className={`font-medium ${isComplete ? 'text-green-600' : ''}`}
+                className={`font-medium ${isComplete ? "text-green-600" : ""}`}
               >
                 {Math.min(Math.round(progressPercentage), 100)}%
               </span>
@@ -206,7 +227,7 @@ export default function MultisigProgressTracker({
               {!isComplete && (
                 <Paragraph size="xs" className="text-primary-base">
                   Waiting for {totalSigners - signedCount} more signature
-                  {totalSigners - signedCount !== 1 ? 's' : ''}
+                  {totalSigners - signedCount !== 1 ? "s" : ""}
                 </Paragraph>
               )}
             </div>

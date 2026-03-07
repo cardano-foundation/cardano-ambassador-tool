@@ -1,7 +1,7 @@
-import { TransactionInfo } from '@meshsdk/core';
-import { Utxo } from '@types';
-import initSqlJs, { Database } from 'sql.js';
-import initSqlJsLocal from './sql-wasm.js';
+import { TransactionInfo } from "@meshsdk/core";
+import { Utxo } from "@types";
+import initSqlJs, { Database } from "sql.js";
+import initSqlJsLocal from "./sql-wasm.js";
 
 // ---------- Database Manager Class ----------
 export class DatabaseManager {
@@ -45,7 +45,7 @@ export class DatabaseManager {
       // Initialize SQL.js only once
       if (!this.SQL) {
         this.SQL = await initSqlJsLocal({
-          locateFile: () => '/sql-wasm.wasm',
+          locateFile: () => "/sql-wasm.wasm",
         });
       }
 
@@ -62,7 +62,7 @@ export class DatabaseManager {
       this.initializationError =
         error instanceof Error
           ? error
-          : new Error('Unknown database initialization error');
+          : new Error("Unknown database initialization error");
       throw this.initializationError;
     } finally {
       this.isInitializing = false;
@@ -71,7 +71,7 @@ export class DatabaseManager {
 
   query<T = Record<string, unknown>>(sql: string, params: any[] = []): T[] {
     if (!this.db) {
-      throw new Error('Database not initialized. Worker data not loaded yet.');
+      throw new Error("Database not initialized. Worker data not loaded yet.");
     }
 
     const stmt = this.db.prepare(sql);
@@ -86,13 +86,13 @@ export class DatabaseManager {
   }
 
   getUtxosByContext(contextName: string): Utxo[] {
-    return this.query<Utxo>('SELECT * FROM utxos WHERE context = ?', [
+    return this.query<Utxo>("SELECT * FROM utxos WHERE context = ?", [
       contextName,
     ]);
   }
 
   getPayoutUtxos(): TransactionInfo[] {
-    return this.query<TransactionInfo>('SELECT * FROM treasury_payout_txs');
+    return this.query<TransactionInfo>("SELECT * FROM treasury_payout_txs");
   }
 
   isReady(): boolean {

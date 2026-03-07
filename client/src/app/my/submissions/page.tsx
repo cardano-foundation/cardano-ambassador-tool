@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import TopNav from '@/components/navigation/TabNav';
-import SimpleCardanoLoader from '@/components/SimpleCardanoLoader';
-import Button from '@/components/atoms/Button';
-import { routes } from '@/config/routes';
-import { useDatabase, useWalletManager } from '@/hooks';
-import Link from 'next/link';
-import { useState } from 'react';
-import MembershipSubmissionsTab from '../_components/membership/MembershipSubmissionsTab';
-import ProposalSubmissionsTab from '../_components/proposals/ProposalSubmissionsTab';
+import TopNav from "@/components/navigation/TabNav";
+import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
+import Button from "@/components/atoms/Button";
+import { routes } from "@/config/routes";
+import { useDatabase, useWalletManager } from "@/hooks";
+import Link from "next/link";
+import { useState } from "react";
+import MembershipSubmissionsTab from "../_components/membership/MembershipSubmissionsTab";
+import ProposalSubmissionsTab from "../_components/proposals/ProposalSubmissionsTab";
 export default function IntentSubmissionsPage() {
   const tabs = [
-    { id: 'membership-intent', label: 'Membership Application' },
-    { id: 'proposal-intent', label: 'Proposal' },
+    { id: "membership-intent", label: "Membership Application" },
+    { id: "proposal-intent", label: "Proposal" },
   ];
 
-  const [activeTab, setActiveTab] = useState('membership-intent');
+  const [activeTab, setActiveTab] = useState("membership-intent");
   const { dbLoading } = useDatabase();
   const { isConnected } = useWalletManager();
 
@@ -38,8 +38,8 @@ export default function IntentSubmissionsPage() {
         </div>
       </div>
 
-      {activeTab === 'membership-intent' && <MembershipSubmissionsTab />}
-      {activeTab === 'proposal-intent' && <ProposalSubmissionsTab />}
+      {activeTab === "membership-intent" && <MembershipSubmissionsTab />}
+      {activeTab === "proposal-intent" && <ProposalSubmissionsTab />}
     </div>
   );
 }

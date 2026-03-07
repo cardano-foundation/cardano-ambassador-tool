@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 interface UseDateFormattingReturn {
   formatDate: (dateString: string) => string;
@@ -10,12 +10,12 @@ export const useDateFormatting = (): UseDateFormattingReturn => {
   return useMemo(() => {
     const formatDate = (dateString: string): string => {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
         year:
           date.getFullYear() !== new Date().getFullYear()
-            ? 'numeric'
+            ? "numeric"
             : undefined,
       });
     };
@@ -32,9 +32,9 @@ export const useDateFormatting = (): UseDateFormattingReturn => {
       const diffInYears = Math.floor(diffInDays / 365);
 
       const formatTime = (date: Date) => {
-        return date.toLocaleTimeString('en-US', {
-          hour: 'numeric',
-          minute: '2-digit',
+        return date.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
           hour12: true,
         });
       };
@@ -65,18 +65,18 @@ export const useDateFormatting = (): UseDateFormattingReturn => {
       }
 
       if (diffInWeeks < 4) {
-        return `${diffInWeeks} ${diffInWeeks === 1 ? 'week' : 'weeks'} ago`;
+        return `${diffInWeeks} ${diffInWeeks === 1 ? "week" : "weeks"} ago`;
       }
 
       if (diffInMonths < 12) {
-        return `${diffInMonths} ${diffInMonths === 1 ? 'month' : 'months'} ago`;
+        return `${diffInMonths} ${diffInMonths === 1 ? "month" : "months"} ago`;
       }
 
-      return `${diffInYears} ${diffInYears === 1 ? 'year' : 'years'} ago`;
+      return `${diffInYears} ${diffInYears === 1 ? "year" : "years"} ago`;
     };
 
     const cleanHtml = (html: string | null | undefined): string => {
-      return html?.replace(/<[^>]*>/g, '') ?? '';
+      return html?.replace(/<[^>]*>/g, "") ?? "";
     };
 
     return {

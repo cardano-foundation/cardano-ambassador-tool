@@ -1,17 +1,17 @@
-import Paragraph from '@/components/atoms/Paragraph';
-import RichTextDisplay from '@/components/atoms/RichTextDisplay';
-import Title from '@/components/atoms/Title';
-import Copyable from '@/components/Copyable';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { formatAdaAmount, parseAdaInput } from '@/utils/utils';
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
+import Paragraph from "@/components/atoms/Paragraph";
+import RichTextDisplay from "@/components/atoms/RichTextDisplay";
+import Title from "@/components/atoms/Title";
+import Copyable from "@/components/Copyable";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { formatAdaAmount, parseAdaInput } from "@/utils/utils";
+import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 
 type ProposalFormData = ProposalData & {
   description: string;
 };
 
 interface Props {
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   formData: ProposalFormData;
   userAddress?: string;
   proposalId?: string;
@@ -19,11 +19,10 @@ interface Props {
 
 export default function FormReview({ formData }: Props) {
   const formatFundsRequested = () => {
-    if (!formData.fundsRequested) return 'Not specified';
+    if (!formData.fundsRequested) return "Not specified";
     const cleanAmount = parseAdaInput(formData.fundsRequested);
-    return cleanAmount ? formatAdaAmount(cleanAmount) : 'Invalid amount';
+    return cleanAmount ? formatAdaAmount(cleanAmount) : "Invalid amount";
   };
-  
 
   return (
     <div className="sm:px-6">
@@ -48,7 +47,7 @@ export default function FormReview({ formData }: Props) {
                   withKey={false}
                   link={`${getCurrentNetworkConfig().explorerUrl}/address/${formData.receiverWalletAddress}`}
                   value={formData.receiverWalletAddress}
-                  keyLabel={''}
+                  keyLabel={""}
                 />
               ) : (
                 <Paragraph className="text-muted-foreground">
@@ -65,7 +64,7 @@ export default function FormReview({ formData }: Props) {
               Title
             </Title>
             <Paragraph className="text-foreground">
-              {formData.title || 'No title provided'}
+              {formData.title || "No title provided"}
             </Paragraph>
           </div>
         </div>

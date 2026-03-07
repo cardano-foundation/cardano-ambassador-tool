@@ -1,11 +1,11 @@
-import { getCatConstants } from '@/utils';
-import { BlockfrostProvider, TransactionInfo } from '@meshsdk/core';
-import { revalidateTag, unstable_cache } from 'next/cache';
-import { NextRequest, NextResponse } from 'next/server';
+import { getCatConstants } from "@/utils";
+import { BlockfrostProvider, TransactionInfo } from "@meshsdk/core";
+import { revalidateTag, unstable_cache } from "next/cache";
+import { NextRequest, NextResponse } from "next/server";
 
 if (!process.env.BLOCKFROST_API_KEY_PREPROD) {
   throw new Error(
-    'BLOCKFROST_API_KEY_PREPROD environment variable is required',
+    "BLOCKFROST_API_KEY_PREPROD environment variable is required",
   );
 }
 
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest): Promise<
     return NextResponse.json(txs, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }
@@ -63,7 +63,7 @@ async function fetchAddressUTxOsUncached(
 const fetchAddressTxs = (address: string) =>
   unstable_cache(
     async () => fetchAddressUTxOsUncached(address),
-    ['address-txs', address],
+    ["address-txs", address],
     {
       revalidate: 3600, // Cache for 1 hour
       tags: [`txs-${address}`],

@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import Card from '@/components/atoms/Card';
-import Title from '@/components/atoms/Title';
-import TopNav from '@/components/navigation/TabNav';
+import Card from "@/components/atoms/Card";
+import Title from "@/components/atoms/Title";
+import TopNav from "@/components/navigation/TabNav";
 import {
   ActivityPulse,
   BadgesPulse,
   RepliesPulse,
   TopicsPulse,
-} from '@/components/PulseLoader';
-import { useAmbassadorProfile, useDatabase, useDateFormatting } from '@/hooks';
-import { formatAdaAmount, lovelaceToAda, parseMemberDatum } from '@/utils';
-import { getCountryByCode } from '@/utils/locationData';
-import React, { useMemo, useState } from 'react';
-import { ActivitySection } from './ActivitySection';
-import { BadgesSection } from './Badges';
-import { EmptyState } from './EmptyState';
-import { ProfileHeader } from './ProfileHeader';
-import { ProfileSidebar } from './ProfileSidebar';
-import { RepliesSection } from './RepliesSection';
-import { TopicsSection } from './TopicsSection';
-import ProposalSubmissionsTab from '@/app/my/_components/proposals/ProposalSubmissionsTab';
+} from "@/components/PulseLoader";
+import { useAmbassadorProfile, useDatabase, useDateFormatting } from "@/hooks";
+import { formatAdaAmount, lovelaceToAda, parseMemberDatum } from "@/utils";
+import { getCountryByCode } from "@/utils/locationData";
+import React, { useMemo, useState } from "react";
+import { ActivitySection } from "./ActivitySection";
+import { BadgesSection } from "./Badges";
+import { EmptyState } from "./EmptyState";
+import { ProfileHeader } from "./ProfileHeader";
+import { ProfileSidebar } from "./ProfileSidebar";
+import { RepliesSection } from "./RepliesSection";
+import { TopicsSection } from "./TopicsSection";
+import ProposalSubmissionsTab from "@/app/my/_components/proposals/ProposalSubmissionsTab";
 
 interface AmbassadorProfilePageProps {
   ambassadorUsername: string;
@@ -29,7 +29,7 @@ interface AmbassadorProfilePageProps {
 const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
   ambassadorUsername,
 }) => {
-  const [activeTab, setActiveTab] = useState('summary');
+  const [activeTab, setActiveTab] = useState("summary");
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [showAllTopics, setShowAllTopics] = useState(false);
   const [showAllReplies, setShowAllReplies] = useState(false);
@@ -43,13 +43,18 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
     const defaultData = {
       name: decodedUsername,
       username: decodedUsername,
-      walletAddress: '',
-      country: '',
-      city: '',
-      bio_excerpt: '',
-      created_at: '',
-      amount_received: '',
+      walletAddress: "",
+      country: "",
+      city: "",
+      bio_excerpt: "",
+      created_at: "",
+      amount_received: "",
       proposal_count: 0,
+      spo_id: "",
+      drep_id: "",
+      x_handle: "",
+      github: "",
+      discord: "",
     };
 
     const member = members.find((utxo) => {
@@ -83,15 +88,20 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
           memberMetadata.displayName ||
           decodedUsername,
         username: memberMetadata.displayName || decodedUsername,
-        country: countryData?.name || memberMetadata.country || '',
-        city: memberMetadata.city || '',
-        bio_excerpt: memberMetadata.bio || '',
-        created_at: '',
+        country: countryData?.name || memberMetadata.country || "",
+        city: memberMetadata.city || "",
+        bio_excerpt: memberMetadata.bio || "",
+        created_at: "",
         amount_received: formatAdaAmount(
           lovelaceToAda(parsed.member.fundReceived),
         ),
         proposal_count: parsed.member.completion.size,
-        walletAddress: memberMetadata.walletAddress || '',
+        walletAddress: memberMetadata.walletAddress || "",
+        spo_id: memberMetadata.spo_id || "",
+        drep_id: (memberMetadata as any).drep_id || "",
+        x_handle: memberMetadata.x_handle || "",
+        github: memberMetadata.github || "",
+        discord: memberMetadata.discord || "",
       };
     } catch {
       return defaultData;
@@ -105,9 +115,9 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
   } = useAmbassadorProfile(decodedUsername);
 
   const tabs = [
-    { id: 'summary', label: 'Summary' },
-    { id: 'badges', label: 'Badges' },
-    { id: 'proposals', label: 'Proposals' },
+    { id: "summary", label: "Summary" },
+    { id: "badges", label: "Badges" },
+    { id: "proposals", label: "Proposals" },
   ];
 
   const displayProfile = {
@@ -119,7 +129,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
         : {
             topics_created: profile?.summary.stats.topics_created || 0,
             proposal_count: memberData.proposal_count || 0,
-            amount_received: memberData.amount_received || '0',
+            amount_received: memberData.amount_received || "0",
             replies_created: profile?.summary.stats.replies_created || 0,
           },
     },
@@ -132,7 +142,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
     profile?.summary.top_replies && profile.summary.top_replies.length > 0;
   const hasAnyContent = hasActivities || hasTopics || hasReplies;
   const currentTabLabel =
-    tabs.find((tab) => tab.id === activeTab)?.label || 'Content';    
+    tabs.find((tab) => tab.id === activeTab)?.label || "Content";
 
   return (
     <div
@@ -159,6 +169,10 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
               bio_excerpt: memberData.bio_excerpt,
               created_at: memberData.created_at,
               city: memberData.city,
+              spo_id: memberData.spo_id,
+              x_handle: memberData.x_handle,
+              github: memberData.github,
+              discord: memberData.discord,
             }}
             formatDate={formatDate}
             cleanHtml={cleanHtml}
@@ -187,7 +201,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
             role="tabpanel"
             aria-labelledby={`tab-${activeTab}`}
           >
-            {activeTab === 'summary' && (
+            {activeTab === "summary" && (
               <div className="w-full space-y-6 lg:space-y-8">
                 {forumLoading ? (
                   <>
@@ -261,7 +275,7 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
               </div>
             )}
 
-            {activeTab === 'badges' &&
+            {activeTab === "badges" &&
               (forumLoading ? (
                 <BadgesPulse />
               ) : profile?.badges && profile.badges.length > 0 ? (
@@ -270,8 +284,8 @@ const AmbassadorProfilePage: React.FC<AmbassadorProfilePageProps> = ({
                 <EmptyState message="No badges yet" />
               ))}
 
-            {activeTab === 'proposals' && (
-               <ProposalSubmissionsTab address={memberData.walletAddress} />
+            {activeTab === "proposals" && (
+              <ProposalSubmissionsTab address={memberData.walletAddress} />
             )}
           </div>
         </div>

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkBreaks from 'remark-breaks';
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkBreaks from "remark-breaks";
 
 interface RichTextDisplayProps {
   content?: string;
@@ -10,8 +10,8 @@ interface RichTextDisplayProps {
 }
 
 const RichTextDisplay = ({
-  content = '',
-  className = '',
+  content = "",
+  className = "",
 }: RichTextDisplayProps) => {
   if (!content) {
     return (
@@ -59,45 +59,41 @@ const RichTextDisplay = ({
 
           img: ({ node, ...props }) => {
             const { src, alt, ...restProps } = props;
-  
-            
+
             return (
               <img
                 {...restProps}
                 src={src}
                 className="my-4 h-auto max-w-full rounded-lg border"
-                alt={alt || 'Image'}
-                style={{ 
-                  maxWidth: '100%', 
-                  height: 'auto',
-                  display: 'block'
+                alt={alt || "Image"}
+                style={{
+                  maxWidth: "100%",
+                  height: "auto",
+                  display: "block",
                 }}
-           
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-          
-                  
-                  
+
                   // Show a placeholder for failed images
-                  target.style.border = '2px dashed #e5e7eb';
-                  target.style.background = '#f9fafb';
-                  target.style.padding = '2rem';
-                  target.style.textAlign = 'center';
-                  target.style.color = '#6b7280';
-                  target.style.minHeight = '100px';
-                  target.style.display = 'flex';
-                  target.style.alignItems = 'center';
-                  target.style.justifyContent = 'center';
-                  
+                  target.style.border = "2px dashed #e5e7eb";
+                  target.style.background = "#f9fafb";
+                  target.style.padding = "2rem";
+                  target.style.textAlign = "center";
+                  target.style.color = "#6b7280";
+                  target.style.minHeight = "100px";
+                  target.style.display = "flex";
+                  target.style.alignItems = "center";
+                  target.style.justifyContent = "center";
+
                   // Create a text node showing the error
-                  const errorDiv = document.createElement('div');
-                  errorDiv.innerHTML = `<div style="text-align: center;"><div>🖼️</div><div style="margin-top: 8px; font-size: 14px;">Image failed to load</div><div style="margin-top: 4px; font-size: 12px; opacity: 0.7;">${alt || 'No alt text'}</div></div>`;
-                  target.style.display = 'none';
+                  const errorDiv = document.createElement("div");
+                  errorDiv.innerHTML = `<div style="text-align: center;"><div>🖼️</div><div style="margin-top: 8px; font-size: 14px;">Image failed to load</div><div style="margin-top: 4px; font-size: 12px; opacity: 0.7;">${alt || "No alt text"}</div></div>`;
+                  target.style.display = "none";
                   target.parentNode?.insertBefore(errorDiv, target);
                 }}
                 loading="lazy"
-
-                {...(typeof src === 'string' && !src.startsWith('data:') && { crossOrigin: 'anonymous' })}
+                {...(typeof src === "string" &&
+                  !src.startsWith("data:") && { crossOrigin: "anonymous" })}
               />
             );
           },

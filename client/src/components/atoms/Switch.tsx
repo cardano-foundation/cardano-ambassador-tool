@@ -1,6 +1,6 @@
-'use client';
-import { cn } from '@/utils/utils';
-import { useEffect, useState } from 'react';
+"use client";
+import { cn } from "@/utils/utils";
+import { useEffect, useState } from "react";
 
 interface SwitchProps {
   checked?: boolean;
@@ -35,26 +35,26 @@ export default function Switch({
       disabled={disabled}
       onClick={handleToggle}
       style={{
-        width: '44px',
-        height: '24px',
-        minWidth: '44px',
-        minHeight: '24px',
+        width: "44px",
+        height: "24px",
+        minWidth: "44px",
+        minHeight: "24px",
       }}
       className={cn(
-        'inline-flex flex-shrink-0 items-center rounded-full border-2 border-transparent transition-all duration-200 ease-in-out',
-        'focus-visible:ring-ring hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-        isChecked ? 'bg-primary-base' : 'dark:bg-black-500 bg-gray-300',
+        "inline-flex flex-shrink-0 items-center rounded-full border-2 border-transparent transition-all duration-200 ease-in-out",
+        "focus-visible:ring-ring hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+        isChecked ? "bg-primary-base" : "dark:bg-black-500 bg-gray-300",
         disabled &&
-          'dark:bg-black-200 cursor-not-allowed bg-gray-300 opacity-70',
+          "dark:bg-black-200 cursor-not-allowed bg-gray-300 opacity-70",
         className,
       )}
     >
       <span
-        style={{ width: '20px', height: '20px' }}
+        style={{ width: "20px", height: "20px" }}
         className={cn(
-          'pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 ease-in-out',
-          disabled ? 'bg-gray-200' : 'bg-white',
-          isChecked ? 'translate-x-5' : 'translate-x-0',
+          "pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 ease-in-out",
+          disabled ? "bg-gray-200" : "bg-white",
+          isChecked ? "translate-x-5" : "translate-x-0",
         )}
       />
     </button>

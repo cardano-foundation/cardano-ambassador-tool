@@ -1,5 +1,5 @@
-import { cn } from '@/utils/utils';
-import { forwardRef, InputHTMLAttributes, ReactNode } from 'react';
+import { cn } from "@/utils/utils";
+import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -36,18 +36,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <div className="inline-flex items-start justify-start self-stretch">
             <div
               className={cn(
-                'border-border flex h-10 items-center justify-start gap-2.5 rounded-tl-md rounded-bl-md border-t border-b border-l py-3 pr-[5px] pl-3',
-                disabled && 'bg-gray-100 opacity-50',
-                error && 'border-primary-500',
+                "border-border flex h-10 items-center justify-start gap-2.5 rounded-tl-md rounded-bl-md border-t border-b border-l py-3 pr-[5px] pl-3",
+                disabled && "bg-gray-100 opacity-50",
+                error && "border-primary-500",
                 prefixClassName,
               )}
             >
               <div
                 className={cn(
-                  'justify-center text-base leading-normal font-normal text-neutral-500',
-                  'focus:!border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
-                  disabled && 'text-gray-400',
-                  error && 'text-primary-500',
+                  "justify-center text-base leading-normal font-normal text-neutral-500",
+                  "focus:!border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none",
+                  disabled && "text-gray-400",
+                  error && "text-primary-500",
                 )}
               >
                 {prefix}
@@ -55,10 +55,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             </div>
             <div
               className={cn(
-                'flex h-10 flex-1 items-center justify-start gap-2.5 rounded-tr-md rounded-br-md px-3 py-3 outline-1 outline-offset-[-1px]',
-                error ? 'outline-primary-base' : 'outline-border',
-                disabled && 'cursor-not-allowed bg-gray-100 opacity-50',
-                icon && 'pl-10',
+                "flex h-10 flex-1 items-center justify-start gap-2.5 rounded-tr-md rounded-br-md px-3 py-3 outline-1 outline-offset-[-1px]",
+                error ? "outline-primary-base" : "outline-border",
+                disabled && "cursor-not-allowed bg-gray-100 opacity-50",
+                icon && "pl-10",
               )}
             >
               {icon && (
@@ -71,7 +71,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 disabled={disabled}
                 className={cn(
                   "w-full justify-center border-none bg-transparent font-['Chivo'] text-base leading-normal font-normal text-neutral-900 outline-none placeholder:text-neutral-400 focus:outline-none",
-                  disabled && 'cursor-not-allowed text-gray-400',
+                  disabled && "cursor-not-allowed text-gray-400",
                 )}
                 {...props}
               />
@@ -91,9 +91,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             className={cn(
-              'block text-sm font-medium',
-              error ? 'text-primary-base' : 'text-foreground',
-              disabled && 'opacity-50',
+              "block text-sm font-medium",
+              error ? "text-primary-base" : "text-foreground",
+              disabled && "opacity-50",
             )}
           >
             {label}
@@ -111,19 +111,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             disabled={disabled}
             className={cn(
-              'h-10 w-full rounded-md border px-3 py-2 transition-colors',
-              'text-sm font-normal',
-              'bg-background border-border placeholder:text-muted-foreground',
-              'focus:border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none',
-              'hover:border-primary-300',
-              icon && 'pl-10',
+              "h-10 w-full rounded-md border px-3 py-2 transition-colors",
+              "text-sm font-normal",
+              "bg-background border-border placeholder:text-muted-foreground",
+              "focus:border-primary-300 focus:ring-primary-300/20 focus:ring-2 focus:outline-none",
+              "hover:border-primary-300",
+              icon && "pl-10",
               disabled && [
-                'cursor-not-allowed opacity-50',
-                'hover:border-border focus:border-border',
+                "cursor-not-allowed opacity-50",
+                "hover:border-border focus:border-border",
               ],
               error && [
-                'border-primary-500',
-                'focus:border-primary-500 focus:ring-primary-500/20',
+                "border-primary-500",
+                "focus:border-primary-500 focus:ring-primary-500/20",
               ],
               className,
             )}
@@ -141,6 +141,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   },
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 export default Input;

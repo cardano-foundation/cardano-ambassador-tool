@@ -1,5 +1,5 @@
-import { useWalletManager } from '@/hooks';
-import { findAdminsFromOracle } from '@/lib/auth/roles';
+import { useWalletManager } from "@/hooks";
+import { findAdminsFromOracle } from "@/lib/auth/roles";
 import {
   dbUtxoToMeshUtxo,
   extractRequiredSigners,
@@ -8,15 +8,15 @@ import {
   getCatConstants,
   getCounterUtxo,
   getProvider,
-} from '@/utils';
-import { storageApiClient } from '@/utils/storageApiClient';
-import { deserializeAddress } from '@meshsdk/core';
-import { AdminActionTx } from '@sidan-lab/cardano-ambassador-tool';
-import { AdminDecision, AdminDecisionData, Utxo } from '@types';
-import React, { useEffect, useState } from 'react';
-import AdminSelectorModal from './AdminSelectorModal';
-import Button from './atoms/Button';
-import ErrorAccordion from './ErrorAccordion';
+} from "@/utils";
+import { storageApiClient } from "@/utils/storageApiClient";
+import { deserializeAddress } from "@meshsdk/core";
+import { AdminActionTx } from "@sidan-lab/cardano-ambassador-tool";
+import { AdminDecision, AdminDecisionData, Utxo } from "@types";
+import React, { useEffect, useState } from "react";
+import AdminSelectorModal from "./AdminSelectorModal";
+import Button from "./atoms/Button";
+import ErrorAccordion from "./ErrorAccordion";
 interface ApproveRejectProps {
   intentUtxo?: Utxo;
   context: string;
@@ -40,7 +40,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
   const [currentWalletHasSigned, setCurrentWalletHasSigned] = useState(false);
   const [showAdminSelector, setShowAdminSelector] = useState(false);
   const [pendingDecision, setPendingDecision] = useState<
-    'approve' | 'reject' | null
+    "approve" | "reject" | null
   >(null);
   const { wallet } = useWalletManager();
 
@@ -58,7 +58,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       const hasSigned = signers?.includes(currentPubKeyHash) || false;
       setCurrentWalletHasSigned(hasSigned);
     } catch (error) {
-      console.error('Error checking wallet signature status:', error);
+      console.error("Error checking wallet signature status:", error);
       setCurrentWalletHasSigned(false);
     }
   };
@@ -71,7 +71,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       const adminData = await findAdminsFromOracle();
 
       if (!adminData) {
-        console.error('Could not fetch admin data from oracle');
+        console.error("Could not fetch admin data from oracle");
         return;
       }
 
@@ -87,7 +87,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
       await checkCurrentWalletSigned(adminDecision);
     } catch (error) {
-      console.error('Error extracting decision data:', error);
+      console.error("Error extracting decision data:", error);
       onDecisionUpdate?.(null);
     }
   };
@@ -99,7 +99,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       secondDecision();
     } else {
       // Show  modal for initial decision
-      setPendingDecision(decision as 'approve' | 'reject');
+      setPendingDecision(decision as "approve" | "reject");
       setShowAdminSelector(true);
     }
   }
@@ -109,7 +109,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
     try {
       if (!wallet || !adminDecision) {
-        throw new Error('Wallet or admin decision not available');
+        throw new Error("Wallet or admin decision not available");
       }
 
       // Use partial signing (true) to combine with existing signatures
@@ -117,7 +117,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
       if (!supportSign) {
         throw new Error(
-          'Failed to sign transaction - wallet returned undefined',
+          "Failed to sign transaction - wallet returned undefined",
         );
       }
 
@@ -129,7 +129,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       await storageApiClient.save(
         intentUtxo!.txHash,
         updatedData,
-        'submissions',
+        "submissions",
       );
 
       setAdminDecision(updatedData);
@@ -137,13 +137,40 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       // After adding the new signature, update the parent with new signature data
       await extractAndSendDecisionData(updatedData);
     } catch (error) {
-      console.error('Error seconding decision:', error);
+      console.error("Error seconding decision:", error);
       setSubmitError({
-        message: 'Failed to second the decision',
+        message: "Failed to second the decision",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
       setIsProcessing(false);
+    }
+  }
+
+  async function handleDeleteDecision() {
+    setSubmitError(null);
+    setIsProcessing(true);
+
+    try {
+        if (!adminDecision || !intentUtxo?.txHash) {
+            throw new Error("Missing decision data");
+        }
+
+        // Delete the entire decision file
+        const deleted = await storageApiClient.delete(intentUtxo.txHash, "submissions");
+        if (!deleted) throw new Error("Failed to delete decision file");
+        
+        setAdminDecision(null);
+        onDecisionUpdate?.(null);
+        setCurrentWalletHasSigned(false);
+    } catch (error) {
+        console.error("Error deleting decision:", error);
+        setSubmitError({
+            message: "Failed to delete decision",
+            details: error instanceof Error ? error.message : String(error),
+        });
+    } finally {
+        setIsProcessing(false);
     }
   }
 
@@ -154,21 +181,21 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       const oracleUtxo = await findOracleUtxo();
 
       if (!oracleUtxo) {
-        throw new Error('Failed to fetch Oracle UTxO');
+        throw new Error("Failed to fetch Oracle UTxO");
       }
 
       let counterUtxo = null;
-      if (context === 'MembershipIntent' && decision === 'approve') {
+      if (context === "MembershipIntent" && decision === "approve") {
         counterUtxo = await getCounterUtxo();
         if (!counterUtxo) {
-          throw new Error('Failed to fetch Counter UTxO');
+          throw new Error("Failed to fetch Counter UTxO");
         }
       }
 
       const blockfrost = getProvider();
 
       if (!wallet) {
-        throw new Error('Wallet not connected');
+        throw new Error("Wallet not connected");
       }
 
       const address = await wallet.getChangeAddress();
@@ -186,8 +213,8 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
       );
 
       let unsignedTx;
-      if (context === 'MembershipIntent') {
-        if (decision === 'approve') {
+      if (context === "MembershipIntent") {
+        if (decision === "approve") {
           unsignedTx = await adminAction.approveMember(
             oracleUtxo,
             counterUtxo!,
@@ -201,8 +228,8 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
             adminsPkh,
           );
         }
-      } else if (context === 'ProposalIntent') {
-        if (decision === 'approve') {
+      } else if (context === "ProposalIntent") {
+        if (decision === "approve") {
           unsignedTx = await adminAction.approveProposal(
             oracleUtxo,
             dbUtxoToMeshUtxo(intentUtxo!),
@@ -221,10 +248,10 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
       const firstSigTX = await wallet!.signTx(unsignedTx.txHex, true);
 
-      if (!unsignedTx) throw new Error('Failed to create transaction');
+      if (!unsignedTx) throw new Error("Failed to create transaction");
       if (!firstSigTX)
         throw new Error(
-          'Failed to sign transaction - wallet returned undefined',
+          "Failed to sign transaction - wallet returned undefined",
         );
 
       const { txHex, ...signedTx } = unsignedTx;
@@ -236,15 +263,15 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         ...signedTx,
       };
 
-      await storageApiClient.save(intentUtxo!.txHash, data, 'submissions');
+      await storageApiClient.save(intentUtxo!.txHash, data, "submissions");
 
       setAdminDecision(data);
 
       await extractAndSendDecisionData(data);
     } catch (error) {
-      console.error('Error creating decision:', error);
+      console.error("Error creating decision:", error);
       setSubmitError({
-        message: 'Failed to create admin decision',
+        message: "Failed to create admin decision",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
@@ -259,7 +286,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
 
         const decision = await storageApiClient.get<AdminDecision>(
           intentUtxo!.txHash,
-          'submissions',
+          "submissions",
         );
         setAdminDecision(decision);
 
@@ -267,7 +294,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
           await extractAndSendDecisionData(decision);
         }
       } catch (error) {
-        console.error('Failed to load admin decision:', error);
+        console.error("Failed to load admin decision:", error);
         setAdminDecision(null);
         setCurrentWalletHasSigned(false);
         onDecisionUpdate?.(null);
@@ -333,39 +360,50 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
           <div className="flex items-center justify-between">
             <div
               className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium ${
-                adminDecision.decision === 'approve'
-                  ? 'border-green-500 bg-green-50 text-green-500'
-                  : 'border-primary-base text-primary-base bg-red-50'
+                adminDecision.decision === "approve"
+                  ? "border-green-500 bg-green-50 text-green-500"
+                  : "border-primary-base text-primary-base bg-red-50"
               }`}
             >
               <span
                 className={`h-2 w-2 rounded-full ${
-                  adminDecision.decision === 'approve'
-                    ? 'bg-green-500'
-                    : 'bg-primary-base'
+                  adminDecision.decision === "approve"
+                    ? "bg-green-500"
+                    : "bg-primary-base"
                 }`}
               ></span>
-              {adminDecision.decision === 'approve' ? 'Approved' : 'Rejected'}
+              {adminDecision.decision === "approve" ? "Approved" : "Rejected"}
             </div>
           </div>
         </div>
 
         {/* Only show Second button if current wallet hasn't signed yet */}
         {!currentWalletHasSigned && (
-          <div className="flex justify-center">
+          <div className="flex w-1/2 justify-between gap-2">
             <Button
               variant={
-                adminDecision.decision === 'approve' ? 'primary' : 'outline'
+                adminDecision.decision === "approve" ? "primary" : "outline"
               }
               onClick={() => handleAdminChoice()}
               disabled={isProcessing}
               className={` ${
-                adminDecision.decision === 'approve' ? '' : 'text-primary-600!'
+                adminDecision.decision === "approve" ? "" : "text-primary-600!"
               }`}
             >
               {isProcessing
-                ? 'Processing...'
-                : `Second ${adminDecision.decision === 'approve' ? 'Approval' : 'Rejection'}`}
+                ? "Processing..."
+                : `Second ${adminDecision.decision === "approve" ? "Approval" : "Rejection"}`}
+            </Button>
+            
+            {/* Delete Control for Admins */}
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleDeleteDecision()}
+                disabled={isProcessing}
+                className="text-primary-base!"
+            >
+                Delete Decision
             </Button>
           </div>
         )}
@@ -395,32 +433,32 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         />
 
         <div className="text-base font-medium">
-          Review the{' '}
-          {context === 'MembershipIntent'
-            ? 'membership application'
-            : 'proposal'}{' '}
+          Review the{" "}
+          {context === "MembershipIntent"
+            ? "membership application"
+            : "proposal"}{" "}
           and make a decision:
         </div>
         <div className="flex w-full gap-4">
           <Button
             variant="outline"
-            onClick={() => handleAdminChoice('reject')}
+            onClick={() => handleAdminChoice("reject")}
             disabled={isProcessing || !intentUtxo!.txHash}
             className="text-primary-base! flex-1"
           >
             {isProcessing
-              ? 'Processing...'
-              : `Reject ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
+              ? "Processing..."
+              : `Reject ${context === "MembershipIntent" ? "Application" : "Proposal"}`}
           </Button>
           <Button
             variant="primary"
-            onClick={() => handleAdminChoice('approve')}
+            onClick={() => handleAdminChoice("approve")}
             disabled={isProcessing || !intentUtxo!.txHash}
             className="flex-1"
           >
             {isProcessing
-              ? 'Processing...'
-              : `Approve ${context === 'MembershipIntent' ? 'Application' : 'Proposal'}`}
+              ? "Processing..."
+              : `Approve ${context === "MembershipIntent" ? "Application" : "Proposal"}`}
           </Button>
         </div>
       </div>
@@ -430,7 +468,7 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
         isVisible={showAdminSelector}
         onConfirm={handleAdminSelectionConfirm}
         onCancel={handleAdminSelectionCancel}
-        decision={pendingDecision || 'approve'}
+        decision={pendingDecision || "approve"}
       />
     </>
   );

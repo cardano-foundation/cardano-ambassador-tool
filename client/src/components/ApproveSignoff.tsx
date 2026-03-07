@@ -1,5 +1,5 @@
-import { useWalletManager } from '@/hooks';
-import { findAdminsFromOracle } from '@/lib/auth/roles';
+import { useWalletManager } from "@/hooks";
+import { findAdminsFromOracle } from "@/lib/auth/roles";
 import {
   dbUtxoToMeshUtxo,
   extractRequiredSigners,
@@ -7,15 +7,15 @@ import {
   findOracleUtxo,
   getCatConstants,
   getProvider,
-} from '@/utils';
-import { storageApiClient } from '@/utils/storageApiClient';
-import { deserializeAddress } from '@meshsdk/core';
-import { AdminActionTx } from '@sidan-lab/cardano-ambassador-tool';
-import { AdminDecision, AdminDecisionData, Utxo } from '@types';
-import React, { useEffect, useState } from 'react';
-import AdminSelectorModal from './AdminSelectorModal';
-import Button from './atoms/Button';
-import ErrorAccordion from './ErrorAccordion';
+} from "@/utils";
+import { storageApiClient } from "@/utils/storageApiClient";
+import { deserializeAddress } from "@meshsdk/core";
+import { AdminActionTx } from "@sidan-lab/cardano-ambassador-tool";
+import { AdminDecision, AdminDecisionData, Utxo } from "@types";
+import React, { useEffect, useState } from "react";
+import AdminSelectorModal from "./AdminSelectorModal";
+import Button from "./atoms/Button";
+import ErrorAccordion from "./ErrorAccordion";
 
 interface ApproveSignoffProps {
   proposalUtxo?: Utxo;
@@ -52,7 +52,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       const hasSigned = signers?.includes(currentPubKeyHash) || false;
       setCurrentWalletHasSigned(hasSigned);
     } catch (error) {
-      console.error('Error checking wallet signature status:', error);
+      console.error("Error checking wallet signature status:", error);
       setCurrentWalletHasSigned(false);
     }
   };
@@ -64,7 +64,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       const adminData = await findAdminsFromOracle();
 
       if (!adminData) {
-        console.error('Could not fetch admin data from oracle');
+        console.error("Could not fetch admin data from oracle");
         return;
       }
 
@@ -79,7 +79,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       onDecisionUpdate?.(decisionData);
       await checkCurrentWalletSigned(adminDecision);
     } catch (error) {
-      console.error('Error extracting decision data:', error);
+      console.error("Error extracting decision data:", error);
       onDecisionUpdate?.(null);
     }
   };
@@ -98,14 +98,14 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
 
     try {
       if (!wallet || !adminDecision) {
-        throw new Error('Wallet or admin decision not available');
+        throw new Error("Wallet or admin decision not available");
       }
 
       const supportSign = await wallet.signTx(adminDecision.signedTx, true);
 
       if (!supportSign) {
         throw new Error(
-          'Failed to sign transaction - wallet returned undefined',
+          "Failed to sign transaction - wallet returned undefined",
         );
       }
 
@@ -117,15 +117,15 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       await storageApiClient.save(
         proposalUtxo!.txHash,
         updatedData,
-        'signoff-submissions',
+        "signoff-submissions",
       );
 
       setAdminDecision(updatedData);
       await extractAndSendDecisionData(updatedData);
     } catch (error) {
-      console.error('Error seconding decision:', error);
+      console.error("Error seconding decision:", error);
       setSubmitError({
-        message: 'Failed to second the signoff approval',
+        message: "Failed to second the signoff approval",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
@@ -140,12 +140,12 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       const oracleUtxo = await findOracleUtxo();
 
       if (!oracleUtxo) {
-        throw new Error('Failed to fetch Oracle UTxO');
+        throw new Error("Failed to fetch Oracle UTxO");
       }
 
       const blockfrost = getProvider();
       if (!wallet) {
-        throw new Error('Wallet not connected');
+        throw new Error("Wallet not connected");
       }
       const address = await wallet.getChangeAddress();
       const adminsPkh = selectedAdmins.map(
@@ -167,17 +167,17 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
 
       const firstSigTX = await wallet.signTx(unsignedTx.txHex, true);
 
-      if (!unsignedTx) throw new Error('Failed to create transaction');
+      if (!unsignedTx) throw new Error("Failed to create transaction");
       if (!firstSigTX)
         throw new Error(
-          'Failed to sign transaction - wallet returned undefined',
+          "Failed to sign transaction - wallet returned undefined",
         );
 
       const { txHex, ...signedTx } = unsignedTx;
 
       const data: AdminDecision = {
-        context: 'SignoffApproval',
-        decision: 'approve',
+        context: "SignoffApproval",
+        decision: "approve",
         signedTx: firstSigTX,
         ...signedTx,
       };
@@ -185,14 +185,14 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
       await storageApiClient.save(
         proposalUtxo!.txHash,
         data,
-        'signoff-submissions',
+        "signoff-submissions",
       );
       setAdminDecision(data);
       await extractAndSendDecisionData(data);
     } catch (error) {
-      console.error('Error creating signoff approval:', error);
+      console.error("Error creating signoff approval:", error);
       setSubmitError({
-        message: 'Failed to create signoff approval',
+        message: "Failed to create signoff approval",
         details: error instanceof Error ? error.message : String(error),
       });
     } finally {
@@ -207,7 +207,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
 
         const decision = await storageApiClient.get<AdminDecision>(
           proposalUtxo!.txHash,
-          'signoff-submissions',
+          "signoff-submissions",
         );
         setAdminDecision(decision);
 
@@ -215,7 +215,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
           await extractAndSendDecisionData(decision);
         }
       } catch (error) {
-        console.error('Failed to load signoff decision:', error);
+        console.error("Failed to load signoff decision:", error);
         setAdminDecision(null);
         setCurrentWalletHasSigned(false);
         onDecisionUpdate?.(null);
@@ -285,7 +285,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
               onClick={() => handleApproveSignoff()}
               disabled={isProcessing}
             >
-              {isProcessing ? 'Processing...' : 'Second Signoff Approval'}
+              {isProcessing ? "Processing..." : "Second Signoff Approval"}
             </Button>
           </div>
         )}
@@ -321,7 +321,7 @@ const ApproveSignoff: React.FC<ApproveSignoffProps> = ({
             disabled={isProcessing || !proposalUtxo!.txHash}
             className="w-full"
           >
-            {isProcessing ? 'Processing...' : 'Approve Signoff'}
+            {isProcessing ? "Processing..." : "Approve Signoff"}
           </Button>
         </div>
       </div>

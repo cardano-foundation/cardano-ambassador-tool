@@ -1,5 +1,5 @@
-import { revalidateTag } from 'next/cache';
-import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from "next/cache";
+import { NextRequest, NextResponse } from "next/server";
 
 type RevalidateRequestBody = {
   tags?: string[];
@@ -41,33 +41,33 @@ export async function POST(req: NextRequest) {
 
     // Revalidate all UTxOs
     if (allUtxos) {
-      revalidateTag('all-utxos');
-      revalidated.push('all-utxos');
+      revalidateTag("all-utxos");
+      revalidated.push("all-utxos");
     }
 
     // Revalidate all oracle data (UTxO + admins)
     if (allOracle) {
-      revalidateTag('oracle-data');
-      revalidateTag('oracle-admins');
-      revalidateTag('oracle-utxo');
-      revalidated.push('oracle-data', 'oracle-admins', 'oracle-utxo');
+      revalidateTag("oracle-data");
+      revalidateTag("oracle-admins");
+      revalidateTag("oracle-utxo");
+      revalidated.push("oracle-data", "oracle-admins", "oracle-utxo");
     } else {
       // Individual oracle cache invalidation
       if (oracleAdmins) {
-        revalidateTag('oracle-admins');
-        revalidated.push('oracle-admins');
+        revalidateTag("oracle-admins");
+        revalidated.push("oracle-admins");
       }
 
       if (oracleUtxo) {
-        revalidateTag('oracle-utxo');
-        revalidated.push('oracle-utxo');
+        revalidateTag("oracle-utxo");
+        revalidated.push("oracle-utxo");
       }
     }
 
     // Revalidate all forum profiles
     if (allForumProfiles) {
-      revalidateTag('all-forum-profiles');
-      revalidated.push('all-forum-profiles');
+      revalidateTag("all-forum-profiles");
+      revalidated.push("all-forum-profiles");
     }
 
     // Revalidate specific forum profile
@@ -79,18 +79,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: 'Cache revalidated successfully',
+        message: "Cache revalidated successfully",
         revalidated,
         timestamp: new Date().toISOString(),
       },
       { status: 200 },
     );
   } catch (error) {
-    console.error('Revalidation error:', error);
+    console.error("Revalidation error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to revalidate cache',
+        error: "Failed to revalidate cache",
       },
       { status: 500 },
     );

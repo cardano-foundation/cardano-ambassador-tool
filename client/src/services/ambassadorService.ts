@@ -1,9 +1,9 @@
-import { NormalizedUser } from '@types';
-import axios from 'axios';
-import { revalidateTag, unstable_cache } from 'next/cache';
+import { NormalizedUser } from "@types";
+import axios from "axios";
+import { revalidateTag, unstable_cache } from "next/cache";
 
-const SUMMARY_URL = 'https://forum.cardano.org/u/{username}/summary.json';
-const PROFILE_URL = 'https://forum.cardano.org/u/{username}.json';
+const SUMMARY_URL = "https://forum.cardano.org/u/{username}/summary.json";
+const PROFILE_URL = "https://forum.cardano.org/u/{username}.json";
 
 export interface Ambassador {
   username: string;
@@ -13,11 +13,11 @@ export interface Ambassador {
 
 async function fetchJson(url: string) {
   const apiKey = process.env.CARDANO_FORUM_API_KEY;
-  const apiUser = process.env.CARDANO_FORUM_API_USERNAME ?? 'system';
+  const apiUser = process.env.CARDANO_FORUM_API_USERNAME ?? "system";
 
   if (!apiKey) {
     throw new Error(
-      'CARDANO_FORUM_API_KEY environment variable is not set. Please add it to your .env.local file.',
+      "CARDANO_FORUM_API_KEY environment variable is not set. Please add it to your .env.local file.",
     );
   }
 
@@ -26,8 +26,8 @@ async function fetchJson(url: string) {
       timeout: 15000,
       family: 4,
       headers: {
-        'Api-Key': apiKey,
-        'Api-Username': apiUser,
+        "Api-Key": apiKey,
+        "Api-Username": apiUser,
       },
     });
     return res.data;
@@ -40,14 +40,14 @@ async function tryMultipleUsernameFormats(
 ): Promise<NormalizedUser | null> {
   const usernameVariations = [
     username,
-    username.replace(/\s+/g, '_'), // "Eligendi_est_quod_ob"
-    username.replace(/\s+/g, '-'), // "Eligendi-est-quod-ob"
-    username.split(' ')[0], // "Eligendi" (first word only)
+    username.replace(/\s+/g, "_"), // "Eligendi_est_quod_ob"
+    username.replace(/\s+/g, "-"), // "Eligendi-est-quod-ob"
+    username.split(" ")[0], // "Eligendi" (first word only)
   ];
 
   for (const variation of usernameVariations) {
     try {
-      const summaryUrl = SUMMARY_URL.replace('{username}', variation);
+      const summaryUrl = SUMMARY_URL.replace("{username}", variation);
       await fetchJson(summaryUrl); // Test if this variation works
       const result = await getUserProfileUncached({ username: variation });
       if (result) {
@@ -70,8 +70,8 @@ async function getUserProfileUncached(
   const encodedUsername = encodeURIComponent(username);
 
   try {
-    const summaryUrl = SUMMARY_URL.replace('{username}', encodedUsername);
-    const profileUrl = PROFILE_URL.replace('{username}', encodedUsername);
+    const summaryUrl = SUMMARY_URL.replace("{username}", encodedUsername);
+    const profileUrl = PROFILE_URL.replace("{username}", encodedUsername);
 
     const summaryRaw = await fetchJson(summaryUrl);
     const profileRaw = await fetchJson(profileUrl);
@@ -105,7 +105,7 @@ function processUserData(
     username,
     name: profileUser.name,
     bio_excerpt: profileUser.bio_excerpt,
-    country: profileUser.location || '',
+    country: profileUser.location || "",
     flag: ambassador.flag,
     avatar: profileUser.avatar_template,
     created_at: profileUser.created_at,
@@ -149,7 +149,7 @@ function processUserData(
     .sort(
       (a, b) =>
         (b.like_count ?? 0) - (a.like_count ?? 0) ||
-        (b.created_at ?? '').localeCompare(a.created_at ?? ''),
+        (b.created_at ?? "").localeCompare(a.created_at ?? ""),
     )
     .slice(0, 5);
   profile.summary.top_replies = sortedReplies.map((r: any) => ({
@@ -163,7 +163,7 @@ function processUserData(
   for (const r of repliesRaw) {
     const topic = topicLookup[r.topic_id] || {};
     activities.push({
-      type: 'reply',
+      type: "reply",
       title: topic.fancy_title,
       url: `https://forum.cardano.org/t/${topic.slug}/${r.topic_id}/${r.post_number}`,
       created_at: r.created_at,
@@ -171,7 +171,7 @@ function processUserData(
   }
   for (const t of topicsRaw) {
     activities.push({
-      type: 'topic',
+      type: "topic",
       title: t.fancy_title,
       url: `https://forum.cardano.org/t/${t.slug}/${t.id}`,
       created_at: t.created_at,
@@ -180,7 +180,7 @@ function processUserData(
   for (const l of userSummary.likes ?? []) {
     const topic = topicLookup[l.topic_id] || {};
     activities.push({
-      type: 'like',
+      type: "like",
       title: topic.fancy_title,
       url: `https://forum.cardano.org/t/${topic.slug}/${l.topic_id}/${l.post_number}`,
       created_at: l.created_at,
@@ -189,7 +189,7 @@ function processUserData(
   for (const v of userSummary.votes ?? []) {
     const topic = topicLookup[v.topic_id] || {};
     activities.push({
-      type: 'vote',
+      type: "vote",
       title: topic.fancy_title,
       url: `https://forum.cardano.org/t/${topic.slug}/${v.topic_id}/${v.post_number}`,
       created_at: v.created_at,
@@ -197,7 +197,7 @@ function processUserData(
   }
 
   profile.activities = activities
-    .sort((a, b) => (b.created_at ?? '').localeCompare(a.created_at ?? ''))
+    .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""))
     .slice(0, 5);
 
   const badgeLookup: Record<string, any> = {};
@@ -225,10 +225,10 @@ export const getUserProfile = (ambassador: Ambassador) =>
       const result = await getUserProfileUncached(ambassador);
       return result;
     },
-    ['forum-profile', ambassador.username],
+    ["forum-profile", ambassador.username],
     {
       revalidate: 1800,
-      tags: [`forum-${ambassador.username}`, 'all-forum-profiles'],
+      tags: [`forum-${ambassador.username}`, "all-forum-profiles"],
     },
   )();
 

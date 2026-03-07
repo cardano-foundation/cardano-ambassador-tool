@@ -1,25 +1,24 @@
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { getCatConstants } from '@/utils';
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { getCatConstants } from "@/utils";
 import {
   parseMemberDatum,
   parseMembershipIntentDatum,
   parseProposalDatum,
-} from '@/utils/utils';
-import { BlockfrostProvider, UTxO } from '@meshsdk/core';
-import { scripts } from '@sidan-lab/cardano-ambassador-tool';
-import { revalidateTag, unstable_cache } from 'next/cache';
-import { NextRequest, NextResponse } from 'next/server';
+} from "@/utils/utils";
+import { BlockfrostProvider, UTxO } from "@meshsdk/core";
+import { scripts } from "@sidan-lab/cardano-ambassador-tool";
+import { revalidateTag, unstable_cache } from "next/cache";
+import { NextRequest, NextResponse } from "next/server";
 
 if (!process.env.BLOCKFROST_API_KEY_PREPROD) {
   throw new Error(
-    'BLOCKFROST_API_KEY_PREPROD environment variable is required',
+    "BLOCKFROST_API_KEY_PREPROD environment variable is required",
   );
 }
 
 const blockfrost = new BlockfrostProvider(
   process.env.BLOCKFROST_API_KEY_PREPROD,
 );
-
 
 const catConstants = getCatConstants();
 
@@ -34,31 +33,31 @@ const SCRIPT_ADDRESSES = {
 
 const actionData = {
   sign_of_approval: {
-    errorContext: 'sign off approval',
+    errorContext: "sign off approval",
     address: SCRIPT_ADDRESSES.SIGN_OFF_APPROVAL,
   },
   members: {
-    errorContext: 'Member',
+    errorContext: "Member",
     address: SCRIPT_ADDRESSES.MEMBER_NFT,
   },
   membership_intent: {
-    errorContext: 'Membership Intent',
+    errorContext: "Membership Intent",
     address: SCRIPT_ADDRESSES.MEMBERSHIP_INTENT,
   },
   proposals: {
-    errorContext: 'Proposal',
+    errorContext: "Proposal",
     address: SCRIPT_ADDRESSES.PROPOSAL,
   },
   proposal_intent: {
-    errorContext: 'Proposal Intent',
+    errorContext: "Proposal Intent",
     address: SCRIPT_ADDRESSES.PROPOSE_INTENT,
   },
   specific_address_utxos: {
-    errorContext: 'Address',
-    address: '',
+    errorContext: "Address",
+    address: "",
   },
   treasury_payouts: {
-    errorContext: 'Treasury Payout',
+    errorContext: "Treasury Payout",
     address: SCRIPT_ADDRESSES.TREASURY_PAYOUTS,
   },
 } as const;
@@ -85,20 +84,20 @@ export async function POST(req: NextRequest): Promise<
     const action = actionData[context];
 
     if (!action) {
-      return NextResponse.json({ error: 'Invalid context' }, { status: 400 });
+      return NextResponse.json({ error: "Invalid context" }, { status: 400 });
     }
 
     const userAddress = address ?? action.address;
 
     if (forceRefresh) {
       revalidateTag(`utxos-${userAddress}`);
-      revalidateTag('all-utxos');
+      revalidateTag("all-utxos");
     }
 
     const utxos = await fetchAddressUTxOs(userAddress);
 
     const validUtxos =
-      context == 'specific_address_utxos' 
+      context == "specific_address_utxos"
         ? utxos
         : utxos.filter((utxo) => utxo.output.plutusData);
 
@@ -108,7 +107,7 @@ export async function POST(req: NextRequest): Promise<
 
         try {
           if (
-            ['proposals', 'proposal_intent', 'sign_of_approval'].includes(
+            ["proposals", "proposal_intent", "sign_of_approval"].includes(
               context,
             )
           ) {
@@ -116,16 +115,16 @@ export async function POST(req: NextRequest): Promise<
             if (parsed?.metadata) {
               let filename = null;
               let description = null;
-              
+
               if (parsed.metadata.url) {
-                if (parsed.metadata.url.includes('|')) {
-                  filename = parsed.metadata.url.split('|')[1];
+                if (parsed.metadata.url.includes("|")) {
+                  filename = parsed.metadata.url.split("|")[1];
                 } else {
-                  filename = parsed.metadata.url.split('/').pop();
+                  filename = parsed.metadata.url.split("/").pop();
                 }
               }
-              
-              if (filename && filename.endsWith('.md')) {
+
+              if (filename && filename.endsWith(".md")) {
                 try {
                   const response = await fetch(
                     `${req.nextUrl.origin}/api/proposal-content?filename=${encodeURIComponent(filename)}`,
@@ -136,7 +135,7 @@ export async function POST(req: NextRequest): Promise<
                     description = data.content;
                   }
                 } catch (err) {
-                  console.error('Error fetching description:', err);
+                  console.error("Error fetching description:", err);
                 }
               }
 
@@ -149,7 +148,7 @@ export async function POST(req: NextRequest): Promise<
                 },
               };
             }
-          } else if (context === 'membership_intent') {
+          } else if (context === "membership_intent") {
             const parsed = parseMembershipIntentDatum(utxo.output.plutusData);
             if (parsed?.metadata) {
               return {
@@ -157,7 +156,7 @@ export async function POST(req: NextRequest): Promise<
                 parsedMetadata: parsed.metadata,
               };
             }
-          } else if (context === 'members') {
+          } else if (context === "members") {
             const parsed = parseMemberDatum(utxo.output.plutusData);
             if (parsed?.member) {
               return {
@@ -169,7 +168,7 @@ export async function POST(req: NextRequest): Promise<
             return utxo;
           }
         } catch (error) {
-          console.error('Error parsing UTxO metadata:', error);
+          console.error("Error parsing UTxO metadata:", error);
         }
 
         return utxo;
@@ -179,7 +178,7 @@ export async function POST(req: NextRequest): Promise<
     return NextResponse.json(utxosWithMetadata, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }
@@ -200,9 +199,9 @@ async function fetchAddressUTxOsUncached(address: string): Promise<UTxO[]> {
 const fetchAddressUTxOs = (address: string) =>
   unstable_cache(
     async () => fetchAddressUTxOsUncached(address),
-    ['address-utxos', address],
+    ["address-utxos", address],
     {
       revalidate: 3600, // Cache for 1 hour
-      tags: [`utxos-${address}`, 'all-utxos'],
+      tags: [`utxos-${address}`, "all-utxos"],
     },
   )();

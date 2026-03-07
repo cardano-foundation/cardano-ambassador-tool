@@ -2,7 +2,7 @@ export function createClientSession(
   address: string,
   roles: { role: string }[],
 ) {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
 
   const sessionData = {
     address,
@@ -10,15 +10,15 @@ export function createClientSession(
     timestamp: Date.now(),
   };
 
-  localStorage.setItem('user_session', JSON.stringify(sessionData));
+  localStorage.setItem("user_session", JSON.stringify(sessionData));
   return sessionData;
 }
 
 export function getClientSession() {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
 
   try {
-    const stored = localStorage.getItem('user_session');
+    const stored = localStorage.getItem("user_session");
     if (!stored) return null;
 
     const session = JSON.parse(stored);
@@ -32,12 +32,12 @@ export function getClientSession() {
 
     return session;
   } catch (error) {
-    console.error('Error reading client session:', error);
+    console.error("Error reading client session:", error);
     destroyClientSession();
     return null;
   }
 }
 
 export function destroyClientSession() {
-  localStorage.removeItem('user_session');
+  localStorage.removeItem("user_session");
 }

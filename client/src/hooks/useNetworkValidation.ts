@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { getCurrentNetworkConfig, NETWORK_NAMES } from '@/config/cardano';
-import { IWallet } from '@meshsdk/core';
-import { NetworkConfig, NetworkValidationResult } from '@types';
-import { useCallback, useEffect, useState } from 'react';
+import { getCurrentNetworkConfig, NETWORK_NAMES } from "@/config/cardano";
+import { IWallet } from "@meshsdk/core";
+import { NetworkConfig, NetworkValidationResult } from "@types";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseNetworkValidationProps {
   wallet: IWallet | null;
@@ -40,9 +40,9 @@ export function useNetworkValidation({
         setNetworkValidation({
           isValid: false,
           expectedNetwork: currentNetwork.name,
-          error: 'WALLET_ERROR',
+          error: "WALLET_ERROR",
           message:
-            'Failed to validate wallet network. Please try reconnecting your wallet.',
+            "Failed to validate wallet network. Please try reconnecting your wallet.",
         });
 
         return;
@@ -64,18 +64,18 @@ export function useNetworkValidation({
           isValid: false,
           walletNetwork: NETWORK_NAMES[walletNetwork],
           expectedNetwork: expectedNetwork.name,
-          error: 'NETWORK_MISMATCH',
+          error: "NETWORK_MISMATCH",
           message: `Network mismatch! Your wallet is connected to ${NETWORK_NAMES[walletNetwork]}, but this app is configured for ${expectedNetwork.name}.`,
         });
       }
     } catch (error) {
-      console.error('Network validation error:', error);
+      console.error("Network validation error:", error);
       setNetworkValidation({
         isValid: false,
         expectedNetwork: currentNetwork.name,
-        error: 'WALLET_ERROR',
+        error: "WALLET_ERROR",
         message:
-          'Failed to validate wallet network. Please try reconnecting your wallet.',
+          "Failed to validate wallet network. Please try reconnecting your wallet.",
       });
     } finally {
       setIsValidatingNetwork(false);
@@ -101,7 +101,7 @@ export function useNetworkValidation({
             isValid: false,
             walletNetwork: NETWORK_NAMES[walletNetwork],
             expectedNetwork: expectedNetwork.name,
-            error: 'NETWORK_MISMATCH',
+            error: "NETWORK_MISMATCH",
             message: `Network mismatch! Your wallet is connected to ${NETWORK_NAMES[walletNetwork]}, but this app is configured for ${expectedNetwork.name}. Please switch your wallet to ${expectedNetwork.name} network.`,
           });
           return false;
@@ -109,13 +109,13 @@ export function useNetworkValidation({
 
         return true;
       } catch (error) {
-        console.error('Network validation error:', error);
+        console.error("Network validation error:", error);
         setNetworkValidation({
           isValid: false,
           expectedNetwork: currentNetwork.name,
-          error: 'WALLET_ERROR',
+          error: "WALLET_ERROR",
           message:
-            'Failed to validate wallet network. Please try reconnecting your wallet.',
+            "Failed to validate wallet network. Please try reconnecting your wallet.",
         });
         return false;
       } finally {

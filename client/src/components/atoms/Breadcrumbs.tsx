@@ -1,13 +1,13 @@
-'use client';
-import { shortenString } from '@/utils';
-import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import React from 'react';
+"use client";
+import { shortenString } from "@/utils";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React from "react";
 
 export default function Breadcrumbs() {
   const paths = usePathname();
-  const pathNames = paths.split('/').filter((path) => path);
+  const pathNames = paths.split("/").filter((path) => path);
 
   return (
     <nav className="my-4 overflow-clip text-sm lg:w-full">
@@ -23,20 +23,20 @@ export default function Breadcrumbs() {
         )}
 
         {pathNames.map((link, index) => {
-          if (link == 'manage') {
+          if (link == "manage") {
             return;
           }
-          if (link == 'my') {
-            return;
-          }
-
-            if (link == 'completed') {
+          if (link == "my") {
             return;
           }
 
-          let href = `/${pathNames.slice(0, index + 1).join('/')}`;
+          if (link == "completed") {
+            return;
+          }
 
-          if (link == 'ambassadors') {
+          let href = `/${pathNames.slice(0, index + 1).join("/")}`;
+
+          if (link == "ambassadors") {
             href = `/`;
           }
           const itemLink = true

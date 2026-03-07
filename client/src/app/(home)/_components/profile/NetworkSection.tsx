@@ -1,29 +1,22 @@
-import Card, { CardContent } from '@/components/atoms/Card';
-import GithubIcon from '@/components/atoms/GithubIcon';
-import LinkedInIcon from '@/components/atoms/LinkedinIcon';
-import Title from '@/components/atoms/Title';
-import XIcon from '@/components/atoms/XIcon';
-import React from 'react';
+import Card, { CardContent } from "@/components/atoms/Card";
+import Title from "@/components/atoms/Title";
+import React from "react";
 
-interface NetworkSectionProps {
-  profileName: string;
-  linkedinUrl?: string;
-  twitterUrl?: string;
-  githubUrl?: string;
+export interface NetworkItem {
+  icon: React.ReactNode;
+  text: string;
+  url?: string;
+  platform: string;
 }
 
-export const NetworkSection: React.FC<NetworkSectionProps> = ({
-  profileName,
-  linkedinUrl,
-  twitterUrl,
-  githubUrl,
-}) => {
-  const SocialLink: React.FC<{
-    url?: string;
-    icon: React.ReactNode;
-    text: string;
-    platform: string;
-  }> = ({ url, icon, text, platform }) => {
+interface NetworkSectionProps {
+  items: NetworkItem[];
+}
+
+export const NetworkSection: React.FC<NetworkSectionProps> = ({ items }) => {
+  const SocialLink: React.FC<{ item: NetworkItem }> = ({ item }) => {
+    const { url, icon, text, platform } = item;
+
     if (!url) {
       return (
         <div className="flex items-center space-x-3 p-2">
@@ -34,13 +27,14 @@ export const NetworkSection: React.FC<NetworkSectionProps> = ({
         </div>
       );
     }
+
     return (
       <a
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex cursor-pointer items-center space-x-3 rounded-lg p-2 transition-all duration-200 hover:bg-gray-100"
-        aria-label={`Visit ${profileName}'s ${platform} profile`}
+        className="group flex cursor-pointer items-center space-x-3 rounded-lg p-2 transition-all duration-200 hover:bg-muted"
+        aria-label={`Visit ${text}'s ${platform} profile`}
       >
         <div className="transition-transform duration-200 group-hover:scale-125">
           {icon}
@@ -52,6 +46,10 @@ export const NetworkSection: React.FC<NetworkSectionProps> = ({
     );
   };
 
+  if (!items || items.length === 0) {
+    return null;
+  }
+
   return (
     <Card>
       <CardContent className="p-2">
@@ -59,24 +57,9 @@ export const NetworkSection: React.FC<NetworkSectionProps> = ({
           Network
         </Title>
         <div className="space-y-1">
-          <SocialLink
-            url={linkedinUrl}
-            icon={<LinkedInIcon size={15} />}
-            text={profileName}
-            platform="LinkedIn"
-          />
-          <SocialLink
-            url={twitterUrl}
-            icon={<XIcon size={15} />}
-            text={profileName}
-            platform="X (Twitter)"
-          />
-          <SocialLink
-            url={githubUrl}
-            icon={<GithubIcon size={15} />}
-            text={profileName}
-            platform="GitHub"
-          />
+          {items.map((item, index) => (
+            <SocialLink key={`${item.platform}-${index}`} item={item} />
+          ))}
         </div>
       </CardContent>
     </Card>

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { MapsIcon } from '@/components/atoms/MapsIcon';
-import { countries, getCityCoordinates } from '@/utils/locationData';
-import React from 'react';
+import { MapsIcon } from "@/components/atoms/MapsIcon";
+import { countries, getCityCoordinates } from "@/utils/locationData";
+import React from "react";
 
 interface LocationMapProps {
   city?: string | null;
@@ -22,11 +22,11 @@ function generateMapEmbedUrl(lat: number, lng: number): string {
 export const LocationMap: React.FC<LocationMapProps> = ({
   city,
   country,
-  className = '',
+  className = "",
   zoom = 8,
 }) => {
   let coordinates: { lat: number; lng: number } | null = null;
-  let locationName = '';
+  let locationName = "";
 
   if (city) {
     coordinates = getCityCoordinates(city);
@@ -56,7 +56,7 @@ export const LocationMap: React.FC<LocationMapProps> = ({
         <div className="text-muted-foreground text-sm">
           {locationName
             ? `Location not found: ${locationName}`
-            : 'No location specified'}
+            : "No location specified"}
         </div>
       </div>
     );
@@ -74,7 +74,7 @@ export const LocationMap: React.FC<LocationMapProps> = ({
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
         allowFullScreen
-        title={`Map of ${locationName || 'location'}`}
+        title={`Map of ${locationName || "location"}`}
         style={{ border: 0 }}
       />
       {/* Custom pin icon overlay */}

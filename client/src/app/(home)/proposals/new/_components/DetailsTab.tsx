@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import FormDetails from '../../_components/FormDetails';
+import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
+import FormDetails from "../../_components/FormDetails";
 
 type ProposalFormData = ProposalData & {
   description: string;

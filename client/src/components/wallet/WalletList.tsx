@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useNetworkValidation, useUserAuth, useWalletManager } from '@/hooks';
-import { shortenString } from '@/utils';
-import { AlertTriangle, X } from 'lucide-react';
-import Image from 'next/image';
-import { MouseEvent, useEffect } from 'react';
-import Button from '../atoms/Button';
-import { toast } from '../toast/toast-manager';
+import { useNetworkValidation, useUserAuth, useWalletManager } from "@/hooks";
+import { shortenString } from "@/utils";
+import { AlertTriangle, X } from "lucide-react";
+import Image from "next/image";
+import { MouseEvent, useEffect } from "react";
+import Button from "../atoms/Button";
+import { toast } from "../toast/toast-manager";
 
 const WalletList = () => {
   const wallet = useWalletManager();
@@ -41,7 +41,7 @@ const WalletList = () => {
 
   useEffect(() => {
     if (isConnected && address && isNetworkValid === true) {
-      toast.success('Wallet connected', shortenString(address, 8));
+      toast.success("Wallet connected", shortenString(address, 8));
     }
   }, [isConnected, address, error, isNetworkValid]);
 
@@ -69,14 +69,14 @@ const WalletList = () => {
           return (
             <div
               key={walletItem.id}
-              className={isWalletConnected ? 'relative' : ''}
+              className={isWalletConnected ? "relative" : ""}
             >
               <Button
                 disabled={isConnecting}
                 variant="ghost"
                 className={`flex min-w-80 items-center justify-start gap-4 px-20 ${
-                  isWalletConnected ? 'border-primary-400! border!' : ''
-                } ${shouldShowWarning ? 'border-primary-base border-2!' : ''}`}
+                  isWalletConnected ? "border-primary-400! border!" : ""
+                } ${shouldShowWarning ? "border-primary-base border-2!" : ""}`}
                 onClick={(e) => {
                   handleConnect(e, walletItem.id);
                 }}
@@ -89,9 +89,9 @@ const WalletList = () => {
                   className="rounded"
                 />
                 <span className="text-[16px] font-medium capitalize">
-                  {walletItem.name.includes('Wallet')
+                  {walletItem.name.includes("Wallet")
                     ? walletItem.name
-                    : walletItem.name + ' wallet'}
+                    : walletItem.name + " wallet"}
                 </span>
 
                 {isWalletConnected && (
@@ -100,7 +100,7 @@ const WalletList = () => {
                       e.stopPropagation();
                       disconnectWallet();
                       logout();
-                      toast.warning('Warning!', 'Wallet disconnected');
+                      toast.warning("Warning!", "Wallet disconnected");
                     }}
                     className="absolute right-3 z-10 flex cursor-pointer items-center rounded p-1"
                     title="Disconnect"

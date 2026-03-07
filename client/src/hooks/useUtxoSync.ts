@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 type SyncContext =
-  | 'member'
-  | 'membership_intent'
-  | 'proposal'
-  | 'proposal_intent'
-  | 'sign_of_approval';
+  | "member"
+  | "membership_intent"
+  | "proposal"
+  | "proposal_intent"
+  | "sign_of_approval";
 
 export function useUtxoSync() {
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
-    const worker = new Worker('/db-worker.js');
+    const worker = new Worker("/db-worker.js");
 
     workerRef.current = worker;
 
@@ -28,14 +28,14 @@ export function useUtxoSync() {
     if (!workerRef.current) return;
 
     workerRef.current.postMessage({
-      action: 'seedAll',
+      action: "seedAll",
       apiBaseUrl: window.location.origin,
       contexts: [
-        'member',
-        'membership_intent',
-        'proposal',
-        'proposal_intent',
-        'sign_of_approval',
+        "member",
+        "membership_intent",
+        "proposal",
+        "proposal_intent",
+        "sign_of_approval",
       ],
     });
   }
@@ -44,7 +44,7 @@ export function useUtxoSync() {
     if (!workerRef.current) return;
 
     workerRef.current.postMessage({
-      action: 'seed',
+      action: "seed",
       apiBaseUrl: window.location.origin,
       context,
     });

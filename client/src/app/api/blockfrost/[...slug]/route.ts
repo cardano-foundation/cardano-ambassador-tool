@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { NextResponse } from 'next/server';
+import axios from "axios";
+import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
@@ -12,13 +12,13 @@ export async function GET(
     let key = process.env.BLOCKFROST_API_KEY_PREPROD;
 
     switch (network) {
-      case 'testnet':
+      case "testnet":
         key = process.env.BLOCKFROST_API_KEY_TESTNET;
         break;
-      case 'mainnet':
+      case "mainnet":
         key = process.env.BLOCKFROST_API_KEY_MAINNET;
         break;
-      case 'preview':
+      case "preview":
         key = process.env.BLOCKFROST_API_KEY_PREVIEW;
         break;
     }
@@ -28,15 +28,15 @@ export async function GET(
       headers: { project_id: key },
     });
 
-    const url = slug.slice(1).join('/');
-    const searchParams = req.url.split('?')[1] || '';
+    const url = slug.slice(1).join("/");
+    const searchParams = req.url.split("?")[1] || "";
     const fullUrl = searchParams ? `${url}?${searchParams}` : url;
 
     const { data } = await axiosInstance.get(fullUrl);
     return NextResponse.json(data);
   } catch (error: any) {
     return NextResponse.json(
-      { error: error?.response?.data || error?.message || 'Unknown error' },
+      { error: error?.response?.data || error?.message || "Unknown error" },
       { status: error?.response?.status || 500 },
     );
   }
@@ -50,17 +50,17 @@ export async function POST(
     const { slug } = await context.params;
 
     const network = slug[0];
-    const endpoint = slug.slice(1).join('/');
+    const endpoint = slug.slice(1).join("/");
 
     let key = process.env.BLOCKFROST_API_KEY_PREPROD;
     switch (network) {
-      case 'testnet':
+      case "testnet":
         key = process.env.BLOCKFROST_API_KEY_TESTNET;
         break;
-      case 'mainnet':
+      case "mainnet":
         key = process.env.BLOCKFROST_API_KEY_MAINNET;
         break;
-      case 'preview':
+      case "preview":
         key = process.env.BLOCKFROST_API_KEY_PREVIEW;
         break;
     }
@@ -71,7 +71,7 @@ export async function POST(
     });
 
     const body = await req.arrayBuffer();
-    const headers = { 'Content-Type': 'application/cbor' };
+    const headers = { "Content-Type": "application/cbor" };
 
     // Convert ArrayBuffer to Uint8Array for axios
     const bodyBytes = new Uint8Array(body);
@@ -81,7 +81,7 @@ export async function POST(
     return NextResponse.json(data, { status });
   } catch (error: any) {
     return NextResponse.json(
-      { error: error?.response?.data || error?.message || 'Unknown error' },
+      { error: error?.response?.data || error?.message || "Unknown error" },
       { status: error?.response?.status || 500 },
     );
   }

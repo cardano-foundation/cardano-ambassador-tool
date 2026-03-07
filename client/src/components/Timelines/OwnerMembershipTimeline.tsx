@@ -1,20 +1,21 @@
-'use client';
+"use client";
 
-import MemberDataComponent from '@/app/manage/membership-applications/_components/MemberDataComponent';
-import Timeline from '@/components/atoms/Timeline';
-import { findAdminsFromOracle } from '@/lib/auth/roles';
+import MemberDataComponent from "@/app/manage/membership-applications/_components/MemberDataComponent";
+import Timeline from "@/components/atoms/Timeline";
+import { findAdminsFromOracle } from "@/lib/auth/roles";
 import {
   extractRequiredSigners,
   extractWitnesses,
   parseMembershipIntentDatum,
   storageApiClient,
-} from '@/utils';
-import { MemberData } from '@sidan-lab/cardano-ambassador-tool';
-import { AdminDecision, AdminDecisionData, TimelineStep, Utxo } from '@types';
-import { useEffect, useState } from 'react';
-import Paragraph from '../atoms/Paragraph';
-import Title from '../atoms/Title';
-import MultisigProgressTracker from '../signature-progress/MultisigProgressTracker';
+} from "@/utils";
+import { MemberData } from "@sidan-lab/cardano-ambassador-tool";
+import { AdminDecision, AdminDecisionData, TimelineStep, Utxo } from "@types";
+import { useEffect, useState } from "react";
+import Paragraph from "../atoms/Paragraph";
+import Title from "../atoms/Title";
+import MultisigProgressTracker from "../signature-progress/MultisigProgressTracker";
+import { useDatabase } from "@/hooks";
 
 type ExtendedMemberData = MemberData & {
   txHash?: string;
@@ -35,6 +36,7 @@ const OwnerMembershipTimeline = ({
   const [adminDecisionData, setAdminDecisionData] =
     useState<AdminDecisionData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { signOfApprovals } = useDatabase();
 
   useEffect(() => {
     if (intentUtxo?.plutusData) {
@@ -69,15 +71,15 @@ const OwnerMembershipTimeline = ({
         displayName: updatedData.displayName ?? membershipData.displayName,
         emailAddress: updatedData.emailAddress ?? membershipData.emailAddress,
         bio: updatedData.bio ?? membershipData.bio,
-        country: updatedData.country ?? membershipData.country ?? '',
-        city: updatedData.city ?? membershipData.city ?? '',
+        country: updatedData.country ?? membershipData.country ?? "",
+        city: updatedData.city ?? membershipData.city ?? "",
       };
 
       await onSave(memberData);
 
       setMembershipData((prev) => (prev ? { ...prev, ...updatedData } : null));
     } catch (error) {
-      console.error('Error saving member data:', error);
+      console.error("Error saving member data:", error);
     } finally {
       setIsSaving(false);
     }
@@ -89,11 +91,11 @@ const OwnerMembershipTimeline = ({
       try {
         const decision = await storageApiClient.get<AdminDecision>(
           intentUtxo!.txHash,
-          'submissions',
+          "submissions",
         );
 
         if (!decision) {
-          throw new Error('Could not fetch admin decision.');
+          throw new Error("Could not fetch admin decision.");
         }
 
         const signers = extractWitnesses(decision.signedTx);
@@ -102,7 +104,7 @@ const OwnerMembershipTimeline = ({
         const adminData = await findAdminsFromOracle();
 
         if (!adminData) {
-          console.error('Could not fetch admin data from oracle');
+          console.error("Could not fetch admin data from oracle");
           return;
         }
 
@@ -116,7 +118,7 @@ const OwnerMembershipTimeline = ({
 
         setAdminDecisionData(adminDecision);
       } catch (error) {
-        console.error('Failed to load admin decision:', error);
+        console.error("Failed to load admin decision:", error);
         setAdminDecisionData(null);
       } finally {
         setLoading(false);
@@ -145,28 +147,38 @@ const OwnerMembershipTimeline = ({
   };
 
   const getEditApplicationStatus = () => {
-    return membershipData ? 'completed' : 'pending';
+    return membershipData ? "completed" : "pending";
   };
 
   const getMultisigApprovalStatus = () => {
-    if (!adminDecisionData?.decision) return 'pending';
-    if (signatureRequirementsMet()) return 'completed';
-    return 'current';
+    if (!adminDecisionData?.decision) return "pending";
+    if (signatureRequirementsMet()) return "completed";
+    return "current";
   };
 
   const getMembershipActivatedStatus = () => {
-    if (signatureRequirementsMet()) return 'current';
-    return 'pending';
+    if (signatureRequirementsMet()) return "current";
+    return "pending";
   };
+
+  const isStatusLocked = signOfApprovals.some(
+    (p) => p.txHash === intentUtxo?.txHash,
+  );
+  const isLocked = !!adminDecisionData || isStatusLocked;
 
   const applicationProgress: TimelineStep[] = [
     {
-      id: 'intent-submitted',
-      title: 'Edit Your Application',
+      id: "intent-submitted",
+      title: "Edit Your Application",
       content: (
         <div className="space-y-3">
+          {isLocked && (
+            <span className="mb-2 block text-xs text-amber-600">
+              Editing disabled: Administrative process has started.
+            </span>
+          )}
           <MemberDataComponent
-            readonly={false}
+            readonly={isLocked}
             membershipData={membershipData}
             onSave={handleMemberDataSave}
           />
@@ -175,8 +187,8 @@ const OwnerMembershipTimeline = ({
       status: getEditApplicationStatus(),
     },
     {
-      id: 'multisig-approval',
-      title: 'Multisig Approval',
+      id: "multisig-approval",
+      title: "Multisig Approval",
       content: (
         <MultisigProgressTracker
           txhash={intentUtxo?.txHash}
@@ -186,8 +198,8 @@ const OwnerMembershipTimeline = ({
       status: getMultisigApprovalStatus(),
     },
     {
-      id: 'membership-activated',
-      title: 'Membership Activated',
+      id: "membership-activated",
+      title: "Membership Activated",
       content: <div></div>,
       status: getMembershipActivatedStatus(),
     },

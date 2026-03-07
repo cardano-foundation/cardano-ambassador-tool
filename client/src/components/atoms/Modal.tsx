@@ -5,21 +5,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/Dialog';
-import { cn } from '@/utils/utils';
-import React from 'react';
-import Button from './Button';
+} from "@/components/Dialog";
+import { cn } from "@/utils/utils";
+import React from "react";
+import Button from "./Button";
 
 interface ModalAction {
   label: string;
   variant?:
-    | 'primary'
-    | 'secondary'
-    | 'outline'
-    | 'ghost'
-    | 'warning'
-    | 'success'
-    | 'primary-light';
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "warning"
+    | "success"
+    | "primary-light";
   onClick: () => void;
   disabled?: boolean;
 }
@@ -35,7 +35,7 @@ interface ModalProps {
   footer?: React.ReactNode;
   showCloseButton?: boolean;
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
   closable?: boolean;
 }
 
@@ -62,16 +62,16 @@ export default function Modal({
   actions = [],
   footer,
   showCloseButton = true,
-  className = '',
-  size = 'md',
+  className = "",
+  size = "md",
   closable = true,
 }: ModalProps) {
   const sizeClasses = {
-    sm: 'sm:max-w-sm',
-    md: 'sm:max-w-md',
-    lg: 'sm:max-w-lg',
-    xl: 'sm:max-w-xl',
-    '2xl': 'sm:max-w-2xl',
+    sm: "sm:max-w-sm",
+    md: "sm:max-w-md",
+    lg: "sm:max-w-lg",
+    xl: "sm:max-w-xl",
+    "2xl": "sm:max-w-2xl",
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -95,7 +95,7 @@ export default function Modal({
         {actions.map((action, index) => (
           <Button
             key={index}
-            variant={action.variant || 'primary'}
+            variant={action.variant || "primary"}
             size="md"
             className="flex-1"
             onClick={action.onClick}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface PulseLoaderProps {
   className?: string;
@@ -7,9 +7,9 @@ interface PulseLoaderProps {
 }
 
 export const PulseLoader: React.FC<PulseLoaderProps> = ({
-  className = '',
-  height = 'h-4',
-  width = 'w-full',
+  className = "",
+  height = "h-4",
+  width = "w-full",
 }) => {
   return (
     <div

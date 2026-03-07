@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useEffect, useState } from 'react';
-import { CardanoLoaderSVG } from './ui/CardanoLoaderSVG';
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { useEffect, useState } from "react";
+import { CardanoLoaderSVG } from "./ui/CardanoLoaderSVG";
 
 interface AppLoadingScreenProps {
   isVisible: boolean;
@@ -11,7 +11,7 @@ interface AppLoadingScreenProps {
 
 export function AppLoadingScreen({
   isVisible,
-  loadingMessage = 'Loading application...',
+  loadingMessage = "Loading application...",
 }: AppLoadingScreenProps) {
   const [fadeOut, setFadeOut] = useState(false);
   const currentNetwork = getCurrentNetworkConfig().name;
@@ -31,7 +31,7 @@ export function AppLoadingScreen({
     <div
       data-testid="app-loading-screen"
       className={`bg-background fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 ${
-        fadeOut ? 'pointer-events-none opacity-0' : 'opacity-100'
+        fadeOut ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
       {/* Background gradient for visual appeal */}
@@ -56,7 +56,7 @@ export function AppLoadingScreen({
             <div className="text-muted-foreground flex items-center justify-center space-x-2 text-sm">
               <div className="bg-primary-base h-2 w-2 rounded-full" />
               <span>
-                Network{' '}
+                Network{" "}
                 <span className="text-primary-base font-medium">
                   {currentNetwork}
                 </span>

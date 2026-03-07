@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Button from '@/components/atoms/Button';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import Copyable from '@/components/Copyable';
-import { ColumnDef, Table } from '@/components/Table/Table';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useDatabase } from '@/hooks';
-import { parseMembershipIntentDatum } from '@/utils';
-import Link from 'next/link';
+import Button from "@/components/atoms/Button";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import Copyable from "@/components/Copyable";
+import { ColumnDef, Table } from "@/components/Table/Table";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { useDatabase } from "@/hooks";
+import { parseMembershipIntentDatum } from "@/utils";
+import Link from "next/link";
 
 export default function MembershipIntentPage() {
   const { membershipIntents, dbLoading } = useDatabase();
@@ -31,42 +31,42 @@ export default function MembershipIntentPage() {
         bio: string;
         index?: number;
       } = {
-        fullName: '',
-        displayName: '',
-        email: '',
-        address: '',
-        bio: '',
+        fullName: "",
+        displayName: "",
+        email: "",
+        address: "",
+        bio: "",
       };
 
       if (utxo.plutusData) {
         const parsed = parseMembershipIntentDatum(utxo.plutusData);
 
         if (parsed && parsed.metadata) {
-          decodedDatum['fullName'] = parsed.metadata.fullName!;
-          decodedDatum['displayName'] = parsed.metadata.displayName!;
-          decodedDatum['email'] = parsed.metadata.emailAddress!;
-          decodedDatum['address'] = parsed.metadata.walletAddress!;
-          decodedDatum['bio'] = parsed.metadata.bio!;
-          decodedDatum['index'] = idx;
+          decodedDatum["fullName"] = parsed.metadata.fullName!;
+          decodedDatum["displayName"] = parsed.metadata.displayName!;
+          decodedDatum["email"] = parsed.metadata.emailAddress!;
+          decodedDatum["address"] = parsed.metadata.walletAddress!;
+          decodedDatum["bio"] = parsed.metadata.bio!;
+          decodedDatum["index"] = idx;
         }
       }
 
       return { ...utxo, ...decodedDatum };
     })
-    .filter((utxo) => utxo.address && utxo.address.trim() !== '');
+    .filter((utxo) => utxo.address && utxo.address.trim() !== "");
 
   const columns: ColumnDef<(typeof decodedUtxos)[number]>[] = [
     {
-      header: '#',
-      accessor: 'index',
+      header: "#",
+      accessor: "index",
       sortable: true,
       cell: (value: string) => (
         <span className="text-neutral font-normal">{value}</span>
       ),
     },
     {
-      header: 'Tx Hash',
-      accessor: 'txHash',
+      header: "Tx Hash",
+      accessor: "txHash",
       sortable: false,
       // copyable: true,
       cell: (value: string) => (
@@ -74,13 +74,13 @@ export default function MembershipIntentPage() {
           withKey={false}
           link={`${getCurrentNetworkConfig().explorerUrl}/transaction/${value}`}
           value={value}
-          keyLabel={''}
+          keyLabel={""}
         />
       ),
     },
     {
-      header: 'Address',
-      accessor: 'address',
+      header: "Address",
+      accessor: "address",
       sortable: false,
       // copyable: true,
       cell: (value: string) => (
@@ -88,29 +88,29 @@ export default function MembershipIntentPage() {
           withKey={false}
           link={`${getCurrentNetworkConfig().explorerUrl}/address/${value}`}
           value={value}
-          keyLabel={''}
+          keyLabel={""}
         />
       ),
     },
     {
-      header: 'Full Name',
-      accessor: 'fullName',
+      header: "Full Name",
+      accessor: "fullName",
       sortable: true,
       cell: (value: string) => (
         <span className="text-neutral font-normal">{value}</span>
       ),
     },
     {
-      header: 'Email',
-      accessor: 'email',
+      header: "Email",
+      accessor: "email",
       sortable: true,
       cell: (value: string) => (
         <span className="text-neutral font-normal">{value}</span>
       ),
     },
     {
-      header: 'Bio',
-      accessor: 'bio',
+      header: "Bio",
+      accessor: "bio",
       sortable: true,
       cell: (value: string) => (
         <span className="text-neutral truncate font-medium text-ellipsis">
@@ -119,14 +119,14 @@ export default function MembershipIntentPage() {
       ),
     },
     {
-      header: 'Action',
+      header: "Action",
       sortable: true,
       copyable: true,
-      accessor: 'txHash',
+      accessor: "txHash",
       cell: (value: string) => (
         <Link href={`/manage/membership-applications/${value}`}>
-          <Button variant={'primary'} size="sm" className="text-nowrap">
-            {'View intent'}
+          <Button variant={"primary"} size="sm" className="text-nowrap">
+            {"View intent"}
           </Button>
         </Link>
       ),

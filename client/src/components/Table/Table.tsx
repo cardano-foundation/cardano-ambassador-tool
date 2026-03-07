@@ -1,7 +1,7 @@
-'use client';
-import { SortDownIcon, SortUpIcon } from '@/components/atoms/SortIcons';
-import { Pagination } from '@/components/Pagination';
-import { useMemo, useRef, useState } from 'react';
+"use client";
+import { SortDownIcon, SortUpIcon } from "@/components/atoms/SortIcons";
+import { Pagination } from "@/components/Pagination";
+import { useMemo, useRef, useState } from "react";
 
 type ColumnDef<T> = {
   header: string;
@@ -32,17 +32,17 @@ export function Table<T>({
   pageSize: initialPageSize = 10,
   onPageSizeChange,
   searchable = false,
-  searchPlaceholder = 'Search...',
-  className = '',
+  searchPlaceholder = "Search...",
+  className = "",
   autoSize = true,
   context,
 }: TableProps<T>) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [internalPageSize, setInternalPageSize] = useState(initialPageSize);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof T;
-    direction: 'ascending' | 'descending';
+    direction: "ascending" | "descending";
   } | null>(null);
 
   const tableRef = useRef<HTMLTableElement>(null);
@@ -68,10 +68,10 @@ export function Table<T>({
       const bValue = b[sortConfig.key];
 
       if (aValue < bValue) {
-        return sortConfig.direction === 'ascending' ? -1 : 1;
+        return sortConfig.direction === "ascending" ? -1 : 1;
       }
       if (aValue > bValue) {
-        return sortConfig.direction === 'ascending' ? 1 : -1;
+        return sortConfig.direction === "ascending" ? 1 : -1;
       }
       return 0;
     });
@@ -85,13 +85,13 @@ export function Table<T>({
   const totalPages = Math.ceil(sortedData.length / pageSize);
 
   const requestSort = (key: keyof T) => {
-    let direction: 'ascending' | 'descending' = 'ascending';
+    let direction: "ascending" | "descending" = "ascending";
     if (
       sortConfig &&
       sortConfig.key === key &&
-      sortConfig.direction === 'ascending'
+      sortConfig.direction === "ascending"
     ) {
-      direction = 'descending';
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
@@ -119,9 +119,9 @@ export function Table<T>({
         <div className="bg-background px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-muted-foreground text-sm">
-              Showing{' '}
-              {paginatedData.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}{' '}
-              of {sortedData.length} {context ?? 'items'}
+              Showing{" "}
+              {paginatedData.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}{" "}
+              of {sortedData.length} {context ?? "items"}
             </div>
             {searchable && (
               <div className="relative">
@@ -145,7 +145,7 @@ export function Table<T>({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="border-border text-foreground placeholder:text-muted-foreground focus:ring-ring w-64 rounded-lg border bg-white py-2 pr-4 pl-10 transition-colors focus:border-transparent focus:ring-2"
-                  aria-label={`Search ${context || 'table'}`}
+                  aria-label={`Search ${context || "table"}`}
                 />
               </div>
             )}
@@ -156,7 +156,7 @@ export function Table<T>({
           <table
             ref={tableRef}
             className="text-foreground w-full text-left text-sm"
-            style={{ tableLayout: autoSize ? 'auto' : 'fixed' }}
+            style={{ tableLayout: autoSize ? "auto" : "fixed" }}
           >
             <thead className="dark:bg-muted text-neutral bg-neutral-50 text-sm font-normal">
               <tr>
@@ -165,7 +165,7 @@ export function Table<T>({
                     key={column.header}
                     scope="col"
                     className={`border-border border px-6 py-3 font-normal whitespace-nowrap last:border-r-0 ${
-                      column.sortable ? 'cursor-pointer select-none' : ''
+                      column.sortable ? "cursor-pointer select-none" : ""
                     } }`}
                     onClick={() =>
                       column.sortable &&
@@ -180,18 +180,18 @@ export function Table<T>({
                           <SortUpIcon
                             className={
                               sortConfig?.key === column.accessor &&
-                              sortConfig?.direction === 'ascending'
-                                ? 'text-neutral'
-                                : 'text-muted-foreground'
+                              sortConfig?.direction === "ascending"
+                                ? "text-neutral"
+                                : "text-muted-foreground"
                             }
                             aria-hidden="true"
                           />
                           <SortDownIcon
                             className={
                               sortConfig?.key === column.accessor &&
-                              sortConfig?.direction === 'descending'
-                                ? 'text-neutral'
-                                : 'text-muted-foreground'
+                              sortConfig?.direction === "descending"
+                                ? "text-neutral"
+                                : "text-muted-foreground"
                             }
                             aria-hidden="true"
                           />
@@ -215,7 +215,7 @@ export function Table<T>({
                         className="border-border border-r px-6 py-4 last:border-r-0"
                       >
                         {column?.cell(
-                          column?.accessor ? row[column?.accessor] : '',
+                          column?.accessor ? row[column?.accessor] : "",
                           row,
                         )}
                       </td>
@@ -230,7 +230,7 @@ export function Table<T>({
                   >
                     {searchTerm
                       ? `No results found for "${searchTerm}"`
-                      : 'No data found'}
+                      : "No data found"}
                   </td>
                 </tr>
               )}

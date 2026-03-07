@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface CardanoIconProps {
   size?: number;
@@ -8,8 +8,8 @@ export interface CardanoIconProps {
 
 export const CardanoIcon: React.FC<CardanoIconProps> = ({
   size = 18,
-  color = '#888989',
-  className = '',
+  color = "#888989",
+  className = "",
 }) => {
   const height = Math.round(size * 0.89);
 

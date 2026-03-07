@@ -1,5 +1,5 @@
-import { CardanoIcon } from '@/components/atoms/CardanoIcon';
-import React from 'react';
+import { CardanoIcon } from "@/components/atoms/CardanoIcon";
+import React from "react";
 
 export interface MapsIconProps {
   size?: number;
@@ -12,11 +12,11 @@ export interface MapsIconProps {
 
 export const MapsIcon: React.FC<MapsIconProps> = ({
   size = 66,
-  pinColor = 'white',
-  backgroundColor = '#ef4444',
-  className = '',
+  pinColor = "white",
+  backgroundColor = "#ef4444",
+  className = "",
   cardanoIconSize = 30,
-  cardanoIconColor = '#ffffff',
+  cardanoIconColor = "#ffffff",
 }) => {
   const height = Math.round(size * (76 / 66));
   const scale = size / 66;

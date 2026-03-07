@@ -1,13 +1,17 @@
-'use client';
+"use client";
 
-import MemberOnlyAccessCard from '@/app/my/_components/MemberOnlyAccessCard';
-import Button from '@/components/atoms/Button';
-import Modal from '@/components/atoms/Modal';
-import Title from '@/components/atoms/Title';
-import TopNav from '@/components/navigation/TabNav';
-import CardanoLoaderSVG from '@/components/ui/CardanoLoaderSVG';
-import { routes } from '@/config/routes';
-import { useMemberValidation, useTxConfirmation, useWalletManager } from '@/hooks';
+import MemberOnlyAccessCard from "@/app/my/_components/MemberOnlyAccessCard";
+import Button from "@/components/atoms/Button";
+import Modal from "@/components/atoms/Modal";
+import Title from "@/components/atoms/Title";
+import TopNav from "@/components/navigation/TabNav";
+import CardanoLoaderSVG from "@/components/ui/CardanoLoaderSVG";
+import { routes } from "@/config/routes";
+import {
+  useMemberValidation,
+  useTxConfirmation,
+  useWalletManager,
+} from "@/hooks";
 import {
   adaToLovelace,
   dbUtxoToMeshUtxo,
@@ -16,18 +20,18 @@ import {
   getProvider,
   parseAdaInput,
   smoothScrollToElement,
-} from '@/utils';
-import { resolveTxHash } from '@meshsdk/core';
+} from "@/utils";
+import { resolveTxHash } from "@meshsdk/core";
 import {
   ProposalData,
   proposalMetadata,
   UserActionTx,
-} from '@sidan-lab/cardano-ambassador-tool';
+} from "@sidan-lab/cardano-ambassador-tool";
 
-import { useEffect, useRef, useState } from 'react';
-import DetailsTab from './_components/DetailsTab';
-import FundsTab from './_components/FundsTab';
-import ReviewTab from './_components/ReviewTab';
+import { useEffect, useRef, useState } from "react";
+import DetailsTab from "./_components/DetailsTab";
+import FundsTab from "./_components/FundsTab";
+import ReviewTab from "./_components/ReviewTab";
 
 type ProposalFormData = ProposalData & {
   description: string;
@@ -35,15 +39,19 @@ type ProposalFormData = ProposalData & {
 
 export default function SubmitProposalPage() {
   const { wallet: userWallet, address: userAddress } = useWalletManager();
-  const { isMember, memberValidationLoading: memberLoading, memberUtxo } = useMemberValidation();
+  const {
+    isMember,
+    memberValidationLoading: memberLoading,
+    memberUtxo,
+  } = useMemberValidation();
   const { showTxConfirmation } = useTxConfirmation();
-  const [activeTab, setActiveTab] = useState('details');
+  const [activeTab, setActiveTab] = useState("details");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [markdownData, setMarkdownData] = useState<any>({});
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [error, setError] = useState<string>('');
-  const [githubFilename, setGithubFilename] = useState<string>('');
+  const [error, setError] = useState<string>("");
+  const [githubFilename, setGithubFilename] = useState<string>("");
   const descriptionEditorRef = useRef<any>(null);
   const impactEditorRef = useRef<any>(null);
   const objectivesEditorRef = useRef<any>(null);
@@ -53,30 +61,30 @@ export default function SubmitProposalPage() {
   const scrollTargetRef = useRef<HTMLDivElement>(null);
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
-    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
+    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
   );
 
   const blockfrost = getProvider();
   const [formData, setFormData] = useState<ProposalFormData>({
-    title: '',
-    description: '',
-    url: '',
-    fundsRequested: '',
-    receiverWalletAddress: '',
-    submittedByAddress: userAddress || '',
-    status: 'pending',
+    title: "",
+    description: "",
+    url: "",
+    fundsRequested: "",
+    receiverWalletAddress: "",
+    submittedByAddress: userAddress || "",
+    status: "pending",
   });
 
   const tabs = [
-    { id: 'details', label: 'Details' },
-    { id: 'funds', label: 'Funds' },
-    { id: 'review', label: 'Review' },
+    { id: "details", label: "Details" },
+    { id: "funds", label: "Funds" },
+    { id: "review", label: "Review" },
   ];
 
   useEffect(() => {
     if (
       userAddress &&
-      (!formData.submittedByAddress || formData.submittedByAddress === '')
+      (!formData.submittedByAddress || formData.submittedByAddress === "")
     ) {
       setFormData((prev) => ({
         ...prev,
@@ -103,14 +111,14 @@ export default function SubmitProposalPage() {
   };
 
   const handleSubmit = async () => {
-    let filename = '';
+    let filename = "";
 
     try {
       setIsSubmitting(true);
 
-      const saveResponse = await fetch('/api/proposal-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const saveResponse = await fetch("/api/proposal-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: formData.title,
           description: formData.description,
@@ -121,7 +129,7 @@ export default function SubmitProposalPage() {
       if (!saveResponse.ok) {
         const errorData = await saveResponse.json();
         throw new Error(
-          errorData.details || 'Failed to save proposal to GitHub',
+          errorData.details || "Failed to save proposal to GitHub",
         );
       }
 
@@ -131,14 +139,14 @@ export default function SubmitProposalPage() {
 
       if (!memberUtxo) {
         throw new Error(
-          'No membership application UTxO found for this address',
+          "No membership application UTxO found for this address",
         );
       }
       const mbrUtxo = dbUtxoToMeshUtxo(memberUtxo);
       const tokenUtxo = await findTokenUtxoByMemberUtxo(mbrUtxo);
 
       if (!tokenUtxo) {
-        throw new Error('No token UTxO found for this membership application');
+        throw new Error("No token UTxO found for this membership application");
       }
 
       const oracleUtxos = await blockfrost.fetchUTxOs(
@@ -149,7 +157,7 @@ export default function SubmitProposalPage() {
       const oracleUtxo = oracleUtxos[0];
 
       if (!oracleUtxo) {
-        throw new Error('Failed to fetch required oracle UTxO');
+        throw new Error("Failed to fetch required oracle UTxO");
       }
 
       const userAction = new UserActionTx(
@@ -163,8 +171,6 @@ export default function SubmitProposalPage() {
       const lovelaceAmount = adaToLovelace(cleanAdaAmount);
 
       const githubUrl = `https://github.com/${process.env.NEXT_PUBLIC_GITHUB_REPO}/blob/${process.env.NEXT_PUBLIC_GITHUB_BRANCH}/proposals-applications/content/${filename}`;
-      
-      
 
       const metadataFormData: ProposalData = {
         title: formData.title,
@@ -189,41 +195,41 @@ export default function SubmitProposalPage() {
 
       showTxConfirmation({
         txHash,
-        title: 'Proposal Submitted',
+        title: "Proposal Submitted",
         description:
-          'Your proposal has been submitted. Please wait for blockchain confirmation.',
+          "Your proposal has been submitted. Please wait for blockchain confirmation.",
         onConfirmed: () => {
           setShowConfirmation(true);
         },
         onTimeout: async () => {
           if (filename) {
-            await fetch('/api/proposal-content', {
-              method: 'DELETE',
-              headers: { 'Content-Type': 'application/json' },
+            await fetch("/api/proposal-content", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ filename }),
             }).catch((err) =>
-              console.error('Failed to rollback GitHub file:', err),
+              console.error("Failed to rollback GitHub file:", err),
             );
           }
 
           setError(
-            'Transaction confirmation timed out. Your proposal may still be processed.',
+            "Transaction confirmation timed out. Your proposal may still be processed.",
           );
           setShowError(true);
         },
       });
     } catch (error: any) {
       if (filename) {
-        await fetch('/api/proposal-content', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch("/api/proposal-content", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ filename }),
         }).catch((err) =>
-          console.error('Failed to rollback GitHub file:', err),
+          console.error("Failed to rollback GitHub file:", err),
         );
       }
 
-      setError(error.message || 'Failed to submit proposal. Please try again.');
+      setError(error.message || "Failed to submit proposal. Please try again.");
       setShowError(true);
     } finally {
       setIsSubmitting(false);
@@ -235,15 +241,15 @@ export default function SubmitProposalPage() {
   };
 
   const handleNextTab = () => {
-    if (activeTab === 'details') {
+    if (activeTab === "details") {
       const capturedMarkdown = {
-        description: descriptionEditorRef.current?.getMarkdown() || '',
+        description: descriptionEditorRef.current?.getMarkdown() || "",
         impactToEcosystem:
-          impactOnEcosystemEditorRef.current?.getMarkdown() || '',
-        objectives: objectivesEditorRef.current?.getMarkdown() || '',
-        milestones: milestonesEditorRef.current?.getMarkdown() || '',
-        impact: impactEditorRef.current?.getMarkdown() || '',
-        budgetBreakdown: budgetBreakdownEditorRef.current?.getMarkdown() || '',
+          impactOnEcosystemEditorRef.current?.getMarkdown() || "",
+        objectives: objectivesEditorRef.current?.getMarkdown() || "",
+        milestones: milestonesEditorRef.current?.getMarkdown() || "",
+        impact: impactEditorRef.current?.getMarkdown() || "",
+        budgetBreakdown: budgetBreakdownEditorRef.current?.getMarkdown() || "",
       };
       setMarkdownData(capturedMarkdown);
     }
@@ -283,7 +289,7 @@ export default function SubmitProposalPage() {
 
         <div className="border-border bg-card rounded-lg border p-6 shadow-sm">
           <div className="mb-8">
-            {activeTab === 'details' && (
+            {activeTab === "details" && (
               <DetailsTab
                 formData={formData}
                 handleInputChange={handleInputChange}
@@ -291,17 +297,17 @@ export default function SubmitProposalPage() {
               />
             )}
 
-            {activeTab === 'funds' && (
+            {activeTab === "funds" && (
               <FundsTab
                 formData={formData}
                 handleInputChange={handleInputChange}
               />
             )}
 
-            {activeTab === 'review' && <ReviewTab formData={formData} />}
+            {activeTab === "review" && <ReviewTab formData={formData} />}
           </div>
 
-          {activeTab === 'details' ? (
+          {activeTab === "details" ? (
             <div className="pt-6">
               <Button
                 variant="primary"
@@ -313,7 +319,7 @@ export default function SubmitProposalPage() {
             </div>
           ) : (
             <div className="flex items-center justify-between gap-4 pt-6">
-              {activeTab !== 'details' && (
+              {activeTab !== "details" && (
                 <div className="text-primary-base w-1/4">
                   <Button
                     variant="outline"
@@ -325,8 +331,8 @@ export default function SubmitProposalPage() {
                 </div>
               )}
 
-              <div className={activeTab === 'details' ? 'w-full' : 'w-3/4'}>
-                {activeTab !== 'review' ? (
+              <div className={activeTab === "details" ? "w-full" : "w-3/4"}>
+                {activeTab !== "review" ? (
                   <Button
                     variant="primary"
                     onClick={handleNextTab}
@@ -341,7 +347,7 @@ export default function SubmitProposalPage() {
                     disabled={isSubmitting}
                     className="w-full"
                   >
-                    {isSubmitting ? 'Submitting...' : 'Submit proposal'}
+                    {isSubmitting ? "Submitting..." : "Submit proposal"}
                   </Button>
                 )}
               </div>
@@ -359,16 +365,16 @@ export default function SubmitProposalPage() {
         size="lg"
         actions={[
           {
-            label: 'View My Submissions',
-            variant: 'primary',
+            label: "View My Submissions",
+            variant: "primary",
             onClick: () => {
               setShowConfirmation(false);
               window.location.href = routes.my.submissions;
             },
           },
           {
-            label: 'Close',
-            variant: 'outline',
+            label: "Close",
+            variant: "outline",
             onClick: () => setShowConfirmation(false),
           },
         ]}
@@ -404,8 +410,8 @@ export default function SubmitProposalPage() {
         description="There was an issue submitting your proposal"
         actions={[
           {
-            label: 'Try Again',
-            variant: 'primary',
+            label: "Try Again",
+            variant: "primary",
             onClick: () => setShowError(false),
           },
         ]}

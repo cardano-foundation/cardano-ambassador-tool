@@ -1,34 +1,34 @@
-'use client';
+"use client";
 
-import LocationSelector from '@/app/(onboarding)/sign-up/_components/LocationSelector';
-import Button from '@/components/atoms/Button';
-import { CardHeader } from '@/components/atoms/Card';
-import Checkbox from '@/components/atoms/Checkbox';
-import ForumUsernameInput from '@/components/atoms/ForumUsernameInput';
-import Input from '@/components/atoms/Input';
-import Paragraph from '@/components/atoms/Paragraph';
-import TextArea from '@/components/atoms/TextArea';
-import ErrorAccordion from '@/components/ErrorAccordion';
-import { toast } from '@/components/toast/toast-manager';
-import { useMemberValidation, useWalletManager } from '@/hooks';
+import LocationSelector from "@/app/(onboarding)/sign-up/_components/LocationSelector";
+import Button from "@/components/atoms/Button";
+import { CardHeader } from "@/components/atoms/Card";
+import Checkbox from "@/components/atoms/Checkbox";
+import ForumUsernameInput from "@/components/atoms/ForumUsernameInput";
+import Input from "@/components/atoms/Input";
+import Paragraph from "@/components/atoms/Paragraph";
+import TextArea from "@/components/atoms/TextArea";
+import ErrorAccordion from "@/components/ErrorAccordion";
+import { toast } from "@/components/toast/toast-manager";
+import { useMemberValidation, useWalletManager } from "@/hooks";
 import {
   findMembershipIntentUtxo,
   getCatConstants,
   getProvider,
-} from '@/utils';
+} from "@/utils";
 import {
   getFieldError,
   validateIntentForm,
   ValidationError,
-} from '@/utils/validation';
+} from "@/utils/validation";
 import {
   membershipMetadata,
   MembershipMetadata,
   UserActionTx,
-} from '@sidan-lab/cardano-ambassador-tool';
-import { MembershipIntentPayoad, MemberTokenDetail } from '@types';
-import { Loader2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+} from "@sidan-lab/cardano-ambassador-tool";
+import { MembershipIntentPayoad, MemberTokenDetail } from "@types";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const SubmitIntent = ({
   asset,
@@ -43,20 +43,20 @@ const SubmitIntent = ({
   const { isMember, memberData } = useMemberValidation();
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
-    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
+    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
   );
 
   const blockfrost = getProvider();
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    fullName: "",
+    email: "",
     wallet_address: address,
-    forum_username: '',
-    country: '',
-    city: '',
+    forum_username: "",
+    country: "",
+    city: "",
     t_c: false,
-    bio: '',
+    bio: "",
     asset,
   });
 
@@ -83,9 +83,9 @@ const SubmitIntent = ({
 
     if (isMember && memberData) {
       setSubmitError({
-        message: 'You are already a Cardano Ambassador member',
+        message: "You are already a Cardano Ambassador member",
         details:
-          'Members cannot submit new membership applications. You can view your profile at /my/submissions.',
+          "Members cannot submit new membership applications. You can view your profile at /my/submissions.",
       });
       return;
     }
@@ -95,17 +95,17 @@ const SubmitIntent = ({
       const existingIntent = await findMembershipIntentUtxo(userAddress);
       if (existingIntent) {
         setSubmitError({
-          message: 'You already have a pending membership application',
+          message: "You already have a pending membership application",
           details:
-            'You can only have one membership application at a time. Check your submission status at /my/submissions.',
+            "You can only have one membership application at a time. Check your submission status at /my/submissions.",
         });
         return;
       }
     } catch (error) {
-      console.error('Error checking existing intent:', error);
+      console.error("Error checking existing intent:", error);
       setSubmitError({
-        message: 'Unable to verify submission eligibility',
-        details: 'Please try again or contact support if the issue persists.',
+        message: "Unable to verify submission eligibility",
+        details: "Please try again or contact support if the issue persists.",
       });
       return;
     }
@@ -129,14 +129,14 @@ const SubmitIntent = ({
       ) as HTMLElement;
       if (errorElement) {
         errorElement.focus();
-        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
       return;
     }
 
     if (!wallet || !address || !asset?.txHash || asset.outputIndex === null) {
       setSubmitError({
-        message: 'Wallet or asset information is missing',
+        message: "Wallet or asset information is missing",
         details: `Wallet: ${!!wallet}, Address: ${!!address}, Asset TX: ${!!asset?.txHash}, Output Index: ${asset?.outputIndex}`,
       });
       return;
@@ -166,13 +166,13 @@ const SubmitIntent = ({
 
     if (result?.success && goNext) {
       toast.success(
-        'Success!',
-        'Your membership application has been submitted successfully.',
+        "Success!",
+        "Your membership application has been submitted successfully.",
       );
       goNext();
     } else if (!result?.success) {
       setSubmitError({
-        message: result?.message || 'Submission failed',
+        message: result?.message || "Submission failed",
         details: result?.error || JSON.stringify(result, null, 2),
       });
       setIsSubmitting(false);
@@ -200,7 +200,7 @@ const SubmitIntent = ({
     } catch (fetchError) {
       return {
         success: false,
-        message: 'Failed to fetch required UTxOs',
+        message: "Failed to fetch required UTxOs",
         data: null,
         error: `UTxO fetch error: ${fetchError instanceof Error ? fetchError.message : String(fetchError)}`,
       };
@@ -209,7 +209,7 @@ const SubmitIntent = ({
     if (!oracleUtxos?.length) {
       return {
         success: false,
-        message: 'Oracle UTxO not found',
+        message: "Oracle UTxO not found",
         data: null,
         error: `Oracle UTxO not found at ${ORACLE_TX_HASH}#${ORACLE_OUTPUT_INDEX}`,
       };
@@ -218,7 +218,7 @@ const SubmitIntent = ({
     if (!tokenUtxos?.length) {
       return {
         success: false,
-        message: 'Token UTxO not found',
+        message: "Token UTxO not found",
         data: null,
         error: `Token UTxO not found at ${tokenUtxoHash}#${tokenUtxoIndex}`,
       };
@@ -236,16 +236,16 @@ const SubmitIntent = ({
 
     const metadata: MembershipMetadata = membershipMetadata({
       walletAddress: userMetadata.walletAddress,
-      fullName: userMetadata.fullName || '',
-      displayName: userMetadata.displayName || '',
-      emailAddress: userMetadata.emailAddress || '',
-      bio: userMetadata.bio || '',
-      country: userMetadata.country || '',
-      city: userMetadata.city || '',
-      x_handle: '',
-      github: '',
-      discord: '',
-      spo_id: '',
+      fullName: userMetadata.fullName || "",
+      displayName: userMetadata.displayName || "",
+      emailAddress: userMetadata.emailAddress || "",
+      bio: userMetadata.bio || "",
+      country: userMetadata.country || "",
+      city: userMetadata.city || "",
+      x_handle: "",
+      github: "",
+      discord: "",
+      spo_id: "",
     });
 
     // Apply membership
@@ -261,7 +261,7 @@ const SubmitIntent = ({
     } catch (membershipError) {
       return {
         success: false,
-        message: 'Membership application failed',
+        message: "Membership application failed",
         data: null,
         error: `Membership error: ${membershipError instanceof Error ? membershipError.message : String(membershipError)}`,
       };
@@ -270,15 +270,15 @@ const SubmitIntent = ({
     if (!result) {
       return {
         success: false,
-        message: 'Membership application failed',
+        message: "Membership application failed",
         data: null,
-        error: 'UserAction.applyMembership returned null or undefined',
+        error: "UserAction.applyMembership returned null or undefined",
       };
     }
 
     return {
       success: true,
-      message: 'Membership successfully applied',
+      message: "Membership successfully applied",
       data: result,
     };
   };
@@ -310,8 +310,8 @@ const SubmitIntent = ({
           onChange={(e) =>
             setFormData({ ...formData, fullName: e.target.value })
           }
-          error={!!getFieldError(validationErrors, 'fullName')}
-          errorMessage={getFieldError(validationErrors, 'fullName')}
+          error={!!getFieldError(validationErrors, "fullName")}
+          errorMessage={getFieldError(validationErrors, "fullName")}
         />
 
         <Input
@@ -321,8 +321,8 @@ const SubmitIntent = ({
           name="email"
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          error={!!getFieldError(validationErrors, 'email')}
-          errorMessage={getFieldError(validationErrors, 'email')}
+          error={!!getFieldError(validationErrors, "email")}
+          errorMessage={getFieldError(validationErrors, "email")}
         />
 
         <div className="space-y-1">
@@ -332,9 +332,9 @@ const SubmitIntent = ({
               setFormData((prev) => ({ ...prev, forum_username }));
             }}
           />
-          {getFieldError(validationErrors, 'forum_username') && (
+          {getFieldError(validationErrors, "forum_username") && (
             <p className="text-primary-base mt-1 text-sm">
-              {getFieldError(validationErrors, 'forum_username')}
+              {getFieldError(validationErrors, "forum_username")}
             </p>
           )}
         </div>
@@ -344,17 +344,17 @@ const SubmitIntent = ({
             countryCode={formData.country}
             city={formData.city}
             onCountryChange={(country) => {
-              setFormData((prev) => ({ ...prev, country, city: '' }));
+              setFormData((prev) => ({ ...prev, country, city: "" }));
             }}
             onCityChange={(city) => {
               setFormData((prev) => ({ ...prev, city }));
             }}
           />
-          {(getFieldError(validationErrors, 'country') ||
-            getFieldError(validationErrors, 'city')) && (
+          {(getFieldError(validationErrors, "country") ||
+            getFieldError(validationErrors, "city")) && (
             <p className="text-primary-base mt-1 text-sm">
-              {getFieldError(validationErrors, 'country') ||
-                getFieldError(validationErrors, 'city')}
+              {getFieldError(validationErrors, "country") ||
+                getFieldError(validationErrors, "city")}
             </p>
           )}
         </div>
@@ -365,8 +365,8 @@ const SubmitIntent = ({
           name="bio"
           value={formData.bio}
           onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-          error={!!getFieldError(validationErrors, 'bio')}
-          errorMessage={getFieldError(validationErrors, 'bio')}
+          error={!!getFieldError(validationErrors, "bio")}
+          errorMessage={getFieldError(validationErrors, "bio")}
         />
 
         <div className="space-y-2">
@@ -389,9 +389,9 @@ const SubmitIntent = ({
               }
             />
           </div>
-          {getFieldError(validationErrors, 't_c') && (
+          {getFieldError(validationErrors, "t_c") && (
             <p className="text-primary-base text-sm">
-              {getFieldError(validationErrors, 't_c')}
+              {getFieldError(validationErrors, "t_c")}
             </p>
           )}
         </div>
@@ -416,7 +416,7 @@ const SubmitIntent = ({
                 <span>Submitting...</span>
               </div>
             ) : (
-              'Create Account'
+              "Create Account"
             )}
           </Button>
         </div>

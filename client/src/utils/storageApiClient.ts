@@ -13,7 +13,7 @@ export class StorageApiError extends Error {
     public status?: number,
   ) {
     super(message);
-    this.name = 'StorageApiError';
+    this.name = "StorageApiError";
   }
 }
 
@@ -21,10 +21,10 @@ async function makeStorageRequest<T = any>(
   action: string,
   params: Record<string, any>,
 ): Promise<StorageApiResponse<T>> {
-  const response = await fetch('/api/storage', {
-    method: 'POST',
+  const response = await fetch("/api/storage", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       action,
@@ -36,7 +36,7 @@ async function makeStorageRequest<T = any>(
 
   if (!response.ok) {
     throw new StorageApiError(
-      result.error || 'Storage API request failed',
+      result.error || "Storage API request failed",
       response.status,
     );
   }
@@ -50,7 +50,7 @@ export const storageApiClient = {
     content: Record<string, any>,
     subfolder: string,
   ): Promise<void> {
-    await makeStorageRequest('save', {
+    await makeStorageRequest("save", {
       filename,
       content,
       subfolder,
@@ -58,7 +58,7 @@ export const storageApiClient = {
   },
 
   async get<T>(filename: string, subfolder?: string): Promise<T | null> {
-    const response = await makeStorageRequest<T>('get', {
+    const response = await makeStorageRequest<T>("get", {
       filename,
       subfolder,
     });
@@ -66,7 +66,7 @@ export const storageApiClient = {
   },
 
   async exists(filename: string, subfolder?: string): Promise<boolean> {
-    const response = await makeStorageRequest('exists', {
+    const response = await makeStorageRequest("exists", {
       filename,
       subfolder,
     });
@@ -74,7 +74,7 @@ export const storageApiClient = {
   },
 
   async delete(filename: string, subfolder?: string): Promise<boolean> {
-    const response = await makeStorageRequest('delete', {
+    const response = await makeStorageRequest("delete", {
       filename,
       subfolder,
     });
@@ -82,7 +82,7 @@ export const storageApiClient = {
   },
 
   async list(subfolder?: string): Promise<string[]> {
-    const response = await makeStorageRequest('list', {
+    const response = await makeStorageRequest("list", {
       subfolder,
     });
     return response.files ?? [];

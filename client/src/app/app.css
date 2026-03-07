@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import './font.css';
+@import "tailwindcss";
+@import "./font.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -75,7 +75,7 @@
   --color-ring: var(--ring);
   --color-neutral: var(--neutral);
 
-  --font-family-sans: 'Chivo', ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans: "Chivo", ui-sans-serif, system-ui, sans-serif;
 
   --breakpoint-lg: 74rem;
   --breakpoint-xl: 80rem;
@@ -106,7 +106,7 @@ html,
 body {
   background-color: var(--color-background);
   color: var(--color-text-default);
-  font-family: 'Chivo', sans-serif;
+  font-family: "Chivo", sans-serif;
   overflow-x: hidden;
 }
 
@@ -126,8 +126,8 @@ button,
 input,
 select,
 textarea,
-[role='button'],
-[tabindex='0'] {
+[role="button"],
+[tabindex="0"] {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   -webkit-user-select: none;
@@ -144,7 +144,7 @@ button.primary {
   color: white;
 }
 
-input:not([tabindex]):not([type='radio']),
+input:not([tabindex]):not([type="radio"]),
 select:not([tabindex]),
 textarea:not([tabindex]) {
   background-color: var(--color-background);
@@ -164,7 +164,7 @@ label {
 .animate-pulse,
 .animate-spin,
 .animate-bounce,
-[class*='animate-'] {
+[class*="animate-"] {
   transition: none !important;
 }
 
@@ -205,14 +205,14 @@ label {
 */
 svg,
 svg *,
-[class*='icon'],
-[class*='gradient'],
-[class*='bg-gradient'] {
+[class*="icon"],
+[class*="gradient"],
+[class*="bg-gradient"] {
   transition: none !important;
 }
 
-[role='tablist'] *::before {
-  content: '' !important;
+[role="tablist"] *::before {
+  content: "" !important;
   display: none !important;
 }
 

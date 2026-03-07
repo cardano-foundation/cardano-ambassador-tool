@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface DiscordIconProps {
   className?: string;
@@ -7,9 +7,9 @@ interface DiscordIconProps {
 }
 
 const DiscordIcon: React.FC<DiscordIconProps> = ({
-  className = '',
+  className = "",
   size = 24,
-  color = 'currentColor',
+  color = "currentColor",
 }) => {
   return (
     <svg

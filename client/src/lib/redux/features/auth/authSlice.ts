@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import type { MemberData } from '@sidan-lab/cardano-ambassador-tool';
-import type { Utxo } from '@types';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import type { MemberData } from "@sidan-lab/cardano-ambassador-tool";
+import type { Utxo } from "@types";
 
 // ---------- Types ----------
 
@@ -59,25 +59,27 @@ export const hydrateFromSession = createAsyncThunk<
   UserSession | null,
   void,
   { rejectValue: string }
->('auth/hydrateFromSession', async (_, { rejectWithValue }) => {
+>("auth/hydrateFromSession", async (_, { rejectWithValue }) => {
   try {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
 
-    const stored = localStorage.getItem('user_session');
+    const stored = localStorage.getItem("user_session");
     if (!stored) return null;
 
-    const session = JSON.parse(stored) as UserSession & { roles: { role: string }[] | string[] };
+    const session = JSON.parse(stored) as UserSession & {
+      roles: { role: string }[] | string[];
+    };
 
     // Check if session is older than 24 hours
     const twentyFourHours = 24 * 60 * 60 * 1000;
     if (Date.now() - session.timestamp > twentyFourHours) {
-      localStorage.removeItem('user_session');
+      localStorage.removeItem("user_session");
       return null;
     }
 
     // Normalize roles format (could be string[] or {role: string}[])
     const roles = session.roles.map((r: string | { role: string }) =>
-      typeof r === 'string' ? r : r.role,
+      typeof r === "string" ? r : r.role,
     );
 
     return {
@@ -86,8 +88,8 @@ export const hydrateFromSession = createAsyncThunk<
       timestamp: session.timestamp,
     };
   } catch (error) {
-    localStorage.removeItem('user_session');
-    return rejectWithValue('Failed to hydrate session');
+    localStorage.removeItem("user_session");
+    return rejectWithValue("Failed to hydrate session");
   }
 });
 
@@ -98,10 +100,10 @@ export const resolveUserRoles = createAsyncThunk<
   { address: string; roles: string[] },
   string,
   { rejectValue: string }
->('auth/resolveUserRoles', async (address, { rejectWithValue }) => {
+>("auth/resolveUserRoles", async (address, { rejectWithValue }) => {
   try {
     // Import dynamically to avoid SSR issues with server action
-    const { resolveRoles } = await import('@/lib/auth/roles');
+    const { resolveRoles } = await import("@/lib/auth/roles");
     const roles = await resolveRoles(address);
     const roleStrings = roles.map((r) => r.role);
 
@@ -111,18 +113,18 @@ export const resolveUserRoles = createAsyncThunk<
       roles: roleStrings,
       timestamp: Date.now(),
     };
-    localStorage.setItem('user_session', JSON.stringify(sessionData));
+    localStorage.setItem("user_session", JSON.stringify(sessionData));
 
     return { address, roles: roleStrings };
   } catch (error) {
-    return rejectWithValue('Failed to resolve user roles');
+    return rejectWithValue("Failed to resolve user roles");
   }
 });
 
 // ---------- Slice ----------
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     /**
@@ -135,7 +137,7 @@ const authSlice = createSlice({
       state.address = action.payload.address;
       state.roles = action.payload.roles;
       state.isAuthenticated = true;
-      state.isAdmin = action.payload.roles.includes('admin');
+      state.isAdmin = action.payload.roles.includes("admin");
       state.error = null;
     },
 
@@ -152,8 +154,8 @@ const authSlice = createSlice({
       state.currentMemberUtxoRef = null;
       state.error = null;
       // Don't reset isHydrated - that's a one-time initialization flag
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('user_session');
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user_session");
       }
     },
 
@@ -207,7 +209,7 @@ const authSlice = createSlice({
           state.address = action.payload.address;
           state.roles = action.payload.roles;
           state.isAuthenticated = true;
-          state.isAdmin = action.payload.roles.includes('admin');
+          state.isAdmin = action.payload.roles.includes("admin");
         }
       })
       .addCase(hydrateFromSession.rejected, (state) => {
@@ -226,11 +228,11 @@ const authSlice = createSlice({
         state.address = action.payload.address;
         state.roles = action.payload.roles;
         state.isAuthenticated = true;
-        state.isAdmin = action.payload.roles.includes('admin');
+        state.isAdmin = action.payload.roles.includes("admin");
       })
       .addCase(resolveUserRoles.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || 'Failed to resolve roles';
+        state.error = action.payload || "Failed to resolve roles";
         state.isAuthenticated = false;
         state.isAdmin = false;
       });

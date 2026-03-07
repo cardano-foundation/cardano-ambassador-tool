@@ -1,12 +1,15 @@
-import { createSelector } from '@reduxjs/toolkit';
-import type { RootState } from '../../store';
+import { createSelector } from "@reduxjs/toolkit";
+import type { RootState } from "../../store";
+import { selectCalculatedTotalPayouts } from "../data/dataSelectors";
 
 // ---------- Base Selectors ----------
 export const selectTreasuryState = (state: RootState) => state.treasury;
 
-export const selectTreasuryBalanceString = (state: RootState) => state.treasury.balance;
-export const selectTotalPayoutsString = (state: RootState) => state.treasury.totalPayouts;
-export const selectIsTreasuryLoading = (state: RootState) => state.treasury.isLoading;
+export const selectTreasuryBalanceString = (state: RootState) =>
+  state.treasury.balance;
+// Removed selectTotalPayoutsString as it's no longer in state
+export const selectIsTreasuryLoading = (state: RootState) =>
+  state.treasury.isLoading;
 export const selectTreasuryError = (state: RootState) => state.treasury.error;
 
 // ---------- Memoized Selectors ----------
@@ -21,9 +24,10 @@ export const selectTreasuryBalance = createSelector(
 
 /**
  * Get total payouts as bigint
+ * Now derived from data slice via selectCalculatedTotalPayouts
  */
 export const selectTotalPayouts = createSelector(
-  [selectTotalPayoutsString],
+  [selectCalculatedTotalPayouts],
   (payoutsString) => BigInt(payoutsString),
 );
 

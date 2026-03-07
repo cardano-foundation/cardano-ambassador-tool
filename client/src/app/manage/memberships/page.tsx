@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import Button from '@/components/atoms/Button';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import UserAvatar from '@/components/atoms/UserAvatar';
-import Copyable from '@/components/Copyable';
-import { ColumnDef, Table } from '@/components/Table/Table';
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { useDatabase } from '@/hooks';
-import { getCountryByCode, parseMemberDatum } from '@/utils';
-import Link from 'next/link';
+import Button from "@/components/atoms/Button";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import UserAvatar from "@/components/atoms/UserAvatar";
+import Copyable from "@/components/Copyable";
+import { ColumnDef, Table } from "@/components/Table/Table";
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { useDatabase } from "@/hooks";
+import { getCountryByCode, parseMemberDatum } from "@/utils";
+import Link from "next/link";
 
 export default function ManageAmbassadorsPage() {
   const { members, dbLoading } = useDatabase();
@@ -31,11 +31,11 @@ export default function ManageAmbassadorsPage() {
         address: string;
         utxoHash: any;
       } = {
-        fullName: '',
-        displayName: '',
-        country: '',
-        utxoHash: '',
-        address: '',
+        fullName: "",
+        displayName: "",
+        country: "",
+        utxoHash: "",
+        address: "",
       };
 
       if (utxo.plutusData) {
@@ -44,30 +44,30 @@ export default function ManageAmbassadorsPage() {
         const memberMetadata = member.metadata;
 
         if (member && memberMetadata) {
-          decodedDatum['fullName'] = memberMetadata.fullName!;
-          decodedDatum['displayName'] = memberMetadata.displayName!;
-          decodedDatum['country'] = memberMetadata.country!;
-          decodedDatum['address'] = memberMetadata.walletAddress!;
-          decodedDatum['utxoHash'] = utxo?.txHash!;
-        }        
+          decodedDatum["fullName"] = memberMetadata.fullName!;
+          decodedDatum["displayName"] = memberMetadata.displayName!;
+          decodedDatum["country"] = memberMetadata.country!;
+          decodedDatum["address"] = memberMetadata.walletAddress!;
+          decodedDatum["utxoHash"] = utxo?.txHash!;
+        }
       }
       return { ...utxo, ...decodedDatum };
     })
-    .filter((utxo) => utxo.address && utxo.address.trim() !== '');
+    .filter((utxo) => utxo.address && utxo.address.trim() !== "");
 
   const getCountryFlag = (code: string): string => {
-    if (!code) return 'https://flagcdn.com/w40/un.png';
+    if (!code) return "https://flagcdn.com/w40/un.png";
     return `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
   };
 
   const ambassadorId = (name: string) => {
-    return name.toLowerCase().replace(/\s+/g, '');
+    return name.toLowerCase().replace(/\s+/g, "");
   };
 
   const columns: ColumnDef<(typeof decodedUtxos)[number]>[] = [
     {
-      header: 'Ambassador',
-      accessor: 'fullName',
+      header: "Ambassador",
+      accessor: "fullName",
       sortable: true,
       cell: (value: string, row: any) => (
         <div className="flex items-center gap-2">
@@ -80,8 +80,8 @@ export default function ManageAmbassadorsPage() {
       ),
     },
     {
-      header: 'Country',
-      accessor: 'country',
+      header: "Country",
+      accessor: "country",
       sortable: true,
       cell: (value: string) => (
         <div>
@@ -91,14 +91,14 @@ export default function ManageAmbassadorsPage() {
             className="mr-2 inline size-6 rounded-full"
           />
           <span className="text-neutral font-normal">
-            {getCountryByCode(value)?.name || ''}
+            {getCountryByCode(value)?.name || ""}
           </span>
         </div>
       ),
     },
     {
-      header: 'Utxo Hash',
-      accessor: 'utxoHash',
+      header: "Approval tx",
+      accessor: "utxoHash",
       sortable: false,
       cell: (value: string) => (
         <Copyable
@@ -109,8 +109,8 @@ export default function ManageAmbassadorsPage() {
       ),
     },
     {
-      header: 'Action',
-      accessor: 'fullName',
+      header: "Action",
+      accessor: "fullName",
       cell: (value: string, row: any) => {
         const name = row.displayName || value;
         return (

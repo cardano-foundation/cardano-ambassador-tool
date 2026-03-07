@@ -2,7 +2,7 @@ interface IconProps {
   className?: string;
 }
 
-export function CopyIcon({ className = '' }: IconProps) {
+export function CopyIcon({ className = "" }: IconProps) {
   return (
     <svg
       width="18"

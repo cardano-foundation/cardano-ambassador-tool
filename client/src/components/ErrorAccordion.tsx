@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { cn } from '@/utils';
-import { AlertTriangle, ChevronDown, ChevronUp, X } from 'lucide-react';
-import { useState } from 'react';
+import { cn } from "@/utils";
+import { AlertTriangle, ChevronDown, ChevronUp, X } from "lucide-react";
+import { useState } from "react";
 
 interface ErrorAccordionProps {
   /**
@@ -28,16 +28,16 @@ interface ErrorAccordionProps {
   /**
    * Variant for different error types
    */
-  variant?: 'error' | 'warning';
+  variant?: "error" | "warning";
 }
 
 const ErrorAccordion = ({
-  message = 'Submission failed',
+  message = "Submission failed",
   details,
   isVisible = false,
   onDismiss,
   className,
-  variant = 'error',
+  variant = "error",
 }: ErrorAccordionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -58,18 +58,18 @@ const ErrorAccordion = ({
   const shouldShowToggle = hasDetails && details !== message;
 
   const baseClasses = cn(
-    'w-full max-w-full border rounded-lg p-4 shadow-md transition-all duration-300 ease-out',
-    'transform translate-y-0 opacity-100 overflow-hidden',
-    variant === 'error'
-      ? 'bg-red-50 border-red-200 text-red-800'
-      : 'bg-yellow-50 border-yellow-200 text-yellow-800',
+    "w-full max-w-full border rounded-lg p-4 shadow-md transition-all duration-300 ease-out",
+    "transform translate-y-0 opacity-100 overflow-hidden",
+    variant === "error"
+      ? "bg-red-50 border-red-200 text-red-800"
+      : "bg-yellow-50 border-yellow-200 text-yellow-800",
     className,
   );
 
   return (
     <div
       className="w-full max-w-full overflow-hidden transition-all duration-300 ease-out"
-      style={{ maxHeight: '500px' }}
+      style={{ maxHeight: "500px" }}
     >
       <div className={baseClasses}>
         <div className="flex min-w-0 items-start gap-3">
@@ -77,8 +77,8 @@ const ErrorAccordion = ({
           <div className="mt-0.5 flex-shrink-0">
             <AlertTriangle
               className={cn(
-                'h-5 w-5',
-                variant === 'error' ? 'text-primary-base' : 'text-yellow-500',
+                "h-5 w-5",
+                variant === "error" ? "text-primary-base" : "text-yellow-500",
               )}
             />
           </div>
@@ -96,10 +96,10 @@ const ErrorAccordion = ({
                 <button
                   onClick={onDismiss}
                   className={cn(
-                    'flex-shrink-0 rounded-md p-0.5 transition-colors hover:cursor-pointer',
-                    variant === 'error'
-                      ? 'text-primary-400 hover:text-primary-500 hover:bg-primary-100'
-                      : 'text-yellow-400 hover:bg-yellow-100 hover:text-yellow-500',
+                    "flex-shrink-0 rounded-md p-0.5 transition-colors hover:cursor-pointer",
+                    variant === "error"
+                      ? "text-primary-400 hover:text-primary-500 hover:bg-primary-100"
+                      : "text-yellow-400 hover:bg-yellow-100 hover:text-yellow-500",
                   )}
                   aria-label="Dismiss error"
                 >
@@ -113,13 +113,13 @@ const ErrorAccordion = ({
               <button
                 onClick={toggleExpanded}
                 className={cn(
-                  'mt-2 inline-flex items-center gap-1 text-xs font-medium transition-colors',
-                  variant === 'error'
-                    ? 'text-red-600 hover:text-red-700'
-                    : 'text-yellow-600 hover:text-yellow-700',
+                  "mt-2 inline-flex items-center gap-1 text-xs font-medium transition-colors",
+                  variant === "error"
+                    ? "text-red-600 hover:text-red-700"
+                    : "text-yellow-600 hover:text-yellow-700",
                 )}
               >
-                {isExpanded ? 'See less' : 'See more'}
+                {isExpanded ? "See less" : "See more"}
                 {isExpanded ? (
                   <ChevronUp className="h-3 w-3" />
                 ) : (
@@ -132,16 +132,16 @@ const ErrorAccordion = ({
             {isExpanded && hasDetails && (
               <div
                 className={cn(
-                  'mt-3 border-t pt-3 transition-all duration-300',
-                  variant === 'error' ? 'border-red-200' : 'border-yellow-200',
+                  "mt-3 border-t pt-3 transition-all duration-300",
+                  variant === "error" ? "border-red-200" : "border-yellow-200",
                 )}
               >
                 <div
                   className={cn(
-                    'max-h-40 w-full overflow-auto rounded-md p-3 font-mono text-xs',
-                    variant === 'error'
-                      ? 'bg-red-100 text-red-700'
-                      : 'bg-yellow-100 text-yellow-700',
+                    "max-h-40 w-full overflow-auto rounded-md p-3 font-mono text-xs",
+                    variant === "error"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-yellow-700",
                   )}
                 >
                   <pre className="overflow-wrap-anywhere word-break w-full max-w-full break-words break-all whitespace-pre-wrap">

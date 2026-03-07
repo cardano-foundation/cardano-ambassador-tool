@@ -1,6 +1,6 @@
-import { TimelineProps, TimelineStatus, TimelineStep } from '@types';
-import React from 'react';
-import { CardanoIcon } from './CardanoIcon';
+import { TimelineProps, TimelineStatus, TimelineStep } from "@types";
+import React from "react";
+import { CardanoIcon } from "./CardanoIcon";
 
 const TimelineItem: React.FC<{
   step: TimelineStep;
@@ -9,9 +9,9 @@ const TimelineItem: React.FC<{
   onClick?: (stepId: string, stepIndex: number) => void;
   clickable?: boolean;
 }> = ({ step, index, isLast, onClick, clickable }) => {
-  const isCompleted = step.status === 'completed';
-  const isCurrent = step.status === 'current';
-  const isPending = step.status === 'pending';
+  const isCompleted = step.status === "completed";
+  const isCurrent = step.status === "current";
+  const isPending = step.status === "pending";
 
   const handleClick = () => {
     if (clickable && onClick) {
@@ -23,7 +23,7 @@ const TimelineItem: React.FC<{
     const base = `
       w-11 h-11 rounded-full flex items-center justify-center 
       transition-all duration-300 ease-in-out
-      ${clickable ? 'cursor-pointer hover:scale-105' : ''}
+      ${clickable ? "cursor-pointer hover:scale-105" : ""}
     `;
 
     if (isCompleted) {
@@ -37,16 +37,16 @@ const TimelineItem: React.FC<{
 
   const getIconColor = () => {
     if (isCompleted) {
-      return 'white';
+      return "white";
     }
     if (isCurrent) {
-      return '#DC2626';
+      return "#DC2626";
     }
-    return '#9CA3AF';
+    return "#9CA3AF";
   };
 
   const getLineClasses = () => {
-    const base = 'w-px transition-colors duration-300';
+    const base = "w-px transition-colors duration-300";
     if (isCompleted || isCurrent) {
       return `${base} bg-primary-base`;
     }
@@ -54,11 +54,11 @@ const TimelineItem: React.FC<{
   };
 
   return (
-    <div className={`relative flex items-start ${clickable ? 'group' : ''}`}>
+    <div className={`relative flex items-start ${clickable ? "group" : ""}`}>
       {!isLast && (
         <div
           className={`absolute top-11 left-5 w-0.5 ${getLineClasses()}`}
-          style={{ height: 'calc(100% - 44px)' }}
+          style={{ height: "calc(100% - 44px)" }}
         />
       )}
 
@@ -70,11 +70,11 @@ const TimelineItem: React.FC<{
       </div>
 
       <div
-        className={`ml-4 min-w-0 flex-1 pb-8 ${clickable ? 'cursor-pointer' : ''}`}
+        className={`ml-4 min-w-0 flex-1 pb-8 ${clickable ? "cursor-pointer" : ""}`}
         onClick={clickable ? handleClick : undefined}
       >
         <div
-          className={`text-foreground mb-3 text-base font-medium ${clickable ? 'group-hover:text-primary' : ''} `}
+          className={`text-foreground mb-3 text-base font-medium ${clickable ? "group-hover:text-primary" : ""} `}
         >
           {step.title}
         </div>
@@ -86,20 +86,20 @@ const TimelineItem: React.FC<{
 
 export const Timeline: React.FC<TimelineProps> = ({
   steps,
-  className = '',
+  className = "",
   onStepClick,
   clickable = false,
 }) => {
-  const currentStepIndex = steps.findIndex((step) => step.status === 'current');
+  const currentStepIndex = steps.findIndex((step) => step.status === "current");
   const correctedSteps =
     currentStepIndex !== -1
       ? steps.map((step, index) => {
           if (index < currentStepIndex) {
-            return { ...step, status: 'completed' as TimelineStatus };
+            return { ...step, status: "completed" as TimelineStatus };
           } else if (index === currentStepIndex) {
-            return { ...step, status: 'current' as TimelineStatus };
+            return { ...step, status: "current" as TimelineStatus };
           } else {
-            return { ...step, status: 'pending' as TimelineStatus };
+            return { ...step, status: "pending" as TimelineStatus };
           }
         })
       : steps;

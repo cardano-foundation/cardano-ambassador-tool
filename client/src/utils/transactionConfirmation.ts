@@ -5,8 +5,8 @@
 import {
   TransactionConfirmationOptions,
   TransactionConfirmationResult,
-} from '@types';
-import { getProvider } from './utils';
+} from "@types";
+import { getProvider } from "./utils";
 
 /**
  * Polls Blockfrost to check if a transaction is confirmed on-chain
@@ -70,7 +70,7 @@ export async function waitForTransactionConfirmation(
           attempts,
           timeTaken: elapsed,
           error:
-            'Timeout reached - transaction not confirmed within the specified time',
+            "Timeout reached - transaction not confirmed within the specified time",
         });
         return;
       }
@@ -114,7 +114,7 @@ export async function waitForTransactionWithProgress(
       );
     },
     onTimeout: () => {
-      onProgress?.('Transaction confirmation timeout reached', 0);
+      onProgress?.("Transaction confirmation timeout reached", 0);
     },
   });
 }

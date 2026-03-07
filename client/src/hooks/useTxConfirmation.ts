@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
   showTxConfirmation as showTxConfirmationAction,
   hideTxConfirmation as hideTxConfirmationAction,
   selectTxConfirmation,
-} from '@/lib/redux/features/ui';
-import { TransactionConfirmationResult } from '@types';
+} from "@/lib/redux/features/ui";
+import { TransactionConfirmationResult } from "@types";
 
 export interface TxConfirmationOptions {
   txHash: string;
@@ -19,7 +19,7 @@ export interface TxConfirmationOptions {
   navigationOptions?: {
     label: string;
     url: string;
-    variant?: 'primary' | 'outline';
+    variant?: "primary" | "outline";
   }[];
 }
 
@@ -34,7 +34,7 @@ export function useTxConfirmation() {
   const showTxConfirmation = useCallback(
     (options: TxConfirmationOptions) => {
       // Store callbacks in a global registry since they can't go in Redux
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         (window as any).__txConfirmationCallbacks = {
           onConfirmed: options.onConfirmed,
           onTimeout: options.onTimeout,

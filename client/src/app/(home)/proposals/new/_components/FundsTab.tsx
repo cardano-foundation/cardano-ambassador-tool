@@ -1,6 +1,6 @@
-import { useWalletManager } from '@/hooks';
-import { ProposalData } from '@sidan-lab/cardano-ambassador-tool';
-import FormFunds from '../../_components/FormFunds';
+import { useWalletManager } from "@/hooks";
+import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
+import FormFunds from "../../_components/FormFunds";
 
 type ProposalFormData = ProposalData & {
   description: string;

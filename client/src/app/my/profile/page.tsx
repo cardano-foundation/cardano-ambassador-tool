@@ -1,35 +1,35 @@
-'use client';
+"use client";
 import {
   useAmbassadorProfile,
   useDatabase,
   useMemberValidation,
   useTxConfirmation,
   useWalletManager,
-} from '@/hooks';
+} from "@/hooks";
 import {
   findMemberUtxo,
   findTokenUtxoByMemberUtxo,
   getCatConstants,
   getProvider,
-} from '@/utils';
-import { resolveTxHash } from '@meshsdk/core';
+} from "@/utils";
+import { resolveTxHash } from "@meshsdk/core";
 import {
   MemberData,
   membershipMetadata,
   UserActionTx,
-} from '@sidan-lab/cardano-ambassador-tool';
-import { TransactionConfirmationResult } from '@types';
-import { useCallback, useMemo, useState } from 'react';
-import DashboardHeader from '../_components/DashboardHeader';
-import MemberOnlyAccessCard from '../_components/MemberOnlyAccessCard';
-import ProfileDetails from '../_components/ProfileDetails';
-import ProfileEditModal from '../_components/ProfileEditModal';
-import ProfileHeader from '../_components/ProfileHeader';
+} from "@sidan-lab/cardano-ambassador-tool";
+import { TransactionConfirmationResult } from "@types";
+import { useCallback, useMemo, useState } from "react";
+import DashboardHeader from "../_components/DashboardHeader";
+import MemberOnlyAccessCard from "../_components/MemberOnlyAccessCard";
+import ProfileDetails from "../_components/ProfileDetails";
+import ProfileEditModal from "../_components/ProfileEditModal";
+import ProfileHeader from "../_components/ProfileHeader";
 
 export default function ProfilesPage() {
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
-    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || '0',
+    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
   );
 
   const blockfrost = getProvider();
@@ -42,13 +42,13 @@ export default function ProfilesPage() {
   const profileData = useMemo(() => {
     if (!memberData) {
       return {
-        name: '',
-        username: '',
-        country: '',
-        city: '',
-        bio_excerpt: '',
-        created_at: '',
-        email: '',
+        name: "",
+        username: "",
+        country: "",
+        city: "",
+        bio_excerpt: "",
+        created_at: "",
+        email: "",
       };
     }
 
@@ -59,7 +59,7 @@ export default function ProfilesPage() {
       country: memberData.country,
       city: memberData.city,
       bio_excerpt: memberData.bio,
-      created_at: '',
+      created_at: "",
     };
   }, [memberData]);
 
@@ -74,10 +74,10 @@ export default function ProfilesPage() {
     email: profileData.email,
     username: profileData.username,
     bio: profileData.bio_excerpt ?? profile?.bio_excerpt,
-    spoId: memberData?.spo_id || '',
-    discord: memberData?.discord || '',
-    twitter: memberData?.x_handle || '',
-    github: memberData?.github || '',
+    spoId: memberData?.spo_id || "",
+    discord: memberData?.discord || "",
+    twitter: memberData?.x_handle || "",
+    github: memberData?.github || "",
     href: profile?.href,
   };
 
@@ -92,7 +92,7 @@ export default function ProfilesPage() {
       };
 
   function handleWithdrawRole(): void {
-    throw new Error('Function not implemented.');
+    throw new Error("Function not implemented.");
   }
 
   function handleEditProfile(): void {
@@ -110,13 +110,13 @@ export default function ProfilesPage() {
       const membershipUtxo = await findMemberUtxo(userAddress);
 
       if (!membershipUtxo) {
-        throw new Error('No membership intent UTxO found for this address');
+        throw new Error("No membership intent UTxO found for this address");
       }
 
       const tokenUtxo = await findTokenUtxoByMemberUtxo(membershipUtxo);
 
       if (!tokenUtxo) {
-        throw new Error('No token UTxO found for this membership intent');
+        throw new Error("No token UTxO found for this membership intent");
       }
 
       const oracleUtxos = await blockfrost.fetchUTxOs(
@@ -127,7 +127,7 @@ export default function ProfilesPage() {
       const oracleUtxo = oracleUtxos[0];
 
       if (!oracleUtxo) {
-        throw new Error('Failed to fetch required oracle UTxO');
+        throw new Error("Failed to fetch required oracle UTxO");
       }
 
       const userAction = new UserActionTx(
@@ -140,16 +140,16 @@ export default function ProfilesPage() {
       // Map the profile data to the expected MemberData format
       const userMetadata: MemberData = {
         walletAddress: userAddress,
-        fullName: updatedProfile.name || '',
-        displayName: updatedProfile.username || '',
-        emailAddress: updatedProfile.email || '',
-        bio: updatedProfile.bio || '',
-        country: updatedProfile.country || '',
-        city: updatedProfile.city || '',
-        x_handle: updatedProfile.twitter || '',
-        github: updatedProfile.github || '',
-        discord: updatedProfile.discord || '',
-        spo_id: updatedProfile.spoId || '',
+        fullName: updatedProfile.name || "",
+        displayName: updatedProfile.username || "",
+        emailAddress: updatedProfile.email || "",
+        bio: updatedProfile.bio || "",
+        country: updatedProfile.country || "",
+        city: updatedProfile.city || "",
+        x_handle: updatedProfile.twitter || "",
+        github: updatedProfile.github || "",
+        discord: updatedProfile.discord || "",
+        spo_id: updatedProfile.spoId || "",
       };
 
       const metadata = membershipMetadata(userMetadata);
@@ -168,18 +168,18 @@ export default function ProfilesPage() {
           setIsEditModalOpen(false);
           showTxConfirmation({
             txHash,
-            title: 'Updating Profile',
+            title: "Updating Profile",
             description:
-              'Please wait while your profile is being updated on the blockchain.',
+              "Please wait while your profile is being updated on the blockchain.",
             onConfirmed: handleTransactionConfirmed,
             onTimeout: handleTransactionTimeout,
           });
         } else {
-          console.error('Failed to compute transaction hash from txHex');
+          console.error("Failed to compute transaction hash from txHex");
         }
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error("Error updating profile:", error);
       throw error;
     }
   };
@@ -187,20 +187,20 @@ export default function ProfilesPage() {
   const handleTransactionConfirmed = useCallback(
     async (result: TransactionConfirmationResult) => {
       try {
-        await fetch('/api/revalidate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch("/api/revalidate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             allUtxos: true,
             oracleAdmins: true,
           }),
         });
       } catch (error) {
-        console.error('Cache invalidation error:', error);
+        console.error("Cache invalidation error:", error);
       }
 
       setTimeout(() => {
-        syncData('membership_intent');
+        syncData("membership_intent");
       }, 2000);
     },
     [syncData],
@@ -209,20 +209,20 @@ export default function ProfilesPage() {
   const handleTransactionTimeout = useCallback(
     async (result: TransactionConfirmationResult) => {
       try {
-        await fetch('/api/revalidate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch("/api/revalidate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             allUtxos: true,
             oracleAdmins: false,
           }),
         });
       } catch (error) {
-        console.error('Cache invalidation error:', error);
+        console.error("Cache invalidation error:", error);
       }
 
       setTimeout(() => {
-        syncData('membership_intent');
+        syncData("membership_intent");
       }, 2000);
     },
     [syncData],

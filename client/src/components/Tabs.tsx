@@ -1,6 +1,6 @@
-import { cn } from '@/utils/utils';
-import * as TabsPrimitive from '@radix-ui/react-tabs';
-import * as React from 'react';
+import { cn } from "@/utils/utils";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+import * as React from "react";
 
 const Tabs = TabsPrimitive.Root;
 
@@ -10,7 +10,7 @@ const TabsList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
-    className={cn('flex w-full min-w-0 flex-nowrap', 'lg:space-x-4', className)}
+    className={cn("flex w-full min-w-0 flex-nowrap", "lg:space-x-4", className)}
     {...props}
   />
 ));
@@ -23,13 +23,13 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      'hover:text-foreground relative flex-shrink-0 text-sm font-medium transition-colors',
-      'px-2 py-2 lg:px-4',
-      'data-[state=active]:text-primary-base',
-      'data-[state=active]:border-primary-base',
+      "hover:text-foreground relative flex-shrink-0 text-sm font-medium transition-colors",
+      "px-2 py-2 lg:px-4",
+      "data-[state=active]:text-primary-base",
+      "data-[state=active]:border-primary-base",
       'after:bg-primary-base after:absolute after:-bottom-[1px] after:left-0 after:h-[4px] after:content-[""]',
-      'after:w-0 after:transition-all after:duration-400 after:ease-in-out',
-      'data-[state=active]:after:w-full',
+      "after:w-0 after:transition-all after:duration-400 after:ease-in-out",
+      "data-[state=active]:after:w-full",
       className,
     )}
     {...props}
@@ -43,7 +43,7 @@ const TabsContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
     ref={ref}
-    className={cn('mt-4', className)}
+    className={cn("mt-4", className)}
     {...props}
   />
 ));

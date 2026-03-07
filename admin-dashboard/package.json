@@ -12,8 +12,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@meshsdk/core": "1.9.0-beta.91",
-    "@meshsdk/core-csl": "1.9.0-beta.91",
+    "@meshsdk/core": "^1.9.0-beta.101",
+    "@meshsdk/core-csl": "^1.9.0-beta.101",
     "@sidan-lab/cardano-ambassador-tool": "0.0.18",
     "next": "15.3.8"
   },

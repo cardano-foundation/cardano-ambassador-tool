@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { useCallback, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
   selectWalletState,
   selectAvailableWallets,
@@ -11,8 +11,8 @@ import {
   clearError as clearErrorAction,
   refreshWalletList,
   setHasAttemptedAutoConnect,
-} from '@/lib/redux/features/wallet';
-import { WalletState } from '@/types/wallet';
+} from "@/lib/redux/features/wallet";
+import { WalletState } from "@/types/wallet";
 
 /**
  * Wallet manager hook - now delegates to Redux.

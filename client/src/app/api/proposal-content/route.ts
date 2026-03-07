@@ -1,6 +1,6 @@
-import GitContentService from '@/services/githubService';
-import { GithubProposalData } from '@types';
-import { NextRequest, NextResponse } from 'next/server';
+import GitContentService from "@/services/githubService";
+import { GithubProposalData } from "@types";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * GET /api/proposal-content
@@ -11,27 +11,27 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function GET(req: NextRequest) {
   try {
-    const filename = new URL(req.url).searchParams.get('filename');
+    const filename = new URL(req.url).searchParams.get("filename");
 
     if (!filename) {
-      return NextResponse.json({ error: 'Filename required' }, { status: 400 });
+      return NextResponse.json({ error: "Filename required" }, { status: 400 });
     }
 
     if (
       filename.length > 200 ||
       !/^[a-zA-Z0-9_-]+\.md$/.test(filename.trim())
     ) {
-      return NextResponse.json({ error: 'Invalid filename' }, { status: 400 });
+      return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
     }
 
     const data = await GitContentService.readContent(filename);
     return NextResponse.json(data);
   } catch (error) {
     const msg =
-      error instanceof Error ? error.message : 'Failed to fetch content';
-    const status = msg.includes('not found')
+      error instanceof Error ? error.message : "Failed to fetch content";
+    const status = msg.includes("not found")
       ? 404
-      : msg.includes('authentication')
+      : msg.includes("authentication")
         ? 503
         : 500;
     return NextResponse.json({ error: msg }, { status });
@@ -47,13 +47,22 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    const body: GithubProposalData & { submitterAddress?: string } =
-      await req.json();
-    const { title, description, submitterAddress } = body;
+    const body: GithubProposalData & {
+      submitterAddress?: string;
+      filename?: string;
+    } = await req.json();
+    const { title, description, submitterAddress, filename } = body;
+
+    if (
+      filename &&
+      (filename.length > 200 || !/^[a-zA-Z0-9_-]+\.md$/.test(filename.trim()))
+    ) {
+      return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
+    }
 
     if (!title || !description) {
       return NextResponse.json(
-        { error: 'Valid title and proposal description required' },
+        { error: "Valid title and proposal description required" },
         { status: 400 },
       );
     }
@@ -62,12 +71,13 @@ export async function POST(req: NextRequest) {
       title,
       description,
       submitterAddress,
+      filename,
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Proposal content saved',
+        message: "Proposal content saved",
         data: response,
       },
       { status: 200 },
@@ -75,7 +85,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       {
-        error: 'Failed to save proposal content',
+        error: "Failed to save proposal content",
         details: error instanceof Error ? error.message : String(error),
       },
       { status: 500 },
@@ -96,7 +106,7 @@ export async function DELETE(req: NextRequest) {
 
     if (!body.filename) {
       return NextResponse.json(
-        { error: 'Filename is required' },
+        { error: "Filename is required" },
         { status: 404 },
       );
     }
@@ -104,20 +114,20 @@ export async function DELETE(req: NextRequest) {
     const deleted = await GitContentService.deleteContent(body.filename);
 
     if (!deleted) {
-      return NextResponse.json({ error: 'File not found' }, { status: 404 });
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Proposal content deleted successfully',
+        message: "Proposal content deleted successfully",
       },
       { status: 200 },
     );
   } catch (error) {
-    console.error('Error deleting proposal content:', error);
+    console.error("Error deleting proposal content:", error);
     return NextResponse.json(
-      { error: 'Failed to delete proposal content' },
+      { error: "Failed to delete proposal content" },
       { status: 500 },
     );
   }

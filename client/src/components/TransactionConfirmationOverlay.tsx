@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { getCurrentNetworkConfig } from '@/config/cardano';
-import { waitForTransactionConfirmation } from '@/utils';
-import { TransactionConfirmationResult } from '@types';
-import { CheckCircle, ExternalLink } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import Button from './atoms/Button';
-import Modal from './atoms/Modal';
-import Paragraph from './atoms/Paragraph';
-import CardanoLoaderSVG from './ui/CardanoLoaderSVG';
+import { getCurrentNetworkConfig } from "@/config/cardano";
+import { waitForTransactionConfirmation } from "@/utils";
+import { TransactionConfirmationResult } from "@types";
+import { CheckCircle, ExternalLink } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import Button from "./atoms/Button";
+import Modal from "./atoms/Modal";
+import Paragraph from "./atoms/Paragraph";
+import CardanoLoaderSVG from "./ui/CardanoLoaderSVG";
 
 interface TransactionConfirmationOverlayProps {
   /** Whether the overlay is visible */
@@ -31,7 +31,7 @@ interface TransactionConfirmationOverlayProps {
   navigationOptions?: {
     label: string;
     url: string;
-    variant?: 'primary' | 'outline';
+    variant?: "primary" | "outline";
   }[];
 }
 
@@ -40,8 +40,8 @@ const TransactionConfirmationOverlay: React.FC<
 > = ({
   isVisible,
   txHash,
-  title = 'Processing Transaction',
-  description = 'Please wait while your transaction is being confirmed on the blockchain.',
+  title = "Processing Transaction",
+  description = "Please wait while your transaction is being confirmed on the blockchain.",
   onClose,
   onConfirmed,
   onTimeout,
@@ -49,12 +49,12 @@ const TransactionConfirmationOverlay: React.FC<
   navigationOptions,
 }) => {
   const [confirmationState, setConfirmationState] = useState<{
-    status: 'waiting' | 'polling' | 'confirmed' | 'timeout';
+    status: "waiting" | "polling" | "confirmed" | "timeout";
     attempts: number;
     timeTaken: number;
     error?: string;
   }>({
-    status: 'waiting',
+    status: "waiting",
     attempts: 0,
     timeTaken: 0,
   });
@@ -64,13 +64,15 @@ const TransactionConfirmationOverlay: React.FC<
 
   useEffect(() => {
     if (!isVisible) {
-      confirmationRunning.current = false;
-      currentTxHash.current = undefined;
-      setConfirmationState({
-        status: 'waiting',
-        attempts: 0,
-        timeTaken: 0,
-      });
+      if (confirmationState.status !== "waiting") {
+        confirmationRunning.current = false;
+        currentTxHash.current = undefined;
+        setConfirmationState({
+          status: "waiting",
+          attempts: 0,
+          timeTaken: 0,
+        });
+      }
       return;
     }
 
@@ -86,10 +88,10 @@ const TransactionConfirmationOverlay: React.FC<
 
     if (
       isVisible &&
-      (confirmationState.status === 'confirmed' ||
-        confirmationState.status === 'timeout')
+      (confirmationState.status === "confirmed" ||
+        confirmationState.status === "timeout")
     ) {
-      window.addEventListener('app:refresh', handleGlobalRefresh, true);
+      window.addEventListener("app:refresh", handleGlobalRefresh, true);
     }
 
     if (confirmationRunning.current && currentTxHash.current === txHash) {
@@ -102,7 +104,7 @@ const TransactionConfirmationOverlay: React.FC<
     const startConfirmation = async () => {
       setConfirmationState((prev) => ({
         ...prev,
-        status: 'polling',
+        status: "polling",
       }));
 
       try {
@@ -122,14 +124,14 @@ const TransactionConfirmationOverlay: React.FC<
 
         if (result.confirmed) {
           setConfirmationState({
-            status: 'confirmed',
+            status: "confirmed",
             attempts: result.attempts,
             timeTaken: result.timeTaken,
           });
           onConfirmed?.(result);
         } else {
           setConfirmationState({
-            status: 'timeout',
+            status: "timeout",
             attempts: result.attempts,
             timeTaken: result.timeTaken,
             error: result.error,
@@ -140,8 +142,8 @@ const TransactionConfirmationOverlay: React.FC<
         confirmationRunning.current = false;
         setConfirmationState((prev) => ({
           ...prev,
-          status: 'timeout',
-          error: error instanceof Error ? error.message : 'Confirmation failed',
+          status: "timeout",
+          error: error instanceof Error ? error.message : "Confirmation failed",
         }));
       }
     };
@@ -150,7 +152,7 @@ const TransactionConfirmationOverlay: React.FC<
 
     // Cleanup function
     return () => {
-      window.removeEventListener('app:refresh', handleGlobalRefresh, true);
+      window.removeEventListener("app:refresh", handleGlobalRefresh, true);
     };
   }, [isVisible, txHash]);
 
@@ -160,7 +162,7 @@ const TransactionConfirmationOverlay: React.FC<
 
   const getStatusContent = () => {
     switch (confirmationState.status) {
-      case 'waiting':
+      case "waiting":
         return (
           <div className="text-center">
             <CardanoLoaderSVG size={64} />
@@ -168,7 +170,7 @@ const TransactionConfirmationOverlay: React.FC<
           </div>
         );
 
-      case 'polling':
+      case "polling":
         return (
           <div className="text-center">
             <CardanoLoaderSVG size={64} />
@@ -200,7 +202,7 @@ const TransactionConfirmationOverlay: React.FC<
           </div>
         );
 
-      case 'confirmed':
+      case "confirmed":
         return (
           <div className="text-center">
             <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
@@ -240,7 +242,7 @@ const TransactionConfirmationOverlay: React.FC<
                       key={index}
                       onClick={() => (window.location.href = option.url)}
                       className="w-full"
-                      variant={option.variant || 'outline'}
+                      variant={option.variant || "outline"}
                     >
                       {option.label}
                     </Button>
@@ -262,7 +264,7 @@ const TransactionConfirmationOverlay: React.FC<
           </div>
         );
 
-      case 'timeout':
+      case "timeout":
         return (
           <div className="text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
@@ -308,7 +310,7 @@ const TransactionConfirmationOverlay: React.FC<
                   className="w-full"
                   onClick={() => {
                     setConfirmationState({
-                      status: 'waiting',
+                      status: "waiting",
                       attempts: 0,
                       timeTaken: 0,
                     });
@@ -331,15 +333,15 @@ const TransactionConfirmationOverlay: React.FC<
       isOpen={isVisible}
       onClose={() => {
         // Only allow closing when not polling
-        if (confirmationState.status !== 'polling' && onClose) {
+        if (confirmationState.status !== "polling" && onClose) {
           onClose();
         }
       }}
       title={title}
       description={description}
       size="lg"
-      showCloseButton={confirmationState.status !== 'polling'}
-      closable={confirmationState.status !== 'polling'}
+      showCloseButton={confirmationState.status !== "polling"}
+      closable={confirmationState.status !== "polling"}
       className="text-center"
     >
       <div className="py-4">{getStatusContent()}</div>

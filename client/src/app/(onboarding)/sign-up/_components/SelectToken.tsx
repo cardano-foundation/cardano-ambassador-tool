@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Button from '@/components/atoms/Button';
-import KeyValue from '@/components/atoms/KeyValue';
-import Paragraph from '@/components/atoms/Paragraph';
-import Title from '@/components/atoms/Title';
-import Copyable from '@/components/Copyable';
-import { useWalletManager } from '@/hooks';
-import { shortenString } from '@/utils';
-import { hexToString } from '@meshsdk/core';
-import { MemberTokenDetail } from '@types';
+import Button from "@/components/atoms/Button";
+import KeyValue from "@/components/atoms/KeyValue";
+import Paragraph from "@/components/atoms/Paragraph";
+import Title from "@/components/atoms/Title";
+import Copyable from "@/components/Copyable";
+import { useWalletManager } from "@/hooks";
+import { shortenString } from "@/utils";
+import { hexToString } from "@meshsdk/core";
+import { MemberTokenDetail } from "@types";
 
 const SelectToken = ({
   setAsset,
@@ -73,10 +73,10 @@ const SelectToken = ({
                 <div className="flex flex-col gap-1 pr-8">
                   <Copyable keyLabel="Policy ID" value={asset.policyId} />
                   <KeyValue
-                    keyLabel={'Token Name'}
+                    keyLabel={"Token Name"}
                     value={hexToString(asset.assetName)}
                   />
-                  <KeyValue keyLabel={'Hex Name'} value={asset.assetName} />
+                  <KeyValue keyLabel={"Hex Name"} value={asset.assetName} />
                 </div>
               </label>
             </div>

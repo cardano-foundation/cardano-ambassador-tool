@@ -1,8 +1,8 @@
-import DiscordIcon from '@/components/atoms/DiscordIcon';
-import GithubIcon from '@/components/atoms/GithubIcon';
-import XIcon from '@/components/atoms/XIcon';
-import Link from 'next/link';
-import ProfileField from './ProfileField';
+import DiscordIcon from "@/components/atoms/DiscordIcon";
+import GithubIcon from "@/components/atoms/GithubIcon";
+import XIcon from "@/components/atoms/XIcon";
+import Link from "next/link";
+import ProfileField from "./ProfileField";
 
 interface SocialLinksProps {
   github?: string;
