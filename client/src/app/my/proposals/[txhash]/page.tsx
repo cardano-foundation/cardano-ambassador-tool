@@ -168,7 +168,7 @@ export default function Page({ params }: PageProps) {
         fundsRequested: metadata?.fundsRequested || "0",
         receiverWalletAddress: metadata?.receiverWalletAddress || "",
         submittedByAddress: metadata?.submittedByAddress || "",
-        status: (proposal as any).status || metadata?.status || "pending",
+        status: metadata?.status || "pending",
       };
     } else {
       throw new Error("No proposal data found");

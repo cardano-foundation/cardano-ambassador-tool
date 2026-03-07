@@ -1,7 +1,9 @@
-import Link from "next/link";
+"use client";
+
 import Button from "@/components/atoms/Button";
 import Paragraph from "@/components/atoms/Paragraph";
 import Title from "@/components/atoms/Title";
+import { useRouter } from "next/navigation";
 
 interface StateFeedbackProps {
   type: "not-found" | "access-denied" | "loading";
@@ -9,6 +11,7 @@ interface StateFeedbackProps {
 }
 
 export const StateFeedback = ({ type, txhash }: StateFeedbackProps) => {
+  const router = useRouter();
   if (type === "loading") {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
@@ -27,7 +30,7 @@ export const StateFeedback = ({ type, txhash }: StateFeedbackProps) => {
           <Paragraph className="text-muted-foreground mb-4">
             The proposal with hash {txhash} could not be found.
           </Paragraph>
-          <Button variant="primary" onClick={() => window.history.back()}>
+          <Button variant="primary" onClick={() => router.back()}>
             Go Back
           </Button>
         </div>
@@ -44,7 +47,7 @@ export const StateFeedback = ({ type, txhash }: StateFeedbackProps) => {
         <Paragraph className="text-muted-foreground mb-4">
           You can only view and edit your own proposals.
         </Paragraph>
-        <Button variant="primary" onClick={() => window.history.back()}>
+        <Button variant="primary" onClick={() => router.back()}>
           Go Back
         </Button>
       </div>

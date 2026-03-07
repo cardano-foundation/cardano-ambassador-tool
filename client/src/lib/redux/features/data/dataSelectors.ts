@@ -168,8 +168,6 @@ export const selectUtxosByContext = createSelector(
   },
 );
 
-// ... existing selectors ...
-
 /**
  * Derived Selector: Parse and combine all proposals (Active + Completed)
  * Replaces logic in useProposals hook

@@ -15,15 +15,17 @@ import {
 import { useState } from "react";
 import { useDatabase, useWalletManager } from "@/hooks";
 import { useRouter } from "next/navigation";
+import type { Utxo } from "@types";
+import type { TxConfirmationOptions } from "@/hooks/useTxConfirmation";
 
 type ProposalFormData = ProposalData & { description: string };
 
 interface UseEditProposalProps {
-  proposal: any;
+  proposal: Utxo;
   userAddress: string;
   formData: ProposalFormData;
   setFormData: (data: ProposalFormData) => void;
-  showTxConfirmation: (props: any) => void;
+  showTxConfirmation: (options: TxConfirmationOptions) => void;
   setIsEditing: (isEditing: boolean) => void;
 }
 

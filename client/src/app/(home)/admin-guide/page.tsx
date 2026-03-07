@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 export default function AdminGuidePage() {
   const wallet = useWalletManager();
-  const { isAdmin } = useUserAuth({
+  const { isAdmin, isLoading: isAuthLoading } = useUserAuth({
     wallet: wallet.wallet,
     address: wallet.address,
     isConnected: wallet.isConnected,
@@ -17,14 +17,15 @@ export default function AdminGuidePage() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // Redirect non-admins only after auth has resolved
   useEffect(() => {
-    // Redirect non-admins
-    if (!isAdmin && !loading) {
+    if (!isAuthLoading && !isAdmin) {
       router.push("/unauthorized");
-      return;
     }
+  }, [isAdmin, isAuthLoading, router]);
 
-    // Load markdown content
+  // Load markdown content when admin is confirmed
+  useEffect(() => {
     if (isAdmin) {
       fetch("/api/docs/admin-guide")
         .then((res) => res.text())
@@ -36,7 +37,7 @@ export default function AdminGuidePage() {
           setLoading(false);
         });
     }
-  }, [isAdmin, router, loading]);
+  }, [isAdmin]);
 
   if (loading || !isAdmin) {
     return (

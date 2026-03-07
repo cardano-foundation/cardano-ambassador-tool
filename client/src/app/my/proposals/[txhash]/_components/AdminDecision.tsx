@@ -2,11 +2,11 @@ import Card from "@/components/atoms/Card";
 import Paragraph from "@/components/atoms/Paragraph";
 import MultisigProgressTracker from "@/components/signature-progress/MultisigProgressTracker";
 import Title from "@/components/atoms/Title";
-import { AdminDecisionData } from "@types";
+import { AdminDecisionData, Utxo } from "@types";
 
 interface AdminDecisionProps {
   adminDecisionData: AdminDecisionData;
-  proposal: any;
+  proposal: Utxo;
 }
 
 export const AdminDecision = ({

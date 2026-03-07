@@ -7,11 +7,11 @@ const GitContentService = {
     title,
     description,
     submitterAddress,
-    filename: validFilename,
+    filename: existingFilename,
   }: GithubProposalData & { submitterAddress?: string; filename?: string }) {
     const { owner, repo, branch, octokit } = await getOctokit();
 
-    let filename = validFilename;
+    let filename = existingFilename;
     if (!filename) {
       const contentHash = crypto
         .createHash("md5")

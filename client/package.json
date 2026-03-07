@@ -14,9 +14,9 @@
   "dependencies": {
     "@emurgo/cardano-serialization-lib-browser": "^15.0.0",
     "@libsql/client": "^0.15.10",
-    "@meshsdk/common": "^1.9.0-beta.79",
-    "@meshsdk/core": "1.9.0-beta.56",
-    "@meshsdk/core-csl": "^1.9.0-beta.56",
+    "@meshsdk/common": "1.9.0-beta.101",
+    "@meshsdk/core": "1.9.0-beta.101",
+    "@meshsdk/core-csl": "1.9.0-beta.101",
     "@multiavatar/multiavatar": "github:multiavatar/multiavatar",
     "@octokit/types": "^16.0.0",
     "@radix-ui/react-dialog": "^1.1.15",

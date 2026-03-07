@@ -3,11 +3,12 @@ import Paragraph from "@/components/atoms/Paragraph";
 import Copyable from "@/components/Copyable";
 import { getCurrentNetworkConfig } from "@/config/cardano";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
+import type { Utxo } from "@types";
 
 type ProposalFormData = ProposalData & { description: string };
 
 interface ProposalDetailsProps {
-  proposal: any;
+  proposal: Utxo;
   proposalData: ProposalFormData;
 }
 
