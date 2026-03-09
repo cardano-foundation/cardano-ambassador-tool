@@ -180,9 +180,9 @@ const RemoveMemberAction: React.FC<RemoveMemberActionProps> = ({
         dbUtxoToMeshUtxo(memberUtxo!),
         adminsPkh,
       );
+      if (!unsignedTx) throw new Error("Failed to create transaction");
 
       const firstSigTX = await wallet.signTx(unsignedTx.txHex, true);
-      if (!unsignedTx) throw new Error("Failed to create transaction");
       if (!firstSigTX) {
         throw new Error("Failed to sign transaction - wallet returned undefined");
       }

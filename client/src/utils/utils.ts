@@ -104,9 +104,9 @@ const safeExtractString = (field: any, fieldName?: string): string => {
 
 /**
  * Validates and converts Plutus data to MembershipIntentDatum
- * Only supports old 5-field structure - filters out new 15-field structure
+ * Supports the 17-field MembershipMetadata layout (fields[0-4] original, fields[5-9] duplicates, fields[10-16] extended)
  * @param plutusData The Plutus data to validate
- * @returns The parsed MembershipIntentDatum and MemberData for old structure, or null for new/invalid
+ * @returns The parsed MembershipIntentDatum and MemberData, or null for invalid data
  */
 export function parseMembershipIntentDatum(
   plutusData: string,

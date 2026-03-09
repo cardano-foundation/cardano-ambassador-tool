@@ -57,14 +57,14 @@ async function main() {
     console.error("KEY_WORDS is required. Set it in .env or environment.");
     process.exit(1);
   }
-  const mnemonic = keyWords.split(/\s+/);
-  if (mnemonic.length < 12) {
+  const words = keyWords.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 12) {
     console.error("Invalid KEY_WORDS. Expected at least 12 words.");
     process.exit(1);
   }
 
   const provider = createProvider(apiKey);
-  const wallet = createWallet(network as "preprod" | "mainnet", provider, mnemonic);
+  const wallet = createWallet(network as "preprod" | "mainnet", provider, words);
   const address = await wallet.getChangeAddress();
   console.log(`\nWallet address: ${address}\n`);
 
@@ -75,7 +75,11 @@ async function main() {
   }
 
   const resumeStepRaw = await prompt("Start from step (1-6) [1]: ");
-  const resumeStep = parseInt(resumeStepRaw || "1");
+  const resumeStep = parseInt(resumeStepRaw || "1") || 1;
+  if (resumeStep < 1 || resumeStep > 6) {
+    console.error("Invalid step. Must be between 1 and 6.");
+    process.exit(1);
+  }
 
   // Step 1: Collect setup UTxO hashes
   console.log("\n--- Step 1: Setup UTxO configuration ---");
@@ -145,7 +149,12 @@ async function main() {
     }
     const admins = await promptMultiline("Admin addresses (bech32):");
     const tenure = await prompt("Admin tenure (display only, e.g., 365d): ");
-    const threshold = parseInt(await prompt(`Multi-sig threshold (1-${admins.length}): `));
+    const thresholdRaw = await prompt(`Multi-sig threshold (1-${admins.length}): `);
+    const threshold = parseInt(thresholdRaw);
+    if (isNaN(threshold) || threshold < 1 || threshold > admins.length) {
+      console.error(`Invalid threshold. Must be between 1 and ${admins.length}.`);
+      process.exit(1);
+    }
     const setup = new SetupTx(address, wallet, provider, catConstants);
     const mintOracleResult = await setup.mintSpendOracleNFT(
       oracleUtxos[0],
