@@ -10,14 +10,14 @@ import Paragraph from "./atoms/Paragraph";
 import ErrorAccordion from "./ErrorAccordion";
 
 interface FinalizeDecisionProps {
-  txhash?: string;
+  txHash?: string;
   adminDecisionData?: AdminDecisionData | null;
   context: "MembershipIntent" | "ProposalIntent" | "Member";
   onFinalizationComplete?: () => void;
 }
 
 const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
-  txhash,
+  txHash,
   adminDecisionData,
   context,
   onFinalizationComplete,
@@ -177,9 +177,9 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
       setIsFinalized(true);
       onFinalizationComplete?.();
 
-      if (txhash) {
+      if (txHash) {
         try {
-          await storageApiClient.delete(txhash, "submissions");
+          await storageApiClient.delete(txHash, "submissions");
         } catch (error) {
           console.error("Failed to clean up admin decision data:", error);
         }
@@ -201,7 +201,7 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
     },
     [
       onFinalizationComplete,
-      txhash,
+      txHash,
       context,
       adminDecisionData?.decision,
       router,

@@ -118,7 +118,7 @@ export function parseMembershipIntentDatum(
       !datum.fields ||
       !datum.fields[0]?.list ||
       !datum.fields[1]?.fields ||
-      datum.fields[1].fields.length < 7
+      datum.fields[1].fields.length < 11
     ) {
       return null;
     }
@@ -133,6 +133,9 @@ export function parseMembershipIntentDatum(
       return null;
     }
 
+    // On-chain MembershipMetadata layout: fields[0-4] are original data,
+    // fields[5-9] are duplicates (walletAddress, fullName, displayName, emailAddress, bio),
+    // fields[10+] are country, city, x_handle, github, discord, spo_id, drep_id
     const metadata: MemberData = {
       walletAddress: serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
@@ -141,12 +144,13 @@ export function parseMembershipIntentDatum(
       displayName: safeExtractString(metadataPlutus.fields[2]),
       emailAddress: safeExtractString(metadataPlutus.fields[3]),
       bio: safeExtractString(metadataPlutus.fields[4]),
-      country: safeExtractString(metadataPlutus.fields[5]),
-      city: safeExtractString(metadataPlutus.fields[6]),
-      x_handle: safeExtractString(metadataPlutus.fields[7]),
-      github: safeExtractString(metadataPlutus.fields[8]),
-      discord: safeExtractString(metadataPlutus.fields[9]),
-      spo_id: safeExtractString(metadataPlutus.fields[10]),
+      country: safeExtractString(metadataPlutus.fields[10]),
+      city: safeExtractString(metadataPlutus.fields[11]),
+      x_handle: safeExtractString(metadataPlutus.fields[12]),
+      github: safeExtractString(metadataPlutus.fields[13]),
+      discord: safeExtractString(metadataPlutus.fields[14]),
+      spo_id: safeExtractString(metadataPlutus.fields[15]),
+      drep_id: safeExtractString(metadataPlutus.fields[16]),
     };
 
     return { datum: datum as MembershipIntentDatum, metadata };
@@ -174,6 +178,7 @@ export function parseMemberDatum(
 
     const metadataPlutus: MembershipMetadata = datum.fields[3];
 
+    // On-chain MembershipMetadata layout: fields[5-9] are duplicates, fields[10+] are extended fields
     const metadata: MemberData = {
       walletAddress: serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
@@ -182,12 +187,13 @@ export function parseMemberDatum(
       displayName: safeExtractString(metadataPlutus.fields[2]),
       emailAddress: safeExtractString(metadataPlutus.fields[3]),
       bio: safeExtractString(metadataPlutus.fields[4]),
-      country: safeExtractString(metadataPlutus.fields[5]),
-      city: safeExtractString(metadataPlutus.fields[6]),
-      x_handle: safeExtractString(metadataPlutus.fields[7]),
-      github: safeExtractString(metadataPlutus.fields[8]),
-      discord: safeExtractString(metadataPlutus.fields[9]),
-      spo_id: safeExtractString(metadataPlutus.fields[10]),
+      country: safeExtractString(metadataPlutus.fields[10]),
+      city: safeExtractString(metadataPlutus.fields[11]),
+      x_handle: safeExtractString(metadataPlutus.fields[12]),
+      github: safeExtractString(metadataPlutus.fields[13]),
+      discord: safeExtractString(metadataPlutus.fields[14]),
+      spo_id: safeExtractString(metadataPlutus.fields[15]),
+      drep_id: safeExtractString(metadataPlutus.fields[16]),
     };
 
     const policyId = (datum.fields[0].list[0] as ByteString).bytes;
@@ -575,18 +581,6 @@ export async function findTokenUtxoByMembershipIntentUtxoMesh(
   }
 }
 
-export function findAdmins(): string[] | null {
-  const adminList = Object.keys(process.env)
-    .filter((key) => key.startsWith("ADMIN_WALLET"))
-    .map((key) => deserializeAddress(process.env[key]!).pubKeyHash)
-    .filter(Boolean);
-
-  if (!adminList.length) {
-    return null;
-  }
-
-  return adminList;
-}
 
 export function extractWitnesses(txHex: string) {
   try {

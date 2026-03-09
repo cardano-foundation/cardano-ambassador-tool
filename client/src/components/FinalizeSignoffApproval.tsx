@@ -10,13 +10,13 @@ import ErrorAccordion from "./ErrorAccordion";
 import TransactionConfirmationOverlay from "./TransactionConfirmationOverlay";
 
 interface FinalizeSignoffApprovalProps {
-  txhash?: string;
+  txHash?: string;
   adminDecisionData?: AdminDecisionData | null;
   onFinalizationComplete?: () => void;
 }
 
 const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
-  txhash,
+  txHash,
   adminDecisionData,
   onFinalizationComplete,
 }) => {
@@ -86,9 +86,9 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
       setIsFinalized(true);
       onFinalizationComplete?.();
 
-      if (txhash) {
+      if (txHash) {
         try {
-          await storageApiClient.delete(txhash, "signoff-submissions");
+          await storageApiClient.delete(txHash, "signoff-submissions");
         } catch (error) {
           console.error("Failed to clean up signoff approval data:", error);
         }
@@ -96,7 +96,7 @@ const FinalizeSignoffApproval: React.FC<FinalizeSignoffApprovalProps> = ({
 
       emitGlobalRefreshWithDelay(2000);
     },
-    [onFinalizationComplete, txhash],
+    [onFinalizationComplete, txHash],
   );
 
   const handleTransactionTimeout = (

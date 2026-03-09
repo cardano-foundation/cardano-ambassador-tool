@@ -16,15 +16,15 @@ import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import { use } from "react";
 
 interface PageProps {
-  params: Promise<{ txhash: string }>;
+  params: Promise<{ txHash: string }>;
 }
 
 export default function TreasurySignoffDetailsPage({ params }: PageProps) {
   const { signOfApprovals, members, dbLoading } = useDatabase();
   const { treasuryBalance, isTreasuryLoading } = useTreasuryBalance();
-  const { txhash } = use(params);
+  const { txHash } = use(params);
 
-  const proposal = signOfApprovals.find((utxo) => utxo.txHash === txhash);
+  const proposal = signOfApprovals.find((utxo) => utxo.txHash === txHash);
 
   const memberUtxo = members.find((mbr) => {
     let memberMetadata = JSON.parse(mbr.parsedMetadata || "{}");
@@ -107,7 +107,7 @@ export default function TreasurySignoffDetailsPage({ params }: PageProps) {
             Treasury Sign-off Not Found
           </Title>
           <Paragraph className="text-muted-foreground mb-4">
-            The treasury sign-off with hash {txhash} could not be found.
+            The treasury sign-off with hash {txHash} could not be found.
           </Paragraph>
           <Button variant="primary" onClick={() => window.history.back()}>
             Go Back

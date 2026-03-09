@@ -1,5 +1,6 @@
 import { BlockfrostService } from "@/services/blockfrostService";
 import { storageService } from "@/services/storageService";
+import { getCatConstants } from "@/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 type CounterUtxoData = {
@@ -12,38 +13,54 @@ const blockfrost = new BlockfrostService();
 /**
  * GET /api/counter-utxo
  *
- * Retrieves the currently saved counter UTxO from storage.
- * This function loads the persisted UTxO reference (transaction hash and output index)
- * from local storage and fetches the full UTxO details from Blockfrost.
+ * Retrieves the counter UTxO. First checks local storage for a saved reference,
+ * then falls back to fetching from the counter script address on-chain.
+ * When found on-chain, auto-saves the reference for future lookups.
  *
  * @returns The full MeshJS UTxO object if found, otherwise 404
  */
 export async function GET(req: NextRequest) {
   try {
+    // Try storage first
     const counter = await storageService.get<CounterUtxoData>(
       "counter_utxo",
       "counter",
     );
 
-    if (!counter) {
-      return NextResponse.json(
-        { error: "Counter UTxO not found" },
-        { status: 404 },
+    if (counter) {
+      const counterUtxo = await blockfrost.fetchUtxo(
+        counter.txHash,
+        counter.outputIndex,
       );
+
+      if (counterUtxo) {
+        return NextResponse.json(counterUtxo, { status: 200 });
+      }
     }
 
-    // Fetch the full UTxO details from Blockfrost
-    const counterUtxo = await blockfrost.fetchUtxo(
-      counter.txHash,
-      counter.outputIndex,
-    );
+    // Fall back: fetch from counter script address
+    const catConstants = getCatConstants();
+    const counterAddress = catConstants.scripts.counter.spend.address;
+    const utxos = await blockfrost.fetchAddressUTxOs(counterAddress);
 
-    if (!counterUtxo) {
+    if (!utxos.length) {
       return NextResponse.json(
         { error: "Counter UTxO not found on blockchain" },
         { status: 404 },
       );
     }
+
+    const counterUtxo = utxos[0];
+
+    // Auto-save for future lookups
+    await storageService.save(
+      "counter_utxo",
+      {
+        txHash: counterUtxo.input.txHash,
+        outputIndex: counterUtxo.input.outputIndex,
+      },
+      "counter",
+    );
 
     return NextResponse.json(counterUtxo, { status: 200 });
   } catch (error) {

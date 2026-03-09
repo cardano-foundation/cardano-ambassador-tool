@@ -15,7 +15,7 @@ interface SignerStatus {
   signed: boolean;
 }
 interface ProgressTrackerClientProps {
-  txhash?: string;
+  txHash?: string;
   adminDecisionData?: AdminDecisionData | null;
 }
 const findAddressByPubKeyHash = (
@@ -36,7 +36,7 @@ const findAddressByPubKeyHash = (
 };
 
 export default function MultisigProgressTracker({
-  txhash,
+  txHash,
   adminDecisionData,
 }: ProgressTrackerClientProps) {
   const [signers, setSigners] = useState<SignerStatus[]>([]);
@@ -108,7 +108,7 @@ export default function MultisigProgressTracker({
     };
 
     loadSigners();
-  }, [txhash, adminDecisionData]);
+  }, [txHash, adminDecisionData]);
 
   if (loading) {
     return <ProgressTrackerLoading />;

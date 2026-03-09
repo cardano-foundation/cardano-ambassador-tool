@@ -21,7 +21,7 @@ type ExtendedMemberData = MemberData & {
 };
 
 interface PageProps {
-  params: Promise<{ txhash: string }>;
+  params: Promise<{ txHash: string }>;
 }
 
 const ManageMemberPage = ({ params }: PageProps) => {
@@ -34,10 +34,10 @@ const ManageMemberPage = ({ params }: PageProps) => {
     useState<AdminDecisionData | null>(null);
   const [isRemoved, setIsRemoved] = useState(false);
   const { members, dbLoading } = useDatabase();
-  const { txhash } = use(params);
+  const { txHash } = use(params);
 
   useEffect(() => {
-    if (!txhash || dbLoading) return;
+    if (!txHash || dbLoading) return;
 
     if (!members.length) {
       setError("No members found");
@@ -45,7 +45,7 @@ const ManageMemberPage = ({ params }: PageProps) => {
       return;
     }
 
-    const found = members.find((m) => m.txHash === txhash);
+    const found = members.find((m) => m.txHash === txHash);
     if (!found) {
       setError("Member not found");
       setLoading(false);
@@ -71,7 +71,7 @@ const ManageMemberPage = ({ params }: PageProps) => {
     }
 
     setLoading(false);
-  }, [txhash, members, dbLoading]);
+  }, [txHash, members, dbLoading]);
 
   const handleAdminDecisionUpdate = (data: AdminDecisionData | null) => {
     setAdminDecisionData(data);
@@ -119,7 +119,7 @@ const ManageMemberPage = ({ params }: PageProps) => {
     return <SimpleCardanoLoader />;
   }
 
-  if (error || !txhash || !memberUtxo) {
+  if (error || !txHash || !memberUtxo) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -159,7 +159,7 @@ const ManageMemberPage = ({ params }: PageProps) => {
       title: "Multisig Approval",
       content: (
         <MultisigProgressTracker
-          txhash={memberUtxo.txHash}
+          txHash={memberUtxo.txHash}
           adminDecisionData={adminDecisionData}
         />
       ),
@@ -170,7 +170,7 @@ const ManageMemberPage = ({ params }: PageProps) => {
       title: "Member Removed",
       content: (
         <FinalizeDecision
-          txhash={memberUtxo.txHash}
+          txHash={memberUtxo.txHash}
           adminDecisionData={adminDecisionData}
           context={"Member"}
           onFinalizationComplete={handleRemovalComplete}

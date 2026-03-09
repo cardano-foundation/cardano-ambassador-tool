@@ -143,7 +143,7 @@ const SideNav = () => {
   }, [isAuthenticated, isAdmin]);
 
   return (
-    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r lg:flex">
+    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r scrollbar-hide lg:flex">
       <div className="flex items-center justify-start p-6">
         <Link href="/">
           <AppLogo />

@@ -38,15 +38,20 @@ export interface SetupState {
   apiKey: string;
   oracleSetupUtxo: SetupUtxo;
   counterSetupUtxo: SetupUtxo;
+  oracleUtxo: SetupUtxo;
   refTxInScripts: RefTxInScripts;
 }
 
 function buildClientEnv(state: SetupState): string {
-  const { network, apiKey, oracleSetupUtxo, counterSetupUtxo, refTxInScripts } = state;
+  const { network, apiKey, oracleSetupUtxo, counterSetupUtxo, oracleUtxo, refTxInScripts } = state;
   return `# Network
 NEXT_PUBLIC_NETWORK=${network}
 BLOCKFROST_API_KEY_PREPROD=${network === "preprod" ? apiKey : ""}
 BLOCKFROST_API_KEY_MAINNET=${network === "mainnet" ? apiKey : ""}
+
+# Oracle UTxO
+NEXT_PUBLIC_ORACLE_TX_HASH=${oracleUtxo.txHash}
+NEXT_PUBLIC_ORACLE_OUTPUT_INDEX=${oracleUtxo.outputIndex}
 
 # Setup UTxOs
 NEXT_PUBLIC_ORACLE_SETUP_TX_HASH=${oracleSetupUtxo.txHash}
@@ -120,6 +125,7 @@ export function loadClientEnv(): Partial<SetupState> | null {
     network: vars["NEXT_PUBLIC_NETWORK"],
     oracleSetupUtxo: utxo("NEXT_PUBLIC_ORACLE_SETUP_TX_HASH", "NEXT_PUBLIC_ORACLE_SETUP_OUTPUT_INDEX"),
     counterSetupUtxo: utxo("NEXT_PUBLIC_COUNTER_SETUP_TX_HASH", "NEXT_PUBLIC_COUNTER_SETUP_OUTPUT_INDEX"),
+    oracleUtxo: utxo("NEXT_PUBLIC_ORACLE_TX_HASH", "NEXT_PUBLIC_ORACLE_OUTPUT_INDEX"),
     refTxInScripts: {
       membershipIntent: {
         mint: utxo("NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_TX_HASH", "NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_OUTPUT_INDEX"),

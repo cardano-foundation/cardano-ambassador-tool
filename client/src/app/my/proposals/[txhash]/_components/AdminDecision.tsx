@@ -65,7 +65,7 @@ export const AdminDecision = ({
               Track the progress of required admin signatures for your proposal.
             </Paragraph>
             <MultisigProgressTracker
-              txhash={proposal?.txHash}
+              txHash={proposal?.txHash}
               adminDecisionData={adminDecisionData}
             />
           </div>

@@ -26,7 +26,7 @@ import { AdminDecision } from "./_components/AdminDecision";
 import { ProposalView } from "./_components/ProposalView";
 
 interface PageProps {
-  params: Promise<{ txhash: string }>;
+  params: Promise<{ txHash: string }>;
 }
 
 type ProposalFormData = ProposalData & { description: string };
@@ -45,7 +45,7 @@ export default function Page({ params }: PageProps) {
   const { showTxConfirmation } = useTxConfirmation();
   const [adminDecisionData, setAdminDecisionData] =
     useState<AdminDecisionData | null>(null);
-  const { txhash } = use(params);
+  const { txHash } = use(params);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -55,14 +55,14 @@ export default function Page({ params }: PageProps) {
 
   useEffect(() => {
     hasTriggeredSync.current = false;
-  }, [txhash]);
+  }, [txHash]);
 
   useEffect(() => {
     const loadAdminDecision = async () => {
-      if (!txhash) return;
+      if (!txHash) return;
       try {
         const decision = await storageApiClient.get<AdminDecisionType>(
-          txhash,
+          txHash,
           "submissions",
         );
 
@@ -100,14 +100,14 @@ export default function Page({ params }: PageProps) {
       }
     };
     loadAdminDecision();
-  }, [txhash]);
+  }, [txHash]);
 
-  const proposal = proposalIntents.find((utxo) => utxo.txHash === txhash);
+  const proposal = proposalIntents.find((utxo) => utxo.txHash === txHash);
 
   useEffect(() => {
     // Only triggering refresh if explicitly requested by URL param OR if missing
     const isExplicitRefresh = searchParams.get("refresh") === "true";
-    const isMissing = !proposal && txhash && !dbLoading && !isSyncing;
+    const isMissing = !proposal && txHash && !dbLoading && !isSyncing;
     const shouldRefresh =
       isExplicitRefresh || (isMissing && !hasTriggeredSync.current);
 
@@ -140,7 +140,7 @@ export default function Page({ params }: PageProps) {
 
       refreshData();
     }
-  }, [proposal, txhash, dbLoading, syncData, searchParams, router, pathname]);
+  }, [proposal, txHash, dbLoading, syncData, searchParams, router, pathname]);
 
   // Initialize proposal data
   let proposalData: ProposalFormData;
@@ -231,7 +231,7 @@ export default function Page({ params }: PageProps) {
 
   if (dbLoading || (isSyncing && !proposal))
     return <StateFeedback type="loading" />;
-  if (!proposal) return <StateFeedback type="not-found" txhash={txhash} />;
+  if (!proposal) return <StateFeedback type="not-found" txHash={txHash} />;
 
   const isOwner =
     userAddress && proposalData.submittedByAddress === userAddress;

@@ -15,23 +15,28 @@ async function fetchJson(url: string) {
   const apiKey = process.env.CARDANO_FORUM_API_KEY;
   const apiUser = process.env.CARDANO_FORUM_API_USERNAME ?? "system";
 
-  if (!apiKey) {
-    throw new Error(
-      "CARDANO_FORUM_API_KEY environment variable is not set. Please add it to your .env.local file.",
-    );
+  const headers: Record<string, string> = {};
+  if (apiKey) {
+    headers["Api-Key"] = apiKey;
+    headers["Api-Username"] = apiUser;
+    console.log("Forum API: using authenticated request");
+  } else {
+    console.log("Forum API: using public access (no API key configured)");
   }
 
   try {
     const res = await axios.get(url, {
       timeout: 15000,
       family: 4,
-      headers: {
-        "Api-Key": apiKey,
-        "Api-Username": apiUser,
-      },
+      headers,
     });
     return res.data;
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        `Forum API error: ${error.response?.status} ${error.response?.statusText} for ${url}`,
+      );
+    }
     throw error;
   }
 }

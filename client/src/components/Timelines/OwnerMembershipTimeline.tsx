@@ -191,7 +191,7 @@ const OwnerMembershipTimeline = ({
       title: "Multisig Approval",
       content: (
         <MultisigProgressTracker
-          txhash={intentUtxo?.txHash}
+          txHash={intentUtxo?.txHash}
           adminDecisionData={adminDecisionData}
         />
       ),

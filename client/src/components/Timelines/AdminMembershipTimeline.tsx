@@ -123,7 +123,7 @@ const AdminMembershipTimeline = ({
       title: "Multisig Approval",
       content: (
         <MultisigProgressTracker
-          txhash={intentUtxo?.txHash}
+          txHash={intentUtxo?.txHash}
           adminDecisionData={adminDecisionData}
         />
       ),
@@ -134,7 +134,7 @@ const AdminMembershipTimeline = ({
       title: "Membership Activated",
       content: (
         <FinalizeDecision
-          txhash={intentUtxo?.txHash}
+          txHash={intentUtxo?.txHash}
           adminDecisionData={adminDecisionData}
           context={"MembershipIntent"}
           onFinalizationComplete={handleActivationComplete}

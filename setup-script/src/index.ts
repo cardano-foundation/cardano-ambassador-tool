@@ -99,11 +99,13 @@ async function main() {
     treasury: { spend: { ...emptyUtxo }, withdrawal: { ...emptyUtxo } },
   };
 
+  const emptyZero: SetupUtxo = { txHash: "0".repeat(64), outputIndex: 0 };
   const state: SetupState = {
     network,
     apiKey,
     oracleSetupUtxo,
     counterSetupUtxo,
+    oracleUtxo: saved?.oracleUtxo ?? { ...emptyZero },
     refTxInScripts,
   };
 
@@ -152,6 +154,8 @@ async function main() {
       threshold,
     );
     console.log(`Oracle NFT minted. TxHash: ${mintOracleResult}`);
+    state.oracleUtxo = { txHash: mintOracleResult, outputIndex: 0 };
+    saveClientEnv(state);
     await waitForTx(provider, mintOracleResult);
   } else {
     console.log("\n--- Step 3: Mint & Spend Oracle NFT (skipped) ---");
@@ -173,6 +177,7 @@ async function main() {
     const setup = new SetupTx(address, wallet, provider, catConstants);
     const spendCounterResult = await setup.spendCounterNFT(counterNftUtxo);
     console.log(`Counter NFT spent. TxHash: ${spendCounterResult}`);
+    saveClientEnv(state);
     await waitForTx(provider, spendCounterResult);
   } else {
     console.log("\n--- Step 4: Spend Counter NFT (skipped) ---");

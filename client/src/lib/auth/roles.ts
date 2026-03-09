@@ -2,7 +2,7 @@
 
 import { BlockfrostService } from "@/services/blockfrostService";
 import type { UTxO } from "@meshsdk/core";
-import { deserializeAddress, deserializeDatum } from "@meshsdk/core";
+import { deserializeDatum } from "@meshsdk/core";
 import {
   getOracleAdmins,
   OracleDatum,
@@ -11,23 +11,6 @@ import { revalidateTag, unstable_cache } from "next/cache";
 
 const blockfrost = new BlockfrostService();
 
-// function getAdminPubKeyHashes(): string[] {
-//   const adminList = Object.keys(process.env)
-//     .filter((key) => key.startsWith('ADMIN_WALLET'))
-//     .map((key) => {
-//       try {
-//         const address = process.env[key];
-//         if (!address) return null;
-//         return deserializeAddress(address).pubKeyHash;
-//       } catch (error) {
-//         console.error(`Error deserializing admin address ${key}:`, error);
-//         return null;
-//       }
-//     })
-//     .filter(Boolean) as string[];
-
-//   return adminList;
-// }
 
 export async function resolveRoles(address: string): Promise<
   {
@@ -64,7 +47,7 @@ async function fetchOracleUtxoUncached(): Promise<UTxO | null> {
   try {
     const utxo = await blockfrost.fetchUtxo(
       process.env.NEXT_PUBLIC_ORACLE_TX_HASH!,
-      parseInt(process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX!),
+      parseInt(process.env.NEXT_PUBLIC_ORACLE_OUTPUT_INDEX!),
     );
 
     if (!utxo?.output?.plutusData) {

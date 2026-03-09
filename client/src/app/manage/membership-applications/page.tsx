@@ -126,7 +126,7 @@ export default function MembershipIntentPage() {
       cell: (value: string) => (
         <Link href={`/manage/membership-applications/${value}`}>
           <Button variant={"primary"} size="sm" className="text-nowrap">
-            {"View intent"}
+            {"View"}
           </Button>
         </Link>
       ),
