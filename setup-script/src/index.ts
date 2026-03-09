@@ -22,7 +22,8 @@ function sleep(ms: number) {
 
 async function waitForTx(provider: any, txHash: string) {
   console.log(`Waiting for tx ${txHash} to confirm...`);
-  while (true) {
+  const MAX_RETRIES = 60;
+  for (let i = 0; i < MAX_RETRIES; i++) {
     try {
       const utxos = await provider.fetchUTxOs(txHash);
       if (utxos.length > 0) {
@@ -34,6 +35,7 @@ async function waitForTx(provider: any, txHash: string) {
     }
     await sleep(TX_CONFIRM_DELAY_MS);
   }
+  throw new Error(`Transaction ${txHash} not confirmed after ${MAX_RETRIES * TX_CONFIRM_DELAY_MS / 1000}s`);
 }
 
 async function main() {
@@ -85,9 +87,17 @@ async function main() {
   console.log("\n--- Step 1: Setup UTxO configuration ---");
   const counterTxHash = await prompt("UTxO txHash for counter mint: ");
   const counterTxIndex = parseInt(await prompt("UTxO output index [0]: ") || "0");
+  if (isNaN(counterTxIndex) || counterTxIndex < 0) {
+    console.error("Invalid counter output index.");
+    process.exit(1);
+  }
 
   const oracleTxHash = await prompt("UTxO txHash for oracle mint: ");
   const oracleTxIndex = parseInt(await prompt("UTxO output index [0]: ") || "0");
+  if (isNaN(oracleTxIndex) || oracleTxIndex < 0) {
+    console.error("Invalid oracle output index.");
+    process.exit(1);
+  }
 
   const counterSetupUtxo: SetupUtxo = { txHash: counterTxHash, outputIndex: counterTxIndex };
   const oracleSetupUtxo: SetupUtxo = { txHash: oracleTxHash, outputIndex: oracleTxIndex };

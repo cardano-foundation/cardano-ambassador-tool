@@ -13,18 +13,16 @@ export function prompt(question: string): Promise<string> {
   });
 }
 
-export function promptMultiline(question: string): Promise<string[]> {
-  return new Promise(async (resolve) => {
-    console.log(question);
-    console.log("(Enter one value per line, empty line to finish)");
-    const lines: string[] = [];
-    while (true) {
-      const line = await prompt("> ");
-      if (line === "") break;
-      lines.push(line);
-    }
-    resolve(lines);
-  });
+export async function promptMultiline(question: string): Promise<string[]> {
+  console.log(question);
+  console.log("(Enter one value per line, empty line to finish)");
+  const lines: string[] = [];
+  while (true) {
+    const line = await prompt("> ");
+    if (line === "") break;
+    lines.push(line);
+  }
+  return lines;
 }
 
 export function closePrompts() {

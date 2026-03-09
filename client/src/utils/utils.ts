@@ -118,7 +118,7 @@ export function parseMembershipIntentDatum(
       !datum.fields ||
       !datum.fields[0]?.list ||
       !datum.fields[1]?.fields ||
-      datum.fields[1].fields.length < 11
+      datum.fields[1].fields.length < 17
     ) {
       return null;
     }
@@ -171,7 +171,8 @@ export function parseMemberDatum(
       !datum.fields[0]?.list ||
       !datum.fields[1] ||
       typeof datum.fields[2]?.int === "undefined" ||
-      !datum.fields[3]?.fields
+      !datum.fields[3]?.fields ||
+      datum.fields[3].fields.length < 17
     ) {
       return null;
     }

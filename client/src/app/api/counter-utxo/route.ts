@@ -38,19 +38,22 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Fall back: fetch from counter script address
+    // Fall back: fetch from counter script address, filter by counter NFT
     const catConstants = getCatConstants();
     const counterAddress = catConstants.scripts.counter.spend.address;
+    const counterPolicyId = catConstants.scripts.counter.mint.hash;
     const utxos = await blockfrost.fetchAddressUTxOs(counterAddress);
 
-    if (!utxos.length) {
+    const counterUtxo = utxos.find((utxo) =>
+      utxo.output.amount.some((a) => a.unit.startsWith(counterPolicyId)),
+    );
+
+    if (!counterUtxo) {
       return NextResponse.json(
         { error: "Counter UTxO not found on blockchain" },
         { status: 404 },
       );
     }
-
-    const counterUtxo = utxos[0];
 
     // Auto-save for future lookups
     await storageService.save(
