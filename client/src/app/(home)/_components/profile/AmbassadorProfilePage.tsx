@@ -2,7 +2,7 @@
 
 import Card from "@/components/atoms/Card";
 import Title from "@/components/atoms/Title";
-import TopNav from "@/components/navigation/TabNav";
+import TopNav from "@/components/Navigation/TabNav";
 import {
   ActivityPulse,
   BadgesPulse,

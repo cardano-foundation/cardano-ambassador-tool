@@ -1,6 +1,6 @@
 "use client";
 
-import TopNav from "@/components/navigation/TabNav";
+import TopNav from "@/components/Navigation/TabNav";
 import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
 import Button from "@/components/atoms/Button";
 import { routes } from "@/config/routes";

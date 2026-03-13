@@ -3,7 +3,7 @@ import ErrorAccordion from "@/components/ErrorAccordion";
 import FormDetails from "@/app/(home)/proposals/_components/FormDetails";
 import FormFunds from "@/app/(home)/proposals/_components/FormFunds";
 import FormReview from "@/app/(home)/proposals/_components/FormReview";
-import TopNav from "@/components/navigation/TabNav";
+import TopNav from "@/components/Navigation/TabNav";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import { RefObject, useState } from "react";
 import { StateFeedback } from "./StateFeedback";
