@@ -1,4 +1,4 @@
-import { useWalletManager } from "@/hooks";
+import { useWalletManager } from "../hooks";
 import {
   dbUtxoToMeshUtxo,
   emitGlobalRefreshWithDelay,
@@ -6,7 +6,7 @@ import {
   getCatConstants,
   getProvider,
   parseProposalDatum,
-} from "@/utils";
+} from "../utils";
 import { AdminActionTx } from "@sidan-lab/cardano-ambassador-tool";
 import { TransactionConfirmationResult, Utxo } from "@types";
 import { Loader2 } from "lucide-react";

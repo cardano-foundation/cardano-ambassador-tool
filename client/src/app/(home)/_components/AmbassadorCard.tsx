@@ -1,9 +1,9 @@
-import Button from "@/components/atoms/Button";
-import Card, { CardContent } from "@/components/atoms/Card";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import UserAvatar from "@/components/atoms/UserAvatar";
-import { getCountryFlag } from "@/utils";
+import Button from "../../../components/atoms/Button";
+import Card, { CardContent } from "../../../components/atoms/Card";
+import Paragraph from "../../../components/atoms/Paragraph";
+import Title from "../../../components/atoms/Title";
+import UserAvatar from "../../../components/atoms/UserAvatar";
+import { getCountryFlag } from "../../../utils";
 import { Ambassador } from "@types";
 import Link from "next/link";
 

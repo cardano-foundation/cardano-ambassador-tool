@@ -1,7 +1,7 @@
 "use client";
 
-import TransactionConfirmationOverlay from "@/components/TransactionConfirmationOverlay";
-import { useTxConfirmation } from "@/hooks";
+import TransactionConfirmationOverlay from "./TransactionConfirmationOverlay";
+import { useTxConfirmation } from "../hooks";
 
 /**
  * Provider component that renders the TransactionConfirmationOverlay.

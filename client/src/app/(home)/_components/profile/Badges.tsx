@@ -1,7 +1,7 @@
-import BadgeIcon from "@/components/atoms/BadgeIcon";
-import Card, { CardContent } from "@/components/atoms/Card";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
+import BadgeIcon from "../../../../components/atoms/BadgeIcon";
+import Card, { CardContent } from "../../../../components/atoms/Card";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Title from "../../../../components/atoms/Title";
 import React from "react";
 
 interface BadgesSectionProps {

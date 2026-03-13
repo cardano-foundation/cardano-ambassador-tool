@@ -1,9 +1,9 @@
-import Button from "@/components/atoms/Button";
-import CardanoLogo from "@/components/atoms/CardanoLogo";
-import LinkButton from "@/components/atoms/LinkButton";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import { routes } from "@/config/routes";
+import Button from "../../../../components/atoms/Button";
+import CardanoLogo from "../../../../components/atoms/CardanoLogo";
+import LinkButton from "../../../../components/atoms/LinkButton";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Title from "../../../../components/atoms/Title";
+import { routes } from "../../../../config/routes";
 
 const IntentExists = ({ goBack }: { goBack: () => void }) => {
   return (

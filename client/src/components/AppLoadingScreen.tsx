@@ -1,6 +1,6 @@
 "use client";
 
-import { getCurrentNetworkConfig } from "@/config/cardano";
+import { getCurrentNetworkConfig } from "../config/cardano";
 import { useEffect, useState } from "react";
 import { CardanoLoaderSVG } from "./ui/CardanoLoaderSVG";
 

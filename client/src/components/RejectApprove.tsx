@@ -1,5 +1,5 @@
-import { useWalletManager } from "@/hooks";
-import { findAdminsFromOracle } from "@/lib/auth/roles";
+import { useWalletManager } from "../hooks";
+import { findAdminsFromOracle } from "../lib/auth/roles";
 import {
   dbUtxoToMeshUtxo,
   extractRequiredSigners,
@@ -8,8 +8,8 @@ import {
   getCatConstants,
   getCounterUtxo,
   getProvider,
-} from "@/utils";
-import { storageApiClient } from "@/utils/storageApiClient";
+} from "../utils";
+import { storageApiClient } from "../utils/storageApiClient";
 import { deserializeAddress } from "@meshsdk/core";
 import { AdminActionTx } from "@sidan-lab/cardano-ambassador-tool";
 import { AdminDecision, AdminDecisionData, Utxo } from "@types";

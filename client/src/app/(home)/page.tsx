@@ -1,11 +1,11 @@
 "use client";
-import AmbassadorSearchBar from "@/components/AmbassadorSearchBar";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import { Pagination } from "@/components/Pagination";
-import { useDatabase } from "@/hooks";
-import { parseMemberDatum } from "@/utils";
-import { getCountryByCode } from "@/utils/locationData";
+import AmbassadorSearchBar from "../../components/AmbassadorSearchBar";
+import Paragraph from "../../components/atoms/Paragraph";
+import Title from "../../components/atoms/Title";
+import { Pagination } from "../../components/Pagination";
+import { useDatabase } from "../../hooks";
+import { parseMemberDatum } from "../../utils";
+import { getCountryByCode } from "../../utils/locationData";
 import { Ambassador } from "@types";
 import React, { useMemo, useState } from "react";
 import AmbassadorCard from "./_components/AmbassadorCard";

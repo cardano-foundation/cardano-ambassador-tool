@@ -1,10 +1,10 @@
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { getCatConstants } from "@/utils";
+import { getCurrentNetworkConfig } from "../../../config/cardano";
+import { getCatConstants } from "../../../utils";
 import {
   parseMemberDatum,
   parseMembershipIntentDatum,
   parseProposalDatum,
-} from "@/utils/utils";
+} from "../../../utils/utils";
 import { BlockfrostProvider, UTxO } from "@meshsdk/core";
 import { scripts } from "@sidan-lab/cardano-ambassador-tool";
 import { revalidateTag, unstable_cache } from "next/cache";

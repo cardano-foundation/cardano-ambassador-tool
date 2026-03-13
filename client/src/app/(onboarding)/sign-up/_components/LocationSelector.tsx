@@ -1,8 +1,8 @@
 "use client";
 
-import SearchableDropdown from "@/components/atoms/SearchableDropdown";
-import { countries, getCitiesForCountry } from "@/utils/locationData";
-import { cn } from "@/utils/utils";
+import SearchableDropdown from "../../../../components/atoms/SearchableDropdown";
+import { countries, getCitiesForCountry } from "../../../../utils/locationData";
+import { cn } from "../../../../utils/utils";
 import React from "react";
 
 interface LocationSelectorProps {

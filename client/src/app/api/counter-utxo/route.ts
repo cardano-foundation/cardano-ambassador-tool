@@ -1,6 +1,6 @@
-import { BlockfrostService } from "@/services/blockfrostService";
-import { storageService } from "@/services/storageService";
-import { getCatConstants } from "@/utils";
+import { BlockfrostService } from "../../../services/blockfrostService";
+import { storageService } from "../../../services/storageService";
+import { getCatConstants } from "../../../utils";
 import { NextRequest, NextResponse } from "next/server";
 
 type CounterUtxoData = {

@@ -1,8 +1,8 @@
-import CardanoLogo from "@/components/atoms/CardanoLogo";
-import Paragraph from "@/components/atoms/Paragraph";
-import TextLink from "@/components/atoms/TextLink";
-import Title from "@/components/atoms/Title";
-import { getCurrentNetworkConfig } from "@/config/cardano";
+import CardanoLogo from "../../../../components/atoms/CardanoLogo";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import TextLink from "../../../../components/atoms/TextLink";
+import Title from "../../../../components/atoms/Title";
+import { getCurrentNetworkConfig } from "../../../../config/cardano";
 
 const ANDAMIO_URLS: Record<string, string> = {
   preprod: "https://preprod.app.andamio.io/",

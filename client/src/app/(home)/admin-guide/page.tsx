@@ -1,8 +1,8 @@
 "use client";
 
-import DocsDisplay from "@/components/atoms/DocsDisplay";
-import Paragraph from "@/components/atoms/Paragraph";
-import { useUserAuth, useWalletManager } from "@/hooks";
+import DocsDisplay from "../../../components/atoms/DocsDisplay";
+import Paragraph from "../../../components/atoms/Paragraph";
+import { useUserAuth, useWalletManager } from "../../../hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

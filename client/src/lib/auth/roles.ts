@@ -1,6 +1,6 @@
 "use server";
 
-import { BlockfrostService } from "@/services/blockfrostService";
+import { BlockfrostService } from "../../services/blockfrostService";
 import type { UTxO } from "@meshsdk/core";
 import { deserializeDatum } from "@meshsdk/core";
 import {

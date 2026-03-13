@@ -1,6 +1,6 @@
-import Empty from "@/components/atoms/Empty";
-import NoNotificationsIcon from "@/components/atoms/NoNotificationsIcon";
-import Paragraph from "@/components/atoms/Paragraph";
+import Empty from "../../../../components/atoms/Empty";
+import NoNotificationsIcon from "../../../../components/atoms/NoNotificationsIcon";
+import Paragraph from "../../../../components/atoms/Paragraph";
 import React from "react";
 
 interface EmptyStateProps {

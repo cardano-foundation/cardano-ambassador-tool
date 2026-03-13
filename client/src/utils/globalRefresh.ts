@@ -12,7 +12,7 @@ import React from "react";
  *
  * Usage:
  * ```typescript
- * import { emitGlobalRefresh } from '@/utils/globalRefresh';
+ * import { emitGlobalRefresh } from "./globalRefresh";
  *
  * // Trigger refresh after successful transaction
  * await submitTransaction();
@@ -48,7 +48,7 @@ export function emitGlobalRefreshWithDelay(delay: number = 1000): void {
  *
  * Usage:
  * ```typescript
- * import { useGlobalRefreshListener } from '@/utils/globalRefresh';
+ * import { useGlobalRefreshListener } from "./globalRefresh";
  *
  * function MyComponent() {
  *   useGlobalRefreshListener(() => {

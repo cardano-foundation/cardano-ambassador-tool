@@ -1,5 +1,5 @@
 "use client";
-import { cn } from "@/utils/utils";
+import { cn } from "../../utils/utils";
 import { useEffect, useRef, useState } from "react";
 
 interface DropdownOption {

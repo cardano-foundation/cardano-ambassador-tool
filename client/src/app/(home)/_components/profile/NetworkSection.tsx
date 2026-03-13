@@ -1,5 +1,5 @@
-import Card, { CardContent } from "@/components/atoms/Card";
-import Title from "@/components/atoms/Title";
+import Card, { CardContent } from "../../../../components/atoms/Card";
+import Title from "../../../../components/atoms/Title";
 import React from "react";
 
 export interface NetworkItem {

@@ -1,8 +1,8 @@
-import ProposalIcon from "@/components/atoms/ProposalIcon";
-import SettingsIcon from "@/components/atoms/SettingsIcon";
-import UsersIcon from "@/components/atoms/UsersIcon";
-import { routes } from "@/config/routes";
-import { useNetworkValidation, useUserAuth, useWalletManager } from "@/hooks";
+import ProposalIcon from "../components/atoms/ProposalIcon";
+import SettingsIcon from "../components/atoms/SettingsIcon";
+import UsersIcon from "../components/atoms/UsersIcon";
+import { routes } from "../config/routes";
+import { useNetworkValidation, useUserAuth, useWalletManager } from ".";
 import { NavigationSection } from "@types";
 import {
   BookOpenTextIcon,

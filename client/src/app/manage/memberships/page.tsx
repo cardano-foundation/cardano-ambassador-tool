@@ -1,14 +1,14 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import UserAvatar from "@/components/atoms/UserAvatar";
-import Copyable from "@/components/Copyable";
-import { ColumnDef, Table } from "@/components/Table/Table";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { useDatabase } from "@/hooks";
-import { getCountryByCode, parseMemberDatum } from "@/utils";
+import Button from "../../../components/atoms/Button";
+import Paragraph from "../../../components/atoms/Paragraph";
+import Title from "../../../components/atoms/Title";
+import UserAvatar from "../../../components/atoms/UserAvatar";
+import Copyable from "../../../components/Copyable";
+import { ColumnDef, Table } from "../../../components/Table/Table";
+import { getCurrentNetworkConfig } from "../../../config/cardano";
+import { useDatabase } from "../../../hooks";
+import { getCountryByCode, parseMemberDatum } from "../../../utils";
 import Link from "next/link";
 
 export default function ManageAmbassadorsPage() {

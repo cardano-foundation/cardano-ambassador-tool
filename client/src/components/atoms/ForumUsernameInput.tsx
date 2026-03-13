@@ -1,7 +1,7 @@
 "use client";
 
-import { AmbassadorProfile } from "@/types/ambassadorProfile";
-import { cn } from "@/utils/utils";
+import { AmbassadorProfile } from "../../types/ambassadorProfile";
+import { cn } from "../../utils/utils";
 import {
   CheckCircle,
   ExternalLink,

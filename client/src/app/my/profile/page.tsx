@@ -5,13 +5,13 @@ import {
   useMemberValidation,
   useTxConfirmation,
   useWalletManager,
-} from "@/hooks";
+} from "../../../hooks";
 import {
   findMemberUtxo,
   findTokenUtxoByMemberUtxo,
   getCatConstants,
   getProvider,
-} from "@/utils";
+} from "../../../utils";
 import { resolveTxHash } from "@meshsdk/core";
 import {
   MemberData,

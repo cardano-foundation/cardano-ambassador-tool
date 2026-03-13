@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
+import Button from "../atoms/Button";
 import {
   Dialog,
   DialogContent,
@@ -8,9 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/Dialog";
-import { useWalletManager } from "@/hooks";
-import { shortenString } from "@/utils";
+} from "../Dialog";
+import { useWalletManager } from "../../hooks";
+import { shortenString } from "../../utils";
 import { useState } from "react";
 import { toast } from "../toast/toast-manager";
 import WalletList from "./WalletList";

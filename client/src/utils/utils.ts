@@ -1,6 +1,6 @@
-import { toast } from "@/components/toast/toast-manager";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { BlockfrostService } from "@/services/blockfrostService";
+import { toast } from "../components/toast/toast-manager";
+import { getCurrentNetworkConfig } from "../config/cardano";
+import { BlockfrostService } from "../services/blockfrostService";
 import {
   BlockfrostProvider,
   ByteString,
@@ -450,7 +450,7 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
  * This re-exports the cached version from roles.ts for convenience
  * @returns The matching UTxO or null if not found
  */
-export { findOracleUtxo } from "@/lib/auth/roles";
+export { findOracleUtxo } from "../lib/auth/roles";
 
 /**
  * Finds a member UTxO by asset name

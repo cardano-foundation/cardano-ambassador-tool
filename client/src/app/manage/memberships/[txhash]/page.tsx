@@ -1,16 +1,16 @@
 "use client";
 
-import MemberDataComponent from "@/app/manage/membership-applications/_components/MemberDataComponent";
-import Timeline from "@/components/atoms/Timeline";
-import Button from "@/components/atoms/Button";
-import Title from "@/components/atoms/Title";
-import FinalizeDecision from "@/components/FinalizeDecision";
-import RemoveMemberAction from "@/components/RemoveMemberAction";
-import MultisigProgressTracker from "@/components/signature-progress/MultisigProgressTracker";
-import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
-import { routes } from "@/config/routes";
-import { useDatabase } from "@/hooks";
-import { parseMemberDatum } from "@/utils";
+import MemberDataComponent from "../../membership-applications/_components/MemberDataComponent";
+import Timeline from "../../../../components/atoms/Timeline";
+import Button from "../../../../components/atoms/Button";
+import Title from "../../../../components/atoms/Title";
+import FinalizeDecision from "../../../../components/FinalizeDecision";
+import RemoveMemberAction from "../../../../components/RemoveMemberAction";
+import MultisigProgressTracker from "../../../../components/signature-progress/MultisigProgressTracker";
+import SimpleCardanoLoader from "../../../../components/SimpleCardanoLoader";
+import { routes } from "../../../../config/routes";
+import { useDatabase } from "../../../../hooks";
+import { parseMemberDatum } from "../../../../utils";
 import { MemberData } from "@sidan-lab/cardano-ambassador-tool";
 import { AdminDecisionData, TimelineStep, Utxo } from "@types";
 import Link from "next/link";

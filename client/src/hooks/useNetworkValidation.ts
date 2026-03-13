@@ -1,6 +1,6 @@
 "use client";
 
-import { getCurrentNetworkConfig, NETWORK_NAMES } from "@/config/cardano";
+import { getCurrentNetworkConfig, NETWORK_NAMES } from "../config/cardano";
 import { IWallet } from "@meshsdk/core";
 import { NetworkConfig, NetworkValidationResult } from "@types";
 import { useCallback, useEffect, useState } from "react";

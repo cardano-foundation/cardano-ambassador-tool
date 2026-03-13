@@ -1,9 +1,9 @@
 "use client";
 
-import { useAppSelector } from "@/lib/redux/hooks";
-import { selectParsedCurrentUserMember } from "@/lib/redux/features/auth";
-import { selectDbLoading } from "@/lib/redux/features/data";
-import { selectWalletAddress } from "@/lib/redux/features/wallet";
+import { useAppSelector } from "../lib/redux/hooks";
+import { selectParsedCurrentUserMember } from "../lib/redux/features/auth";
+import { selectDbLoading } from "../lib/redux/features/data";
+import { selectWalletAddress } from "../lib/redux/features/wallet";
 import { MemberData } from "@sidan-lab/cardano-ambassador-tool";
 import { Utxo } from "@types";
 

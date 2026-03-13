@@ -1,7 +1,7 @@
-import Card from "@/components/atoms/Card";
-import Paragraph from "@/components/atoms/Paragraph";
-import MultisigProgressTracker from "@/components/signature-progress/MultisigProgressTracker";
-import Title from "@/components/atoms/Title";
+import Card from "../../../../../components/atoms/Card";
+import Paragraph from "../../../../../components/atoms/Paragraph";
+import MultisigProgressTracker from "../../../../../components/signature-progress/MultisigProgressTracker";
+import Title from "../../../../../components/atoms/Title";
 import { AdminDecisionData, Utxo } from "@types";
 
 interface AdminDecisionProps {

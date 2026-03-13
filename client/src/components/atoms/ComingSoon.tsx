@@ -1,7 +1,7 @@
 "use client";
 
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
+import Paragraph from "./Paragraph";
+import Title from "./Title";
 
 interface ComingSoonProps {
   title?: string;

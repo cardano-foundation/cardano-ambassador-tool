@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "../lib/redux/hooks";
 import {
   selectDbLoading,
   selectIsSyncing,
@@ -17,13 +17,13 @@ import {
   dbInitialized,
   dbInitializationFailed,
   startSync,
-} from "@/lib/redux/features/data";
-import { DatabaseManager } from "@/lib/dbManager";
+} from "../lib/redux/features/data";
+import { DatabaseManager } from "../lib/dbManager";
 import {
   initUtxoWorker,
   onUtxoWorkerMessage,
   sendUtxoWorkerMessage,
-} from "@/lib/utxoWorkerClient";
+} from "../lib/utxoWorkerClient";
 import {
   deserializeDatum,
   PubKeyAddress,

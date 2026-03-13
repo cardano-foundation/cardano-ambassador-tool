@@ -3,20 +3,20 @@ import {
   parseProposalDatum,
   extractWitnesses,
   extractRequiredSigners,
-} from "@/utils";
-import { storageApiClient } from "@/utils/storageApiClient";
+} from "../../../../utils";
+import { storageApiClient } from "../../../../utils/storageApiClient";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import type {
   AdminDecisionData,
   AdminDecision as AdminDecisionType,
 } from "@types";
 import { use, useEffect, useRef, useState } from "react";
-import { useDatabase, useWalletManager } from "@/hooks";
-import { useTxConfirmation } from "@/hooks/useTxConfirmation";
-import Chip from "@/components/atoms/Chip";
-import Title from "@/components/atoms/Title";
+import { useDatabase, useWalletManager } from "../../../../hooks";
+import { useTxConfirmation } from "../../../../hooks/useTxConfirmation";
+import Chip from "../../../../components/atoms/Chip";
+import Title from "../../../../components/atoms/Title";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { findAdminsFromOracle } from "@/lib/auth/roles";
+import { findAdminsFromOracle } from "../../../../lib/auth/roles";
 
 import { EditProposalForm } from "./_components/EditProposalForm";
 import { useEditProposal } from "./_components/useEditProposal";

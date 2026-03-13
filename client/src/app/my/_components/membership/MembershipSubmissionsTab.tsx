@@ -1,17 +1,17 @@
 "use client";
 
-import OwnerMembershipTimeline from "@/components/Timelines/OwnerMembershipTimeline";
-import TransactionConfirmationOverlay from "@/components/TransactionConfirmationOverlay";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import { useDatabase, useMemberValidation, useWalletManager } from "@/hooks";
+import OwnerMembershipTimeline from "../../../../components/Timelines/OwnerMembershipTimeline";
+import TransactionConfirmationOverlay from "../../../../components/TransactionConfirmationOverlay";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Title from "../../../../components/atoms/Title";
+import { useDatabase, useMemberValidation, useWalletManager } from "../../../../hooks";
 import {
   findMembershipIntentUtxo,
   findTokenUtxoByMembershipIntentUtxo,
   getCatConstants,
   getProvider,
   parseMembershipIntentDatum,
-} from "@/utils";
+} from "../../../../utils";
 import { resolveTxHash } from "@meshsdk/core";
 import {
   MemberData,

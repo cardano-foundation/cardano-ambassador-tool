@@ -1,16 +1,16 @@
 "use client";
-import Button from "@/components/atoms/Button";
-import Card, { CardContent } from "@/components/atoms/Card";
-import Chip from "@/components/atoms/Chip";
-import Paragraph from "@/components/atoms/Paragraph";
-import RichTextDisplay from "@/components/atoms/RichTextDisplay";
-import Title from "@/components/atoms/Title";
-import Copyable from "@/components/Copyable";
-import ProposalDescription from "@/components/ProposalDescription";
-import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { useDatabase } from "@/hooks";
-import { formatAdaAmount } from "@/utils";
+import Button from "../../../../components/atoms/Button";
+import Card, { CardContent } from "../../../../components/atoms/Card";
+import Chip from "../../../../components/atoms/Chip";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import RichTextDisplay from "../../../../components/atoms/RichTextDisplay";
+import Title from "../../../../components/atoms/Title";
+import Copyable from "../../../../components/Copyable";
+import ProposalDescription from "../../../../components/ProposalDescription";
+import SimpleCardanoLoader from "../../../../components/SimpleCardanoLoader";
+import { getCurrentNetworkConfig } from "../../../../config/cardano";
+import { useDatabase } from "../../../../hooks";
+import { formatAdaAmount } from "../../../../utils";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import { use } from "react";
 

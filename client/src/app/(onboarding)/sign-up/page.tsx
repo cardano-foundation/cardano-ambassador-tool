@@ -1,8 +1,8 @@
 "use client";
 
-import { SingleRowStepper } from "@/components/atoms/Stepper";
-import { useMemberValidation, useWalletManager } from "@/hooks";
-import { findMembershipIntentUtxo, smoothScrollToElement } from "@/utils";
+import { SingleRowStepper } from "../../../components/atoms/Stepper";
+import { useMemberValidation, useWalletManager } from "../../../hooks";
+import { findMembershipIntentUtxo, smoothScrollToElement } from "../../../utils";
 import { UTxO } from "@meshsdk/core";
 import { MemberTokenDetail } from "@types";
 import { AnimatePresence, motion } from "framer-motion";

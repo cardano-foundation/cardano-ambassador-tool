@@ -1,4 +1,4 @@
-import { cn } from "@/utils/utils";
+import { cn } from "../../utils/utils";
 import { TextareaHTMLAttributes, forwardRef } from "react";
 
 interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {

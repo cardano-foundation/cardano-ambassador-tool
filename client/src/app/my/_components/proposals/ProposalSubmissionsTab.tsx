@@ -1,16 +1,16 @@
 "use client";
 
-import { ColumnDef, Table } from "@/components/Table/Table";
-import Button from "@/components/atoms/Button";
-import Chip from "@/components/atoms/Chip";
-import Empty from "@/components/atoms/Empty";
-import Paragraph from "@/components/atoms/Paragraph";
-import Select from "@/components/atoms/Select";
-import Title from "@/components/atoms/Title";
-import { routes } from "@/config/routes";
-import { useWalletManager } from "@/hooks";
-import useProposals from "@/hooks/useProposals";
-import { formatAdaAmount } from "@/utils";
+import { ColumnDef, Table } from "../../../../components/Table/Table";
+import Button from "../../../../components/atoms/Button";
+import Chip from "../../../../components/atoms/Chip";
+import Empty from "../../../../components/atoms/Empty";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Select from "../../../../components/atoms/Select";
+import Title from "../../../../components/atoms/Title";
+import { routes } from "../../../../config/routes";
+import { useWalletManager } from "../../../../hooks";
+import useProposals from "../../../../hooks/useProposals";
+import { formatAdaAmount } from "../../../../utils";
 import { Proposal } from "@types";
 import { ArrowUpLeftFromSquare, ArrowUpRightFromSquare } from "lucide-react";
 import Link from "next/link";

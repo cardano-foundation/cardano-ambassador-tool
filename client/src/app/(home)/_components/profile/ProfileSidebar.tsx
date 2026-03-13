@@ -1,6 +1,6 @@
-import DiscordIcon from "@/components/atoms/DiscordIcon";
-import GithubIcon from "@/components/atoms/GithubIcon";
-import XIcon from "@/components/atoms/XIcon";
+import DiscordIcon from "../../../../components/atoms/DiscordIcon";
+import GithubIcon from "../../../../components/atoms/GithubIcon";
+import XIcon from "../../../../components/atoms/XIcon";
 import React from "react";
 import { AboutSection } from "./AboutSection";
 import { NetworkItem, NetworkSection } from "./NetworkSection";

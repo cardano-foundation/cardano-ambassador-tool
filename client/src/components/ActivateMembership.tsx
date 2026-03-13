@@ -1,6 +1,6 @@
-import { useWalletManager } from "@/hooks";
-import { emitGlobalRefreshWithDelay, saveCounterUtxo } from "@/utils";
-import { storageApiClient } from "@/utils/storageApiClient";
+import { useWalletManager } from "../hooks";
+import { emitGlobalRefreshWithDelay, saveCounterUtxo } from "../utils";
+import { storageApiClient } from "../utils/storageApiClient";
 import { AdminDecisionData, TransactionConfirmationResult } from "@types";
 import { Loader2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";

@@ -1,4 +1,4 @@
-import { useWalletManager } from "@/hooks";
+import { useWalletManager } from "../../../../../hooks";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import FormFunds from "../../_components/FormFunds";
 

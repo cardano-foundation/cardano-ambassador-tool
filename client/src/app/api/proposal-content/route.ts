@@ -1,4 +1,4 @@
-import GitContentService from "@/services/githubService";
+import GitContentService from "../../../services/githubService";
 import { GithubProposalData } from "@types";
 import { NextRequest, NextResponse } from "next/server";
 

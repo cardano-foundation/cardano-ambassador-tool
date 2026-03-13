@@ -1,9 +1,9 @@
-import CardanoIcon from "@/components/atoms/CardanoIcon";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import UserAvatar from "@/components/atoms/UserAvatar";
-import { StatCardPulse } from "@/components/PulseLoader";
-import { getCountryFlag } from "@/utils/countryFlags";
+import CardanoIcon from "../../../../components/atoms/CardanoIcon";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Title from "../../../../components/atoms/Title";
+import UserAvatar from "../../../../components/atoms/UserAvatar";
+import { StatCardPulse } from "../../../../components/PulseLoader";
+import { getCountryFlag } from "../../../../utils/countryFlags";
 import React from "react";
 import { StatCard } from "./StartCard";
 

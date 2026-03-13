@@ -1,10 +1,10 @@
 "use client";
 
-import TopNav from "@/components/Navigation/TabNav";
-import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
-import Button from "@/components/atoms/Button";
-import { routes } from "@/config/routes";
-import { useDatabase, useWalletManager } from "@/hooks";
+import TopNav from "../../../components/Navigation/TabNav";
+import SimpleCardanoLoader from "../../../components/SimpleCardanoLoader";
+import Button from "../../../components/atoms/Button";
+import { routes } from "../../../config/routes";
+import { useDatabase, useWalletManager } from "../../../hooks";
 import Link from "next/link";
 import { useState } from "react";
 import MembershipSubmissionsTab from "../_components/membership/MembershipSubmissionsTab";

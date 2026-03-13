@@ -1,8 +1,8 @@
 "use client";
 
-import MemberDataComponent from "@/app/manage/membership-applications/_components/MemberDataComponent";
-import Timeline from "@/components/atoms/Timeline";
-import { parseMembershipIntentDatum } from "@/utils";
+import MemberDataComponent from "../../app/manage/membership-applications/_components/MemberDataComponent";
+import Timeline from "../atoms/Timeline";
+import { parseMembershipIntentDatum } from "../../utils";
 import { MemberData } from "@sidan-lab/cardano-ambassador-tool";
 import { AdminDecisionData, TimelineStep, Utxo } from "@types";
 import { useEffect, useState } from "react";

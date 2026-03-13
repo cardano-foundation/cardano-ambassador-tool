@@ -1,17 +1,17 @@
 "use client";
 
-import Card from "@/components/atoms/Card";
-import Title from "@/components/atoms/Title";
-import TopNav from "@/components/Navigation/TabNav";
+import Card from "../../../../components/atoms/Card";
+import Title from "../../../../components/atoms/Title";
+import TopNav from "../../../../components/Navigation/TabNav";
 import {
   ActivityPulse,
   BadgesPulse,
   RepliesPulse,
   TopicsPulse,
-} from "@/components/PulseLoader";
-import { useAmbassadorProfile, useDatabase, useDateFormatting } from "@/hooks";
-import { formatAdaAmount, lovelaceToAda, parseMemberDatum } from "@/utils";
-import { getCountryByCode } from "@/utils/locationData";
+} from "../../../../components/PulseLoader";
+import { useAmbassadorProfile, useDatabase, useDateFormatting } from "../../../../hooks";
+import { formatAdaAmount, lovelaceToAda, parseMemberDatum } from "../../../../utils";
+import { getCountryByCode } from "../../../../utils/locationData";
 import React, { useMemo, useState } from "react";
 import { ActivitySection } from "./ActivitySection";
 import { BadgesSection } from "./Badges";
@@ -20,7 +20,7 @@ import { ProfileHeader } from "./ProfileHeader";
 import { ProfileSidebar } from "./ProfileSidebar";
 import { RepliesSection } from "./RepliesSection";
 import { TopicsSection } from "./TopicsSection";
-import ProposalSubmissionsTab from "@/app/my/_components/proposals/ProposalSubmissionsTab";
+import ProposalSubmissionsTab from "../../../my/_components/proposals/ProposalSubmissionsTab";
 
 interface AmbassadorProfilePageProps {
   ambassadorUsername: string;

@@ -1,12 +1,12 @@
 "use client";
 
-import Card, { CardContent } from "@/components/atoms/Card";
-import AppLogo from "@/components/atoms/Logo";
-import SettingsIcon from "@/components/atoms/SettingsIcon";
-import UsersIcon from "@/components/atoms/UsersIcon";
-import ConnectWallet from "@/components/wallet/ConnectWallet";
-import { routes } from "@/config/routes";
-import { useNetworkValidation, useUserAuth, useWalletManager } from "@/hooks";
+import Card, { CardContent } from "../atoms/Card";
+import AppLogo from "../atoms/Logo";
+import SettingsIcon from "../atoms/SettingsIcon";
+import UsersIcon from "../atoms/UsersIcon";
+import ConnectWallet from "../wallet/ConnectWallet";
+import { routes } from "../../config/routes";
+import { useNetworkValidation, useUserAuth, useWalletManager } from "../../hooks";
 import { NavigationSection } from "@types";
 import {
   BookOpenTextIcon,

@@ -1,12 +1,12 @@
 "use client";
-import { AppLoadingScreen } from "@/components/AppLoadingScreen";
-import AppLogo from "@/components/atoms/Logo";
-import OnboardingSvg from "@/components/atoms/onboarding";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import Footer from "@/components/Footer";
-import ToastContainer from "@/components/toast/Toast";
-import { useAppLoading } from "@/hooks";
+import { AppLoadingScreen } from "../../components/AppLoadingScreen";
+import AppLogo from "../../components/atoms/Logo";
+import OnboardingSvg from "../../components/atoms/onboarding";
+import Paragraph from "../../components/atoms/Paragraph";
+import Title from "../../components/atoms/Title";
+import Footer from "../../components/Footer";
+import ToastContainer from "../../components/toast/Toast";
+import { useAppLoading } from "../../hooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

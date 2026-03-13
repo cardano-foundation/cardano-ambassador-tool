@@ -1,4 +1,4 @@
-import { CardanoIcon } from "@/components/atoms/CardanoIcon";
+import { CardanoIcon } from "./CardanoIcon";
 import React from "react";
 
 export interface MapsIconProps {

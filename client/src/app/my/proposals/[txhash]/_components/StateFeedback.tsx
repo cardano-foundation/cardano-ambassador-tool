@@ -1,8 +1,8 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
+import Button from "../../../../../components/atoms/Button";
+import Paragraph from "../../../../../components/atoms/Paragraph";
+import Title from "../../../../../components/atoms/Title";
 import { useRouter } from "next/navigation";
 
 interface StateFeedbackProps {

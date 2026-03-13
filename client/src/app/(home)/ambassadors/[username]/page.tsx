@@ -1,4 +1,4 @@
-import AmbassadorProfile from "@/app/(home)/_components/profile/AmbassadorProfilePage";
+import AmbassadorProfile from "../../_components/profile/AmbassadorProfilePage";
 import { use } from "react";
 
 interface PageProps {

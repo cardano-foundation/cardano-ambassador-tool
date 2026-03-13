@@ -1,7 +1,7 @@
 "use client";
 
-import { MapsIcon } from "@/components/atoms/MapsIcon";
-import { countries, getCityCoordinates } from "@/utils/locationData";
+import { MapsIcon } from "../../../../components/atoms/MapsIcon";
+import { countries, getCityCoordinates } from "../../../../utils/locationData";
 import React from "react";
 
 interface LocationMapProps {

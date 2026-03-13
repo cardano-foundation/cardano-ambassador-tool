@@ -1,8 +1,8 @@
-import Card, { CardContent } from "@/components/atoms/Card";
-import Switch from "@/components/atoms/Switch";
-import TextLink from "@/components/atoms/TextLink";
-import Progress from "@/components/atoms/Timeline";
-import Title from "@/components/atoms/Title";
+import Card, { CardContent } from "../../../../components/atoms/Card";
+import Switch from "../../../../components/atoms/Switch";
+import TextLink from "../../../../components/atoms/TextLink";
+import Progress from "../../../../components/atoms/Timeline";
+import Title from "../../../../components/atoms/Title";
 import Link from "next/link";
 import React from "react";
 

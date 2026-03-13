@@ -1,26 +1,26 @@
 "use client";
 
-import LocationSelector from "@/app/(onboarding)/sign-up/_components/LocationSelector";
-import Button from "@/components/atoms/Button";
-import { CardHeader } from "@/components/atoms/Card";
-import Checkbox from "@/components/atoms/Checkbox";
-import ForumUsernameInput from "@/components/atoms/ForumUsernameInput";
-import Input from "@/components/atoms/Input";
-import Paragraph from "@/components/atoms/Paragraph";
-import TextArea from "@/components/atoms/TextArea";
-import ErrorAccordion from "@/components/ErrorAccordion";
-import { toast } from "@/components/toast/toast-manager";
-import { useMemberValidation, useWalletManager } from "@/hooks";
+import LocationSelector from "./LocationSelector";
+import Button from "../../../../components/atoms/Button";
+import { CardHeader } from "../../../../components/atoms/Card";
+import Checkbox from "../../../../components/atoms/Checkbox";
+import ForumUsernameInput from "../../../../components/atoms/ForumUsernameInput";
+import Input from "../../../../components/atoms/Input";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import TextArea from "../../../../components/atoms/TextArea";
+import ErrorAccordion from "../../../../components/ErrorAccordion";
+import { toast } from "../../../../components/toast/toast-manager";
+import { useMemberValidation, useWalletManager } from "../../../../hooks";
 import {
   findMembershipIntentUtxo,
   getCatConstants,
   getProvider,
-} from "@/utils";
+} from "../../../../utils";
 import {
   getFieldError,
   validateIntentForm,
   ValidationError,
-} from "@/utils/validation";
+} from "../../../../utils/validation";
 import {
   membershipMetadata,
   MembershipMetadata,

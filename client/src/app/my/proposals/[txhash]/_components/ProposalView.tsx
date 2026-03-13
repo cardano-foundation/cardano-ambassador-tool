@@ -1,13 +1,13 @@
 "use client";
 
-import Card from "@/components/atoms/Card";
-import Paragraph from "@/components/atoms/Paragraph";
-import RichTextDisplay from "@/components/atoms/RichTextDisplay";
-import Title from "@/components/atoms/Title";
-import ProposalDescription from "@/components/ProposalDescription";
+import Card from "../../../../../components/atoms/Card";
+import Paragraph from "../../../../../components/atoms/Paragraph";
+import RichTextDisplay from "../../../../../components/atoms/RichTextDisplay";
+import Title from "../../../../../components/atoms/Title";
+import ProposalDescription from "../../../../../components/ProposalDescription";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import { useState } from "react";
-import Button from "@/components/atoms/Button";
+import Button from "../../../../../components/atoms/Button";
 import { AdminDecisionData } from "@types";
 
 type ProposalFormData = ProposalData & { description: string };
