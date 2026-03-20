@@ -1,5 +1,5 @@
-import Input from "@/components/atoms/Input";
-import { useWalletManager } from "@/hooks";
+import Input from "../../../../components/atoms/Input";
+import { useWalletManager } from "../../../../hooks";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 
 type ProposalFormData = ProposalData & {

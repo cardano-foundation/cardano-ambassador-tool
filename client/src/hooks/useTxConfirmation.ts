@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback } from "react";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "../lib/redux/hooks";
 import {
   showTxConfirmation as showTxConfirmationAction,
   hideTxConfirmation as hideTxConfirmationAction,
   selectTxConfirmation,
-} from "@/lib/redux/features/ui";
+} from "../lib/redux/features/ui";
 import { TransactionConfirmationResult } from "@types";
 
 export interface TxConfirmationOptions {

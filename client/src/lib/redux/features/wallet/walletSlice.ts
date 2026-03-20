@@ -10,7 +10,7 @@ import {
   getWalletAddress,
   saveWalletSelection,
   validateNetwork,
-} from "@/utils/wallet";
+} from "../../../../utils/wallet";
 
 // ---------- Types ----------
 export interface WalletState {

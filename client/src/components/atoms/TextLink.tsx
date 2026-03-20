@@ -1,4 +1,4 @@
-import { cn } from "@/utils/utils";
+import { cn } from "../../utils/utils";
 import Link from "next/link";
 import React from "react";
 

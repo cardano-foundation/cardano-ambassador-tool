@@ -1,19 +1,19 @@
 "use client";
-import LocationSelector from "@/app/(onboarding)/sign-up/_components/LocationSelector";
-import Button from "@/components/atoms/Button";
-import ForumUsernameInput from "@/components/atoms/ForumUsernameInput";
-import Input from "@/components/atoms/Input";
-import Modal from "@/components/atoms/Modal";
-import TextArea from "@/components/atoms/TextArea";
-import Title from "@/components/atoms/Title";
-import UserAvatar from "@/components/atoms/UserAvatar";
-import ErrorAccordion from "@/components/ErrorAccordion";
-import { getCountryByCode, getCountryByName } from "@/utils/locationData";
+import LocationSelector from "../../(onboarding)/sign-up/_components/LocationSelector";
+import Button from "../../../components/atoms/Button";
+import ForumUsernameInput from "../../../components/atoms/ForumUsernameInput";
+import Input from "../../../components/atoms/Input";
+import Modal from "../../../components/atoms/Modal";
+import TextArea from "../../../components/atoms/TextArea";
+import Title from "../../../components/atoms/Title";
+import UserAvatar from "../../../components/atoms/UserAvatar";
+import ErrorAccordion from "../../../components/ErrorAccordion";
+import { getCountryByCode, getCountryByName } from "../../../utils/locationData";
 import {
   getFieldError,
   validateProfileForm,
   ValidationError,
-} from "@/utils/validation";
+} from "../../../utils/validation";
 import { useEffect, useState } from "react";
 
 interface ProfileEditModalProps {

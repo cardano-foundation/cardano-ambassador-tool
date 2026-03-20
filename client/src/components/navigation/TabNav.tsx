@@ -1,5 +1,5 @@
-import { Tabs, TabsList, TabsTrigger } from "@/components/Tabs";
-import { cn } from "@/utils/utils";
+import { Tabs, TabsList, TabsTrigger } from "../Tabs";
+import { cn } from "../../utils/utils";
 import React from "react";
 
 interface TabItem {

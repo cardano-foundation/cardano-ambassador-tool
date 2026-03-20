@@ -1,27 +1,27 @@
 "use client";
-import ApproveSignoff from "@/components/ApproveSignoff";
-import Button from "@/components/atoms/Button";
-import Card, { CardContent } from "@/components/atoms/Card";
-import Chip from "@/components/atoms/Chip";
-import Paragraph from "@/components/atoms/Paragraph";
-import RichTextDisplay from "@/components/atoms/RichTextDisplay";
-import Title from "@/components/atoms/Title";
-import Copyable from "@/components/Copyable";
-import FinalizeDecision from "@/components/FinalizeDecision";
-import FinalizeSignoffApproval from "@/components/FinalizeSignoffApproval";
-import ProposalDescription from "@/components/ProposalDescription";
-import ApproveReject from "@/components/RejectApprove";
-import MultisigProgressTracker from "@/components/signature-progress/MultisigProgressTracker";
-import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { useDatabase } from "@/hooks";
-import { formatAdaAmount, parseProposalDatum } from "@/utils";
+import ApproveSignoff from "../../../../components/ApproveSignoff";
+import Button from "../../../../components/atoms/Button";
+import Card, { CardContent } from "../../../../components/atoms/Card";
+import Chip from "../../../../components/atoms/Chip";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import RichTextDisplay from "../../../../components/atoms/RichTextDisplay";
+import Title from "../../../../components/atoms/Title";
+import Copyable from "../../../../components/Copyable";
+import FinalizeDecision from "../../../../components/FinalizeDecision";
+import FinalizeSignoffApproval from "../../../../components/FinalizeSignoffApproval";
+import ProposalDescription from "../../../../components/ProposalDescription";
+import ApproveReject from "../../../../components/RejectApprove";
+import MultisigProgressTracker from "../../../../components/signature-progress/MultisigProgressTracker";
+import SimpleCardanoLoader from "../../../../components/SimpleCardanoLoader";
+import { getCurrentNetworkConfig } from "../../../../config/cardano";
+import { useDatabase } from "../../../../hooks";
+import { formatAdaAmount, parseProposalDatum } from "../../../../utils";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import { AdminDecisionData } from "@types";
 import { use, useState } from "react";
 
 interface PageProps {
-  params: Promise<{ txhash: string }>;
+  params: Promise<{ txHash: string }>;
 }
 
 export default function Page({ params }: PageProps) {
@@ -33,13 +33,13 @@ export default function Page({ params }: PageProps) {
     useState<AdminDecisionData | null>(null);
   const [isFinalized, setIsFinalized] = useState(false);
   const [isSignoffFinalized, setIsSignoffFinalized] = useState(false);
-  const { txhash } = use(params);
+  const { txHash } = use(params);
 
   const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
-  const proposal = allProposals.find((utxo) => utxo.txHash === txhash);
+  const proposal = allProposals.find((utxo) => utxo.txHash === txHash);
 
   const signoffApprovalUtxo = signOfApprovals.find(
-    (utxo) => utxo.txHash === txhash,
+    (utxo) => utxo.txHash === txHash,
   );
 
   let proposalData: ProposalData & { description?: string };
@@ -77,15 +77,15 @@ export default function Page({ params }: PageProps) {
         fundsRequested: metadata?.fundsRequested || "0",
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
-        status: signOfApprovals.some((p) => p.txHash === txhash)
+        status: signOfApprovals.some((p) => p.txHash === txHash)
           ? "signoff_pending"
-          : proposals.some((p) => p.txHash === txhash)
+          : proposals.some((p) => p.txHash === txHash)
             ? "approved"
             : "pending",
       };
     } catch (error) {
       console.error("Error parsing proposal datum:", error);
-      const isApproved = proposals.some((p) => p.txHash === txhash);
+      const isApproved = proposals.some((p) => p.txHash === txHash);
       proposalData = {
         title: "Error Loading Proposal",
         url: "",
@@ -120,7 +120,7 @@ export default function Page({ params }: PageProps) {
             Proposal Not Found
           </Title>
           <Paragraph className="text-muted-foreground mb-4">
-            The proposal with hash {txhash} could not be found.
+            The proposal with hash {txHash} could not be found.
           </Paragraph>
           <Button variant="primary" onClick={() => window.history.back()}>
             Go Back
@@ -304,7 +304,7 @@ export default function Page({ params }: PageProps) {
             <Card>
               <div className="p-6">
                 <MultisigProgressTracker
-                  txhash={proposal?.txHash}
+                  txHash={proposal?.txHash}
                   adminDecisionData={adminDecisionData}
                   aria-label="Multisignature progress tracker"
                 />
@@ -320,7 +320,7 @@ export default function Page({ params }: PageProps) {
             <Card>
               <div className="p-6">
                 <FinalizeDecision
-                  txhash={proposal?.txHash}
+                  txHash={proposal?.txHash}
                   adminDecisionData={adminDecisionData}
                   context={"ProposalIntent"}
                   onFinalizationComplete={handleFinalizationComplete}
@@ -358,7 +358,7 @@ export default function Page({ params }: PageProps) {
                 <Card>
                   <div className="p-6">
                     <MultisigProgressTracker
-                      txhash={proposal?.txHash}
+                      txHash={proposal?.txHash}
                       adminDecisionData={signoffDecisionData}
                       aria-label="Signoff multisignature progress tracker"
                     />
@@ -376,7 +376,7 @@ export default function Page({ params }: PageProps) {
                 <Card>
                   <div className="p-6">
                     <FinalizeSignoffApproval
-                      txhash={proposal?.txHash}
+                      txHash={proposal?.txHash}
                       adminDecisionData={signoffDecisionData}
                       onFinalizationComplete={handleSignoffFinalizationComplete}
                       aria-label="Execute signoff approval"

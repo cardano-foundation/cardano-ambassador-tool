@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ArrowRightIcon } from "@/components/atoms/ArrowIcons";
+import { ArrowLeftIcon, ArrowRightIcon } from "./atoms/ArrowIcons";
 
 type PaginationProps = {
   currentPage: number;

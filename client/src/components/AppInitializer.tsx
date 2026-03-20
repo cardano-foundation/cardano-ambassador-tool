@@ -1,11 +1,11 @@
 "use client";
 
-import { useAppDispatch } from "@/lib/redux/hooks";
-import { updateLoadingState } from "@/lib/redux/features/ui";
-import { useDatabase } from "@/hooks/useDatabase";
-import { useThemeManager } from "@/hooks/useThemeManager";
-import { useUserAuth } from "@/hooks/useUserAuth";
-import { useWalletManager } from "@/hooks/useWalletManager";
+import { useAppDispatch } from "../lib/redux/hooks";
+import { updateLoadingState } from "../lib/redux/features/ui";
+import { useDatabase } from "../hooks/useDatabase";
+import { useThemeManager } from "../hooks/useThemeManager";
+import { useUserAuth } from "../hooks/useUserAuth";
+import { useWalletManager } from "../hooks/useWalletManager";
 import { useEffect } from "react";
 
 /**

@@ -1,6 +1,6 @@
 "use client";
-import { SortDownIcon, SortUpIcon } from "@/components/atoms/SortIcons";
-import { Pagination } from "@/components/Pagination";
+import { SortDownIcon, SortUpIcon } from "../atoms/SortIcons";
+import { Pagination } from "../Pagination";
 import { useMemo, useRef, useState } from "react";
 
 type ColumnDef<T> = {

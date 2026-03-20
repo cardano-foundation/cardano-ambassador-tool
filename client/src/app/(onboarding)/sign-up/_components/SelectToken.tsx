@@ -1,12 +1,12 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import KeyValue from "@/components/atoms/KeyValue";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import Copyable from "@/components/Copyable";
-import { useWalletManager } from "@/hooks";
-import { shortenString } from "@/utils";
+import Button from "../../../../components/atoms/Button";
+import KeyValue from "../../../../components/atoms/KeyValue";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Title from "../../../../components/atoms/Title";
+import Copyable from "../../../../components/Copyable";
+import { useWalletManager } from "../../../../hooks";
+import { shortenString } from "../../../../utils";
 import { hexToString } from "@meshsdk/core";
 import { MemberTokenDetail } from "@types";
 

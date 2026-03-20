@@ -1,14 +1,14 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import UserAvatar from "@/components/atoms/UserAvatar";
-import Copyable from "@/components/Copyable";
-import { ColumnDef, Table } from "@/components/Table/Table";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { useDatabase } from "@/hooks";
-import { getCountryByCode, parseMemberDatum } from "@/utils";
+import Button from "../../../components/atoms/Button";
+import Paragraph from "../../../components/atoms/Paragraph";
+import Title from "../../../components/atoms/Title";
+import UserAvatar from "../../../components/atoms/UserAvatar";
+import Copyable from "../../../components/Copyable";
+import { ColumnDef, Table } from "../../../components/Table/Table";
+import { getCurrentNetworkConfig } from "../../../config/cardano";
+import { useDatabase } from "../../../hooks";
+import { getCountryByCode, parseMemberDatum } from "../../../utils";
 import Link from "next/link";
 
 export default function ManageAmbassadorsPage() {
@@ -114,11 +114,18 @@ export default function ManageAmbassadorsPage() {
       cell: (value: string, row: any) => {
         const name = row.displayName || value;
         return (
-          <Link href={`/ambassadors/${ambassadorId(name)}`}>
-            <Button variant="primary" size="sm" className="text-nowrap">
-              View Ambassador
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href={`/ambassadors/${ambassadorId(name)}`}>
+              <Button variant="primary" size="sm" className="text-nowrap">
+                View Ambassador
+              </Button>
+            </Link>
+            <Link href={`/manage/memberships/${row.utxoHash}`}>
+              <Button variant="outline" size="sm" className="text-nowrap">
+                Manage
+              </Button>
+            </Link>
+          </div>
         );
       },
     },

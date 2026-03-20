@@ -1,21 +1,21 @@
 "use client";
 
-import MemberDataComponent from "@/app/manage/membership-applications/_components/MemberDataComponent";
-import Timeline from "@/components/atoms/Timeline";
-import { findAdminsFromOracle } from "@/lib/auth/roles";
+import MemberDataComponent from "../../app/manage/membership-applications/_components/MemberDataComponent";
+import Timeline from "../atoms/Timeline";
+import { findAdminsFromOracle } from "../../lib/auth/roles";
 import {
   extractRequiredSigners,
   extractWitnesses,
   parseMembershipIntentDatum,
   storageApiClient,
-} from "@/utils";
+} from "../../utils";
 import { MemberData } from "@sidan-lab/cardano-ambassador-tool";
 import { AdminDecision, AdminDecisionData, TimelineStep, Utxo } from "@types";
 import { useEffect, useState } from "react";
 import Paragraph from "../atoms/Paragraph";
 import Title from "../atoms/Title";
 import MultisigProgressTracker from "../signature-progress/MultisigProgressTracker";
-import { useDatabase } from "@/hooks";
+import { useDatabase } from "../../hooks";
 
 type ExtendedMemberData = MemberData & {
   txHash?: string;
@@ -191,7 +191,7 @@ const OwnerMembershipTimeline = ({
       title: "Multisig Approval",
       content: (
         <MultisigProgressTracker
-          txhash={intentUtxo?.txHash}
+          txHash={intentUtxo?.txHash}
           adminDecisionData={adminDecisionData}
         />
       ),

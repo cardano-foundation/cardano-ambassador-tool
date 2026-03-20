@@ -1,6 +1,6 @@
 "use client";
 
-import UserAvatar from "@/components/atoms/UserAvatar";
+import UserAvatar from "./UserAvatar";
 import { Camera } from "lucide-react";
 import { useRef } from "react";
 

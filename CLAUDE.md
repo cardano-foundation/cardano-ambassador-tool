@@ -14,7 +14,6 @@ On-chain membership and treasury management system for Cardano ambassadors. Toke
 | Task | Command | Directory |
 |------|---------|-----------|
 | Dev (client) | `npm run dev` | `client/` |
-| Dev (admin) | `npm run dev` | `admin-dashboard/` |
 | Build (client) | `npm run build` | `client/` |
 | Build (SDK) | `npm run build` | `off-chain/` |
 | Build (contracts) | `aiken build` | `on-chain/` |
@@ -22,6 +21,7 @@ On-chain membership and treasury management system for Cardano ambassadors. Toke
 | Test (e2e) | `npm run test:e2e` | `client/` |
 | Lint | `npm run format` | `client/` |
 | Type check | `npm run type-check` | `client/` |
+| Setup | `npm run setup` | `setup-script/` |
 
 ## Conventions
 
@@ -43,7 +43,7 @@ On-chain membership and treasury management system for Cardano ambassadors. Toke
 | `client/src/utils/` | Utility functions | `format.ts`, `error.ts` |
 | `client/src/components/` | Shared UI components | `Navigation/`, `SignatureProgress/` |
 | `client/src/lib/redux/` | Redux Store & Slices | `store.ts`, `features/` |
-| `admin-dashboard/` | Admin panel (Next.js) | `src/pages/admin.tsx` |
+| `setup-script/` | CLI deployment tool | `src/index.ts` |
 
 ## Entry Points
 
@@ -131,7 +131,7 @@ ProposeIntent    -> [approve] -> Proposal -> [signoff] -> SignOffApproval -> [ex
 | Consumer | What They Use |
 |----------|---------------|
 | `client/` | `@sidan-lab/cardano-ambassador-tool` SDK |
-| `admin-dashboard/` | `@sidan-lab/cardano-ambassador-tool` SDK |
+| `setup-script/` | `@sidan-lab/cardano-ambassador-tool` SDK |
 
 ## Project Management
 

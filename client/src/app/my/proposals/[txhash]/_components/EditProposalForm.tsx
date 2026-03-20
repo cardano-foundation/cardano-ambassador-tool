@@ -1,9 +1,9 @@
-import Button from "@/components/atoms/Button";
-import ErrorAccordion from "@/components/ErrorAccordion";
-import FormDetails from "@/app/(home)/proposals/_components/FormDetails";
-import FormFunds from "@/app/(home)/proposals/_components/FormFunds";
-import FormReview from "@/app/(home)/proposals/_components/FormReview";
-import TopNav from "@/components/navigation/TabNav";
+import Button from "../../../../../components/atoms/Button";
+import ErrorAccordion from "../../../../../components/ErrorAccordion";
+import FormDetails from "../../../../(home)/proposals/_components/FormDetails";
+import FormFunds from "../../../../(home)/proposals/_components/FormFunds";
+import FormReview from "../../../../(home)/proposals/_components/FormReview";
+import TopNav from "../../../../../components/navigation/TabNav";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import { RefObject, useState } from "react";
 import { StateFeedback } from "./StateFeedback";

@@ -4,6 +4,48 @@ export function getCatConstants() {
   const network =
     (process.env.NEXT_PUBLIC_NETWORK as "mainnet" | "preprod") ?? "preprod";
 
+  // Validate required env vars before using them
+  const requiredEnvVars: Record<string, string | undefined> = {
+    NEXT_PUBLIC_ORACLE_SETUP_TX_HASH:
+      process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH,
+    NEXT_PUBLIC_COUNTER_SETUP_TX_HASH:
+      process.env.NEXT_PUBLIC_COUNTER_SETUP_TX_HASH,
+    NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_TX_HASH:
+      process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_MINT_TX_HASH,
+    NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_TX_HASH:
+      process.env.NEXT_PUBLIC_MEMBERSHIP_INTENT_SPEND_TX_HASH,
+    NEXT_PUBLIC_MEMBER_MINT_TX_HASH:
+      process.env.NEXT_PUBLIC_MEMBER_MINT_TX_HASH,
+    NEXT_PUBLIC_MEMBER_SPEND_TX_HASH:
+      process.env.NEXT_PUBLIC_MEMBER_SPEND_TX_HASH,
+    NEXT_PUBLIC_PROPOSE_INTENT_MINT_TX_HASH:
+      process.env.NEXT_PUBLIC_PROPOSE_INTENT_MINT_TX_HASH,
+    NEXT_PUBLIC_PROPOSE_INTENT_SPEND_TX_HASH:
+      process.env.NEXT_PUBLIC_PROPOSE_INTENT_SPEND_TX_HASH,
+    NEXT_PUBLIC_PROPOSAL_MINT_TX_HASH:
+      process.env.NEXT_PUBLIC_PROPOSAL_MINT_TX_HASH,
+    NEXT_PUBLIC_PROPOSAL_SPEND_TX_HASH:
+      process.env.NEXT_PUBLIC_PROPOSAL_SPEND_TX_HASH,
+    NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_TX_HASH:
+      process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_MINT_TX_HASH,
+    NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_TX_HASH:
+      process.env.NEXT_PUBLIC_SIGN_OFF_APPROVAL_SPEND_TX_HASH,
+    NEXT_PUBLIC_TREASURY_SPEND_TX_HASH:
+      process.env.NEXT_PUBLIC_TREASURY_SPEND_TX_HASH,
+    NEXT_PUBLIC_TREASURY_WITHDRAWAL_TX_HASH:
+      process.env.NEXT_PUBLIC_TREASURY_WITHDRAWAL_TX_HASH,
+  };
+
+  const missing = Object.entries(requiredEnvVars)
+    .filter(([, value]) => !value)
+    .map(([key]) => key);
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required env vars: ${missing.join(", ")}. Check your .env file.`,
+    );
+  }
+
   const SETUP_UTXO = {
     oracle: {
       txHash: process.env.NEXT_PUBLIC_ORACLE_SETUP_TX_HASH!,

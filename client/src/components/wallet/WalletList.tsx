@@ -1,7 +1,7 @@
 "use client";
 
-import { useNetworkValidation, useUserAuth, useWalletManager } from "@/hooks";
-import { shortenString } from "@/utils";
+import { useNetworkValidation, useUserAuth, useWalletManager } from "../../hooks";
+import { shortenString } from "../../utils";
 import { AlertTriangle, X } from "lucide-react";
 import Image from "next/image";
 import { MouseEvent, useEffect } from "react";

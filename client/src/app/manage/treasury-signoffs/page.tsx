@@ -1,16 +1,16 @@
 "use client";
 
-import Copyable from "@/components/Copyable";
-import { ColumnDef, Table } from "@/components/Table/Table";
-import Button from "@/components/atoms/Button";
-import Card, { CardContent } from "@/components/atoms/Card";
-import Chip from "@/components/atoms/Chip";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { routes } from "@/config/routes";
-import { useDatabase, useTreasuryBalance } from "@/hooks";
-import { formatAdaAmount, getCatConstants, parseProposalDatum } from "@/utils";
+import Copyable from "../../../components/Copyable";
+import { ColumnDef, Table } from "../../../components/Table/Table";
+import Button from "../../../components/atoms/Button";
+import Card, { CardContent } from "../../../components/atoms/Card";
+import Chip from "../../../components/atoms/Chip";
+import Paragraph from "../../../components/atoms/Paragraph";
+import Title from "../../../components/atoms/Title";
+import { getCurrentNetworkConfig } from "../../../config/cardano";
+import { routes } from "../../../config/routes";
+import { useDatabase, useTreasuryBalance } from "../../../hooks";
+import { formatAdaAmount, getCatConstants, parseProposalDatum } from "../../../utils";
 import { ArrowUpRightFromSquare } from "lucide-react";
 import Link from "next/link";
 

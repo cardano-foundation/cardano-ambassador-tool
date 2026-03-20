@@ -1,13 +1,13 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import Copyable from "@/components/Copyable";
-import { ColumnDef, Table } from "@/components/Table/Table";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { useDatabase } from "@/hooks";
-import { parseMembershipIntentDatum } from "@/utils";
+import Button from "../../../components/atoms/Button";
+import Paragraph from "../../../components/atoms/Paragraph";
+import Title from "../../../components/atoms/Title";
+import Copyable from "../../../components/Copyable";
+import { ColumnDef, Table } from "../../../components/Table/Table";
+import { getCurrentNetworkConfig } from "../../../config/cardano";
+import { useDatabase } from "../../../hooks";
+import { parseMembershipIntentDatum } from "../../../utils";
 import Link from "next/link";
 
 export default function MembershipIntentPage() {
@@ -126,7 +126,7 @@ export default function MembershipIntentPage() {
       cell: (value: string) => (
         <Link href={`/manage/membership-applications/${value}`}>
           <Button variant={"primary"} size="sm" className="text-nowrap">
-            {"View intent"}
+            {"View"}
           </Button>
         </Link>
       ),

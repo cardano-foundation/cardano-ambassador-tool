@@ -1,15 +1,15 @@
 "use client";
 
-import { useAppSelector } from "@/lib/redux/hooks";
+import { useAppSelector } from "../../lib/redux/hooks";
 import {
   selectIsConnected,
   selectIsWalletReady,
   selectWallet,
   selectWalletAddress,
-} from "@/lib/redux/features/wallet";
-import { toast } from "@/components/toast/toast-manager";
-import { routes } from "@/config/routes";
-import { useUserAuth } from "@/hooks";
+} from "../../lib/redux/features/wallet";
+import { toast } from "../toast/toast-manager";
+import { routes } from "../../config/routes";
+import { useUserAuth } from "../../hooks";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

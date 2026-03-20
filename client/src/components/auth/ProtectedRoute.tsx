@@ -1,18 +1,18 @@
 "use client";
 
-import { toast } from "@/components/toast/toast-manager";
-import { routes } from "@/config/routes";
-import { useAppSelector } from "@/lib/redux/hooks";
+import { toast } from "../toast/toast-manager";
+import { routes } from "../../config/routes";
+import { useAppSelector } from "../../lib/redux/hooks";
 import {
   selectIsConnected,
   selectIsWalletReady,
-} from "@/lib/redux/features/wallet";
+} from "../../lib/redux/features/wallet";
 import {
   selectIsAdmin,
   selectIsAuthLoading,
   selectIsAuthenticated,
   selectIsHydrated,
-} from "@/lib/redux/features/auth";
+} from "../../lib/redux/features/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

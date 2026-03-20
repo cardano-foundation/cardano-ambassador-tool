@@ -1,20 +1,20 @@
 "use client";
 
-import LocationSelector from "@/app/(onboarding)/sign-up/_components/LocationSelector";
-import Button from "@/components/atoms/Button";
-import ForumUsernameInput from "@/components/atoms/ForumUsernameInput";
-import Input from "@/components/atoms/Input";
-import TextArea from "@/components/atoms/TextArea";
-import Copyable from "@/components/Copyable";
-import ErrorAccordion from "@/components/ErrorAccordion";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { fetchTransactionTimestamp, formatTimestamp } from "@/utils";
-import { getCountryByCode } from "@/utils/locationData";
+import LocationSelector from "../../../(onboarding)/sign-up/_components/LocationSelector";
+import Button from "../../../../components/atoms/Button";
+import ForumUsernameInput from "../../../../components/atoms/ForumUsernameInput";
+import Input from "../../../../components/atoms/Input";
+import TextArea from "../../../../components/atoms/TextArea";
+import Copyable from "../../../../components/Copyable";
+import ErrorAccordion from "../../../../components/ErrorAccordion";
+import { getCurrentNetworkConfig } from "../../../../config/cardano";
+import { fetchTransactionTimestamp, formatTimestamp } from "../../../../utils";
+import { getCountryByCode } from "../../../../utils/locationData";
 import {
   getFieldError,
   validateIntentForm,
   ValidationError,
-} from "@/utils/validation";
+} from "../../../../utils/validation";
 import { ExtendedMemberData } from "@types";
 import { Edit, Save, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";

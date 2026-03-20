@@ -1,8 +1,8 @@
-import Card, { CardContent } from "@/components/atoms/Card";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import Copyable from "@/components/Copyable";
-import { getCurrentNetworkConfig } from "@/config/cardano";
+import Card, { CardContent } from "../../../../components/atoms/Card";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Title from "../../../../components/atoms/Title";
+import Copyable from "../../../../components/Copyable";
+import { getCurrentNetworkConfig } from "../../../../config/cardano";
 import React from "react";
 import { LocationMap } from "./CountryMap";
 

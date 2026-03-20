@@ -8,36 +8,37 @@ export const routes = {
   unauthorized: "/unauthorized",
 
   // Dynamic public routes
-  proposal: (txhash: string) => `/proposals/${txhash}`,
+  proposal: (txHash: string) => `/proposals/${txHash}`,
   completedProposal: (slug: string) => `/proposals/completed/${slug}`,
 
   // User/Member routes
   my: {
     profile: "/my/profile",
     submissions: "/my/submissions",
-    proposals: (txhash: string) => `/my/proposals/${txhash}`,
+    proposals: (txHash: string) => `/my/proposals/${txHash}`,
   },
 
   // Admin routes
   manage: {
     ambassadors: "/manage/memberships",
+    ambassador: (txHash: string) => `/manage/memberships/${txHash}`,
     membershipApplications: "/manage/membership-applications",
-    membershipApplication: (txhash: string) =>
-      `/manage/membership-applications/${txhash}`,
+    membershipApplication: (txHash: string) =>
+      `/manage/membership-applications/${txHash}`,
     proposalApplications: "/manage/proposal-applications",
-    proposal: (txhash: string) => `/manage/proposal-applications/${txhash}`,
+    proposal: (txHash: string) => `/manage/proposal-applications/${txHash}`,
     treasurySignoffs: "/manage/treasury-signoffs",
-    treasurySignoff: (txhash: string) => `/manage/treasury-signoffs/${txhash}`,
+    treasurySignoff: (txHash: string) => `/manage/treasury-signoffs/${txHash}`,
     adminGuide: "/admin-guide",
   },
 } as const;
 
 // Helper function to get route with parameters
 export const getRoute = {
-  proposal: (txhash: string) => routes.proposal(txhash),
+  proposal: (txHash: string) => routes.proposal(txHash),
   completedProposal: (slug: string) => routes.completedProposal(slug),
-  myProposal: (txhash: string) => routes.my.proposals(txhash),
-  manageMembershipApplication: (txhash: string) =>
-    routes.manage.membershipApplication(txhash),
-  manageProposal: (txhash: string) => routes.manage.proposal(txhash),
+  myProposal: (txHash: string) => routes.my.proposals(txHash),
+  manageMembershipApplication: (txHash: string) =>
+    routes.manage.membershipApplication(txHash),
+  manageProposal: (txHash: string) => routes.manage.proposal(txHash),
 } as const;

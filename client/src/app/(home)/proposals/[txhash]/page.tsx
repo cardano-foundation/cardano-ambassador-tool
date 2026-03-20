@@ -1,30 +1,30 @@
 "use client";
-import Button from "@/components/atoms/Button";
-import Card, { CardContent } from "@/components/atoms/Card";
-import Chip from "@/components/atoms/Chip";
-import Paragraph from "@/components/atoms/Paragraph";
-import RichTextDisplay from "@/components/atoms/RichTextDisplay";
-import Title from "@/components/atoms/Title";
-import Copyable from "@/components/Copyable";
-import ProposalDescription from "@/components/ProposalDescription";
-import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { useDatabase } from "@/hooks";
-import { formatAdaAmount } from "@/utils";
+import Button from "../../../../components/atoms/Button";
+import Card, { CardContent } from "../../../../components/atoms/Card";
+import Chip from "../../../../components/atoms/Chip";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import RichTextDisplay from "../../../../components/atoms/RichTextDisplay";
+import Title from "../../../../components/atoms/Title";
+import Copyable from "../../../../components/Copyable";
+import ProposalDescription from "../../../../components/ProposalDescription";
+import SimpleCardanoLoader from "../../../../components/SimpleCardanoLoader";
+import { getCurrentNetworkConfig } from "../../../../config/cardano";
+import { useDatabase } from "../../../../hooks";
+import { formatAdaAmount } from "../../../../utils";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import { use } from "react";
 
 interface PageProps {
-  params: Promise<{ txhash: string }>;
+  params: Promise<{ txHash: string }>;
 }
 
 export default function Page({ params }: PageProps) {
   const { proposals, proposalIntents, signOfApprovals, dbLoading } =
     useDatabase();
-  const { txhash } = use(params);
+  const { txHash } = use(params);
 
   const allProposals = [...proposalIntents, ...proposals, ...signOfApprovals];
-  const proposal = allProposals.find((utxo) => utxo.txHash === txhash);
+  const proposal = allProposals.find((utxo) => utxo.txHash === txHash);
 
   let proposalData: ProposalData & { description?: string };
   if (proposal && proposal.parsedMetadata) {
@@ -40,9 +40,9 @@ export default function Page({ params }: PageProps) {
         fundsRequested: metadata?.fundsRequested || "0",
         receiverWalletAddress: metadata?.receiverWalletAddress,
         submittedByAddress: metadata?.submittedByAddress,
-        status: signOfApprovals.some((p) => p.txHash === txhash)
+        status: signOfApprovals.some((p) => p.txHash === txHash)
           ? "signoff_pending"
-          : proposals.some((p) => p.txHash === txhash)
+          : proposals.some((p) => p.txHash === txHash)
             ? "approved"
             : "pending",
       };
@@ -80,7 +80,7 @@ export default function Page({ params }: PageProps) {
             Proposal Not Found
           </Title>
           <Paragraph className="text-muted-foreground mb-4">
-            The proposal with hash {txhash} could not be found.
+            The proposal with hash {txHash} could not be found.
           </Paragraph>
           <Button variant="primary" onClick={() => window.history.back()}>
             Go Back

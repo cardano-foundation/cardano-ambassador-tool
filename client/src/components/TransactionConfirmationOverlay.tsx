@@ -1,7 +1,7 @@
 "use client";
 
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { waitForTransactionConfirmation } from "@/utils";
+import { getCurrentNetworkConfig } from "../config/cardano";
+import { waitForTransactionConfirmation } from "../utils";
 import { TransactionConfirmationResult } from "@types";
 import { CheckCircle, ExternalLink } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

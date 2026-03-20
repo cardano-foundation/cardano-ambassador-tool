@@ -1,8 +1,8 @@
 "use client";
 
-import { useDatabase } from "@/hooks";
-import { fetchTreasuryBalance as fetchTreasuryBalanceThunk } from "@/lib/redux/features/treasury";
-import { useAppDispatch } from "@/lib/redux/hooks";
+import { useDatabase } from "../hooks";
+import { fetchTreasuryBalance as fetchTreasuryBalanceThunk } from "../lib/redux/features/treasury";
+import { useAppDispatch } from "../lib/redux/hooks";
 import { RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import Button from "./atoms/Button";

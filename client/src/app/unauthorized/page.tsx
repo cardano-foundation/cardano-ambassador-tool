@@ -1,8 +1,8 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import Card, { CardContent, CardHeader } from "@/components/atoms/Card";
-import { toast } from "@/components/toast/toast-manager";
+import Button from "../../components/atoms/Button";
+import Card, { CardContent, CardHeader } from "../../components/atoms/Card";
+import { toast } from "../../components/toast/toast-manager";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

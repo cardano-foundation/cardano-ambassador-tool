@@ -1,7 +1,7 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { selectTheme, toggleTheme } from "@/lib/redux/features/ui";
+import { useAppDispatch, useAppSelector } from "../lib/redux/hooks";
+import { selectTheme, toggleTheme } from "../lib/redux/features/ui";
 
 const MoonIcon = () => (
   <svg

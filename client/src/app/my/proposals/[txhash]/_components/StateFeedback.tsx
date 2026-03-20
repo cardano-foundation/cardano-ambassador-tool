@@ -1,16 +1,16 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
+import Button from "../../../../../components/atoms/Button";
+import Paragraph from "../../../../../components/atoms/Paragraph";
+import Title from "../../../../../components/atoms/Title";
 import { useRouter } from "next/navigation";
 
 interface StateFeedbackProps {
   type: "not-found" | "access-denied" | "loading";
-  txhash?: string;
+  txHash?: string;
 }
 
-export const StateFeedback = ({ type, txhash }: StateFeedbackProps) => {
+export const StateFeedback = ({ type, txHash }: StateFeedbackProps) => {
   const router = useRouter();
   if (type === "loading") {
     return (
@@ -28,7 +28,7 @@ export const StateFeedback = ({ type, txhash }: StateFeedbackProps) => {
             Proposal Not Found
           </Title>
           <Paragraph className="text-muted-foreground mb-4">
-            The proposal with hash {txhash} could not be found.
+            The proposal with hash {txHash} could not be found.
           </Paragraph>
           <Button variant="primary" onClick={() => router.back()}>
             Go Back

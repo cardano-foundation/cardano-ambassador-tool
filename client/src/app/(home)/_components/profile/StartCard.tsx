@@ -1,4 +1,4 @@
-import Card, { CardContent } from "@/components/atoms/Card";
+import Card, { CardContent } from "../../../../components/atoms/Card";
 import React from "react";
 
 interface StatCardProps {

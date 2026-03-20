@@ -1,5 +1,5 @@
 "use client";
-import Input from "@/components/atoms/Input";
+import Input from "./atoms/Input";
 import React, { useEffect, useRef, useState } from "react";
 
 const SearchIcon = ({ className = "" }: { className?: string }) => (

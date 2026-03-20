@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef, Table } from "@/components/Table/Table";
+import { ColumnDef, Table } from "../../../components/Table/Table";
 import { Ambassador } from "@types";
 
 export function TableTestPage() {

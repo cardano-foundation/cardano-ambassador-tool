@@ -1,17 +1,17 @@
 "use client";
 
-import OwnerMembershipTimeline from "@/components/Timelines/OwnerMembershipTimeline";
-import TransactionConfirmationOverlay from "@/components/TransactionConfirmationOverlay";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import { useDatabase, useMemberValidation, useWalletManager } from "@/hooks";
+import OwnerMembershipTimeline from "../../../../components/Timelines/OwnerMembershipTimeline";
+import TransactionConfirmationOverlay from "../../../../components/TransactionConfirmationOverlay";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Title from "../../../../components/atoms/Title";
+import { useDatabase, useMemberValidation, useWalletManager } from "../../../../hooks";
 import {
   findMembershipIntentUtxo,
   findTokenUtxoByMembershipIntentUtxo,
   getCatConstants,
   getProvider,
   parseMembershipIntentDatum,
-} from "@/utils";
+} from "../../../../utils";
 import { resolveTxHash } from "@meshsdk/core";
 import {
   MemberData,
@@ -26,7 +26,7 @@ import MemberStatusCard from "./MemberStatusCard";
 export default function MembershipSubmissionsTab() {
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
-    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
+    process.env.NEXT_PUBLIC_ORACLE_OUTPUT_INDEX || "0",
   );
 
   const blockfrost = getProvider();

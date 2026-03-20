@@ -1,11 +1,11 @@
 "use client";
 
-import { AppLoadingScreen } from "@/components/AppLoadingScreen";
-import Footer from "@/components/Footer";
-import SideNav from "@/components/navigation/SideNav";
-import TopNavBar from "@/components/navigation/TopNavBar";
-import ToastContainer from "@/components/toast/Toast";
-import { useAppLoading } from "@/hooks";
+import { AppLoadingScreen } from "../../components/AppLoadingScreen";
+import Footer from "../../components/Footer";
+import SideNav from "../../components/navigation/SideNav";
+import TopNavBar from "../../components/navigation/TopNavBar";
+import ToastContainer from "../../components/toast/Toast";
+import { useAppLoading } from "../../hooks";
 import React from "react";
 
 function DashboardContent({ children }: { children: React.ReactNode }) {

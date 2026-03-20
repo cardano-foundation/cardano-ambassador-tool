@@ -1,17 +1,17 @@
 "use client";
 
-import MemberOnlyAccessCard from "@/app/my/_components/MemberOnlyAccessCard";
-import Button from "@/components/atoms/Button";
-import Modal from "@/components/atoms/Modal";
-import Title from "@/components/atoms/Title";
-import TopNav from "@/components/navigation/TabNav";
-import CardanoLoaderSVG from "@/components/ui/CardanoLoaderSVG";
-import { routes } from "@/config/routes";
+import MemberOnlyAccessCard from "../../../my/_components/MemberOnlyAccessCard";
+import Button from "../../../../components/atoms/Button";
+import Modal from "../../../../components/atoms/Modal";
+import Title from "../../../../components/atoms/Title";
+import TopNav from "../../../../components/navigation/TabNav";
+import CardanoLoaderSVG from "../../../../components/ui/CardanoLoaderSVG";
+import { routes } from "../../../../config/routes";
 import {
   useMemberValidation,
   useTxConfirmation,
   useWalletManager,
-} from "@/hooks";
+} from "../../../../hooks";
 import {
   adaToLovelace,
   dbUtxoToMeshUtxo,
@@ -20,7 +20,7 @@ import {
   getProvider,
   parseAdaInput,
   smoothScrollToElement,
-} from "@/utils";
+} from "../../../../utils";
 import { resolveTxHash } from "@meshsdk/core";
 import {
   ProposalData,
@@ -61,7 +61,7 @@ export default function SubmitProposalPage() {
   const scrollTargetRef = useRef<HTMLDivElement>(null);
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
-    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
+    process.env.NEXT_PUBLIC_ORACLE_OUTPUT_INDEX || "0",
   );
 
   const blockfrost = getProvider();

@@ -1,6 +1,6 @@
-import { useWalletManager } from "@/hooks";
-import { emitGlobalRefreshWithDelay, saveCounterUtxo } from "@/utils";
-import { storageApiClient } from "@/utils/storageApiClient";
+import { useWalletManager } from "../hooks";
+import { emitGlobalRefreshWithDelay, saveCounterUtxo } from "../utils";
+import { storageApiClient } from "../utils/storageApiClient";
 import { AdminDecisionData, TransactionConfirmationResult } from "@types";
 import { Loader2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
@@ -10,13 +10,13 @@ import ErrorAccordion from "./ErrorAccordion";
 import TransactionConfirmationOverlay from "./TransactionConfirmationOverlay";
 
 interface ActivateMembershipProps {
-  txhash?: string;
+  txHash?: string;
   adminDecisionData?: AdminDecisionData | null;
   onActivationComplete?: () => void;
 }
 
 const ActivateMembership: React.FC<ActivateMembershipProps> = ({
-  txhash,
+  txHash,
   adminDecisionData,
   onActivationComplete,
 }) => {
@@ -100,9 +100,9 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
       setIsActivated(true);
       onActivationComplete?.();
 
-      if (txhash) {
+      if (txHash) {
         try {
-          await storageApiClient.delete(txhash, "submissions");
+          await storageApiClient.delete(txHash, "submissions");
         } catch (error) {
           console.error("Failed to clean up admin decision data:", error);
         }
@@ -110,7 +110,7 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
 
       emitGlobalRefreshWithDelay(2000);
     },
-    [onActivationComplete, txhash],
+    [onActivationComplete, txHash],
   );
 
   const handleTransactionTimeout = (
@@ -139,7 +139,7 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
         }
         onClick={handleActivation}
         disabled={!signatureRequirementsMet}
-        className={`w-full  text-primary-base!`}
+        className="w-full"
       >
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {adminDecisionData?.decision === "approve"

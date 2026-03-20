@@ -5,7 +5,7 @@ import {
   getProvider,
   parseAdaInput,
   parseProposalDatum,
-} from "@/utils";
+} from "../../../../../utils";
 import { resolveTxHash } from "@meshsdk/core";
 import {
   ProposalData,
@@ -13,10 +13,10 @@ import {
   UserActionTx,
 } from "@sidan-lab/cardano-ambassador-tool";
 import { useState } from "react";
-import { useDatabase, useWalletManager } from "@/hooks";
+import { useDatabase, useWalletManager } from "../../../../../hooks";
 import { useRouter } from "next/navigation";
 import type { Utxo } from "@types";
-import type { TxConfirmationOptions } from "@/hooks/useTxConfirmation";
+import type { TxConfirmationOptions } from "../../../../../hooks/useTxConfirmation";
 
 type ProposalFormData = ProposalData & { description: string };
 
@@ -78,7 +78,7 @@ export const useEditProposal = ({
       const blockfrost = getProvider();
       const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
       const ORACLE_OUTPUT_INDEX = parseInt(
-        process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
+        process.env.NEXT_PUBLIC_ORACLE_OUTPUT_INDEX || "0",
       );
 
       const oracleUtxos = await blockfrost.fetchUTxOs(

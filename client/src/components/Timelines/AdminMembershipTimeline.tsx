@@ -1,8 +1,8 @@
 "use client";
 
-import MemberDataComponent from "@/app/manage/membership-applications/_components/MemberDataComponent";
-import Timeline from "@/components/atoms/Timeline";
-import { parseMembershipIntentDatum } from "@/utils";
+import MemberDataComponent from "../../app/manage/membership-applications/_components/MemberDataComponent";
+import Timeline from "../atoms/Timeline";
+import { parseMembershipIntentDatum } from "../../utils";
 import { MemberData } from "@sidan-lab/cardano-ambassador-tool";
 import { AdminDecisionData, TimelineStep, Utxo } from "@types";
 import { useEffect, useState } from "react";
@@ -123,7 +123,7 @@ const AdminMembershipTimeline = ({
       title: "Multisig Approval",
       content: (
         <MultisigProgressTracker
-          txhash={intentUtxo?.txHash}
+          txHash={intentUtxo?.txHash}
           adminDecisionData={adminDecisionData}
         />
       ),
@@ -134,7 +134,7 @@ const AdminMembershipTimeline = ({
       title: "Membership Activated",
       content: (
         <FinalizeDecision
-          txhash={intentUtxo?.txHash}
+          txHash={intentUtxo?.txHash}
           adminDecisionData={adminDecisionData}
           context={"MembershipIntent"}
           onFinalizationComplete={handleActivationComplete}

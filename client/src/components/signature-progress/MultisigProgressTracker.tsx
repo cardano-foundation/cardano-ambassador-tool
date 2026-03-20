@@ -1,21 +1,21 @@
 "use client";
 
-import Paragraph from "@/components/atoms/Paragraph";
-import Copyable from "@/components/Copyable";
-import { findAdminsFromOracle } from "@/lib/auth/roles";
+import Paragraph from "../atoms/Paragraph";
+import Copyable from "../Copyable";
+import { findAdminsFromOracle } from "../../lib/auth/roles";
 import { AdminDecisionData } from "@types";
 import { deserializeAddress } from "@meshsdk/core";
 import { CheckCircleIcon, Hourglass, XCircleIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ProgressTrackerLoading from "./ProgressTrackerLoading";
-import { getCurrentNetworkConfig } from "@/config/cardano";
+import { getCurrentNetworkConfig } from "../../config/cardano";
 
 interface SignerStatus {
   address: string;
   signed: boolean;
 }
 interface ProgressTrackerClientProps {
-  txhash?: string;
+  txHash?: string;
   adminDecisionData?: AdminDecisionData | null;
 }
 const findAddressByPubKeyHash = (
@@ -36,7 +36,7 @@ const findAddressByPubKeyHash = (
 };
 
 export default function MultisigProgressTracker({
-  txhash,
+  txHash,
   adminDecisionData,
 }: ProgressTrackerClientProps) {
   const [signers, setSigners] = useState<SignerStatus[]>([]);
@@ -108,7 +108,7 @@ export default function MultisigProgressTracker({
     };
 
     loadSigners();
-  }, [txhash, adminDecisionData]);
+  }, [txHash, adminDecisionData]);
 
   if (loading) {
     return <ProgressTrackerLoading />;

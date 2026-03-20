@@ -1,6 +1,6 @@
 "use client";
 
-import RichTextDisplay from "@/components/atoms/RichTextDisplay";
+import RichTextDisplay from "./atoms/RichTextDisplay";
 
 interface ProposalDescriptionProps {
   content: string;

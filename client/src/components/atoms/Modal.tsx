@@ -5,8 +5,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/Dialog";
-import { cn } from "@/utils/utils";
+} from "../Dialog";
+import { cn } from "../../utils/utils";
 import React from "react";
 import Button from "./Button";
 

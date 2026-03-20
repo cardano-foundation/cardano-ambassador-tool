@@ -1,6 +1,6 @@
-import Input from "@/components/atoms/Input";
-import Paragraph from "@/components/atoms/Paragraph";
-import RichTextEditor from "@/components/atoms/RichTextEditor";
+import Input from "../../../../components/atoms/Input";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import RichTextEditor from "../../../../components/atoms/RichTextEditor";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 import { RefObject } from "react";
 

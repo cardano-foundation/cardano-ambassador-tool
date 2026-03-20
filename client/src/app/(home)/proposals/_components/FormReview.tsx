@@ -1,9 +1,9 @@
-import Paragraph from "@/components/atoms/Paragraph";
-import RichTextDisplay from "@/components/atoms/RichTextDisplay";
-import Title from "@/components/atoms/Title";
-import Copyable from "@/components/Copyable";
-import { getCurrentNetworkConfig } from "@/config/cardano";
-import { formatAdaAmount, parseAdaInput } from "@/utils/utils";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import RichTextDisplay from "../../../../components/atoms/RichTextDisplay";
+import Title from "../../../../components/atoms/Title";
+import Copyable from "../../../../components/Copyable";
+import { getCurrentNetworkConfig } from "../../../../config/cardano";
+import { formatAdaAmount, parseAdaInput } from "../../../../utils/utils";
 import { ProposalData } from "@sidan-lab/cardano-ambassador-tool";
 
 type ProposalFormData = ProposalData & {

@@ -1,7 +1,7 @@
 import {
   getUserProfile,
   getUserProfileUncached,
-} from "@/services/ambassadorService";
+} from "../../../../services/ambassadorService";
 import { NextResponse } from "next/server";
 
 export async function GET(

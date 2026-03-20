@@ -2,7 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 import { selectMembers, selectDbLoading } from "../data/dataSelectors";
 import { selectWalletAddress } from "../wallet/walletSelectors";
-import { parseMemberDatum, getCountryByCode } from "@/utils";
+import { parseMemberDatum, getCountryByCode } from "../../../../utils";
 import type { Utxo } from "@types";
 import type { MemberData } from "@sidan-lab/cardano-ambassador-tool";
 

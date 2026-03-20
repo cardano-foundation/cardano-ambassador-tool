@@ -1,11 +1,11 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import Title from "@/components/atoms/Title";
-import SimpleCardanoLoader from "@/components/SimpleCardanoLoader";
-import AdminMembershipTimeline from "@/components/Timelines/AdminMembershipTimeline";
-import { routes } from "@/config/routes";
-import { useDatabase } from "@/hooks";
+import Button from "../../../../components/atoms/Button";
+import Title from "../../../../components/atoms/Title";
+import SimpleCardanoLoader from "../../../../components/SimpleCardanoLoader";
+import AdminMembershipTimeline from "../../../../components/Timelines/AdminMembershipTimeline";
+import { routes } from "../../../../config/routes";
+import { useDatabase } from "../../../../hooks";
 import { Utxo } from "@types";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";

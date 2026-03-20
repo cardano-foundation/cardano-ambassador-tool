@@ -1,7 +1,7 @@
-import Card, { CardContent } from "@/components/atoms/Card";
-import Paragraph from "@/components/atoms/Paragraph";
-import TextLink from "@/components/atoms/TextLink";
-import Title from "@/components/atoms/Title";
+import Card, { CardContent } from "../../../../components/atoms/Card";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import TextLink from "../../../../components/atoms/TextLink";
+import Title from "../../../../components/atoms/Title";
 import Link from "next/link";
 import React from "react";
 

@@ -1,8 +1,8 @@
-import CardanoLogo from "@/components/atoms/CardanoLogo";
-import LinkButton from "@/components/atoms/LinkButton";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import { routes } from "@/config/routes";
+import CardanoLogo from "../../../../components/atoms/CardanoLogo";
+import LinkButton from "../../../../components/atoms/LinkButton";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Title from "../../../../components/atoms/Title";
+import { routes } from "../../../../config/routes";
 
 const SubmissionSuccess = () => {
   return (

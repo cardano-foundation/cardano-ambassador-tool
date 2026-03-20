@@ -1,4 +1,4 @@
-import { storageService } from "@/services/storageService";
+import { storageService } from "../../../services/storageService";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {

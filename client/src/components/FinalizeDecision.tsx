@@ -1,6 +1,6 @@
-import { useTxConfirmation, useWalletManager } from "@/hooks";
-import { emitGlobalRefreshWithDelay, saveCounterUtxo } from "@/utils";
-import { storageApiClient } from "@/utils/storageApiClient";
+import { useTxConfirmation, useWalletManager } from "../hooks";
+import { emitGlobalRefreshWithDelay, saveCounterUtxo } from "../utils";
+import { storageApiClient } from "../utils/storageApiClient";
 import { AdminDecisionData, TransactionConfirmationResult } from "@types";
 import { Loader2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
@@ -10,14 +10,14 @@ import Paragraph from "./atoms/Paragraph";
 import ErrorAccordion from "./ErrorAccordion";
 
 interface FinalizeDecisionProps {
-  txhash?: string;
+  txHash?: string;
   adminDecisionData?: AdminDecisionData | null;
-  context: "MembershipIntent" | "ProposalIntent";
+  context: "MembershipIntent" | "ProposalIntent" | "Member";
   onFinalizationComplete?: () => void;
 }
 
 const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
-  txhash,
+  txHash,
   adminDecisionData,
   context,
   onFinalizationComplete,
@@ -69,6 +69,23 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
           pending:
             "Please wait while membership activation is being confirmed on the blockchain.",
           success: "Membership has been successfully activated! 🎉",
+        },
+      };
+    } else if (context === "Member") {
+      return {
+        approveButton: "Execute Removal",
+        rejectButton: "Execute Removal",
+        pendingMessage:
+          "An admin needs to initiate member removal first.",
+        rejectedMessage: "This member has been removed.",
+        waitingMessage: "Waiting for",
+        readyMessage: "✓ All requirements met! Ready to remove member.",
+        completedMessage: "✓ Member Removed!",
+        overlayTitle: "Removing Member",
+        overlayDescription: {
+          pending:
+            "Please wait while member removal is being confirmed on the blockchain.",
+          success: "Member has been successfully removed! 🎉",
         },
       };
     } else {
@@ -160,9 +177,9 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
       setIsFinalized(true);
       onFinalizationComplete?.();
 
-      if (txhash) {
+      if (txHash) {
         try {
-          await storageApiClient.delete(txhash, "submissions");
+          await storageApiClient.delete(txHash, "submissions");
         } catch (error) {
           console.error("Failed to clean up admin decision data:", error);
         }
@@ -184,7 +201,7 @@ const FinalizeDecision: React.FC<FinalizeDecisionProps> = ({
     },
     [
       onFinalizationComplete,
-      txhash,
+      txHash,
       context,
       adminDecisionData?.decision,
       router,

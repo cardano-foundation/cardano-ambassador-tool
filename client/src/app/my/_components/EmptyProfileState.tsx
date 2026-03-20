@@ -1,8 +1,8 @@
-import Button from "@/components/atoms/Button";
-import Empty from "@/components/atoms/Empty";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import { routes } from "@/config/routes";
+import Button from "../../../components/atoms/Button";
+import Empty from "../../../components/atoms/Empty";
+import Paragraph from "../../../components/atoms/Paragraph";
+import Title from "../../../components/atoms/Title";
+import { routes } from "../../../config/routes";
 import Link from "next/link";
 
 export default function EmptyProfileState() {

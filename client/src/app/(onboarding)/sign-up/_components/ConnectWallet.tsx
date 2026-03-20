@@ -1,10 +1,10 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import WalletList from "@/components/wallet/WalletList";
-import { useWalletManager } from "@/hooks";
+import Button from "../../../../components/atoms/Button";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import Title from "../../../../components/atoms/Title";
+import WalletList from "../../../../components/wallet/WalletList";
+import { useWalletManager } from "../../../../hooks";
 
 const ConnectWallet = ({ goNext }: { goNext?: () => void }) => {
   const { address } = useWalletManager();

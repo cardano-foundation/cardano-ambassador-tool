@@ -5,13 +5,13 @@ import {
   useMemberValidation,
   useTxConfirmation,
   useWalletManager,
-} from "@/hooks";
+} from "../../../hooks";
 import {
   findMemberUtxo,
   findTokenUtxoByMemberUtxo,
   getCatConstants,
   getProvider,
-} from "@/utils";
+} from "../../../utils";
 import { resolveTxHash } from "@meshsdk/core";
 import {
   MemberData,
@@ -29,7 +29,7 @@ import ProfileHeader from "../_components/ProfileHeader";
 export default function ProfilesPage() {
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
-    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
+    process.env.NEXT_PUBLIC_ORACLE_OUTPUT_INDEX || "0",
   );
 
   const blockfrost = getProvider();

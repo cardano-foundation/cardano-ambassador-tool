@@ -1,12 +1,12 @@
 "use client";
 
-import Card, { CardContent } from "@/components/atoms/Card";
-import AppLogo from "@/components/atoms/Logo";
-import SettingsIcon from "@/components/atoms/SettingsIcon";
-import UsersIcon from "@/components/atoms/UsersIcon";
-import ConnectWallet from "@/components/wallet/ConnectWallet";
-import { routes } from "@/config/routes";
-import { useNetworkValidation, useUserAuth, useWalletManager } from "@/hooks";
+import Card, { CardContent } from "../atoms/Card";
+import AppLogo from "../atoms/Logo";
+import SettingsIcon from "../atoms/SettingsIcon";
+import UsersIcon from "../atoms/UsersIcon";
+import ConnectWallet from "../wallet/ConnectWallet";
+import { routes } from "../../config/routes";
+import { useNetworkValidation, useUserAuth, useWalletManager } from "../../hooks";
 import { NavigationSection } from "@types";
 import {
   BookOpenTextIcon,
@@ -143,7 +143,7 @@ const SideNav = () => {
   }, [isAuthenticated, isAdmin]);
 
   return (
-    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r lg:flex">
+    <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r scrollbar-hide lg:flex">
       <div className="flex items-center justify-start p-6">
         <Link href="/">
           <AppLogo />

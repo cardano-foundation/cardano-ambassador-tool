@@ -1,5 +1,5 @@
 "use client";
-import { shortenString } from "@/utils";
+import { shortenString } from "../../utils";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

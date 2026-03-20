@@ -1,10 +1,10 @@
-import Button from "@/components/atoms/Button";
-import Card, { CardContent } from "@/components/atoms/Card";
-import Paragraph from "@/components/atoms/Paragraph";
-import Title from "@/components/atoms/Title";
-import UserAvatar from "@/components/atoms/UserAvatar";
-import Copyable from "@/components/Copyable";
-import { getCountryFlag } from "@/utils";
+import Button from "../../../components/atoms/Button";
+import Card, { CardContent } from "../../../components/atoms/Card";
+import Paragraph from "../../../components/atoms/Paragraph";
+import Title from "../../../components/atoms/Title";
+import UserAvatar from "../../../components/atoms/UserAvatar";
+import Copyable from "../../../components/Copyable";
+import { getCountryFlag } from "../../../utils";
 import { CopyIcon, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import ProfileField from "./ProfileField";

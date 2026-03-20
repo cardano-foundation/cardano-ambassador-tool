@@ -143,10 +143,14 @@ export const getCounterDatum = (counterUtxo: UTxO): number => {
 
 // Helper function to safely extract string from ByteString | List<ByteString>
 export const extractString = (field: any): string => {
+  if (!field) return "";
   if (field.list) {
     return hexToString(plutusBSArrayToString(field));
   }
-  return hexToString(field.bytes);
+  if (field.bytes !== undefined) {
+    return hexToString(field.bytes);
+  }
+  return "";
 };
 
 const extractStats = (field: StatsPlutusData): StatsData => {
@@ -218,19 +222,22 @@ export const getMembershipIntentDatum = (
   const assetName = datum.fields[0].list[1].bytes;
   const metadataPluts: MembershipMetadata = datum.fields[1];
 
+  // On-chain MembershipMetadata layout: fields[0-4] are original data,
+  // fields[5-9] are duplicates (walletAddress, fullName, displayName, emailAddress, bio),
+  // fields[10+] are country, city, x_handle, github, discord, spo_id, drep_id
   const metadata: MemberData = {
     walletAddress: serializeAddressObj(metadataPluts.fields[0]),
     fullName: extractString(metadataPluts.fields[1]),
     displayName: extractString(metadataPluts.fields[2]),
     emailAddress: extractString(metadataPluts.fields[3]),
     bio: extractString(metadataPluts.fields[4]),
-    country: extractString(metadataPluts.fields[5]),
-    city: extractString(metadataPluts.fields[6]),
-    x_handle: extractString(metadataPluts.fields[7]),
-    github: extractString(metadataPluts.fields[8]),
-    discord: extractString(metadataPluts.fields[9]),
-    spo_id: extractString(metadataPluts.fields[10]),
-    drep_id: extractString(metadataPluts.fields[11]),
+    country: extractString(metadataPluts.fields[10]),
+    city: extractString(metadataPluts.fields[11]),
+    x_handle: extractString(metadataPluts.fields[12]),
+    github: extractString(metadataPluts.fields[13]),
+    discord: extractString(metadataPluts.fields[14]),
+    spo_id: extractString(metadataPluts.fields[15]),
+    drep_id: extractString(metadataPluts.fields[16]),
   };
   return { policyId, assetName, metadata };
 };
@@ -240,19 +247,20 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
   const datum: MemberDatum = deserializeDatum(plutusData);
   const metadataPluts: MembershipMetadata = datum.fields[3];
 
+  // On-chain MembershipMetadata layout: fields[5-9] are duplicates, fields[10+] are extended fields
   const metadata: MemberData = {
     walletAddress: serializeAddressObj(metadataPluts.fields[0]),
     fullName: extractString(metadataPluts.fields[1]),
     displayName: extractString(metadataPluts.fields[2]),
     emailAddress: extractString(metadataPluts.fields[3]),
     bio: extractString(metadataPluts.fields[4]),
-    country: extractString(metadataPluts.fields[5]),
-    city: extractString(metadataPluts.fields[6]),
-    x_handle: extractString(metadataPluts.fields[7]),
-    github: extractString(metadataPluts.fields[8]),
-    discord: extractString(metadataPluts.fields[9]),
-    spo_id: extractString(metadataPluts.fields[10]),
-    drep_id: extractString(metadataPluts.fields[11]),
+    country: extractString(metadataPluts.fields[10]),
+    city: extractString(metadataPluts.fields[11]),
+    x_handle: extractString(metadataPluts.fields[12]),
+    github: extractString(metadataPluts.fields[13]),
+    discord: extractString(metadataPluts.fields[14]),
+    spo_id: extractString(metadataPluts.fields[15]),
+    drep_id: extractString(metadataPluts.fields[16]),
   };
 
   const policyId = datum.fields[0].list[0].bytes;

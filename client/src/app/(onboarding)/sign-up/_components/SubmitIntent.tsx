@@ -1,26 +1,26 @@
 "use client";
 
-import LocationSelector from "@/app/(onboarding)/sign-up/_components/LocationSelector";
-import Button from "@/components/atoms/Button";
-import { CardHeader } from "@/components/atoms/Card";
-import Checkbox from "@/components/atoms/Checkbox";
-import ForumUsernameInput from "@/components/atoms/ForumUsernameInput";
-import Input from "@/components/atoms/Input";
-import Paragraph from "@/components/atoms/Paragraph";
-import TextArea from "@/components/atoms/TextArea";
-import ErrorAccordion from "@/components/ErrorAccordion";
-import { toast } from "@/components/toast/toast-manager";
-import { useMemberValidation, useWalletManager } from "@/hooks";
+import LocationSelector from "./LocationSelector";
+import Button from "../../../../components/atoms/Button";
+import { CardHeader } from "../../../../components/atoms/Card";
+import Checkbox from "../../../../components/atoms/Checkbox";
+import ForumUsernameInput from "../../../../components/atoms/ForumUsernameInput";
+import Input from "../../../../components/atoms/Input";
+import Paragraph from "../../../../components/atoms/Paragraph";
+import TextArea from "../../../../components/atoms/TextArea";
+import ErrorAccordion from "../../../../components/ErrorAccordion";
+import { toast } from "../../../../components/toast/toast-manager";
+import { useMemberValidation, useWalletManager } from "../../../../hooks";
 import {
   findMembershipIntentUtxo,
   getCatConstants,
   getProvider,
-} from "@/utils";
+} from "../../../../utils";
 import {
   getFieldError,
   validateIntentForm,
   ValidationError,
-} from "@/utils/validation";
+} from "../../../../utils/validation";
 import {
   membershipMetadata,
   MembershipMetadata,
@@ -43,7 +43,7 @@ const SubmitIntent = ({
   const { isMember, memberData } = useMemberValidation();
   const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
   const ORACLE_OUTPUT_INDEX = parseInt(
-    process.env.NEXT_PUBLIC_ORACLE_OUTPOUT_INDEX || "0",
+    process.env.NEXT_PUBLIC_ORACLE_OUTPUT_INDEX || "0",
   );
 
   const blockfrost = getProvider();

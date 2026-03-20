@@ -1,7 +1,7 @@
 "use client";
 
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { getCatConstants, getProvider } from "@/utils";
+import { getCatConstants, getProvider } from "../../../../utils";
 
 // ---------- Types ----------
 export interface TreasuryState {

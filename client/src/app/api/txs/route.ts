@@ -1,4 +1,4 @@
-import { getCatConstants } from "@/utils";
+import { getCatConstants } from "../../../utils";
 import { BlockfrostProvider, TransactionInfo } from "@meshsdk/core";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,5 +1,5 @@
-import DocsDisplay from "@/components/atoms/DocsDisplay";
-import Paragraph from "@/components/atoms/Paragraph";
+import DocsDisplay from "../../../components/atoms/DocsDisplay";
+import Paragraph from "../../../components/atoms/Paragraph";
 import fs from "fs";
 import path from "path";
 
