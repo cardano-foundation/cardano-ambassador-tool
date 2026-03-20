@@ -4,7 +4,7 @@ import MemberOnlyAccessCard from "../../../my/_components/MemberOnlyAccessCard";
 import Button from "../../../../components/atoms/Button";
 import Modal from "../../../../components/atoms/Modal";
 import Title from "../../../../components/atoms/Title";
-import TopNav from "../../../../components/Navigation/TabNav";
+import TopNav from "../../../../components/navigation/TabNav";
 import CardanoLoaderSVG from "../../../../components/ui/CardanoLoaderSVG";
 import { routes } from "../../../../config/routes";
 import {
