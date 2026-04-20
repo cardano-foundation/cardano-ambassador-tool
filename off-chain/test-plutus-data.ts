@@ -47,7 +47,7 @@ function testMemberDatum(plutusData: string) {
   const mockUtxo = createMockUtxo(plutusData);
 
   try {
-    const result = getMemberDatum(mockUtxo);
+    const result = getMemberDatum(mockUtxo, 0);
     console.log('✅ SUCCESS! Parsed member datum:\n');
     console.log('Token:', result.token);
     console.log('Fund Received:', result.fundReceived);
@@ -87,7 +87,7 @@ function testProposalDatum(plutusData: string) {
   const mockUtxo = createMockUtxo(plutusData);
 
   try {
-    const result = getProposalDatum(mockUtxo);
+    const result = getProposalDatum(mockUtxo, 0);
     console.log('✅ SUCCESS! Parsed proposal datum:\n');
     console.log('Fund Requested:', result.fundRequested);
     console.log('Receiver:', result.receiver);
@@ -115,7 +115,7 @@ function testMembershipIntentDatum(plutusData: string) {
   const mockUtxo = createMockUtxo(plutusData);
 
   try {
-    const result = getMembershipIntentDatum(mockUtxo);
+    const result = getMembershipIntentDatum(mockUtxo, 0);
     console.log('✅ SUCCESS! Parsed membership intent datum:\n');
     console.log('Policy ID:', result.policyId);
     console.log('Asset Name:', result.assetName);

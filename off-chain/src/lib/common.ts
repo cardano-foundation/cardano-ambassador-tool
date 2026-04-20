@@ -59,9 +59,7 @@ export class Layer1Tx {
     const txBuilder = new MeshTxBuilder(txBuilderConfig);
     txBuilder.txEvaluationMultiplier = 1.5;
 
-    txBuilder.setNetwork(
-      this.catConstant.networkId === 1 ? "mainnet" : "preprod"
-    );
+    txBuilder.setNetwork(this.catConstant.network);
     return txBuilder;
   };
 

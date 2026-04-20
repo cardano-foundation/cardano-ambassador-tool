@@ -20,9 +20,9 @@ describe('Utils - Datum Parsing', () => {
       };
 
       // This should not throw an error
-      expect(() => getMemberDatum(mockUtxo)).not.toThrow();
+      expect(() => getMemberDatum(mockUtxo, 0)).not.toThrow();
 
-      const result = getMemberDatum(mockUtxo);
+      const result = getMemberDatum(mockUtxo, 0);
 
       // Verify structure
       expect(result).toHaveProperty('token');
@@ -54,7 +54,7 @@ describe('Utils - Datum Parsing', () => {
       };
 
       // Should handle undefined fields without crashing
-      expect(() => getMemberDatum(mockUtxo)).not.toThrow();
+      expect(() => getMemberDatum(mockUtxo, 0)).not.toThrow();
     });
   });
 
@@ -75,9 +75,9 @@ describe('Utils - Datum Parsing', () => {
         },
       };
 
-      expect(() => getProposalDatum(mockUtxo)).not.toThrow();
+      expect(() => getProposalDatum(mockUtxo, 0)).not.toThrow();
 
-      const result = getProposalDatum(mockUtxo);
+      const result = getProposalDatum(mockUtxo, 0);
 
       expect(result).toHaveProperty('fundRequested');
       expect(result).toHaveProperty('receiver');
@@ -104,7 +104,7 @@ describe('Utils - Datum Parsing', () => {
         },
       };
 
-      const result = getMemberDatum(mockUtxo);
+      const result = getMemberDatum(mockUtxo, 0);
 
       // These should be empty strings, not throw errors
       expect(typeof result.metadata.country).toBe('string');
@@ -131,7 +131,7 @@ export function testWithPlutusData(plutusData: string) {
   };
 
   try {
-    const result = getMemberDatum(mockUtxo);
+    const result = getMemberDatum(mockUtxo, 0);
     console.log('✅ Successfully parsed member datum:');
     console.log(JSON.stringify(result, null, 2));
     return result;

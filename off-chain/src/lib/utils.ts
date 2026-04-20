@@ -69,14 +69,18 @@ export const getTokenAssetNameByPolicyId = (
 /**
  *
  * @param oracleUtxo
- * @returns A list of pubKeyHash of admins
+ * @param networkId 0 for testnet (preprod/preview), 1 for mainnet
+ * @returns A list of bech32 admin addresses
  */
-export const getOracleAdmins = (oracleUtxo: UTxO): string[] => {
+export const getOracleAdmins = (
+  oracleUtxo: UTxO,
+  networkId: number
+): string[] => {
   const plutusData = oracleUtxo.output.plutusData!;
   const datum: OracleDatum = deserializeDatum(plutusData);
 
   const admins: string[] = datum.fields[0].list.map((item) => {
-    return serializeAddressObj(item);
+    return serializeAddressObj(item, networkId);
   });
 
   return admins;
@@ -213,7 +217,8 @@ const extractBadges = (field: List<BadgePlutusData>): BadgeData[] => {
 };
 
 export const getMembershipIntentDatum = (
-  membershipIntentUtxo: UTxO
+  membershipIntentUtxo: UTxO,
+  networkId: number
 ): { policyId: string; assetName: string; metadata: MemberData } => {
   const plutusData = membershipIntentUtxo.output.plutusData!;
   const datum: MembershipIntentDatum = deserializeDatum(plutusData);
@@ -226,7 +231,7 @@ export const getMembershipIntentDatum = (
   // fields[5-9] are duplicates (walletAddress, fullName, displayName, emailAddress, bio),
   // fields[10+] are country, city, x_handle, github, discord, spo_id, drep_id
   const metadata: MemberData = {
-    walletAddress: serializeAddressObj(metadataPluts.fields[0]),
+    walletAddress: serializeAddressObj(metadataPluts.fields[0], networkId),
     fullName: extractString(metadataPluts.fields[1]),
     displayName: extractString(metadataPluts.fields[2]),
     emailAddress: extractString(metadataPluts.fields[3]),
@@ -242,14 +247,14 @@ export const getMembershipIntentDatum = (
   return { policyId, assetName, metadata };
 };
 
-export const getMemberDatum = (memberUtxo: UTxO): Member => {
+export const getMemberDatum = (memberUtxo: UTxO, networkId: number): Member => {
   const plutusData = memberUtxo.output.plutusData!;
   const datum: MemberDatum = deserializeDatum(plutusData);
   const metadataPluts: MembershipMetadata = datum.fields[3];
 
   // On-chain MembershipMetadata layout: fields[5-9] are duplicates, fields[10+] are extended fields
   const metadata: MemberData = {
-    walletAddress: serializeAddressObj(metadataPluts.fields[0]),
+    walletAddress: serializeAddressObj(metadataPluts.fields[0], networkId),
     fullName: extractString(metadataPluts.fields[1]),
     displayName: extractString(metadataPluts.fields[2]),
     emailAddress: extractString(metadataPluts.fields[3]),
@@ -273,8 +278,8 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
         title: extractString(item.k.fields[0]),
         url: extractString(item.k.fields[1]),
         fundsRequested: extractString(item.k.fields[2]),
-        receiverWalletAddress: serializeAddressObj(item.k.fields[3]),
-        submittedByAddress: serializeAddressObj(item.k.fields[4]),
+        receiverWalletAddress: serializeAddressObj(item.k.fields[3], networkId),
+        submittedByAddress: serializeAddressObj(item.k.fields[4], networkId),
         status: extractString(item.k.fields[5]),
       },
       Number(item.v.int)
@@ -293,10 +298,14 @@ export const getMemberDatum = (memberUtxo: UTxO): Member => {
 
 export const updateMemberDatum = (
   memberUtxo: UTxO,
-  signOffApprovalUtxo: UTxO
+  signOffApprovalUtxo: UTxO,
+  networkId: number
 ): MemberDatum => {
-  const member: Member = getMemberDatum(memberUtxo);
-  const signOffApproval: Proposal = getProposalDatum(signOffApprovalUtxo);
+  const member: Member = getMemberDatum(memberUtxo, networkId);
+  const signOffApproval: Proposal = getProposalDatum(
+    signOffApprovalUtxo,
+    networkId
+  );
 
   const updatedCompletions: Map<ProposalData, number> = new Map();
   member.completion.forEach((v, k) => {
@@ -325,12 +334,12 @@ export const updateMemberDatum = (
   return updatedMemberDatum;
 };
 
-export const getProposalDatum = (utxo: UTxO): Proposal => {
+export const getProposalDatum = (utxo: UTxO, networkId: number): Proposal => {
   const plutusData = utxo.output.plutusData!;
   const datum: ProposalDatum = deserializeDatum(plutusData);
 
   const fundRequested: number = Number(datum.fields[0].int);
-  const receiver: string = serializeAddressObj(datum.fields[1]);
+  const receiver: string = serializeAddressObj(datum.fields[1], networkId);
   const member: number = Number(datum.fields[2].int);
   const metadataPluts: ProposalMetadata = datum.fields[3];
 
@@ -338,8 +347,8 @@ export const getProposalDatum = (utxo: UTxO): Proposal => {
     title: extractString(metadataPluts.fields[0]),
     url: extractString(metadataPluts.fields[1]),
     fundsRequested: extractString(metadataPluts.fields[2]),
-    receiverWalletAddress: serializeAddressObj(metadataPluts.fields[3]),
-    submittedByAddress: serializeAddressObj(metadataPluts.fields[4]),
+    receiverWalletAddress: serializeAddressObj(metadataPluts.fields[3], networkId),
+    submittedByAddress: serializeAddressObj(metadataPluts.fields[4], networkId),
     status: extractString(metadataPluts.fields[5]),
   };
   return {

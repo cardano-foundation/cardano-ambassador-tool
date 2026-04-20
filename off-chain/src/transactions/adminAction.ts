@@ -91,7 +91,10 @@ export class AdminActionTx extends Layer1Tx {
       policyId: tokenPolicyId,
       assetName: tokenAssetName,
       metadata: memberData,
-    } = getMembershipIntentDatum(membershipIntentUtxo);
+    } = getMembershipIntentDatum(
+      membershipIntentUtxo,
+      this.catConstant.networkId
+    );
     const metadata: MembershipMetadata = membershipMetadata(memberData);
     const newMemberDatum: MemberDatum = memberDatum(
       tokenPolicyId,
@@ -618,11 +621,15 @@ export class AdminActionTx extends Layer1Tx {
       this.catConstant.scripts.signOffApproval.mint.hash
     );
 
-    const proposal: Proposal = getProposalDatum(signOffApprovalUtxo);
+    const proposal: Proposal = getProposalDatum(
+      signOffApprovalUtxo,
+      this.catConstant.networkId
+    );
 
     const updatedMemberDatum: MemberDatum = updateMemberDatum(
       memberUtxo,
-      signOffApprovalUtxo
+      signOffApprovalUtxo,
+      this.catConstant.networkId
     );
 
     const { selectedUtxos, returnValue } = await this.getUtxosForWithdrawal([

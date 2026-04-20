@@ -139,7 +139,10 @@ export class UserActionTx extends Layer1Tx {
     metadata: any
   ) => {
     const { policyId: intentPolicyId, assetName: intentAssetName } =
-      getMembershipIntentDatum(membershipIntentUtxo);
+      getMembershipIntentDatum(
+        membershipIntentUtxo,
+        this.catConstant.networkId
+      );
     const updatedIntentDatum: MembershipIntentDatum = membershipIntentDatum(
       intentPolicyId,
       intentAssetName,
@@ -232,7 +235,7 @@ export class UserActionTx extends Layer1Tx {
       token: memberToken,
       completion,
       fundReceived,
-    } = getMemberDatum(memberUtxo);
+    } = getMemberDatum(memberUtxo, this.catConstant.networkId);
     const updatedMemberDatum: MemberDatum = memberDatum(
       memberToken.policyId,
       memberToken.assetName,
