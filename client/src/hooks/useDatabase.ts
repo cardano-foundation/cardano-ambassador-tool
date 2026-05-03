@@ -36,6 +36,9 @@ import {
   MembershipMetadata,
 } from "@sidan-lab/cardano-ambassador-tool";
 import { Utxo } from "@types";
+import { getCatConstants } from "../utils/constants";
+
+const { networkId } = getCatConstants();
 
 // ---------- Database operations ----------
 const dbManager = DatabaseManager.getInstance();
@@ -192,6 +195,7 @@ export function useDatabase() {
               metadataPlutus.fields[0] as unknown as
                 | PubKeyAddress
                 | ScriptAddress,
+              networkId,
             );
             return walletAddress === address;
           } catch (error) {

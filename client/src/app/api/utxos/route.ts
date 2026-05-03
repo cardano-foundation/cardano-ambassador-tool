@@ -10,15 +10,19 @@ import { scripts } from "@sidan-lab/cardano-ambassador-tool";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-if (!process.env.BLOCKFROST_API_KEY_PREPROD) {
+const network = process.env.NEXT_PUBLIC_NETWORK ?? "preprod";
+const blockfrostKey =
+  network === "mainnet"
+    ? process.env.BLOCKFROST_API_KEY_MAINNET
+    : process.env.BLOCKFROST_API_KEY_PREPROD;
+
+if (!blockfrostKey) {
   throw new Error(
-    "BLOCKFROST_API_KEY_PREPROD environment variable is required",
+    `BLOCKFROST_API_KEY_${network.toUpperCase()} environment variable is required`,
   );
 }
 
-const blockfrost = new BlockfrostProvider(
-  process.env.BLOCKFROST_API_KEY_PREPROD,
-);
+const blockfrost = new BlockfrostProvider(blockfrostKey);
 
 const catConstants = getCatConstants();
 

@@ -1,3 +1,4 @@
 .env
 .env.setup
+.env.setup-bak
 node_modules

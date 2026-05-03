@@ -84,13 +84,15 @@ TypeScript SDK for Cardano Ambassador Tool on-chain interactions.
 
 | Function | Signature | Purpose |
 |----------|-----------|---------|
-| `getOracleAdmins` | `(utxo: UTxO) => string[]` | Extract admin pubkey hashes |
+| `getOracleAdmins` | `(utxo: UTxO, networkId: number) => string[]` | Extract admin bech32 addresses |
 | `getCounterDatum` | `(utxo: UTxO) => number` | Extract current count |
-| `getMembershipIntentDatum` | `(utxo: UTxO) => { policyId, assetName, metadata }` | Parse intent UTxO |
-| `getMemberDatum` | `(utxo: UTxO) => Member` | Parse member UTxO |
-| `getProposalDatum` | `(utxo: UTxO) => Proposal` | Parse proposal UTxO |
+| `getMembershipIntentDatum` | `(utxo: UTxO, networkId: number) => { policyId, assetName, metadata }` | Parse intent UTxO |
+| `getMemberDatum` | `(utxo: UTxO, networkId: number) => Member` | Parse member UTxO |
+| `getProposalDatum` | `(utxo: UTxO, networkId: number) => Proposal` | Parse proposal UTxO |
 | `updateOracleDatum` | `(utxo, newAdmins?, tenure?, threshold?) => OracleDatum` | Update oracle fields |
-| `updateMemberDatum` | `(memberUtxo, signOffUtxo) => MemberDatum` | Add completion to member |
+| `updateMemberDatum` | `(memberUtxo, signOffUtxo, networkId: number) => MemberDatum` | Add completion to member |
+
+> `networkId` is `0` for testnet (preprod/preview) or `1` for mainnet. Required — callers must pass it explicitly to avoid silent-testnet-address bugs.
 
 ### Utilities
 

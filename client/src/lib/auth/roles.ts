@@ -1,6 +1,7 @@
 "use server";
 
 import { BlockfrostService } from "../../services/blockfrostService";
+import { getCatConstants } from "../../utils/constants";
 import type { UTxO } from "@meshsdk/core";
 import { deserializeDatum } from "@meshsdk/core";
 import {
@@ -45,9 +46,11 @@ export async function resolveRoles(address: string): Promise<
  */
 async function fetchOracleUtxoUncached(): Promise<UTxO | null> {
   try {
+    const { oracleUtxo } = getCatConstants();
+    if (!oracleUtxo) return null;
     const utxo = await blockfrost.fetchUtxo(
-      process.env.NEXT_PUBLIC_ORACLE_TX_HASH!,
-      parseInt(process.env.NEXT_PUBLIC_ORACLE_OUTPUT_INDEX!),
+      oracleUtxo.txHash,
+      oracleUtxo.outputIndex,
     );
 
     if (!utxo?.output?.plutusData) {
@@ -90,7 +93,10 @@ async function fetchAdminsFromOracle(): Promise<{
     const plutusData = oracleUtxo!.output.plutusData!;
     const datum: OracleDatum = deserializeDatum(plutusData);
     const minsigners = Number(datum.fields[2].int);
-    const adminAddresses = getOracleAdmins(oracleUtxo!);
+    const adminAddresses = getOracleAdmins(
+      oracleUtxo!,
+      getCatConstants().networkId,
+    );
 
     return {
       adminAddresses,

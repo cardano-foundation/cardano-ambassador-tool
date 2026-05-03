@@ -23,20 +23,22 @@ export const NETWORK_CONFIGS: Record<CardanoNetwork, NetworkConfig> = {
 };
 
 /**
- * Gets the current Cardano network from environment variables
- * Defaults to preprod if not specified or invalid
+ * Gets the current Cardano network from environment variables.
+ * Throws if NEXT_PUBLIC_NETWORK is missing or invalid — prevents silent
+ * fall-through to testnet in production.
  */
 export function getCurrentNetworkConfig(): NetworkConfig {
-  const envNetwork = process.env.NEXT_PUBLIC_NETWORK as CardanoNetwork;
+  const envNetwork = process.env.NEXT_PUBLIC_NETWORK;
 
-  if (envNetwork && (envNetwork === "mainnet" || envNetwork === "preprod")) {
+  if (envNetwork === "mainnet" || envNetwork === "preprod") {
     return NETWORK_CONFIGS[envNetwork];
   }
 
-  console.warn(
-    `Invalid or missing NEXT_PUBLIC_NETWORK: "${envNetwork}". Defaulting to preprod.`,
+  throw new Error(
+    `NEXT_PUBLIC_NETWORK must be "mainnet" or "preprod", got: ${JSON.stringify(
+      envNetwork,
+    )}. Set NEXT_PUBLIC_NETWORK at build time.`,
   );
-  return NETWORK_CONFIGS["preprod"];
 }
 
 /**

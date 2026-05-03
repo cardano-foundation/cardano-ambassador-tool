@@ -76,14 +76,11 @@ export const useEditProposal = ({
 
       // 2. Prepare Transaction
       const blockfrost = getProvider();
-      const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
-      const ORACLE_OUTPUT_INDEX = parseInt(
-        process.env.NEXT_PUBLIC_ORACLE_OUTPUT_INDEX || "0",
-      );
+      const oracleUtxoRef = getCatConstants().oracleUtxo!;
 
       const oracleUtxos = await blockfrost.fetchUTxOs(
-        ORACLE_TX_HASH,
-        ORACLE_OUTPUT_INDEX,
+        oracleUtxoRef.txHash,
+        oracleUtxoRef.outputIndex,
       );
       const oracleUtxo = oracleUtxos[0];
 

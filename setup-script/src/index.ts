@@ -42,9 +42,11 @@ async function main() {
   console.log("=== Cardano Ambassador Tool Setup ===\n");
 
   // Step 0: Configuration from environment
-  const network = process.env.NETWORK || "preprod";
+  const network = process.env.NETWORK;
   if (network !== "preprod" && network !== "mainnet") {
-    console.error("Invalid NETWORK. Must be 'preprod' or 'mainnet'.");
+    console.error(
+      `NETWORK must be "preprod" or "mainnet", got: ${JSON.stringify(network)}.`,
+    );
     process.exit(1);
   }
 
@@ -85,22 +87,37 @@ async function main() {
 
   // Step 1: Collect setup UTxO hashes
   console.log("\n--- Step 1: Setup UTxO configuration ---");
-  const counterTxHash = await prompt("UTxO txHash for counter mint: ");
-  const counterTxIndex = parseInt(await prompt("UTxO output index [0]: ") || "0");
-  if (isNaN(counterTxIndex) || counterTxIndex < 0) {
-    console.error("Invalid counter output index.");
-    process.exit(1);
-  }
+  const ZERO_HASH = "0".repeat(64);
+  const hasSavedSetupUtxos =
+    saved?.counterSetupUtxo && saved.counterSetupUtxo.txHash !== ZERO_HASH &&
+    saved?.oracleSetupUtxo && saved.oracleSetupUtxo.txHash !== ZERO_HASH;
 
-  const oracleTxHash = await prompt("UTxO txHash for oracle mint: ");
-  const oracleTxIndex = parseInt(await prompt("UTxO output index [0]: ") || "0");
-  if (isNaN(oracleTxIndex) || oracleTxIndex < 0) {
-    console.error("Invalid oracle output index.");
-    process.exit(1);
-  }
+  let counterSetupUtxo: SetupUtxo;
+  let oracleSetupUtxo: SetupUtxo;
 
-  const counterSetupUtxo: SetupUtxo = { txHash: counterTxHash, outputIndex: counterTxIndex };
-  const oracleSetupUtxo: SetupUtxo = { txHash: oracleTxHash, outputIndex: oracleTxIndex };
+  if (hasSavedSetupUtxos) {
+    counterSetupUtxo = saved!.counterSetupUtxo!;
+    oracleSetupUtxo = saved!.oracleSetupUtxo!;
+    console.log(`Loaded counter setup UTxO: ${counterSetupUtxo.txHash}#${counterSetupUtxo.outputIndex}`);
+    console.log(`Loaded oracle setup UTxO: ${oracleSetupUtxo.txHash}#${oracleSetupUtxo.outputIndex}`);
+  } else {
+    const counterTxHash = await prompt("UTxO txHash for counter mint: ");
+    const counterTxIndex = parseInt(await prompt("UTxO output index [0]: ") || "0");
+    if (isNaN(counterTxIndex) || counterTxIndex < 0) {
+      console.error("Invalid counter output index.");
+      process.exit(1);
+    }
+
+    const oracleTxHash = await prompt("UTxO txHash for oracle mint: ");
+    const oracleTxIndex = parseInt(await prompt("UTxO output index [0]: ") || "0");
+    if (isNaN(oracleTxIndex) || oracleTxIndex < 0) {
+      console.error("Invalid oracle output index.");
+      process.exit(1);
+    }
+
+    counterSetupUtxo = { txHash: counterTxHash, outputIndex: counterTxIndex };
+    oracleSetupUtxo = { txHash: oracleTxHash, outputIndex: oracleTxIndex };
+  }
 
   // Load ref scripts from saved progress or initialize empty
   const emptyUtxo: SetupUtxo = { txHash: "0".repeat(64), outputIndex: 0 };
@@ -136,7 +153,7 @@ async function main() {
   // Step 2: Mint Counter NFT
   if (resumeStep <= 2) {
     console.log("\n--- Step 2: Mint Counter NFT ---");
-    const counterUtxos = await provider.fetchUTxOs(counterTxHash, counterTxIndex);
+    const counterUtxos = await provider.fetchUTxOs(counterSetupUtxo.txHash, counterSetupUtxo.outputIndex);
     if (!counterUtxos[0]) {
       console.error("Failed to fetch counter UTxO");
       process.exit(1);
@@ -152,7 +169,7 @@ async function main() {
   // Step 3: Mint & Spend Oracle NFT
   if (resumeStep <= 3) {
     console.log("\n--- Step 3: Mint & Spend Oracle NFT ---");
-    const oracleUtxos = await provider.fetchUTxOs(oracleTxHash, oracleTxIndex);
+    const oracleUtxos = await provider.fetchUTxOs(oracleSetupUtxo.txHash, oracleSetupUtxo.outputIndex);
     if (!oracleUtxos[0]) {
       console.error("Failed to fetch oracle UTxO");
       process.exit(1);

@@ -6,10 +6,15 @@ export class BlockfrostService {
   private blockfrost?: BlockfrostProvider;
 
   constructor() {
-    if (isServer && process.env.BLOCKFROST_API_KEY_PREPROD) {
-      this.blockfrost = new BlockfrostProvider(
-        process.env.BLOCKFROST_API_KEY_PREPROD,
-      );
+    if (isServer) {
+      const network = process.env.NEXT_PUBLIC_NETWORK ?? "preprod";
+      const blockfrostKey =
+        network === "mainnet"
+          ? process.env.BLOCKFROST_API_KEY_MAINNET
+          : process.env.BLOCKFROST_API_KEY_PREPROD;
+      if (blockfrostKey) {
+        this.blockfrost = new BlockfrostProvider(blockfrostKey);
+      }
     }
   }
 

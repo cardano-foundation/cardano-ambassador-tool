@@ -49,6 +49,7 @@ export function copyToClipboard(text: string) {
 const blockfrostService = new BlockfrostService();
 
 const catConstants = getCatConstants();
+const { networkId } = catConstants;
 
 export const SCRIPT_ADDRESSES = {
   MEMBERSHIP_INTENT: catConstants.scripts.membershipIntent.spend.address,
@@ -128,6 +129,7 @@ export function parseMembershipIntentDatum(
     try {
       serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+        networkId,
       );
     } catch {
       return null;
@@ -139,6 +141,7 @@ export function parseMembershipIntentDatum(
     const metadata: MemberData = {
       walletAddress: serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+        networkId,
       ),
       fullName: safeExtractString(metadataPlutus.fields[1]),
       displayName: safeExtractString(metadataPlutus.fields[2]),
@@ -183,6 +186,7 @@ export function parseMemberDatum(
     const metadata: MemberData = {
       walletAddress: serializeAddressObj(
         metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+        networkId,
       ),
       fullName: safeExtractString(metadataPlutus.fields[1]),
       displayName: safeExtractString(metadataPlutus.fields[2]),
@@ -210,8 +214,14 @@ export function parseMemberDatum(
           title: hexToString(item.k.fields[0].bytes || ""),
           url: hexToString(item.k.fields[1].bytes || ""),
           fundsRequested: hexToString(item.k.fields[2].bytes || ""),
-          receiverWalletAddress: serializeAddressObj(item.k.fields[3]),
-          submittedByAddress: serializeAddressObj(item.k.fields[4]),
+          receiverWalletAddress: serializeAddressObj(
+            item.k.fields[3],
+            networkId,
+          ),
+          submittedByAddress: serializeAddressObj(
+            item.k.fields[4],
+            networkId,
+          ),
           status: hexToString(item.k.fields[5].bytes || ""),
         },
         Number(item.v.int),
@@ -268,8 +278,14 @@ export function parseProposalDatum(plutusData: string): {
       title: hexToString((metadataPlutus.fields[0] as ByteString).bytes),
       url: safeExtractString(metadataPlutus.fields[1] as ByteString),
       fundsRequested: lovelaceToAda(parseInt(fundsRequestedLovelace || "0")),
-      receiverWalletAddress: serializeAddressObj(metadataPlutus.fields[3]),
-      submittedByAddress: serializeAddressObj(metadataPlutus.fields[4]),
+      receiverWalletAddress: serializeAddressObj(
+        metadataPlutus.fields[3],
+        networkId,
+      ),
+      submittedByAddress: serializeAddressObj(
+        metadataPlutus.fields[4],
+        networkId,
+      ),
       status: hexToString((metadataPlutus.fields[5] as ByteString).bytes),
     };
     return { datum: datum as ProposalDatum, metadata, memberIndex };
@@ -402,7 +418,10 @@ export async function findMembershipIntentUtxo(
         utxo.output.plutusData,
       );
       const metadataPluts: MembershipMetadata = datum.fields[1];
-      const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
+      const walletAddress = serializeAddressObj(
+        metadataPluts.fields[0],
+        networkId,
+      );
       return walletAddress === address;
     });
     return matchingUtxo || null;
@@ -431,6 +450,7 @@ export async function findMemberUtxo(address: string): Promise<UTxO | null> {
         const metadataPlutus: MembershipMetadata = datum.fields[3];
         const walletAddress = serializeAddressObj(
           metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+          networkId,
         );
         return walletAddress === address;
       } catch (error) {
@@ -493,6 +513,7 @@ export async function findTokenUtxoByMemberUtxo(
     const metadataPlutus: MembershipMetadata = datum.fields[3];
     const walletAddress = serializeAddressObj(
       metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+      networkId,
     );
     const policyId = datum.fields[0].list[0].bytes;
     const assetName = datum.fields[0].list[1].bytes;
@@ -528,7 +549,10 @@ export async function findTokenUtxoByMembershipIntentUtxo(
     );
 
     const metadataPluts: MembershipMetadata = datum.fields[1];
-    const walletAddress = serializeAddressObj(metadataPluts.fields[0]);
+    const walletAddress = serializeAddressObj(
+      metadataPluts.fields[0],
+      networkId,
+    );
     const policyId = datum.fields[0].list[0].bytes;
     const assetName = datum.fields[0].list[1].bytes;
     const tokenUnit = policyId + assetName;
@@ -564,6 +588,7 @@ export async function findTokenUtxoByMembershipIntentUtxoMesh(
     const metadataPlutus: MembershipMetadata = datum.fields[1];
     const walletAddress = serializeAddressObj(
       metadataPlutus.fields[0] as unknown as PubKeyAddress | ScriptAddress,
+      networkId,
     );
     const policyId = datum.fields[0].list[0].bytes;
     const assetName = datum.fields[0].list[1].bytes;

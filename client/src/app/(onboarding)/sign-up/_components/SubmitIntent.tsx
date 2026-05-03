@@ -41,10 +41,7 @@ const SubmitIntent = ({
 }) => {
   const { address, wallet } = useWalletManager();
   const { isMember, memberData } = useMemberValidation();
-  const ORACLE_TX_HASH = process.env.NEXT_PUBLIC_ORACLE_TX_HASH!;
-  const ORACLE_OUTPUT_INDEX = parseInt(
-    process.env.NEXT_PUBLIC_ORACLE_OUTPUT_INDEX || "0",
-  );
+  const oracleUtxoRef = getCatConstants().oracleUtxo!;
 
   const blockfrost = getProvider();
 
@@ -194,7 +191,7 @@ const SubmitIntent = ({
     let oracleUtxos, tokenUtxos;
     try {
       [oracleUtxos, tokenUtxos] = await Promise.all([
-        blockfrost.fetchUTxOs(ORACLE_TX_HASH, ORACLE_OUTPUT_INDEX),
+        blockfrost.fetchUTxOs(oracleUtxoRef.txHash, oracleUtxoRef.outputIndex),
         blockfrost.fetchUTxOs(tokenUtxoHash, tokenUtxoIndex),
       ]);
     } catch (fetchError) {
@@ -211,7 +208,7 @@ const SubmitIntent = ({
         success: false,
         message: "Oracle UTxO not found",
         data: null,
-        error: `Oracle UTxO not found at ${ORACLE_TX_HASH}#${ORACLE_OUTPUT_INDEX}`,
+        error: `Oracle UTxO not found at ${oracleUtxoRef.txHash}#${oracleUtxoRef.outputIndex}`,
       };
     }
 
