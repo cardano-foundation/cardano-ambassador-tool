@@ -20,35 +20,71 @@ const blockfrost = new BlockfrostService();
  * @returns The full MeshJS UTxO object if found, otherwise 404
  */
 export async function GET(req: NextRequest) {
+  const network = process.env.NEXT_PUBLIC_NETWORK ?? "preprod";
   try {
     // Try storage first
     const counter = await storageService.get<CounterUtxoData>(
       "counter_utxo",
       "counter",
     );
+    console.log("[counter-utxo] network:", network, "cached:", counter);
 
     if (counter) {
-      const counterUtxo = await blockfrost.fetchUtxo(
+      console.log(
+        "[counter-utxo] fetching cached UTxO",
         counter.txHash,
         counter.outputIndex,
       );
+      try {
+        const counterUtxo = await blockfrost.fetchUtxo(
+          counter.txHash,
+          counter.outputIndex,
+        );
 
-      if (counterUtxo) {
-        return NextResponse.json(counterUtxo, { status: 200 });
+        if (counterUtxo) {
+          return NextResponse.json(counterUtxo, { status: 200 });
+        }
+      } catch (e) {
+        // Cached pointer is stale (UTxO spent or never existed on this network).
+        // Fall through to the address scan instead of bubbling a 500.
+        console.log(
+          "[counter-utxo] cached fetch failed, dropping stale entry:",
+          e instanceof Error ? e.message : e,
+        );
       }
+      await storageService.delete("counter_utxo", "counter");
+      console.log("[counter-utxo] cache miss, falling through to address scan");
     }
 
     // Fall back: fetch from counter script address, filter by counter NFT
     const catConstants = getCatConstants();
     const counterAddress = catConstants.scripts.counter.spend.address;
     const counterPolicyId = catConstants.scripts.counter.mint.hash;
+    console.log(
+      "[counter-utxo] scanning counter address:",
+      counterAddress,
+      "policyId:",
+      counterPolicyId,
+    );
     const utxos = await blockfrost.fetchAddressUTxOs(counterAddress);
+    console.log(
+      "[counter-utxo] address returned",
+      utxos.length,
+      "UTxOs, units:",
+      utxos.flatMap((u) => u.output.amount.map((a) => a.unit)),
+    );
 
     const counterUtxo = utxos.find((utxo) =>
       utxo.output.amount.some((a) => a.unit.startsWith(counterPolicyId)),
     );
 
     if (!counterUtxo) {
+      console.log(
+        "[counter-utxo] no UTxO matched policyId",
+        counterPolicyId,
+        "at",
+        counterAddress,
+      );
       return NextResponse.json(
         { error: "Counter UTxO not found on blockchain" },
         { status: 404 },
@@ -67,7 +103,19 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(counterUtxo, { status: 200 });
   } catch (error) {
-    console.error("Error fetching counter UTxO:", error);
+    let counterAddress: string | undefined;
+    let counterPolicyId: string | undefined;
+    try {
+      const c = getCatConstants();
+      counterAddress = c.scripts.counter.spend.address;
+      counterPolicyId = c.scripts.counter.mint.hash;
+    } catch {}
+    console.error("Error fetching counter UTxO:", {
+      network,
+      counterAddress,
+      counterPolicyId,
+      error,
+    });
     return NextResponse.json(
       { error: "Failed to fetch counter UTxO" },
       { status: 500 },
@@ -161,7 +209,7 @@ export async function POST(req: NextRequest) {
  *
  * @returns Success response or error
  */
-export async function DELETE(req: NextRequest) {
+export async function DELETE() {
   try {
     // Create a backup before deleting
     const existing = await storageService.get<CounterUtxoData>(
