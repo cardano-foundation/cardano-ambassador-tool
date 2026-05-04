@@ -3,7 +3,7 @@
 import SearchableDropdown from "../../../../components/atoms/SearchableDropdown";
 import { countries, getCitiesForCountry } from "../../../../utils/locationData";
 import { cn } from "../../../../utils/utils";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 interface LocationSelectorProps {
   countryCode?: string;
@@ -13,6 +13,13 @@ interface LocationSelectorProps {
   className?: string;
 }
 
+// Country list is ~250 entries and never changes — build the options array
+// once at module scope rather than on every render.
+const COUNTRY_OPTIONS = countries.map((country) => ({
+  value: country.code,
+  label: `${country.flag} ${country.name}`,
+}));
+
 const LocationSelector: React.FC<LocationSelectorProps> = ({
   countryCode,
   city,
@@ -20,26 +27,31 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
   onCityChange,
   className = "",
 }) => {
-  const countryOptions = countries.map((country) => ({
-    value: country.code,
-    label: `${country.flag} ${country.name}`,
-  }));
+  const cityOptions = useMemo(
+    () =>
+      countryCode
+        ? getCitiesForCountry(countryCode).map((cityName) => ({
+            value: cityName.name,
+            label: cityName.name,
+          }))
+        : [],
+    [countryCode],
+  );
 
-  const cityOptions = countryCode
-    ? getCitiesForCountry(countryCode).map((cityName) => ({
-        value: cityName.name,
-        label: cityName.name,
-      }))
-    : [];
+  const handleCountryChange = useCallback(
+    (newCountryCode: string) => {
+      onCountryChange(newCountryCode);
+      onCityChange("");
+    },
+    [onCountryChange, onCityChange],
+  );
 
-  const handleCountryChange = (newCountryCode: string) => {
-    onCountryChange(newCountryCode);
-    onCityChange("");
-  };
-
-  const handleCityChange = (newCity: string) => {
-    onCityChange(newCity);
-  };
+  const handleCityChange = useCallback(
+    (newCity: string) => {
+      onCityChange(newCity);
+    },
+    [onCityChange],
+  );
 
   return (
     <div className={cn("space-y-4", className)}>
@@ -48,7 +60,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
           Country
         </label>
         <SearchableDropdown
-          options={countryOptions}
+          options={COUNTRY_OPTIONS}
           value={countryCode}
           onValueChange={handleCountryChange}
           placeholder="Select your country..."
@@ -77,4 +89,4 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
   );
 };
 
-export default LocationSelector;
+export default React.memo(LocationSelector);

@@ -1,0 +1,66 @@
+name: Vercel Preprod Deployment
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - 'client/**'
+      - '.github/workflows/vercel-preprod.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-preprod-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    env:
+      NEXT_PUBLIC_NETWORK: preprod
+      NEXT_PUBLIC_AMBASSADOR_POLICY_ID: ${{ secrets.NEXT_PUBLIC_AMBASSADOR_POLICY_ID }}
+      NEXT_PUBLIC_GITHUB_REPO: ${{ secrets.NEXT_PUBLIC_GITHUB_REPO }}
+      NEXT_PUBLIC_GITHUB_BRANCH: ${{ secrets.NEXT_PUBLIC_GITHUB_BRANCH }}
+      BLOCKFROST_API_KEY_PREPROD: ${{ secrets.BLOCKFROST_API_KEY_PREPROD }}
+      BLOCKFROST_API_KEY_PREVIEW: ${{ secrets.BLOCKFROST_API_KEY_PREVIEW }}
+      BLOCKFROST_API_KEY_TESTNET: ${{ secrets.BLOCKFROST_API_KEY_TESTNET }}
+      BLOCKFROST_API_KEY_MAINNET: ${{ secrets.BLOCKFROST_API_KEY_MAINNET }}
+      CARDANO_FORUM_API_KEY: ${{ secrets.CARDANO_FORUM_API_KEY }}
+      CARDANO_FORUM_API_USERNAME: ${{ secrets.CARDANO_FORUM_API_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel environment information
+        run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Build project
+        run: vercel build --token="$VERCEL_TOKEN"
+
+      - name: Deploy to Vercel
+        run: |
+          vercel deploy --prebuilt --token="$VERCEL_TOKEN" \
+            --env "BLOCKFROST_API_KEY_PREPROD=$BLOCKFROST_API_KEY_PREPROD" \
+            --env "BLOCKFROST_API_KEY_PREVIEW=$BLOCKFROST_API_KEY_PREVIEW" \
+            --env "BLOCKFROST_API_KEY_TESTNET=$BLOCKFROST_API_KEY_TESTNET" \
+            --env "BLOCKFROST_API_KEY_MAINNET=$BLOCKFROST_API_KEY_MAINNET" \
+            --env "CARDANO_FORUM_API_KEY=$CARDANO_FORUM_API_KEY" \
+            --env "CARDANO_FORUM_API_USERNAME=$CARDANO_FORUM_API_USERNAME" \
+            --env "NEXT_PUBLIC_NETWORK=$NEXT_PUBLIC_NETWORK" \
+            --env "NEXT_PUBLIC_AMBASSADOR_POLICY_ID=$NEXT_PUBLIC_AMBASSADOR_POLICY_ID" \
+            --env "NEXT_PUBLIC_GITHUB_REPO=$NEXT_PUBLIC_GITHUB_REPO" \
+            --env "NEXT_PUBLIC_GITHUB_BRANCH=$NEXT_PUBLIC_GITHUB_BRANCH"

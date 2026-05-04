@@ -275,4 +275,4 @@ const ForumUsernameInput: React.FC<ForumUsernameInputProps> = ({
   );
 };
 
-export default ForumUsernameInput;
+export default React.memo(ForumUsernameInput);

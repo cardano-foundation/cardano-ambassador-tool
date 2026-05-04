@@ -3,9 +3,11 @@
 import { ColumnDef, Table } from "../../../components/Table/Table";
 import Button from "../../../components/atoms/Button";
 import Chip from "../../../components/atoms/Chip";
+import EmptyState from "../../../components/atoms/EmptyState";
 import Paragraph from "../../../components/atoms/Paragraph";
 import Select from "../../../components/atoms/Select";
 import Title from "../../../components/atoms/Title";
+import SimpleCardanoLoader from "../../../components/SimpleCardanoLoader";
 import { routes } from "../../../config/routes";
 import useProposals from "../../../hooks/useProposals";
 import { formatAdaAmount } from "../../../utils";
@@ -100,7 +102,7 @@ const proposalIntentColumns: ColumnDef<Proposal>[] = [
     cell: (value, row) => {
       if (row.txHash) {
         return (
-          <Link href={routes.manage.proposal(row.txHash)} prefetch={true}>
+          <Link href={routes.manage.proposal(row.txHash)} prefetch={false}>
             <Button variant="primary" size="md">
               View
             </Button>
@@ -108,7 +110,7 @@ const proposalIntentColumns: ColumnDef<Proposal>[] = [
         );
       } else if (row.status === "paid_out" && row.slug) {
         return (
-          <Link href={routes.completedProposal(row.slug)} prefetch={true}>
+          <Link href={routes.completedProposal(row.slug)} prefetch={false}>
             <Button variant="primary" size="md">
               View
             </Button>
@@ -127,11 +129,21 @@ export default function ProposalIntentsPage() {
   );
 
   if (loading) {
-    return <div className="p-4">Loading proposals...</div>;
+    return (
+      <SimpleCardanoLoader
+        fullscreen={false}
+        message="Loading proposal applications..."
+      />
+    );
   }
 
   if (!allProposals.length) {
-    return <div className="p-4">No proposals found.</div>;
+    return (
+      <EmptyState
+        title="No proposals yet"
+        description="Approved community proposals awaiting review will appear here."
+      />
+    );
   }
 
   // Apply status filter

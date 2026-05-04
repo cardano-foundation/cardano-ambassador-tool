@@ -7,6 +7,10 @@ import {
 } from "../lib/redux/features/treasury";
 import { selectCalculatedTotalPayouts } from "../lib/redux/features/data/dataSelectors";
 
+// Module-level guard: treasury balance is fetched once per session. Without
+// this, every page using `useTreasuryBalance` re-fetches on mount.
+let treasuryFetched = false;
+
 /**
  * Treasury balance hook - now delegates to Redux for state management.
  * Maintains backward compatibility with existing consumers.
@@ -20,8 +24,11 @@ export function useTreasuryBalance() {
   const totalPayouts = useAppSelector(selectCalculatedTotalPayouts);
   const isTreasuryLoading = useAppSelector(selectIsTreasuryLoading);
 
-  // Fetch treasury balance on mount
+  // Fetch treasury balance once per session; manual refresh via
+  // `refreshTreasuryBalance` always re-dispatches.
   useEffect(() => {
+    if (treasuryFetched) return;
+    treasuryFetched = true;
     dispatch(fetchTreasuryBalanceThunk());
   }, [dispatch]);
 

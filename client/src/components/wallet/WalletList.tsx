@@ -3,7 +3,6 @@
 import { useNetworkValidation, useUserAuth, useWalletManager } from "../../hooks";
 import { shortenString } from "../../utils";
 import { AlertTriangle, X } from "lucide-react";
-import Image from "next/image";
 import { MouseEvent, useEffect } from "react";
 import Button from "../atoms/Button";
 import { toast } from "../toast/toast-manager";
@@ -81,7 +80,7 @@ const WalletList = () => {
                   handleConnect(e, walletItem.id);
                 }}
               >
-                <Image
+                <img
                   src={walletItem.icon}
                   alt={walletItem.id}
                   width={24}

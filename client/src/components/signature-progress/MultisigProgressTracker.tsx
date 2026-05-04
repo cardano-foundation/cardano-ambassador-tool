@@ -42,73 +42,79 @@ export default function MultisigProgressTracker({
   const [signers, setSigners] = useState<SignerStatus[]>([]);
   const [loading, setLoading] = useState(true);
   const [minRequiredSigners, setMinRequiredSigners] = useState<number>(0);
+  const [adminAddresses, setAdminAddresses] = useState<string[]>([]);
 
+  // Fetch oracle admins once per mount. Previously this lived inside the
+  // signers effect with `adminDecisionData` as a dep, so every parent state
+  // update reissued the `findAdminsFromOracle` server action.
   useEffect(() => {
-    const loadSigners = async () => {
-      let adminAddresses: string[] = [];
-
+    let cancelled = false;
+    (async () => {
       try {
         const adminData = await findAdminsFromOracle();
-
-        adminAddresses = adminData?.adminAddresses || [];
-        setMinRequiredSigners(Number(adminData!.minsigners));
+        if (cancelled) return;
+        setAdminAddresses(adminData?.adminAddresses || []);
+        if (adminData) setMinRequiredSigners(Number(adminData.minsigners));
       } catch (error) {
         console.warn(
           "Failed to fetch oracle admins, falling back to raw hashes:",
           error,
         );
       }
-
-      try {
-        if (
-          adminDecisionData &&
-          adminDecisionData.selectedAdmins &&
-          adminDecisionData.selectedAdmins.length > 0
-        ) {
-          const signersWithStatus: SignerStatus[] =
-            adminDecisionData.selectedAdmins.map((pubKeyHash: string) => {
-              const address = findAddressByPubKeyHash(
-                pubKeyHash,
-                adminAddresses,
-              );
-              return {
-                address: address,
-                signed: adminDecisionData.signers.includes(pubKeyHash),
-              };
-            });
-          setSigners(signersWithStatus);
-        } else if (
-          adminDecisionData &&
-          adminDecisionData.signers &&
-          adminDecisionData.signers.length > 0
-        ) {
-          const uniqueSigners = [...new Set([...adminDecisionData.signers])];
-          const signersWithStatus: SignerStatus[] = uniqueSigners.map(
-            (pubKeyHash) => {
-              const address = findAddressByPubKeyHash(
-                pubKeyHash,
-                adminAddresses,
-              );
-              return {
-                address: address,
-                signed: true,
-              };
-            },
-          );
-          setSigners(signersWithStatus);
-        } else {
-          setSigners([]);
-        }
-      } catch (error) {
-        console.error("Failed to process signers:", error);
-        setSigners([]);
-      } finally {
-        setLoading(false);
-      }
+    })();
+    return () => {
+      cancelled = true;
     };
+  }, []);
 
-    loadSigners();
-  }, [txHash, adminDecisionData]);
+  useEffect(() => {
+    try {
+      if (
+        adminDecisionData &&
+        adminDecisionData.selectedAdmins &&
+        adminDecisionData.selectedAdmins.length > 0
+      ) {
+        const signersWithStatus: SignerStatus[] =
+          adminDecisionData.selectedAdmins.map((pubKeyHash: string) => {
+            const address = findAddressByPubKeyHash(
+              pubKeyHash,
+              adminAddresses,
+            );
+            return {
+              address: address,
+              signed: adminDecisionData.signers.includes(pubKeyHash),
+            };
+          });
+        setSigners(signersWithStatus);
+      } else if (
+        adminDecisionData &&
+        adminDecisionData.signers &&
+        adminDecisionData.signers.length > 0
+      ) {
+        const uniqueSigners = [...new Set([...adminDecisionData.signers])];
+        const signersWithStatus: SignerStatus[] = uniqueSigners.map(
+          (pubKeyHash) => {
+            const address = findAddressByPubKeyHash(
+              pubKeyHash,
+              adminAddresses,
+            );
+            return {
+              address: address,
+              signed: true,
+            };
+          },
+        );
+        setSigners(signersWithStatus);
+      } else {
+        setSigners([]);
+      }
+    } catch (error) {
+      console.error("Failed to process signers:", error);
+      setSigners([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [txHash, adminDecisionData, adminAddresses]);
 
   if (loading) {
     return <ProgressTrackerLoading />;

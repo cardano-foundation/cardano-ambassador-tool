@@ -67,12 +67,13 @@ export const POLICY_IDS = {
 // Provider Utility
 // ============================================================================
 /**
- * Creates and configures a Blockfrost provider
- * @param network The network to connect to (default: "preprod")
+ * Creates and configures a Blockfrost provider for the network configured
+ * via `NEXT_PUBLIC_NETWORK`. Pass `network` only to override (e.g. tests).
  * @returns Configured BlockfrostProvider instance
  */
-export function getProvider(network = "preprod"): BlockfrostProvider {
-  const provider = new BlockfrostProvider(`/api/blockfrost/${network}/`);
+export function getProvider(network?: string): BlockfrostProvider {
+  const target = network ?? getCurrentNetworkConfig().network;
+  const provider = new BlockfrostProvider(`/api/blockfrost/${target}/`);
   provider.setSubmitTxToBytes(false);
   return provider;
 }

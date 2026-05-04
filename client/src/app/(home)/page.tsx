@@ -1,5 +1,6 @@
 "use client";
 import AmbassadorSearchBar from "../../components/AmbassadorSearchBar";
+import EmptyState from "../../components/atoms/EmptyState";
 import Paragraph from "../../components/atoms/Paragraph";
 import Title from "../../components/atoms/Title";
 import { Pagination } from "../../components/Pagination";
@@ -181,22 +182,27 @@ export default function HomePage() {
 
       {/* Show message when no results found */}
       {totalItems === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <Paragraph size="base" className="text-muted-foreground">
-            No ambassadors found matching your search criteria.
-          </Paragraph>
-          {(searchTerm || selectedRegion !== "all") && (
-            <button
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedRegion("all");
-              }}
-              className="text-primary mt-4 underline"
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
+        <EmptyState
+          title="No ambassadors found"
+          description={
+            searchTerm || selectedRegion !== "all"
+              ? "Try adjusting your search or region filter to see more ambassadors."
+              : "Approved ambassadors will appear here once they join the program."
+          }
+          action={
+            (searchTerm || selectedRegion !== "all") && (
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedRegion("all");
+                }}
+                className="text-primary-base hover:text-primary-300 underline"
+              >
+                Clear filters
+              </button>
+            )
+          }
+        />
       )}
     </div>
   );

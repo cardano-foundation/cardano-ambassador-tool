@@ -181,6 +181,7 @@ function MobileSideNav({ onClose }: { onClose: () => void }) {
                   <Link
                     key={item.id}
                     href={item.href}
+                    prefetch={false}
                     className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
                       isActive ? "bg-muted" : ""
                     }`}

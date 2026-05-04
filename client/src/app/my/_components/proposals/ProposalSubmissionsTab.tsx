@@ -1,5 +1,6 @@
 "use client";
 
+import SimpleCardanoLoader from "../../../../components/SimpleCardanoLoader";
 import { ColumnDef, Table } from "../../../../components/Table/Table";
 import Button from "../../../../components/atoms/Button";
 import Chip from "../../../../components/atoms/Chip";
@@ -150,13 +151,10 @@ export default function ProposalSubmissionsTab({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-center">
-          <Title level="3" className="text-foreground mb-2">
-            Loading your proposals...
-          </Title>
-        </div>
-      </div>
+      <SimpleCardanoLoader
+        fullscreen={false}
+        message="Loading your proposals..."
+      />
     );
   }
 

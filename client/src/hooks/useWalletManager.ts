@@ -14,6 +14,11 @@ import {
 } from "../lib/redux/features/wallet";
 import { WalletState } from "../types/wallet";
 
+// Module-level guard: 30+ components call useWalletManager. Without this,
+// every mounted instance races to dispatch refreshWalletList + autoConnect on
+// first render, multiplying wallet-discovery and connect calls.
+let walletBootstrapAttempted = false;
+
 /**
  * Wallet manager hook - now delegates to Redux.
  * Maintains backward compatibility with existing consumers.
@@ -55,6 +60,10 @@ export function useWalletManager(): WalletState & {
 
   // Auto-connection on mount
   useEffect(() => {
+    if (walletBootstrapAttempted) return;
+    if (walletState.hasAttemptedAutoConnect) return;
+    walletBootstrapAttempted = true;
+
     const attemptAutoConnect = async () => {
       // First refresh wallet list
       const result = await dispatch(refreshWalletList());
@@ -69,9 +78,7 @@ export function useWalletManager(): WalletState & {
       }
     };
 
-    if (!walletState.hasAttemptedAutoConnect) {
-      attemptAutoConnect();
-    }
+    attemptAutoConnect();
   }, [dispatch, walletState.hasAttemptedAutoConnect]);
 
   return {

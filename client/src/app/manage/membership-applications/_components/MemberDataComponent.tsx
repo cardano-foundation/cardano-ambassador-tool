@@ -240,9 +240,13 @@ const MemberDataComponent = ({
 
   useEffect(() => {
     if (membershipData?.txHash) {
-      fetchTransactionTime(membershipData.txHash!);
+      fetchTransactionTime(membershipData.txHash);
     }
-  }, [membershipData]);
+    // Key on the txHash string instead of the membershipData object so we
+    // don't re-fetch the Blockfrost tx info every time the parent rebuilds
+    // the membershipData reference.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [membershipData?.txHash]);
 
   return (
     <div className="mx-auto max-w-4xl space-y-4">

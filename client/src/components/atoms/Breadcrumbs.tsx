@@ -14,6 +14,7 @@ export default function Breadcrumbs() {
       <ol className="text-primary-base flex space-x-1 font-semibold">
         <Link
           href="/"
+          prefetch={false}
           className="hover:text-primary-300 text-primary-base font-semibold hover:underline"
         >
           Home
@@ -49,6 +50,7 @@ export default function Breadcrumbs() {
                   <Link
                     className="hover:text-primary-300 text-primary-base hover:underline"
                     href={href}
+                    prefetch={false}
                   >
                     {itemLink}
                   </Link>

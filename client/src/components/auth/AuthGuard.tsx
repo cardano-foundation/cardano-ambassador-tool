@@ -1,5 +1,6 @@
 "use client";
 
+import SimpleCardanoLoader from "../SimpleCardanoLoader";
 import { useAppSelector } from "../../lib/redux/hooks";
 import {
   selectIsConnected,
@@ -86,16 +87,11 @@ export function AuthGuard({
   // Show loading while initializing
   if (!isFullyReady) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="flex items-center gap-2">
-          <div className="border-primary-base h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></div>
-          <span className="text-muted-foreground text-sm">
-            {!isWalletReady
-              ? "Initializing wallet..."
-              : "Loading user roles..."}
-          </span>
-        </div>
-      </div>
+      <SimpleCardanoLoader
+        message={
+          !isWalletReady ? "Initializing wallet..." : "Verifying access..."
+        }
+      />
     );
   }
 

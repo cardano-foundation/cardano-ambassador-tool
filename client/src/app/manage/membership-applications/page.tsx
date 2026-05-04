@@ -1,9 +1,11 @@
 "use client";
 
 import Button from "../../../components/atoms/Button";
+import EmptyState from "../../../components/atoms/EmptyState";
 import Paragraph from "../../../components/atoms/Paragraph";
 import Title from "../../../components/atoms/Title";
 import Copyable from "../../../components/Copyable";
+import SimpleCardanoLoader from "../../../components/SimpleCardanoLoader";
 import { ColumnDef, Table } from "../../../components/Table/Table";
 import { getCurrentNetworkConfig } from "../../../config/cardano";
 import { useDatabase } from "../../../hooks";
@@ -14,11 +16,21 @@ export default function MembershipIntentPage() {
   const { membershipIntents, dbLoading } = useDatabase();
 
   if (dbLoading) {
-    return <div className="p-4">Loading membership intents...</div>;
+    return (
+      <SimpleCardanoLoader
+        fullscreen={false}
+        message="Loading membership applications..."
+      />
+    );
   }
 
   if (!membershipIntents.length) {
-    return <div className="p-4">No membership intents found.</div>;
+    return (
+      <EmptyState
+        title="No applications yet"
+        description="New ambassador membership applications will appear here once submitted."
+      />
+    );
   }
 
   const decodedUtxos = membershipIntents

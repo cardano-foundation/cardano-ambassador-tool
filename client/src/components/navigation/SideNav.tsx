@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import ProposalIcon from "../atoms/ProposalIcon";
 import UserIcon from "../atoms/UserIcon";
 
@@ -113,39 +113,30 @@ const SideNav = () => {
     isConnected: wallet.isConnected,
   });
   const pathname = usePathname();
-  const [sections, setSections] = useState(defaultNavigationSections);
 
-  // Active link handling
-  const [currentActiveId, setCurrentActiveId] = useState("");
-  useEffect(() => {
+  // Derive sections from auth flags so the menu list only changes when
+  // membership changes — useState + useEffect previously created a new array
+  // reference on every redux update, churning Link reconciliation/prefetch.
+  const sections = useMemo(() => {
+    const updated = [...defaultNavigationSections];
+    if (isAdmin) updated.push(adminToolsSection);
+    if (isAuthenticated) updated.push(memberToolsSection);
+    return updated;
+  }, [isAuthenticated, isAdmin]);
+
+  const currentActiveId = useMemo(() => {
     const allItems = [
       ...defaultNavigationSections.flatMap((s) => s.items),
       ...memberToolsSection.items,
       ...adminToolsSection.items,
     ];
-    const match = allItems.find((item) => item.href === pathname);
-    if (match) setCurrentActiveId(match.id);
+    return allItems.find((item) => item.href === pathname)?.id ?? "";
   }, [pathname]);
-
-  // Update sections when roles change
-  useEffect(() => {
-    const updated = [...defaultNavigationSections];
-
-    if (isAdmin) {
-      updated.push(adminToolsSection);
-    }
-
-    if (isAuthenticated) {
-      updated.push(memberToolsSection);
-    }
-
-    setSections(updated);
-  }, [isAuthenticated, isAdmin]);
 
   return (
     <div className="bg-background border-border sticky top-0 hidden h-screen w-80 flex-col overflow-y-auto border-r scrollbar-hide lg:flex">
       <div className="flex items-center justify-start p-6">
-        <Link href="/">
+        <Link href="/" prefetch={false}>
           <AppLogo />
         </Link>
       </div>
@@ -175,6 +166,7 @@ const SideNav = () => {
                     <Link
                       key={item.id}
                       href={item.href}
+                      prefetch={false}
                       className={`hover:bg-muted group flex w-full items-center space-x-3 px-6 py-3 transition-colors ${
                         isActive ? "bg-muted" : ""
                       }`}

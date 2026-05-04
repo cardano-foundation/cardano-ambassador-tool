@@ -43,6 +43,12 @@ const { networkId } = getCatConstants();
 // ---------- Database operations ----------
 const dbManager = DatabaseManager.getInstance();
 
+// Module-level guard: the worker bootstrap + initial seed should fire once
+// per browser session. Without this, every component that calls
+// `useDatabase()` re-runs the init effect on mount, triggering 7 redundant
+// `/api/utxos` and `/api/txs` fetches on every navigation.
+let workerBootstrapped = false;
+
 const queryDb = <T = Record<string, unknown>>(
   sql: string,
   params: any[] = [],
@@ -73,6 +79,9 @@ export function useDatabase() {
 
   // Database initialization and worker setup
   useEffect(() => {
+    if (workerBootstrapped) return;
+    workerBootstrapped = true;
+
     const timeoutId = setTimeout(() => {
       dispatch(setDbLoading(false));
     }, 10000);

@@ -2,6 +2,7 @@
 
 import DocsDisplay from "../../../components/atoms/DocsDisplay";
 import Paragraph from "../../../components/atoms/Paragraph";
+import SimpleCardanoLoader from "../../../components/SimpleCardanoLoader";
 import { useUserAuth, useWalletManager } from "../../../hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -41,9 +42,7 @@ export default function AdminGuidePage() {
 
   if (loading || !isAdmin) {
     return (
-      <div className="p-6">
-        <Paragraph className="text-muted-foreground">Loading...</Paragraph>
-      </div>
+      <SimpleCardanoLoader fullscreen={false} message="Loading admin guide..." />
     );
   }
 

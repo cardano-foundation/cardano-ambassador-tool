@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import type { MemberData } from "@sidan-lab/cardano-ambassador-tool";
 import type { Utxo } from "@types";
+import type { RootState } from "../../store";
 
 // ---------- Types ----------
 
@@ -58,40 +59,49 @@ const initialState: AuthState = {
 export const hydrateFromSession = createAsyncThunk<
   UserSession | null,
   void,
-  { rejectValue: string }
->("auth/hydrateFromSession", async (_, { rejectWithValue }) => {
-  try {
-    if (typeof window === "undefined") return null;
+  { rejectValue: string; state: RootState }
+>(
+  "auth/hydrateFromSession",
+  async (_, { rejectWithValue }) => {
+    try {
+      if (typeof window === "undefined") return null;
 
-    const stored = localStorage.getItem("user_session");
-    if (!stored) return null;
+      const stored = localStorage.getItem("user_session");
+      if (!stored) return null;
 
-    const session = JSON.parse(stored) as UserSession & {
-      roles: { role: string }[] | string[];
-    };
+      const session = JSON.parse(stored) as UserSession & {
+        roles: { role: string }[] | string[];
+      };
 
-    // Check if session is older than 24 hours
-    const twentyFourHours = 24 * 60 * 60 * 1000;
-    if (Date.now() - session.timestamp > twentyFourHours) {
+      // Check if session is older than 24 hours
+      const twentyFourHours = 24 * 60 * 60 * 1000;
+      if (Date.now() - session.timestamp > twentyFourHours) {
+        localStorage.removeItem("user_session");
+        return null;
+      }
+
+      // Normalize roles format (could be string[] or {role: string}[])
+      const roles = session.roles.map((r: string | { role: string }) =>
+        typeof r === "string" ? r : r.role,
+      );
+
+      return {
+        address: session.address,
+        roles,
+        timestamp: session.timestamp,
+      };
+    } catch (error) {
       localStorage.removeItem("user_session");
-      return null;
+      return rejectWithValue("Failed to hydrate session");
     }
-
-    // Normalize roles format (could be string[] or {role: string}[])
-    const roles = session.roles.map((r: string | { role: string }) =>
-      typeof r === "string" ? r : r.role,
-    );
-
-    return {
-      address: session.address,
-      roles,
-      timestamp: session.timestamp,
-    };
-  } catch (error) {
-    localStorage.removeItem("user_session");
-    return rejectWithValue("Failed to hydrate session");
-  }
-});
+  },
+  {
+    // Many components mount useUserAuth simultaneously; without this guard
+    // each one would dispatch hydration before isHydrated flips, causing
+    // duplicate localStorage reads and state churn.
+    condition: (_, { getState }) => !getState().auth.isHydrated,
+  },
+);
 
 /**
  * Resolve user roles from server
@@ -99,27 +109,44 @@ export const hydrateFromSession = createAsyncThunk<
 export const resolveUserRoles = createAsyncThunk<
   { address: string; roles: string[] },
   string,
-  { rejectValue: string }
->("auth/resolveUserRoles", async (address, { rejectWithValue }) => {
-  try {
-    // Import dynamically to avoid SSR issues with server action
-    const { resolveRoles } = await import("@/lib/auth/roles");
-    const roles = await resolveRoles(address);
-    const roleStrings = roles.map((r) => r.role);
+  { rejectValue: string; state: RootState }
+>(
+  "auth/resolveUserRoles",
+  async (address, { rejectWithValue }) => {
+    try {
+      // Import dynamically to avoid SSR issues with server action
+      const { resolveRoles } = await import("@/lib/auth/roles");
+      const roles = await resolveRoles(address);
+      const roleStrings = roles.map((r) => r.role);
 
-    // Create session in localStorage
-    const sessionData = {
-      address,
-      roles: roleStrings,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem("user_session", JSON.stringify(sessionData));
+      // Create session in localStorage
+      const sessionData = {
+        address,
+        roles: roleStrings,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem("user_session", JSON.stringify(sessionData));
 
-    return { address, roles: roleStrings };
-  } catch (error) {
-    return rejectWithValue("Failed to resolve user roles");
-  }
-});
+      return { address, roles: roleStrings };
+    } catch (error) {
+      return rejectWithValue("Failed to resolve user roles");
+    }
+  },
+  {
+    // Many components call useUserAuth (AppInitializer, AuthGuard, SideNav,
+    // TopNavBar, etc.). When the wallet auto-connects they all see
+    // isAuthenticated=false on the same render and would each dispatch this
+    // thunk, fanning out into dozens of duplicate `resolveRoles` server-action
+    // POSTs. Skip if a request is already in-flight or this address is already
+    // resolved.
+    condition: (address, { getState }) => {
+      const { auth } = getState();
+      if (auth.isLoading) return false;
+      if (auth.isAuthenticated && auth.address === address) return false;
+      return true;
+    },
+  },
+);
 
 // ---------- Slice ----------
 

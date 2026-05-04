@@ -28,7 +28,7 @@ import {
 } from "@sidan-lab/cardano-ambassador-tool";
 import { MembershipIntentPayoad, MemberTokenDetail } from "@types";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const SubmitIntent = ({
   asset,
@@ -41,9 +41,12 @@ const SubmitIntent = ({
 }) => {
   const { address, wallet } = useWalletManager();
   const { isMember, memberData } = useMemberValidation();
-  const oracleUtxoRef = getCatConstants().oracleUtxo!;
 
-  const blockfrost = getProvider();
+  // `getCatConstants()` and `getProvider()` rebuild Mesh script/provider
+  // objects (CSL work) every call — keep them out of the per-render path so
+  // each keystroke doesn't pay that cost.
+  const oracleUtxoRef = useMemo(() => getCatConstants().oracleUtxo!, []);
+  const blockfrost = useMemo(() => getProvider(), []);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -72,6 +75,46 @@ const SubmitIntent = ({
       setSubmitError(null);
     }
   }, [formData]);
+
+  const handleFullNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setFormData((prev) => ({ ...prev, fullName: value }));
+    },
+    [],
+  );
+
+  const handleEmailChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setFormData((prev) => ({ ...prev, email: value }));
+    },
+    [],
+  );
+
+  const handleBioChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      setFormData((prev) => ({ ...prev, bio: value }));
+    },
+    [],
+  );
+
+  const handleForumUsernameChange = useCallback((forum_username: string) => {
+    setFormData((prev) => ({ ...prev, forum_username }));
+  }, []);
+
+  const handleCountryChange = useCallback((country: string) => {
+    setFormData((prev) => ({ ...prev, country, city: "" }));
+  }, []);
+
+  const handleCityChange = useCallback((city: string) => {
+    setFormData((prev) => ({ ...prev, city }));
+  }, []);
+
+  const handleTermsChange = useCallback((checked: boolean) => {
+    setFormData((prev) => ({ ...prev, t_c: checked }));
+  }, []);
 
   const handleSubmit = async () => {
     // Clear previous errors
@@ -304,9 +347,7 @@ const SubmitIntent = ({
           type="name"
           name="fullName"
           value={formData.fullName}
-          onChange={(e) =>
-            setFormData({ ...formData, fullName: e.target.value })
-          }
+          onChange={handleFullNameChange}
           error={!!getFieldError(validationErrors, "fullName")}
           errorMessage={getFieldError(validationErrors, "fullName")}
         />
@@ -317,7 +358,7 @@ const SubmitIntent = ({
           type="email"
           name="email"
           value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          onChange={handleEmailChange}
           error={!!getFieldError(validationErrors, "email")}
           errorMessage={getFieldError(validationErrors, "email")}
         />
@@ -325,9 +366,7 @@ const SubmitIntent = ({
         <div className="space-y-1">
           <ForumUsernameInput
             value={formData.forum_username}
-            onChange={(forum_username) => {
-              setFormData((prev) => ({ ...prev, forum_username }));
-            }}
+            onChange={handleForumUsernameChange}
           />
           {getFieldError(validationErrors, "forum_username") && (
             <p className="text-primary-base mt-1 text-sm">
@@ -340,12 +379,8 @@ const SubmitIntent = ({
           <LocationSelector
             countryCode={formData.country}
             city={formData.city}
-            onCountryChange={(country) => {
-              setFormData((prev) => ({ ...prev, country, city: "" }));
-            }}
-            onCityChange={(city) => {
-              setFormData((prev) => ({ ...prev, city }));
-            }}
+            onCountryChange={handleCountryChange}
+            onCityChange={handleCityChange}
           />
           {(getFieldError(validationErrors, "country") ||
             getFieldError(validationErrors, "city")) && (
@@ -361,7 +396,7 @@ const SubmitIntent = ({
           rows={4}
           name="bio"
           value={formData.bio}
-          onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+          onChange={handleBioChange}
           error={!!getFieldError(validationErrors, "bio")}
           errorMessage={getFieldError(validationErrors, "bio")}
         />
@@ -381,9 +416,7 @@ const SubmitIntent = ({
             <Checkbox
               id="terms-checkbox"
               checked={formData.t_c}
-              onCheckedChange={(checked) =>
-                setFormData({ ...formData, t_c: checked })
-              }
+              onCheckedChange={handleTermsChange}
             />
           </div>
           {getFieldError(validationErrors, "t_c") && (

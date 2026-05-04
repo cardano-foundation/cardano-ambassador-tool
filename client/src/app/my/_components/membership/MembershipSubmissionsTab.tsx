@@ -1,6 +1,7 @@
 "use client";
 
 import OwnerMembershipTimeline from "../../../../components/Timelines/OwnerMembershipTimeline";
+import SimpleCardanoLoader from "../../../../components/SimpleCardanoLoader";
 import TransactionConfirmationOverlay from "../../../../components/TransactionConfirmationOverlay";
 import Paragraph from "../../../../components/atoms/Paragraph";
 import Title from "../../../../components/atoms/Title";
@@ -220,13 +221,10 @@ export default function MembershipSubmissionsTab() {
 
   if (loading || dbLoading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-center">
-          <Title level="3" className="text-foreground mb-2">
-            Loading membership status...
-          </Title>
-        </div>
-      </div>
+      <SimpleCardanoLoader
+        fullscreen={false}
+        message="Loading membership status..."
+      />
     );
   }
 

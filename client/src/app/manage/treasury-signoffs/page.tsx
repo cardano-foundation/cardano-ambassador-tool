@@ -1,10 +1,12 @@
 "use client";
 
 import Copyable from "../../../components/Copyable";
+import SimpleCardanoLoader from "../../../components/SimpleCardanoLoader";
 import { ColumnDef, Table } from "../../../components/Table/Table";
 import Button from "../../../components/atoms/Button";
 import Card, { CardContent } from "../../../components/atoms/Card";
 import Chip from "../../../components/atoms/Chip";
+import EmptyState from "../../../components/atoms/EmptyState";
 import Paragraph from "../../../components/atoms/Paragraph";
 import Title from "../../../components/atoms/Title";
 import { getCurrentNetworkConfig } from "../../../config/cardano";
@@ -130,7 +132,7 @@ const proposalIntentColumns: ColumnDef<ProposalIntent>[] = [
     header: "Action",
     sortable: false,
     cell: (value, row) => (
-      <Link href={routes.manage.treasurySignoff(row.txHash)} prefetch={true}>
+      <Link href={routes.manage.treasurySignoff(row.txHash)} prefetch={false}>
         <Button variant="primary" size="sm">
           View
         </Button>
@@ -147,7 +149,12 @@ export default function TreasurySignOffsPage() {
   const treasuryBalanceAda = Math.floor(Number(treasuryBalance) / 1_000_000);
 
   if (dbLoading || isTreasuryLoading) {
-    return <div className="p-4">Loading treasury sign-offs...</div>;
+    return (
+      <SimpleCardanoLoader
+        fullscreen={false}
+        message="Loading treasury sign-offs..."
+      />
+    );
   }
 
   const decodedUtxos = signOfApprovals.map((utxo, idx) => {
@@ -290,10 +297,11 @@ export default function TreasurySignOffsPage() {
             </div>
           ) : (
             <Card>
-              <CardContent className="p-6 text-center">
-                <Paragraph className="text-muted-foreground">
-                  No treasury sign-offs found.
-                </Paragraph>
+              <CardContent className="p-2">
+                <EmptyState
+                  title="No sign-offs pending"
+                  description="Approved proposals awaiting treasury sign-off will appear here."
+                />
               </CardContent>
             </Card>
           )}

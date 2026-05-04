@@ -7,6 +7,7 @@ import Button from "./atoms/Button";
 import Checkbox from "./atoms/Checkbox";
 import Modal from "./atoms/Modal";
 import Copyable from "./Copyable";
+import SimpleCardanoLoader from "./SimpleCardanoLoader";
 
 interface AdminInfo {
   address: string;
@@ -120,10 +121,11 @@ const AdminSelectorModal: React.FC<AdminSelectorModalProps> = ({
   };
 
   const modalContent = loading ? (
-    <div className="py-8 text-center">
-      <div className="border-primary-base mx-auto h-8 w-8 animate-spin rounded-full border-b-2"></div>
-      <p className="mt-2">Loading admins...</p>
-    </div>
+    <SimpleCardanoLoader
+      fullscreen={false}
+      size={56}
+      message="Loading admins..."
+    />
   ) : error ? (
     <div className="py-8 text-center">
       <div className="text-primary-base mb-2">⚠️ Error</div>

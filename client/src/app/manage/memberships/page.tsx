@@ -1,10 +1,12 @@
 "use client";
 
 import Button from "../../../components/atoms/Button";
+import EmptyState from "../../../components/atoms/EmptyState";
 import Paragraph from "../../../components/atoms/Paragraph";
 import Title from "../../../components/atoms/Title";
 import UserAvatar from "../../../components/atoms/UserAvatar";
 import Copyable from "../../../components/Copyable";
+import SimpleCardanoLoader from "../../../components/SimpleCardanoLoader";
 import { ColumnDef, Table } from "../../../components/Table/Table";
 import { getCurrentNetworkConfig } from "../../../config/cardano";
 import { useDatabase } from "../../../hooks";
@@ -15,11 +17,18 @@ export default function ManageAmbassadorsPage() {
   const { members, dbLoading } = useDatabase();
 
   if (dbLoading) {
-    return <div className="p-4">Loading ambassadors...</div>;
+    return (
+      <SimpleCardanoLoader fullscreen={false} message="Loading ambassadors..." />
+    );
   }
 
   if (!members || members.length === 0) {
-    return <div className="p-4">No Ambassadors Found</div>;
+    return (
+      <EmptyState
+        title="No ambassadors yet"
+        description="Approved ambassadors will be listed here for review and management."
+      />
+    );
   }
 
   const decodedUtxos = members
