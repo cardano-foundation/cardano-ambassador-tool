@@ -377,9 +377,8 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
           </div>
         </div>
 
-        {/* Only show Second button if current wallet hasn't signed yet */}
-        {!currentWalletHasSigned && (
-          <div className="flex w-1/2 justify-between gap-2">
+        <div className="flex w-1/2 items-center justify-between gap-2">
+          {!currentWalletHasSigned && (
             <Button
               variant={
                 adminDecision.decision === "approve" ? "primary" : "outline"
@@ -394,28 +393,26 @@ const ApproveReject: React.FC<ApproveRejectProps> = ({
                 ? "Processing..."
                 : `Second ${adminDecision.decision === "approve" ? "Approval" : "Rejection"}`}
             </Button>
-            
-            {/* Delete Control for Admins */}
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleDeleteDecision()}
-                disabled={isProcessing}
-                className="text-primary-base!"
-            >
-                Delete Decision
-            </Button>
-          </div>
-        )}
-
-        {/* Show message if current wallet has already signed */}
-        {currentWalletHasSigned && (
-          <div className="">
+          )}
+          {currentWalletHasSigned && (
             <span className="text-sm">
               ✓ You have already signed this {adminDecision.decision}
             </span>
-          </div>
-        )}
+          )}
+
+          {/* Any admin can cancel the in-progress approval/rejection process.
+              This only clears the off-chain coordination cache (Upstash); no
+              on-chain state changes. The membership intent UTxO is untouched. */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleDeleteDecision()}
+            disabled={isProcessing}
+            className="text-primary-base!"
+          >
+            {`Cancel ${adminDecision.decision === "approve" ? "Approval" : "Rejection"}`}
+          </Button>
+        </div>
       </div>
     );
   }

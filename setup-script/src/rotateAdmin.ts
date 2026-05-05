@@ -166,10 +166,14 @@ async function main() {
     newAdminsTenure,
   );
 
-  const outPath = path.resolve(__dirname, "../rotate-admin-tx.hex");
-  fs.writeFileSync(outPath, txHex);
+  // Partial-sign with the operator wallet so its witness for the fee-paying input
+  // is already in the witness set. Remaining admin witnesses are added downstream.
+  const partiallySignedTx = await wallet.signTx(txHex, true);
 
-  console.log("\n=== Unsigned tx built ===");
+  const outPath = path.resolve(__dirname, "../rotate-admin-tx.hex");
+  fs.writeFileSync(outPath, partiallySignedTx);
+
+  console.log("\n=== Tx built and partially signed by operator ===");
   console.log(`Tx hex saved to: ${outPath}`);
   console.log("\nSignatures required (pkhs added to required_signers):");
   console.log(`  - Current admins (≥ threshold):`);

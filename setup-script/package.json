@@ -7,6 +7,7 @@
   "scripts": {
     "setup": "tsx src/index.ts",
     "rotate-admin": "tsx src/rotateAdmin.ts",
+    "operator-sign-submit": "tsx src/operatorSignSubmit.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

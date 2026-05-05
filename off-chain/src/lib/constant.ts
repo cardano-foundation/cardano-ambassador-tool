@@ -95,7 +95,7 @@ export type Deployment = {
 export const MAINNET_DEPLOYMENT: Deployment = {
   oracleUtxo: {
     txHash:
-      "9d164d0398947749f2e7d4ee051b787d140974e6b5326211ec0f502002a1239c",
+      "ca5e31bc639f89d95bf22c8692bd4dcdfe15041b0509617b2c34475dd8507662",
     outputIndex: 0,
   },
   setupUtxos: {
