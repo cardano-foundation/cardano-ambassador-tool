@@ -103,7 +103,7 @@ export const rotateAdmin = (
         return addrBech32ToPlutusDataObj(admin);
       })
     ),
-    byteString(newAdminsTenure),
+    byteString(stringToHex(newAdminsTenure)),
   ]);
 };
 

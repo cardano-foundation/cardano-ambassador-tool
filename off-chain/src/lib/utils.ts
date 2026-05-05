@@ -8,6 +8,7 @@ import {
   list,
   serializeAddressObj,
   serializeData,
+  stringToHex,
   UTxO,
   plutusBSArrayToString,
   List,
@@ -112,7 +113,7 @@ export const updateOracleDatum = (
         )
       : datum.fields[0],
     newAdminsTenure
-      ? byteString(hexToString(newAdminsTenure))
+      ? byteString(stringToHex(newAdminsTenure))
       : datum.fields[1],
     newMultiSigThreshold ? integer(newMultiSigThreshold) : datum.fields[2],
     datum.fields[3],
