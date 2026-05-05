@@ -24,7 +24,7 @@ Add all of these under **Repo Settings → Secrets and variables → Actions →
 | `VERCEL_ORG_ID` | Vercel dashboard → switch to the **cardano-foundation** team → **Settings** → **General** → copy **Team ID**. (Alternative: `vercel link`, see below.) |
 | `VERCEL_PROJECT_ID` | Open the project in the dashboard → **Settings** → **General** → copy **Project ID**. (Alternative: `vercel link`, see below.) |
 
-### Build & runtime env vars (9)
+### Build & runtime env vars (11)
 
 These are read by the Next.js app. `NEXT_PUBLIC_*` are baked into the browser bundle at build time; the rest are server-side only.
 
@@ -39,6 +39,8 @@ These are read by the Next.js app. `NEXT_PUBLIC_*` are baked into the browser bu
 | `BLOCKFROST_API_KEY_MAINNET` | `/api/*` routes | server-side only |
 | `CARDANO_FORUM_API_KEY` | ambassador service | server-side only |
 | `CARDANO_FORUM_API_USERNAME` | ambassador service | typically `system` |
+| `UPSTASH_REDIS_REST_URL` | `/api/storage` | Multi-admin coordination store. See [Upstash Redis setup](#one-time-setup-upstash-redis) below. |
+| `UPSTASH_REDIS_REST_TOKEN` | `/api/storage` | Same source as above. |
 
 > `NEXT_PUBLIC_NETWORK` is **not** a secret — it's hardcoded inside each workflow file (`mainnet` for `vercel-mainnet.yml`, `preprod` for `vercel-preprod.yml`).
 
@@ -63,6 +65,24 @@ cat .vercel/project.json
 ```
 
 The `.vercel/` folder is git-ignored — do **not** commit it. Just copy the two IDs into GitHub Secrets.
+
+## One-time setup: Upstash Redis
+
+The admin multi-sig flow coordinates partial signatures across admins (Admin A signs → Admin B sees the partial → adds a signature → threshold reached → submit). On a stateful host we'd put those records on disk; on Vercel Lambdas the code root is read-only and `/tmp` is per-instance ephemeral, so a real shared store is required. The lightest option is Upstash Redis, which Vercel's marketplace provisions in one click and exposes via two REST credentials.
+
+1. **Provision the database**
+   - Vercel dashboard → switch to the `cardano-foundation` team → **Storage** tab → **Create Database** → **Marketplace Database Providers** → **Upstash → Redis**.
+   - Region: pick the same region as the Vercel deployment (typically `iad1` / N. Virginia).
+   - Plan: **Free** is enough — this app's signature volume is tiny.
+   - When prompted, **link** it to the existing Vercel project. (You're not relying on the auto-injected env vars from this link — the GitHub Action passes them in explicitly — but linking keeps the Vercel UI showing the right relationship.)
+2. **Copy the credentials**
+   - In the database's dashboard, find **REST API** → copy `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
+3. **Save them as GitHub Secrets**
+   - GitHub → **Repo Settings** → **Secrets and variables** → **Actions** → add the two values under those exact secret names.
+4. **(Optional) Use the same database for preprod**
+   - The mainnet and preprod workflows both read from the same `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` secrets. If you want the two environments isolated, provision a second Upstash database and override these secrets at the Environment level (GitHub Secrets → Environments → `preprod`).
+
+The store only holds in-flight multi-sig records — once a tx hits chain, the record is deleted by the workflow (e.g., `FinalizeDecision.tsx`). At any given moment the database holds a few KB.
 
 ## Triggering a deployment
 
