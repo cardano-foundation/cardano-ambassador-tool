@@ -21,9 +21,6 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: client
     env:
       NEXT_PUBLIC_NETWORK: mainnet
       NEXT_PUBLIC_AMBASSADOR_POLICY_ID: ${{ secrets.NEXT_PUBLIC_AMBASSADOR_POLICY_ID }}
