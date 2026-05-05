@@ -1,5 +1,5 @@
 import { useWalletManager } from "../hooks";
-import { emitGlobalRefreshWithDelay, saveCounterUtxo } from "../utils";
+import { emitGlobalRefreshWithDelay } from "../utils";
 import { storageApiClient } from "../utils/storageApiClient";
 import { AdminDecisionData, TransactionConfirmationResult } from "@types";
 import { Loader2 } from "lucide-react";
@@ -72,15 +72,6 @@ const ActivateMembership: React.FC<ActivateMembershipProps> = ({
       }
 
       const txHash = await wallet.submitTx(adminDecisionData.signedTx);
-
-      try {
-        await saveCounterUtxo(
-          txHash,
-          adminDecisionData.counterUtxoTxIndex || 0,
-        );
-      } catch (error) {
-        console.error("Failed to update counter UTxO:", error);
-      }
 
       setConfirmedTxHash(txHash);
       setShowConfirmationOverlay(true);

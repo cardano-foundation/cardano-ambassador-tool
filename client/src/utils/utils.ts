@@ -718,10 +718,9 @@ export function dbUtxoToMeshUtxo(dbUtxo: Utxo): UTxO {
 // ============================================================================
 
 /**
- * Retrieves the currently saved counter UTxO from storage via API.
- *
- * This function loads the persisted UTxO reference (transaction hash and output index)
- * from server-side storage and fetches the full UTxO details from Blockfrost.
+ * Fetches the live counter UTxO via the API. The route scans the counter
+ * script address on every call, so this always returns the current
+ * unspent counter UTxO (no client-side caching).
  *
  * @returns The full MeshJS UTxO object if found, otherwise `null`.
  */
@@ -743,37 +742,6 @@ export async function getCounterUtxo(): Promise<UTxO | null> {
   } catch (error) {
     console.error("Error fetching counter UTxO:", error);
     return null;
-  }
-}
-
-/**
- * Safely saves a new counter UTxO reference to storage via API.
- *
- * @param txHash - The transaction hash of the UTxO.
- * @param outputIndex - The output index of the UTxO.
- * @returns `true` if saved successfully, otherwise throws an error.
- */
-export async function saveCounterUtxo(
-  txHash: string,
-  outputIndex: number,
-): Promise<boolean> {
-  try {
-    const response = await fetch("/api/counter-utxo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ txHash, outputIndex }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "Failed to save counter UTxO");
-    }
-
-    return true;
-  } catch (error) {
-    throw new Error(`Failed to save counter_utxo: ${String(error)}`);
   }
 }
 
