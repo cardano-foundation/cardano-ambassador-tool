@@ -147,13 +147,21 @@ async function main() {
     process.exit(1);
   }
   assertBech32Addresses("new admin", newAdmins, network as "preprod" | "mainnet");
+  const newAdminPkhs = newAdmins.map((a) =>
+    addressToPubKeyHash("new admin", a, network as "preprod" | "mainnet"),
+  );
 
   const newAdminsTenure = await prompt("New admin tenure (display only, e.g., 365d): ");
+
+  // Validator requires every new admin to be in extra_signatories too, so add their
+  // pkhs to required_signers via the SDK's adminSigned param. Dedup to avoid duplicate
+  // requiredSignerHash entries when a current admin is also a new admin.
+  const requiredSignerPkhs = Array.from(new Set([...adminSigned, ...newAdminPkhs]));
 
   const adminAction = new AdminActionTx(address, wallet, provider, catConstants);
   const { txHex } = await adminAction.rotateAdmin(
     oracleUtxo,
-    adminSigned,
+    requiredSignerPkhs,
     newAdmins,
     newAdminsTenure,
   );
@@ -163,13 +171,15 @@ async function main() {
 
   console.log("\n=== Unsigned tx built ===");
   console.log(`Tx hex saved to: ${outPath}`);
-  console.log("\nSignatures required:");
+  console.log("\nSignatures required (pkhs added to required_signers):");
   console.log(`  - Current admins (≥ threshold):`);
   for (let i = 0; i < adminSignedAddrs.length; i++) {
     console.log(`      ${adminSignedAddrs[i]}  (pkh: ${adminSigned[i]})`);
   }
   console.log(`  - New admins (ALL):`);
-  for (const a of newAdmins) console.log(`      ${a}`);
+  for (let i = 0; i < newAdmins.length; i++) {
+    console.log(`      ${newAdmins[i]}  (pkh: ${newAdminPkhs[i]})`);
+  }
   console.log(
     `\nAfter the tx is submitted and confirmed, update NEXT_PUBLIC_ORACLE_TX_HASH (and OUTPUT_INDEX=0) in ${CLIENT_ENV_PATH} to the new tx hash.`,
   );

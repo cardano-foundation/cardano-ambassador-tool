@@ -23,7 +23,7 @@
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-tabs": "^1.1.12",
     "@reduxjs/toolkit": "^2.11.2",
-    "@sidan-lab/cardano-ambassador-tool": "0.1.1",
+    "@sidan-lab/cardano-ambassador-tool": "0.1.2",
     "@tiptap/extension-image": "^3.6.6",
     "@tiptap/extension-text-align": "^3.6.1",
     "@tiptap/extension-underline": "^3.6.1",
