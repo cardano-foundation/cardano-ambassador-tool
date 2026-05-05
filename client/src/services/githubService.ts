@@ -126,17 +126,17 @@ const GitContentService = {
 
 const getOctokit = async () => {
   const {
-    GITHUB_TOKEN,
+    GH_TOKEN,
     NEXT_PUBLIC_GITHUB_REPO,
     NEXT_PUBLIC_GITHUB_BRANCH = "main",
   } = process.env;
 
-  if (!GITHUB_TOKEN || !NEXT_PUBLIC_GITHUB_REPO) {
+  if (!GH_TOKEN || !NEXT_PUBLIC_GITHUB_REPO) {
     throw new Error("GitHub credentials missing in environment variables");
   }
 
   const [owner, repo] = NEXT_PUBLIC_GITHUB_REPO.split("/");
-  const octokit = new Octokit({ auth: GITHUB_TOKEN });
+  const octokit = new Octokit({ auth: GH_TOKEN });
 
   return { owner, repo, branch: NEXT_PUBLIC_GITHUB_BRANCH, octokit };
 };

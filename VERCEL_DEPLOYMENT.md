@@ -21,8 +21,8 @@ Add all of these under **Repo Settings → Secrets and variables → Actions →
 | Secret | Where to get it |
 |---|---|
 | `VERCEL_TOKEN` | Vercel dashboard → top-right avatar → **Account Settings** → **Tokens** → **Create Token**. Scope it to the `cardano-foundation` team and set a reasonable expiry. Copy once — it cannot be revealed again. |
-| `VERCEL_ORG_ID` | Run `vercel link` once locally inside `client/` (see below). The ID appears in `client/.vercel/project.json` as `orgId`. |
-| `VERCEL_PROJECT_ID` | Same `client/.vercel/project.json` file, the `projectId` field. |
+| `VERCEL_ORG_ID` | Vercel dashboard → switch to the **cardano-foundation** team → **Settings** → **General** → copy **Team ID**. (Alternative: `vercel link`, see below.) |
+| `VERCEL_PROJECT_ID` | Open the project in the dashboard → **Settings** → **General** → copy **Project ID**. (Alternative: `vercel link`, see below.) |
 
 ### Build & runtime env vars (9)
 
@@ -44,9 +44,9 @@ These are read by the Next.js app. `NEXT_PUBLIC_*` are baked into the browser bu
 
 > Each env var is consumed twice in the workflow: at `vercel build` time (so Next.js can inline `NEXT_PUBLIC_*` and run server bundling), and via `vercel deploy --env KEY=...` (so server-side vars exist at runtime in the deployed function). This avoids needing to set anything in the Vercel project settings.
 
-## One-time setup: getting `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`
+## Alternative: get the IDs via `vercel link`
 
-You need these IDs before the workflows can run. Do this once on your laptop:
+The dashboard route above is the easiest. If you'd rather use the CLI (e.g. you already have it installed for local deploys), run this once on your laptop:
 
 ```bash
 npm install --global vercel@latest
