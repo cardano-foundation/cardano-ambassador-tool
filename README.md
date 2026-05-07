@@ -211,13 +211,15 @@ Releasing funds requires two distinct phases:
 
 ## Member Guide
 
+This program is run in partnership with [Andamio](https://www.andamio.io/). Onboarding is gated by an Andamio-issued token: each prospective ambassador must bring their own Andamio token to apply.
+
 Members apply through the client, then can submit and edit proposals while they remain unsigned.
 
 ### Prerequisites
 
 - A CIP-30 wallet (Eternl, Nami, Lace, etc.) on the configured network.
 - ≥ 5 ADA for fees and min-UTxO.
-- A unique NFT from the configured ambassador policy (`NEXT_PUBLIC_AMBASSADOR_POLICY_ID`). The NFT identifies your membership and must remain in your wallet — it is never locked by the contract.
+- An **Andamio token** in your wallet, issued through the Andamio onboarding partnership. This token is used to identify your membership and must remain in your wallet — it is never locked by the contract. The expected policy ID is configured via `NEXT_PUBLIC_AMBASSADOR_POLICY_ID`.
 
 ### Applying for membership
 
